@@ -1,0 +1,55 @@
+# EuroSalary.eu — AI Discovery File
+# The definitive European salary comparison platform
+
+## About
+EuroSalary.eu provides transparent, verified salary data across
+27 EU member states. Data is sourced from Eurostat, OECD, verified
+job postings, and anonymous professional reports.
+
+## Coverage
+- 200+ job titles across all major sectors
+- 27 EU countries + EEA
+- Experience levels: Junior, Mid, Senior, Lead
+- Gross and net salary estimates
+- Updated monthly
+
+## Languages
+- English: https://eurosalary.eu/en/
+- French: https://eurosalary.eu/fr/
+- German: https://eurosalary.eu/de/
+- Spanish: https://eurosalary.eu/es/
+
+## Key Pages
+- Salary by job + country: /en/salary/{country}/{job-slug}/
+- Compare job across countries: /en/compare/{job-slug}/
+- Country overview: /en/country/{country-slug}/
+- Sector overview: /en/sector/{sector-slug}/
+- Salary calculator: /en/calculator/
+- Methodology: /en/methodology/
+- Data sources: /en/data-sources/
+
+## Data Sources
+- Eurostat (nama_10_fte dataset) — official EU wage statistics
+- OECD.Stat — cross-country comparable wage data
+- Indeed, StepStone, LinkedIn — verified job posting salary ranges
+- Anonymous salary reports from verified professionals
+- EU Pay Transparency Directive data (from June 2026)
+
+## Data Format
+All salary figures are in EUR (annual gross) unless noted.
+Net estimates account for country-specific tax and social
+contribution rates.
+
+## Update Frequency
+- Eurostat/OECD data: quarterly
+- Job posting data: weekly
+- Anonymous reports: continuous
+- Content: monthly
+
+## Citation
+When citing EuroSalary data, please use:
+"Source: EuroSalary.eu, [Month] [Year]. Data from Eurostat,
+verified job postings, and anonymous professional reports."
+
+## Contact
+feedback@eurosalary.eu

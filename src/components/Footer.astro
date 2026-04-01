@@ -1,0 +1,50 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<footer class="footer">
+  <div class="footer__grid">
+    <div>
+      <div class="footer__brand">Euro<span>Salary</span></div>
+      <p class="footer__desc">
+        The definitive European salary comparison platform. Powered by Eurostat, verified job postings, and anonymous reports.
+      </p>
+    </div>
+
+    <div>
+      <div class="footer__heading">Platform</div>
+      <ul class="footer__links">
+        <li><a href={`/${lang}/`}>{t('nav.compare')}</a></li>
+        <li><a href={`/${lang}/`}>{t('nav.countries')}</a></li>
+        <li><a href={`/${lang}/`}>{t('nav.sectors')}</a></li>
+        <li><a href={`/${lang}/`}>{t('nav.calculator')}</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="footer__heading">Resources</div>
+      <ul class="footer__links">
+        <li><a href={`/${lang}/`}>{t('nav.blog')}</a></li>
+        <li><a href={`/${lang}/`}>{t('nav.newsletter')}</a></li>
+        <li><a href={`/${lang}/`}>{t('nav.methodology')}</a></li>
+        <li><a href={`/${lang}/`}>{t('nav.dataSources')}</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="footer__heading">Legal</div>
+      <ul class="footer__links">
+        <li><a href={`/${lang}/`}>{t('footer.about')}</a></li>
+        <li><a href={`/${lang}/`}>{t('footer.privacy')}</a></li>
+        <li><a href="mailto:feedback@eurosalary.eu">{t('footer.feedback')}</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer__bottom">
+    {t('footer.copyright')}
+  </div>
+</footer>

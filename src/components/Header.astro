@@ -1,0 +1,28 @@
+---
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { getLangFromUrl } from '../i18n/utils';
+import { useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<header class="header">
+  <div class="header__inner">
+    <a href={`/${lang}/`} class="header__logo">
+      Euro<span>Salary</span>
+    </a>
+
+    <nav class="header__nav">
+      <a href={`/${lang}/`}>{t('nav.compare')}</a>
+      <a href={`/${lang}/`}>{t('nav.countries')}</a>
+      <a href={`/${lang}/`}>{t('nav.sectors')}</a>
+      <a href={`/${lang}/`}>{t('nav.calculator')}</a>
+      <a href={`/${lang}/`}>{t('nav.blog')}</a>
+    </nav>
+
+    <div class="header__right">
+      <LanguageSwitcher />
+    </div>
+  </div>
+</header>

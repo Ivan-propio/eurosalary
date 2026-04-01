@@ -1,0 +1,146 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getLangFromUrl, getAlternateLinks } from '../i18n/utils';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  datePublished?: string;
+  dateModified?: string;
+  ogImage?: string;
+  schema?: Record<string, unknown>[];
+  canonicalPath?: string;
+}
+
+const {
+  title,
+  description,
+  datePublished,
+  dateModified,
+  ogImage = '/og-default.png',
+  schema = [],
+  canonicalPath,
+} = Astro.props;
+
+const lang = getLangFromUrl(Astro.url);
+const alternates = getAlternateLinks(Astro.url.pathname);
+const canonicalUrl = canonicalPath
+  ? `https://eurosalary.eu${canonicalPath}`
+  : `https://eurosalary.eu${Astro.url.pathname}`;
+const fullTitle = title.includes('EuroSalary') ? title : `${title} | EuroSalary.eu`;
+
+// Organization schema (always present)
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'EuroSalary',
+  url: 'https://eurosalary.eu',
+  logo: 'https://eurosalary.eu/logo.svg',
+  description: 'The definitive European salary comparison platform.',
+};
+
+// BreadcrumbList schema (always present)
+const pathParts = Astro.url.pathname.split('/').filter(Boolean);
+const breadcrumbItems = pathParts.map((part, index) => ({
+  '@type': 'ListItem',
+  position: index + 1,
+  name: part.charAt(0).toUpperCase() + part.slice(1).replace(/-/g, ' '),
+  item: `https://eurosalary.eu/${pathParts.slice(0, index + 1).join('/')}/`,
+}));
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: breadcrumbItems,
+};
+
+const allSchemas = [orgSchema, breadcrumbSchema, ...schema];
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+
+    <!-- Canonical -->
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- hreflang for all 4 languages -->
+    {alternates.map((alt) => (
+      <link rel="alternate" hreflang={alt.lang} href={`https://eurosalary.eu${alt.href}`} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={`https://eurosalary.eu/en${Astro.url.pathname.replace(/^\/(en|fr|de|es)/, '')}`} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="EuroSalary.eu" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={`https://eurosalary.eu${ogImage}`} />
+    <meta property="og:locale" content={lang} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`https://eurosalary.eu${ogImage}`} />
+
+    <!-- Dates (if content page) -->
+    {datePublished && <meta property="article:published_time" content={datePublished} />}
+    {dateModified && <meta property="article:modified_time" content={dateModified} />}
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- llms.txt discovery -->
+    <link rel="author" href="/llms.txt" />
+
+    <!-- Plausible Analytics (GDPR-compliant, no cookies) -->
+    <script defer data-domain="eurosalary.eu" src="https://plausible.io/js/script.js"></script>
+
+    <!-- Structured Data -->
+    {allSchemas.map((s) => (
+      <script type="application/ld+json" set:html={JSON.stringify(s)} />
+    ))}
+
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+
+    <!-- Language auto-detect on first visit -->
+    <script>
+      (function () {
+        const stored = localStorage.getItem('eurosalary-lang');
+        if (stored) return; // Already has a preference
+
+        const path = window.location.pathname;
+        const currentLang = path.split('/')[1];
+        const supported = ['en', 'fr', 'de', 'es'];
+
+        if (supported.includes(currentLang)) return; // Already on a lang page
+
+        const browserLang = navigator.language.split('-')[0];
+        const targetLang = supported.includes(browserLang) ? browserLang : 'en';
+        localStorage.setItem('eurosalary-lang', targetLang);
+        window.location.href = '/' + targetLang + '/';
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+---
+import { languages, type Lang } from '../i18n/ui';
+import { getAlternateLinks, getLangFromUrl } from '../i18n/utils';
+
+const currentLang = getLangFromUrl(Astro.url);
+const alternates = getAlternateLinks(Astro.url.pathname);
+---
+
+<nav class="lang-switcher" aria-label="Language switcher">
+  {alternates.map((alt, i) => (
+    <>
+      {i > 0 && <span class="lang-switcher__sep">/</span>}
+      <a
+        href={alt.href}
+        class:list={['lang-switcher__link', { 'lang-switcher__link--active': alt.lang === currentLang }]}
+        hreflang={alt.lang}
+        data-lang={alt.lang}
+      >
+        {languages[alt.lang]}
+      </a>
+    </>
+  ))}
+</nav>
+
+<script>
+  // Persist language preference
+  document.addEventListener('DOMContentLoaded', () => {
+    const links = document.querySelectorAll('.lang-switcher__link');
+    links.forEach((link) => {
+      link.addEventListener('click', () => {
+        const lang = (link as HTMLAnchorElement).dataset.lang;
+        if (lang) localStorage.setItem('eurosalary-lang', lang);
+      });
+    });
+  });
+</script>
