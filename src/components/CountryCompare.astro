@@ -1,0 +1,103 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+
+interface CompareItem {
+  countryName: string;
+  countrySlug: string;
+  countryCode: string;
+  flag: string;
+  medianSalary: number;
+}
+
+interface Props {
+  job: string;
+  jobSlug: string;
+  items: CompareItem[];
+}
+
+const { job, jobSlug, items } = Astro.props;
+const lang = getLangFromUrl(Astro.url) as Lang;
+const t = useTranslations(lang);
+
+function formatSalary(amount: number): string {
+  return new Intl.NumberFormat(lang, {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+const maxSalary = Math.max(...items.map((i) => i.medianSalary));
+---
+
+<section class="compare-section section">
+  <div class="container">
+    <h2>{t('salary.compare').replace('{country}', '')}{job}</h2>
+    <div class="compare-grid">
+      {items.map((item) => (
+        <a href={`/${lang}/salary/${item.countrySlug}/${jobSlug}/`} class="compare-card card">
+          <div class="compare-card__header">
+            <span class="compare-card__flag">{item.flag}</span>
+            <span class="compare-card__country">{item.countryName}</span>
+          </div>
+          <div class="compare-card__salary">{formatSalary(item.medianSalary)}</div>
+          <div class="compare-card__bar">
+            <div class="compare-card__bar-fill" style={`width: ${(item.medianSalary / maxSalary) * 100}%`}></div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+  }
+
+  .compare-card {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .compare-card__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+
+  .compare-card__flag {
+    font-size: var(--text-2xl);
+  }
+
+  .compare-card__country {
+    font-weight: var(--weight-semibold);
+  }
+
+  .compare-card__salary {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-blue-600);
+    margin-bottom: var(--space-3);
+  }
+
+  .compare-card__bar {
+    height: 6px;
+    background: var(--color-gray-200);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+  }
+
+  .compare-card__bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-blue-600), var(--color-blue-400));
+    border-radius: var(--radius-full);
+    transition: width var(--transition-slow);
+  }
+</style>

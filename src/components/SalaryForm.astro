@@ -1,0 +1,155 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<section class="salary-form-section section section--light" id="submit-salary">
+  <div class="container" style="max-width: 600px;">
+    <h2>{t('form.salaryReport.title')}</h2>
+    <p class="salary-form__privacy">{t('form.salaryReport.privacy')}</p>
+
+    <form class="salary-form" id="salaryReportForm">
+      <div class="form-group">
+        <label class="form-label" for="sf-job">{t('form.salaryReport.job')}</label>
+        <input type="text" id="sf-job" name="job" class="form-input" required placeholder="e.g. Software Engineer" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="sf-country">{t('form.salaryReport.country')}</label>
+          <select id="sf-country" name="country" class="form-select" required>
+            <option value="">--</option>
+            <option value="DE">Germany</option>
+            <option value="FR">France</option>
+            <option value="NL">Netherlands</option>
+            <option value="BE">Belgium</option>
+            <option value="ES">Spain</option>
+            <option value="IT">Italy</option>
+            <option value="AT">Austria</option>
+            <option value="IE">Ireland</option>
+            <option value="PT">Portugal</option>
+            <option value="PL">Poland</option>
+            <option value="SE">Sweden</option>
+            <option value="DK">Denmark</option>
+            <option value="FI">Finland</option>
+            <option value="LU">Luxembourg</option>
+            <option value="CZ">Czech Republic</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="sf-city">{t('form.salaryReport.city')}</label>
+          <input type="text" id="sf-city" name="city" class="form-input" placeholder="e.g. Berlin" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="sf-experience">{t('form.salaryReport.experience')}</label>
+          <select id="sf-experience" name="experience_level" class="form-select" required>
+            <option value="">--</option>
+            <option value="junior">Junior (0-2 yrs)</option>
+            <option value="mid">Mid-Level (3-5 yrs)</option>
+            <option value="senior">Senior (6-10 yrs)</option>
+            <option value="lead">Lead (10+ yrs)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="sf-salary">{t('form.salaryReport.grossSalary')}</label>
+          <input type="number" id="sf-salary" name="gross_salary" class="form-input" required min="10000" max="500000" placeholder="55000" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="sf-employment">{t('form.salaryReport.employmentType')}</label>
+          <select id="sf-employment" name="employment_type" class="form-select">
+            <option value="">--</option>
+            <option value="corporate">Corporate</option>
+            <option value="startup">Startup</option>
+            <option value="public">Public Sector</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="sf-size">{t('form.salaryReport.companySize')}</label>
+          <select id="sf-size" name="company_size" class="form-select">
+            <option value="">--</option>
+            <option value="1-10">1-10</option>
+            <option value="11-50">11-50</option>
+            <option value="51-200">51-200</option>
+            <option value="201-1000">201-1,000</option>
+            <option value="1001+">1,001+</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn--primary btn--lg" style="width: 100%;">
+        {t('form.submit')}
+      </button>
+
+      <div id="formSuccess" class="salary-form__success" style="display: none;">
+        {t('form.salaryReport.success')}
+      </div>
+    </form>
+  </div>
+</section>
+
+<style>
+  .salary-form-section h2 {
+    text-align: center;
+    margin-bottom: var(--space-2);
+  }
+
+  .salary-form__privacy {
+    text-align: center;
+    font-size: var(--text-sm);
+    color: var(--color-gray-500);
+    margin-bottom: var(--space-6);
+  }
+
+  .salary-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+  }
+
+  .salary-form__success {
+    background: var(--color-success);
+    color: var(--color-white);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    text-align: center;
+    font-weight: var(--weight-semibold);
+  }
+
+  @media (max-width: 768px) {
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  document.getElementById('salaryReportForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    // For now, log and show success (Supabase integration will be added when connected)
+    console.log('Salary report submitted:', data);
+
+    form.style.display = 'none';
+    document.getElementById('formSuccess')!.style.display = 'block';
+  });
+</script>

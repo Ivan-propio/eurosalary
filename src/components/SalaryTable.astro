@@ -1,0 +1,115 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+interface SalaryRow {
+  level: string;
+  min: number;
+  median: number;
+  max: number;
+  netEstimate?: number;
+}
+
+interface Props {
+  rows: SalaryRow[];
+  currency?: string;
+}
+
+const { rows, currency = 'EUR' } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+function formatSalary(amount: number): string {
+  return new Intl.NumberFormat(lang, {
+    style: 'currency',
+    currency,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+const levelLabels: Record<string, string> = {
+  junior: t('salary.junior'),
+  mid: t('salary.mid'),
+  senior: t('salary.senior'),
+  lead: t('salary.lead'),
+};
+---
+
+<div class="salary-table-wrapper">
+  <div class="salary-table-toggle">
+    <div class="toggle">
+      <button class="toggle__option toggle__option--active" data-mode="gross">{t('salary.gross')}</button>
+      <button class="toggle__option" data-mode="net">{t('salary.net')}</button>
+    </div>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Level</th>
+        <th>{t('salary.min')}</th>
+        <th>{t('salary.median')}</th>
+        <th>{t('salary.max')}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr>
+          <td><strong>{levelLabels[row.level] || row.level}</strong></td>
+          <td class="salary-value" data-gross={row.min} data-net={row.netEstimate ? Math.round(row.netEstimate * (row.min / row.median)) : ''}>{formatSalary(row.min)}</td>
+          <td class="salary-value" data-gross={row.median} data-net={row.netEstimate || ''}>{formatSalary(row.median)}</td>
+          <td class="salary-value" data-gross={row.max} data-net={row.netEstimate ? Math.round(row.netEstimate * (row.max / row.median)) : ''}>{formatSalary(row.max)}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <p class="salary-table-note">
+    {t('salary.perYear')} &middot; {t('salary.lastUpdated')}: 2026
+  </p>
+</div>
+
+<style>
+  .salary-table-wrapper {
+    margin: var(--space-6) 0;
+  }
+
+  .salary-table-toggle {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--space-4);
+  }
+
+  .salary-table-note {
+    font-size: var(--text-xs);
+    color: var(--color-gray-500);
+    margin-top: var(--space-3);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.toggle__option');
+    const cells = document.querySelectorAll('.salary-value');
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const mode = (btn as HTMLElement).dataset.mode;
+        buttons.forEach((b) => b.classList.remove('toggle__option--active'));
+        btn.classList.add('toggle__option--active');
+
+        cells.forEach((cell) => {
+          const el = cell as HTMLElement;
+          const value = mode === 'net' ? el.dataset.net : el.dataset.gross;
+          if (value) {
+            const num = parseInt(value, 10);
+            el.textContent = new Intl.NumberFormat(document.documentElement.lang || 'en', {
+              style: 'currency',
+              currency: 'EUR',
+              maximumFractionDigits: 0,
+            }).format(num);
+          }
+        });
+      });
+    });
+  });
+</script>

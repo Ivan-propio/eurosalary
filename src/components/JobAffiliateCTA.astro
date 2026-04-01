@@ -1,0 +1,84 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+interface Props {
+  jobName: string;
+  countryName: string;
+  countryCode: string;
+}
+
+const { jobName, countryName, countryCode } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const utmParams = `utm_source=eurosalary&utm_medium=referral&utm_campaign=salary_page&utm_content=${countryCode}`;
+const encodedJob = encodeURIComponent(jobName);
+const encodedCountry = encodeURIComponent(countryName);
+
+const links = [
+  {
+    name: 'Indeed',
+    url: `https://www.indeed.com/jobs?q=${encodedJob}&l=${encodedCountry}&${utmParams}`,
+    icon: '🔍',
+  },
+  {
+    name: 'LinkedIn',
+    url: `https://www.linkedin.com/jobs/search/?keywords=${encodedJob}&location=${encodedCountry}&${utmParams}`,
+    icon: '💼',
+  },
+  {
+    name: 'StepStone',
+    url: `https://www.stepstone.de/jobs/${encodedJob}?${utmParams}`,
+    icon: '📋',
+  },
+];
+---
+
+<div class="affiliate-cta">
+  <h3>{t('salary.jobsCTA')}</h3>
+  <p class="affiliate-cta__subtitle">
+    {jobName} in {countryName}
+  </p>
+  <div class="affiliate-cta__links">
+    {links.map((link) => (
+      <a
+        href={link.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn btn--secondary"
+        data-plausible-event="Affiliate Click"
+        data-plausible-props={`{"platform":"${link.name}","job":"${jobName}","country":"${countryCode}"}`}
+      >
+        <span>{link.icon}</span> {link.name}
+      </a>
+    ))}
+  </div>
+</div>
+
+<style>
+  .affiliate-cta {
+    background: var(--color-gray-50);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6) var(--space-8);
+    text-align: center;
+    margin: var(--space-8) 0;
+  }
+
+  .affiliate-cta h3 {
+    margin-bottom: var(--space-2);
+  }
+
+  .affiliate-cta__subtitle {
+    color: var(--color-gray-500);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-4);
+  }
+
+  .affiliate-cta__links {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+</style>
