@@ -36,20 +36,92 @@ GitHub repo: eurosalary
 - Pexels API (blog images)
 - NO Make.com — we use free tools only
 
-## i18n system
-- All 24 EU languages defined in src/i18n/ui.ts
-- Object.keys(languages) in all getStaticPaths()
-- fb(record, lang) = fallback function: tries
-  record[lang], falls back to record.en
-- Translated strings: Record<string, string> with
-  en/fr/de/es keys, fb() handles other 20 langs
-- Localized URL slugs: src/data/slugs.ts
-  (countrySlugsByLang, jobSlugsByLang)
-- City slugs: src/data/cities.ts
-- Language switcher: searchable dropdown, all 24
-  langs with traffic-priority sort order
+## i18n architecture — MUST follow for ALL new code
 
-## Pages inventory (9,578 total, 33 page files)
+### Golden rule
+**Every user-visible string must be translatable in all 24 languages.**
+Never hardcode text in any language. Never use inline 4-lang Records.
+
+### Three translation systems (use the right one)
+
+#### 1. `t()` — Navigation, layout, homepage strings
+- **File:** `src/i18n/ui.ts`
+- **Format:** `ui.en['nav.home'] = 'Home'`, repeated for all 24 langs
+- **Usage:** `const t = useTranslations(lang); t('nav.home')`
+- **When to use:** Header, footer, homepage, layout-level strings
+- **Keys:** dot-notation like `'nav.home'`, `'home.heroTitle1'`, `'footer.copyright'`
+
+#### 2. `fb(uiLabels.xxx, lang)` — Reusable UI labels across pages
+- **File:** `src/i18n/translations.ts` → `uiLabels` object
+- **Format:** `uiLabels.salaryComparison: { en: '...', fr: '...', ..all 24.. }`
+- **Usage:** `fb(uiLabels.salaryComparison, lang)`
+- **When to use:** Labels shared across multiple pages/components
+  (table headers, section titles, button text, etc.)
+- **Current keys (~50):** home, compare, details, country, junior,
+  midLevel, senior, salary, perYear, acrossEurope, salaryComparison,
+  highestPaying, lowestPaying, salaryGap, betweenHighestLowest,
+  compareSalaries, inCountries, seniorityData, in2026, countries,
+  salaryDataByCountry, avgSalary, topJobs, viewDetails, minimumWage,
+  cities, h1Country, economicOverviewTitle, topJobsInCountry,
+  avgSalaryLabel, minWageLabel, taxRateLabel, colLabel, populationLabel,
+  currencyLabel, jobTitleHeader, viewSalaryLink, salaries,
+  salaryBreakdownByLevel, sourcesTitle, sourcesIntro, sourcesLastUpdated,
+  submitSalary, sourceEurostatDesc, sourceJobPostingsTitle,
+  sourceJobPostingsDesc, sourceReportsTitle, sourceReportsDesc,
+  allCountries, medianCompByJurisdiction, fullComparison
+
+#### 3. `fb(countryNames.XX, lang)` / `fb(jobNames.slug, lang)` — Entity names
+- **File:** `src/i18n/translations.ts` → `countryNames`, `jobNames`
+- **Format:** `countryNames.DE: { en: 'Germany', nl: 'Duitsland', ..all 24.. }`
+- **Usage:** `fb(countryNames[countryCode], lang)`, `fb(jobNames[jobSlug], lang)`
+- **When to use:** Displaying country or job names anywhere
+- **NEVER use `getLocalizedName()`** — it only reads 4 Supabase columns
+
+### `fb()` — Smart fallback function
+- **File:** `src/i18n/utils.ts`
+- Tries exact lang → family chain → English
+- Family chains: nl→de→en, it→es→fr→en, pl→cs→sk→en, etc.
+- **Always provide all 24 langs** — fallback is safety net, not a feature
+
+### Template literals with variables
+For strings containing `${jobName}`, `${countryName}`, `${fmt(salary)}`:
+- Define inline in the page as `Record<string, string>` with ALL 24 keys
+- Example: `titles: { en: \`What is the salary of \${jobName}?\`, nl: \`Wat is het salaris van \${jobName}?\`, ...all 24... }`
+- These CANNOT go in translations.ts because they need runtime variables
+- Use `{placeholder}` syntax in translations.ts for simple substitution:
+  `h1Country: { en: 'Salaries in {country}', nl: 'Salarissen in {country}' }`
+
+### How to add a new translatable string
+
+1. **Decide which system** (see above)
+2. **Add ALL 24 languages at once** — never add just 4
+   Languages: en, fr, de, es, it, pt, nl, pl, ro, cs,
+   sv, da, fi, el, hu, sk, bg, hr, sl, lt, lv, et, mt, ga
+3. **Use `fb()` to read** — never access record[lang] directly
+4. **Test with a non-primary lang** (e.g. nl, et, bg) to verify
+
+### How to add a new page
+
+1. Create `src/pages/[lang]/your-page.astro`
+2. In `getStaticPaths()`: iterate `Object.keys(languages)` — generates 24 routes
+3. Import translations: `import { fb } from '../../i18n/utils'`
+4. Import what you need: `import { uiLabels, countryNames, jobNames } from '../../i18n/translations'`
+5. For page-specific text (H1, description, FAQ): define inline Records with ALL 24 langs
+6. For shared labels: use `fb(uiLabels.xxx, lang)`
+7. For entity names: use `fb(countryNames[code], lang)` / `fb(jobNames[slug], lang)`
+8. **Never hardcode any visible text in English**
+
+### File reference
+- `src/i18n/ui.ts` — 24 language definitions + t() strings (nav, homepage, layout)
+- `src/i18n/utils.ts` — getLangFromUrl(), useTranslations(), fb(), getAlternateLinks()
+- `src/i18n/translations.ts` — countryNames (16×24), jobNames (21×24), uiLabels (~50×24)
+- `src/data/slugs.ts` — countrySlugsByLang, jobSlugsByLang (URL slugs for 24 langs)
+- `src/data/cities.ts` — cityData, citySlugs, cityDisplayNames
+
+### Language switcher
+Searchable dropdown, all 24 langs with traffic-priority sort order
+
+## Pages inventory (9,602 total, 34 page files)
 ### Core pages
 - /[lang]/ — homepage (24 routes)
 - /[lang]/salary/[country]/[job]/ — salary pages
@@ -165,5 +237,6 @@ Before doing ANYTHING in a new session:
 4. Then start working
 
 ## Current status
-All 5 prompts executed. Build: 9,578 pages, 0 errors.
-Remaining work: deploy to dev/staging/main.
+All 5 prompts executed. Full 24-language i18n system complete.
+Build: 9,602 pages, 0 errors. Deployed to production (Cloudflare Pages).
+Last deploy: 2026-04-05, commit 717b13d.
