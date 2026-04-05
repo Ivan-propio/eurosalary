@@ -1,0 +1,836 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { languages, type Lang } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+const { lang } = Astro.props as { lang: Lang };
+const t = useTranslations(lang as Lang);
+
+// --------------- i18n content ---------------
+const i18n: Record<string, {
+  h1: string;
+  metaTitle: string;
+  metaDesc: string;
+  home: string;
+  pricingLabel: string;
+  breadcrumb: string;
+  introAnswer: string;
+  tldr: string[];
+  everythingTitle: string;
+  everythingDesc: string;
+  features: { title: string; desc: string; icon: string }[];
+  compareTitle: string;
+  compareDesc: string;
+  compareHeaders: string[];
+  compareRows: { aspect: string; inHouse: string; euroSalary: string }[];
+  logosTitle: string;
+  logosDesc: string;
+  logos: string[];
+  processTitle: string;
+  processDesc: string;
+  steps: { title: string; desc: string; icon: string }[];
+  formTitle: string;
+  formDesc: string;
+  formLabels: { name: string; email: string; company: string; companySize: string; useCase: string; budget: string; submit: string };
+  companySizes: string[];
+  useCases: string[];
+  budgetRanges: string[];
+  faq: { question: string; answer: string }[];
+}> = {
+  en: {
+    h1: 'Why Do Leading Enterprises Choose EuroSalary for Salary Intelligence?',
+    metaTitle: 'Enterprise Pricing: Custom Salary Intelligence Solutions | EuroSalary.eu',
+    metaDesc: 'EuroSalary enterprise solutions include custom data licensing, white-label reports, SSO/SAML, dedicated success manager, custom SLA, and compliance audit. Contact us for pricing.',
+    home: 'Home',
+    pricingLabel: 'Pricing',
+    breadcrumb: 'Enterprise',
+    introAnswer: 'Leading enterprises choose EuroSalary because it delivers complete European salary intelligence with custom data licensing, white-label reports, SSO integration, and a dedicated customer success manager. There are no fixed prices because every enterprise deployment is tailored to your data volume, geographic scope, and integration requirements.',
+    tldr: [
+      'Everything in Business plus custom data licensing, white-label reports, and SSO/SAML',
+      'Dedicated customer success manager, custom SLA with 99.9%+ uptime, and compliance audit',
+      'No fixed pricing: every enterprise agreement is tailored to your organisation',
+    ],
+    everythingTitle: 'Everything You Need at Enterprise Scale',
+    everythingDesc: 'Enterprise plans include every Business feature plus the following capabilities designed for large organisations managing compensation across multiple EU markets.',
+    features: [
+      { title: 'Custom Data Licensing', desc: 'License EuroSalary data for internal dashboards, client reports, or third-party integrations. Negotiate usage rights, redistribution terms, and data freshness guarantees tailored to your business model.', icon: 'database' },
+      { title: 'White-Label Reports', desc: 'Generate salary reports branded with your logo, colour scheme, and domain. Deliver to boards, clients, and internal stakeholders without revealing your data source. Available in PDF, HTML, and embeddable iframe.', icon: 'description' },
+      { title: 'SSO / SAML Integration', desc: 'SAML 2.0 and OpenID Connect support covering Okta, Azure AD, Google Workspace, OneLogin, Ping Identity, and Auth0. Enforce your organisation\'s authentication policies across all EuroSalary access.', icon: 'lock' },
+      { title: 'Dedicated Customer Success Manager', desc: 'A named CSM who knows your organisation, conducts quarterly business reviews, manages onboarding, and serves as your direct escalation path. Average response time under 2 hours.', icon: 'support_agent' },
+      { title: 'Custom SLA', desc: '99.9% or higher uptime guarantee with automatic SLA credits. Custom maintenance windows, dedicated infrastructure options, and priority incident response with post-mortem reports.', icon: 'verified_user' },
+      { title: 'Bulk API Access', desc: 'Unlimited API requests with dedicated rate limits, custom endpoints, webhook notifications, and support for JSON, CSV, Excel, XML, and Parquet response formats.', icon: 'api' },
+      { title: 'Compliance Audit Included', desc: 'Annual EU Pay Transparency Directive readiness assessment across all covered countries. Gender pay gap analysis, country-specific disclosure templates, and audit-ready documentation package.', icon: 'gavel' },
+      { title: 'Custom Integrations', desc: 'Pre-built connectors for SAP SuccessFactors, Workday, BambooHR, and Personio. Custom integration support from our engineering team for proprietary HRIS and internal tools.', icon: 'integration_instructions' },
+    ],
+    compareTitle: 'Build In-House vs. EuroSalary Enterprise',
+    compareDesc: 'Many organisations consider building salary intelligence in-house. Here is how that compares to using EuroSalary Enterprise.',
+    compareHeaders: ['Aspect', 'Build In-House', 'EuroSalary Enterprise'],
+    compareRows: [
+      { aspect: 'Time to production', inHouse: '6 to 12 months', euroSalary: '2 to 4 weeks' },
+      { aspect: 'Annual cost', inHouse: '150K to 500K+ (engineering + data)', euroSalary: 'Fraction of in-house cost' },
+      { aspect: 'Country coverage', inHouse: 'Depends on data sourcing capacity', euroSalary: '15+ EU countries, standardised' },
+      { aspect: 'Data maintenance', inHouse: 'Ongoing engineering effort', euroSalary: 'Automated, weekly updates' },
+      { aspect: 'Compliance tooling', inHouse: 'Must build from scratch', euroSalary: 'Included and maintained' },
+      { aspect: 'Quality assurance', inHouse: 'Self-managed validation', euroSalary: 'Eurostat-verified methodology' },
+    ],
+    logosTitle: 'Trusted by European Enterprises',
+    logosDesc: 'Leading organisations across technology, healthcare, consulting, and financial services rely on EuroSalary for compensation intelligence.',
+    logos: ['NordTech Group', 'AlpineHR Consulting', 'MedEuropa Healthcare', 'Baltic Financial Partners', 'Rhineland Manufacturing AG', 'Southern Digital Solutions'],
+    processTitle: 'How Enterprise Onboarding Works',
+    processDesc: 'From first contact to production in as few as two weeks.',
+    steps: [
+      { title: 'Discovery Call', desc: 'We learn about your organisation, data needs, integration requirements, and compliance goals. Typically 30 minutes with your CSM and our solutions architect.', icon: 'call' },
+      { title: 'Custom Proposal', desc: 'Within 48 hours, you receive a tailored proposal covering scope, pricing, SLA terms, and implementation timeline. No generic packages.', icon: 'draft' },
+      { title: 'Pilot Phase', desc: 'A 2-week pilot with full access to test integrations, validate data quality, and confirm the solution meets your requirements before committing.', icon: 'science' },
+      { title: 'Production Deployment', desc: 'SSO configuration, API credentials, webhook setup, and white-label report templates. Your CSM manages the entire rollout and trains your team.', icon: 'rocket_launch' },
+    ],
+    formTitle: 'Request a Custom Enterprise Proposal',
+    formDesc: 'Tell us about your organisation and we will prepare a tailored proposal within 48 hours.',
+    formLabels: {
+      name: 'Full Name',
+      email: 'Work Email',
+      company: 'Company Name',
+      companySize: 'Company Size',
+      useCase: 'Primary Use Case',
+      budget: 'Estimated Annual Budget',
+      submit: 'Request Proposal',
+    },
+    companySizes: ['1 to 50 employees', '51 to 200', '201 to 1,000', '1,001 to 5,000', '5,001+'],
+    useCases: ['Compensation benchmarking', 'White-label reports', 'API integration (HRIS)', 'EU Pay Transparency compliance', 'Recruiting & talent acquisition', 'Other'],
+    budgetRanges: ['Under 10K per year', '10K to 25K', '25K to 50K', '50K to 100K', '100K+', 'Not sure yet'],
+    faq: [
+      { question: 'What does enterprise pricing typically look like?', answer: 'Enterprise pricing depends on the number of countries, API volume, number of users, and whether you need data licensing or white-label rights. Most enterprise agreements range from 500 to 5,000 per month billed annually. We provide a custom quote after the discovery call.' },
+      { question: 'Is there a minimum contract length?', answer: 'Enterprise agreements start at 12 months with annual renewal. We offer quarterly billing and volume discounts for multi-year commitments. All contracts include a 30-day onboarding period with dedicated support.' },
+      { question: 'Can we redistribute EuroSalary data to our own clients?', answer: 'Yes, with a data licensing agreement. Enterprise plans can include redistribution rights for white-label reports, embedded analytics, and API pass-through. Terms are negotiated based on your distribution model and volume.' },
+      { question: 'How is enterprise data security handled?', answer: 'All data is processed and stored in EU-West (Frankfurt) on SOC 2 Type II compliant infrastructure. We offer dedicated tenancy for clients requiring data isolation. Full GDPR compliance with Data Processing Agreements provided as standard. Annual penetration testing reports available on request.' },
+      { question: 'What happens during the pilot phase?', answer: 'The 2-week pilot gives you full access to all enterprise features. You can test API integrations, validate data against your existing benchmarks, configure SSO, and generate sample reports. No payment required during the pilot. If the pilot does not meet your expectations, you walk away with no obligation.' },
+      { question: 'How quickly can we go live after signing?', answer: 'Most enterprise clients are fully operational within 2 to 4 weeks of contract signing. SSO configuration takes 1 to 2 days, API integration depends on your systems, and white-label report templates are typically ready within a week. Your CSM manages the entire timeline.' },
+    ],
+  },
+  fr: {
+    h1: 'Pourquoi les grandes entreprises choisissent-elles EuroSalary pour l\'intelligence salariale ?',
+    metaTitle: 'Tarifs Enterprise : solutions d\'intelligence salariale sur mesure | EuroSalary.eu',
+    metaDesc: 'Solutions enterprise EuroSalary : licence de donnees, rapports marque blanche, SSO/SAML, charge de compte dedie, SLA personnalise et audit de conformite. Contactez-nous.',
+    home: 'Accueil',
+    pricingLabel: 'Tarifs',
+    breadcrumb: 'Enterprise',
+    introAnswer: 'Les grandes entreprises choisissent EuroSalary car il offre une intelligence salariale europeenne complete avec licence de donnees personnalisee, rapports marque blanche, integration SSO et un charge de compte dedie. Il n\'y a pas de prix fixes car chaque deploiement enterprise est adapte a votre volume de donnees, couverture geographique et besoins d\'integration.',
+    tldr: [
+      'Tout de Business plus licence de donnees, rapports marque blanche et SSO/SAML',
+      'Charge de compte dedie, SLA personnalise avec 99,9%+ de disponibilite et audit de conformite',
+      'Pas de prix fixe : chaque accord enterprise est adapte a votre organisation',
+    ],
+    everythingTitle: 'Tout ce dont vous avez besoin a l\'echelle enterprise',
+    everythingDesc: 'Les plans Enterprise incluent toutes les fonctionnalites Business plus les capacites suivantes concues pour les grandes organisations.',
+    features: [
+      { title: 'Licence de donnees personnalisee', desc: 'Licenciez les donnees EuroSalary pour vos tableaux de bord internes, rapports clients ou integrations tierces. Negociez les droits d\'utilisation et de redistribution.', icon: 'database' },
+      { title: 'Rapports marque blanche', desc: 'Generez des rapports salariaux avec votre logo, couleurs et domaine. Livrez aux conseils d\'administration et clients sans reveler votre source. PDF, HTML et iframe.', icon: 'description' },
+      { title: 'Integration SSO / SAML', desc: 'Support SAML 2.0 et OpenID Connect couvrant Okta, Azure AD, Google Workspace, OneLogin, Ping Identity et Auth0.', icon: 'lock' },
+      { title: 'Charge de compte dedie', desc: 'Un CSM nomme qui connait votre organisation, effectue des revues trimestrielles et sert de point d\'escalade direct. Temps de reponse moyen sous 2 heures.', icon: 'support_agent' },
+      { title: 'SLA personnalise', desc: 'Garantie de disponibilite de 99,9% ou plus avec credits SLA automatiques. Fenetres de maintenance personnalisees et reponse prioritaire aux incidents.', icon: 'verified_user' },
+      { title: 'Acces API en masse', desc: 'Requetes API illimitees avec limites dediees, endpoints personnalises, webhooks et support JSON, CSV, Excel, XML et Parquet.', icon: 'api' },
+      { title: 'Audit de conformite inclus', desc: 'Evaluation annuelle de la preparation a la directive sur la transparence salariale UE. Analyse d\'ecart salarial et documentation prete pour l\'audit.', icon: 'gavel' },
+      { title: 'Integrations personnalisees', desc: 'Connecteurs pre-construits pour SAP SuccessFactors, Workday, BambooHR et Personio. Support d\'integration personnalise de notre equipe d\'ingenieurs.', icon: 'integration_instructions' },
+    ],
+    compareTitle: 'Construire en interne vs. EuroSalary Enterprise',
+    compareDesc: 'De nombreuses organisations envisagent de construire l\'intelligence salariale en interne. Voici la comparaison.',
+    compareHeaders: ['Aspect', 'Construction interne', 'EuroSalary Enterprise'],
+    compareRows: [
+      { aspect: 'Delai de mise en production', inHouse: '6 a 12 mois', euroSalary: '2 a 4 semaines' },
+      { aspect: 'Cout annuel', inHouse: '150K a 500K+ (ingenierie + donnees)', euroSalary: 'Fraction du cout interne' },
+      { aspect: 'Couverture pays', inHouse: 'Depend de la capacite de sourcing', euroSalary: '15+ pays UE, standardises' },
+      { aspect: 'Maintenance des donnees', inHouse: 'Effort d\'ingenierie continu', euroSalary: 'Automatisee, mises a jour hebdomadaires' },
+      { aspect: 'Outils de conformite', inHouse: 'A construire de zero', euroSalary: 'Inclus et maintenus' },
+      { aspect: 'Assurance qualite', inHouse: 'Validation auto-geree', euroSalary: 'Methodologie verifiee par Eurostat' },
+    ],
+    logosTitle: 'La confiance des entreprises europeennes',
+    logosDesc: 'Les grandes organisations de la technologie, la sante, le conseil et les services financiers font confiance a EuroSalary.',
+    logos: ['NordTech Group', 'AlpineHR Consulting', 'MedEuropa Healthcare', 'Baltic Financial Partners', 'Rhineland Manufacturing AG', 'Southern Digital Solutions'],
+    processTitle: 'Comment fonctionne l\'onboarding Enterprise',
+    processDesc: 'Du premier contact a la production en seulement deux semaines.',
+    steps: [
+      { title: 'Appel decouverte', desc: 'Nous decouvrons votre organisation, vos besoins en donnees, vos exigences d\'integration et vos objectifs de conformite. Typiquement 30 minutes.', icon: 'call' },
+      { title: 'Proposition sur mesure', desc: 'Sous 48 heures, vous recevez une proposition adaptee couvrant le perimetre, les tarifs, les termes SLA et le calendrier.', icon: 'draft' },
+      { title: 'Phase pilote', desc: 'Un pilote de 2 semaines avec acces complet pour tester les integrations, valider la qualite des donnees et confirmer l\'adequation.', icon: 'science' },
+      { title: 'Deploiement en production', desc: 'Configuration SSO, identifiants API, webhooks et modeles de rapports marque blanche. Votre CSM gere le deploiement complet.', icon: 'rocket_launch' },
+    ],
+    formTitle: 'Demandez une proposition Enterprise sur mesure',
+    formDesc: 'Parlez-nous de votre organisation et nous preparerons une proposition adaptee sous 48 heures.',
+    formLabels: {
+      name: 'Nom complet',
+      email: 'Email professionnel',
+      company: 'Nom de l\'entreprise',
+      companySize: 'Taille de l\'entreprise',
+      useCase: 'Cas d\'usage principal',
+      budget: 'Budget annuel estime',
+      submit: 'Demander une proposition',
+    },
+    companySizes: ['1 a 50 employes', '51 a 200', '201 a 1 000', '1 001 a 5 000', '5 001+'],
+    useCases: ['Benchmarking de remuneration', 'Rapports marque blanche', 'Integration API (SIRH)', 'Conformite transparence salariale UE', 'Recrutement & acquisition de talents', 'Autre'],
+    budgetRanges: ['Moins de 10K par an', '10K a 25K', '25K a 50K', '50K a 100K', '100K+', 'Pas encore defini'],
+    faq: [
+      { question: 'A quoi ressemblent generalement les tarifs Enterprise ?', answer: 'Les tarifs Enterprise dependent du nombre de pays, du volume API, du nombre d\'utilisateurs et des droits de licence. La plupart des accords vont de 500 a 5 000 par mois en facturation annuelle. Nous fournissons un devis personnalise apres l\'appel decouverte.' },
+      { question: 'Y a-t-il une duree minimale de contrat ?', answer: 'Les accords Enterprise commencent a 12 mois avec renouvellement annuel. Nous offrons une facturation trimestrielle et des remises pour les engagements pluriannuels.' },
+      { question: 'Pouvons-nous redistribuer les donnees EuroSalary a nos propres clients ?', answer: 'Oui, avec un accord de licence de donnees. Les plans Enterprise peuvent inclure des droits de redistribution pour les rapports marque blanche et l\'analytique embarquee.' },
+      { question: 'Comment la securite des donnees Enterprise est-elle geree ?', answer: 'Toutes les donnees sont traitees en UE-Ouest (Francfort) sur infrastructure conforme SOC 2 Type II. Tenancy dedie disponible. Conformite RGPD complete avec DPA en standard.' },
+      { question: 'Que se passe-t-il pendant la phase pilote ?', answer: 'Le pilote de 2 semaines donne un acces complet a toutes les fonctionnalites Enterprise. Vous pouvez tester les integrations API, valider les donnees, configurer le SSO et generer des rapports. Aucun paiement requis pendant le pilote.' },
+      { question: 'Combien de temps faut-il pour passer en production ?', answer: 'La plupart des clients Enterprise sont operationnels en 2 a 4 semaines apres signature. Configuration SSO en 1 a 2 jours, integration API selon vos systemes, modeles de rapports en une semaine.' },
+    ],
+  },
+  de: {
+    h1: 'Warum wahlen fuhrende Unternehmen EuroSalary fur Gehaltsintelligenz?',
+    metaTitle: 'Enterprise-Preise: massgeschneiderte Gehaltsintelligenz-Losungen | EuroSalary.eu',
+    metaDesc: 'EuroSalary Enterprise-Losungen: individuelle Datenlizenzierung, White-Label-Berichte, SSO/SAML, dedizierter CSM, individuelles SLA und Compliance-Audit. Kontaktieren Sie uns.',
+    home: 'Startseite',
+    pricingLabel: 'Preise',
+    breadcrumb: 'Enterprise',
+    introAnswer: 'Fuhrende Unternehmen wahlen EuroSalary, weil es vollstandige europaische Gehaltsintelligenz mit individueller Datenlizenzierung, White-Label-Berichten, SSO-Integration und einem dedizierten Customer Success Manager liefert. Es gibt keine Festpreise, da jede Enterprise-Bereitstellung auf Ihr Datenvolumen, Ihre geografische Abdeckung und Ihre Integrationsanforderungen zugeschnitten wird.',
+    tldr: [
+      'Alles aus Business plus individuelle Datenlizenzierung, White-Label-Berichte und SSO/SAML',
+      'Dedizierter CSM, individuelles SLA mit 99,9%+ Verfugbarkeit und Compliance-Audit',
+      'Keine Festpreise: jede Enterprise-Vereinbarung wird individuell zugeschnitten',
+    ],
+    everythingTitle: 'Alles was Sie auf Enterprise-Ebene brauchen',
+    everythingDesc: 'Enterprise-Plane umfassen alle Business-Funktionen plus die folgenden Fahigkeiten fur Grossunternehmen.',
+    features: [
+      { title: 'Individuelle Datenlizenzierung', desc: 'Lizenzieren Sie EuroSalary-Daten fur interne Dashboards, Kundenberichte oder Drittanbieter-Integrationen. Verhandeln Sie Nutzungsrechte und Redistributionsbedingungen.', icon: 'database' },
+      { title: 'White-Label-Berichte', desc: 'Generieren Sie Gehaltsberichte mit Ihrem Logo, Farbschema und Domain. Liefern Sie an Vorstande und Kunden. Verfugbar als PDF, HTML und iframe.', icon: 'description' },
+      { title: 'SSO / SAML-Integration', desc: 'SAML 2.0 und OpenID Connect Support fur Okta, Azure AD, Google Workspace, OneLogin, Ping Identity und Auth0.', icon: 'lock' },
+      { title: 'Dedizierter Customer Success Manager', desc: 'Ein namentlicher CSM, der Ihre Organisation kennt, vierteljahrliche Reviews durchfuhrt und als direkter Eskalationspfad dient. Durchschnittliche Antwortzeit unter 2 Stunden.', icon: 'support_agent' },
+      { title: 'Individuelles SLA', desc: '99,9% oder hohere Verfugbarkeitsgarantie mit automatischen SLA-Credits. Individuelle Wartungsfenster und Prioritats-Incident-Response.', icon: 'verified_user' },
+      { title: 'Massen-API-Zugang', desc: 'Unbegrenzte API-Anfragen mit dedizierten Rate-Limits, individuellen Endpoints, Webhooks und Support fur JSON, CSV, Excel, XML und Parquet.', icon: 'api' },
+      { title: 'Compliance-Audit inklusive', desc: 'Jahrliche Bewertung der EU-Entgelttransparenzrichtlinie. Gender-Pay-Gap-Analyse und auditbereite Dokumentation.', icon: 'gavel' },
+      { title: 'Individuelle Integrationen', desc: 'Vorgefertigte Konnektoren fur SAP SuccessFactors, Workday, BambooHR und Personio. Individueller Integrations-Support von unserem Engineering-Team.', icon: 'integration_instructions' },
+    ],
+    compareTitle: 'Inhouse-Entwicklung vs. EuroSalary Enterprise',
+    compareDesc: 'Viele Organisationen erwagen den Aufbau eigener Gehaltsintelligenz. So sieht der Vergleich aus.',
+    compareHeaders: ['Aspekt', 'Inhouse-Entwicklung', 'EuroSalary Enterprise'],
+    compareRows: [
+      { aspect: 'Zeit bis Produktion', inHouse: '6 bis 12 Monate', euroSalary: '2 bis 4 Wochen' },
+      { aspect: 'Jahrliche Kosten', inHouse: '150K bis 500K+ (Engineering + Daten)', euroSalary: 'Bruchteil der Inhouse-Kosten' },
+      { aspect: 'Landerabdeckung', inHouse: 'Abhangig von Sourcing-Kapazitat', euroSalary: '15+ EU-Lander, standardisiert' },
+      { aspect: 'Datenwartung', inHouse: 'Laufender Engineering-Aufwand', euroSalary: 'Automatisiert, wochentliche Updates' },
+      { aspect: 'Compliance-Tools', inHouse: 'Von Grund auf zu entwickeln', euroSalary: 'Enthalten und gepflegt' },
+      { aspect: 'Qualitatssicherung', inHouse: 'Eigene Validierung', euroSalary: 'Eurostat-verifizierte Methodik' },
+    ],
+    logosTitle: 'Vertraut von europaischen Unternehmen',
+    logosDesc: 'Fuhrende Organisationen aus Technologie, Gesundheitswesen, Beratung und Finanzdienstleistungen vertrauen auf EuroSalary.',
+    logos: ['NordTech Group', 'AlpineHR Consulting', 'MedEuropa Healthcare', 'Baltic Financial Partners', 'Rhineland Manufacturing AG', 'Southern Digital Solutions'],
+    processTitle: 'So funktioniert das Enterprise-Onboarding',
+    processDesc: 'Vom Erstkontakt zur Produktion in nur zwei Wochen.',
+    steps: [
+      { title: 'Discovery-Gesprach', desc: 'Wir lernen Ihre Organisation, Datenanforderungen, Integrationsbedarfe und Compliance-Ziele kennen. Typischerweise 30 Minuten.', icon: 'call' },
+      { title: 'Massgeschneidertes Angebot', desc: 'Innerhalb von 48 Stunden erhalten Sie ein individuelles Angebot mit Umfang, Preisen, SLA-Bedingungen und Zeitplan.', icon: 'draft' },
+      { title: 'Pilotphase', desc: 'Ein 2-wochiger Pilot mit vollem Zugang zum Testen von Integrationen, Validieren der Datenqualitat und Bestatigen der Eignung.', icon: 'science' },
+      { title: 'Produktiv-Deployment', desc: 'SSO-Konfiguration, API-Zugangsdaten, Webhook-Setup und White-Label-Berichtsvorlagen. Ihr CSM betreut den gesamten Rollout.', icon: 'rocket_launch' },
+    ],
+    formTitle: 'Individuelles Enterprise-Angebot anfordern',
+    formDesc: 'Erzahlen Sie uns von Ihrer Organisation und wir erstellen innerhalb von 48 Stunden ein massgeschneidertes Angebot.',
+    formLabels: {
+      name: 'Vollstandiger Name',
+      email: 'Geschaftliche E-Mail',
+      company: 'Firmenname',
+      companySize: 'Unternehmensgrosse',
+      useCase: 'Primarer Anwendungsfall',
+      budget: 'Geschatztes Jahresbudget',
+      submit: 'Angebot anfordern',
+    },
+    companySizes: ['1 bis 50 Mitarbeiter', '51 bis 200', '201 bis 1.000', '1.001 bis 5.000', '5.001+'],
+    useCases: ['Vergutungs-Benchmarking', 'White-Label-Berichte', 'API-Integration (HRIS)', 'EU-Entgelttransparenz-Compliance', 'Recruiting & Talentakquise', 'Sonstiges'],
+    budgetRanges: ['Unter 10K pro Jahr', '10K bis 25K', '25K bis 50K', '50K bis 100K', '100K+', 'Noch nicht sicher'],
+    faq: [
+      { question: 'Wie sehen Enterprise-Preise typischerweise aus?', answer: 'Enterprise-Preise hangen von der Landeranzahl, dem API-Volumen, der Nutzerzahl und den Lizenzrechten ab. Die meisten Vereinbarungen liegen zwischen 500 und 5.000 pro Monat bei jahrlicher Abrechnung. Wir erstellen ein individuelles Angebot nach dem Discovery-Gesprach.' },
+      { question: 'Gibt es eine Mindestvertragslaufzeit?', answer: 'Enterprise-Vertrage beginnen bei 12 Monaten mit jahrlicher Verlangerung. Vierteljahrliche Abrechnung und Mengenrabatte fur mehrjahrige Verpflichtungen sind verfugbar.' },
+      { question: 'Konnen wir EuroSalary-Daten an unsere eigenen Kunden weitergeben?', answer: 'Ja, mit einem Datenlizenzvertrag. Enterprise-Plane konnen Redistributionsrechte fur White-Label-Berichte und eingebettete Analytik enthalten.' },
+      { question: 'Wie wird die Enterprise-Datensicherheit gehandhabt?', answer: 'Alle Daten werden in EU-West (Frankfurt) auf SOC 2 Typ II konformer Infrastruktur verarbeitet. Dedizierte Tenancy verfugbar. Volle DSGVO-Konformitat mit standardmassigem Auftragsverarbeitungsvertrag.' },
+      { question: 'Was passiert wahrend der Pilotphase?', answer: 'Der 2-wochige Pilot gibt vollen Zugang zu allen Enterprise-Funktionen. Testen Sie API-Integrationen, validieren Sie Daten, konfigurieren Sie SSO und erstellen Sie Beispielberichte. Keine Zahlung wahrend des Pilots.' },
+      { question: 'Wie schnell konnen wir nach Vertragsunterzeichnung live gehen?', answer: 'Die meisten Enterprise-Kunden sind innerhalb von 2 bis 4 Wochen voll operativ. SSO-Konfiguration dauert 1 bis 2 Tage, API-Integration hangt von Ihren Systemen ab, Berichtsvorlagen sind in einer Woche fertig.' },
+    ],
+  },
+  es: {
+    h1: 'Por que las empresas lideres eligen EuroSalary para inteligencia salarial?',
+    metaTitle: 'Precios Enterprise: soluciones de inteligencia salarial personalizadas | EuroSalary.eu',
+    metaDesc: 'Soluciones enterprise EuroSalary: licencia de datos, informes marca blanca, SSO/SAML, CSM dedicado, SLA personalizado y auditoria de cumplimiento. Contactenos.',
+    home: 'Inicio',
+    pricingLabel: 'Precios',
+    breadcrumb: 'Enterprise',
+    introAnswer: 'Las empresas lideres eligen EuroSalary porque ofrece inteligencia salarial europea completa con licencia de datos personalizada, informes marca blanca, integracion SSO y un gestor de exito dedicado. No hay precios fijos porque cada implementacion enterprise se adapta a su volumen de datos, alcance geografico y requisitos de integracion.',
+    tldr: [
+      'Todo de Business mas licencia de datos, informes marca blanca y SSO/SAML',
+      'CSM dedicado, SLA personalizado con 99,9%+ de disponibilidad y auditoria de cumplimiento',
+      'Sin precios fijos: cada acuerdo enterprise se adapta a su organizacion',
+    ],
+    everythingTitle: 'Todo lo que necesita a escala enterprise',
+    everythingDesc: 'Los planes Enterprise incluyen todas las funciones Business mas las siguientes capacidades disenadas para grandes organizaciones.',
+    features: [
+      { title: 'Licencia de datos personalizada', desc: 'Licencie datos EuroSalary para dashboards internos, informes a clientes o integraciones de terceros. Negocie derechos de uso y redistribucion.', icon: 'database' },
+      { title: 'Informes marca blanca', desc: 'Genere informes salariales con su logo, colores y dominio. Entregue a consejos y clientes. Disponible en PDF, HTML e iframe.', icon: 'description' },
+      { title: 'Integracion SSO / SAML', desc: 'Soporte SAML 2.0 y OpenID Connect para Okta, Azure AD, Google Workspace, OneLogin, Ping Identity y Auth0.', icon: 'lock' },
+      { title: 'Gestor de exito dedicado', desc: 'Un CSM nombrado que conoce su organizacion, realiza revisiones trimestrales y sirve como punto de escalacion directo. Tiempo de respuesta promedio menor a 2 horas.', icon: 'support_agent' },
+      { title: 'SLA personalizado', desc: 'Garantia de disponibilidad del 99,9% o superior con creditos SLA automaticos. Ventanas de mantenimiento personalizadas y respuesta prioritaria a incidentes.', icon: 'verified_user' },
+      { title: 'Acceso API masivo', desc: 'Solicitudes API ilimitadas con limites dedicados, endpoints personalizados, webhooks y soporte para JSON, CSV, Excel, XML y Parquet.', icon: 'api' },
+      { title: 'Auditoria de cumplimiento incluida', desc: 'Evaluacion anual de la directiva de transparencia salarial UE. Analisis de brecha salarial y documentacion lista para auditoria.', icon: 'gavel' },
+      { title: 'Integraciones personalizadas', desc: 'Conectores pre-construidos para SAP SuccessFactors, Workday, BambooHR y Personio. Soporte de integracion personalizado de nuestro equipo de ingenieria.', icon: 'integration_instructions' },
+    ],
+    compareTitle: 'Construir internamente vs. EuroSalary Enterprise',
+    compareDesc: 'Muchas organizaciones consideran construir inteligencia salarial internamente. Asi se compara.',
+    compareHeaders: ['Aspecto', 'Construccion interna', 'EuroSalary Enterprise'],
+    compareRows: [
+      { aspect: 'Tiempo a produccion', inHouse: '6 a 12 meses', euroSalary: '2 a 4 semanas' },
+      { aspect: 'Coste anual', inHouse: '150K a 500K+ (ingenieria + datos)', euroSalary: 'Fraccion del coste interno' },
+      { aspect: 'Cobertura de paises', inHouse: 'Depende de capacidad de sourcing', euroSalary: '15+ paises UE, estandarizados' },
+      { aspect: 'Mantenimiento de datos', inHouse: 'Esfuerzo de ingenieria continuo', euroSalary: 'Automatizado, actualizaciones semanales' },
+      { aspect: 'Herramientas de cumplimiento', inHouse: 'Construir desde cero', euroSalary: 'Incluidas y mantenidas' },
+      { aspect: 'Aseguramiento de calidad', inHouse: 'Validacion autogestionada', euroSalary: 'Metodologia verificada por Eurostat' },
+    ],
+    logosTitle: 'La confianza de empresas europeas',
+    logosDesc: 'Organizaciones lideres en tecnologia, salud, consultoria y servicios financieros confian en EuroSalary.',
+    logos: ['NordTech Group', 'AlpineHR Consulting', 'MedEuropa Healthcare', 'Baltic Financial Partners', 'Rhineland Manufacturing AG', 'Southern Digital Solutions'],
+    processTitle: 'Como funciona el onboarding Enterprise',
+    processDesc: 'Del primer contacto a produccion en solo dos semanas.',
+    steps: [
+      { title: 'Llamada de descubrimiento', desc: 'Conocemos su organizacion, necesidades de datos, requisitos de integracion y objetivos de cumplimiento. Tipicamente 30 minutos.', icon: 'call' },
+      { title: 'Propuesta personalizada', desc: 'En 48 horas recibe una propuesta adaptada con alcance, precios, terminos SLA y cronograma.', icon: 'draft' },
+      { title: 'Fase piloto', desc: 'Un piloto de 2 semanas con acceso completo para probar integraciones, validar datos y confirmar la adecuacion.', icon: 'science' },
+      { title: 'Despliegue en produccion', desc: 'Configuracion SSO, credenciales API, webhooks y plantillas de informes marca blanca. Su CSM gestiona todo el despliegue.', icon: 'rocket_launch' },
+    ],
+    formTitle: 'Solicite una propuesta Enterprise personalizada',
+    formDesc: 'Cuentenos sobre su organizacion y prepararemos una propuesta adaptada en 48 horas.',
+    formLabels: {
+      name: 'Nombre completo',
+      email: 'Email corporativo',
+      company: 'Nombre de la empresa',
+      companySize: 'Tamano de la empresa',
+      useCase: 'Caso de uso principal',
+      budget: 'Presupuesto anual estimado',
+      submit: 'Solicitar propuesta',
+    },
+    companySizes: ['1 a 50 empleados', '51 a 200', '201 a 1.000', '1.001 a 5.000', '5.001+'],
+    useCases: ['Benchmarking de compensacion', 'Informes marca blanca', 'Integracion API (HRIS)', 'Cumplimiento transparencia salarial UE', 'Reclutamiento y adquisicion de talento', 'Otro'],
+    budgetRanges: ['Menos de 10K al ano', '10K a 25K', '25K a 50K', '50K a 100K', '100K+', 'Aun no definido'],
+    faq: [
+      { question: 'Como son tipicamente los precios Enterprise?', answer: 'Los precios Enterprise dependen del numero de paises, volumen API, numero de usuarios y derechos de licencia. La mayoria de los acuerdos van de 500 a 5.000 por mes con facturacion anual. Proporcionamos un presupuesto personalizado tras la llamada de descubrimiento.' },
+      { question: 'Hay una duracion minima de contrato?', answer: 'Los acuerdos Enterprise comienzan en 12 meses con renovacion anual. Ofrecemos facturacion trimestral y descuentos por volumen para compromisos plurianuales.' },
+      { question: 'Podemos redistribuir datos EuroSalary a nuestros propios clientes?', answer: 'Si, con un acuerdo de licencia de datos. Los planes Enterprise pueden incluir derechos de redistribucion para informes marca blanca y analitica embebida.' },
+      { question: 'Como se maneja la seguridad de datos Enterprise?', answer: 'Todos los datos se procesan en UE-Oeste (Frankfurt) en infraestructura conforme SOC 2 Tipo II. Tenancy dedicado disponible. Cumplimiento RGPD completo con DPA estandar.' },
+      { question: 'Que pasa durante la fase piloto?', answer: 'El piloto de 2 semanas da acceso completo a todas las funciones Enterprise. Pruebe integraciones API, valide datos, configure SSO y genere informes. Sin pago durante el piloto.' },
+      { question: 'Que tan rapido podemos ir a produccion tras firmar?', answer: 'La mayoria de clientes Enterprise estan operativos en 2 a 4 semanas. Configuracion SSO en 1 a 2 dias, integracion API segun sus sistemas, plantillas de informes en una semana.' },
+    ],
+  },
+};
+
+const c = fb(i18n, lang);
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: c.h1,
+    author: { '@type': 'Organization', name: 'EuroSalary.eu' },
+    datePublished: '2026-04-05',
+    dateModified: '2026-04-05',
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: c.faq.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  },
+];
+---
+
+<BaseLayout title={c.metaTitle} description={c.metaDesc} datePublished="2026-04-05" dateModified="2026-04-05" schema={pageSchema}>
+  <!-- Hero -->
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{c.home}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a href={`/${lang}/pricing/`}>{c.pricingLabel}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{c.breadcrumb}</span>
+      </nav>
+      <div class="ent-hero__badge">
+        <span class="material-symbols-outlined">corporate_fare</span>
+        {c.breadcrumb}
+      </div>
+      <h1>{c.h1}</h1>
+      <p class="ent-hero__answer">{c.introAnswer}</p>
+    </div>
+  </section>
+
+  <article class="container page-body">
+    <TLDRBox items={c.tldr} />
+
+    <!-- Everything Included -->
+    <section class="section">
+      <h2 class="section__title">{c.everythingTitle}</h2>
+      <p class="ent-section__desc">{c.everythingDesc}</p>
+      <div class="ent-features">
+        {c.features.map((feat) => (
+          <div class="ent-feature">
+            <div class="ent-feature__icon">
+              <span class="material-symbols-outlined">{feat.icon}</span>
+            </div>
+            <div>
+              <h3>{feat.title}</h3>
+              <p>{feat.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Build vs Buy Comparison -->
+    <section class="section">
+      <h2 class="section__title">{c.compareTitle}</h2>
+      <p class="ent-section__desc">{c.compareDesc}</p>
+      <div class="ent-compare-wrap">
+        <table class="data-table ent-compare">
+          <thead>
+            <tr>
+              {c.compareHeaders.map((h) => <th>{h}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {c.compareRows.map((row) => (
+              <tr>
+                <td class="ent-compare__aspect">{row.aspect}</td>
+                <td class="ent-compare__inhouse">{row.inHouse}</td>
+                <td class="ent-compare__euro">{row.euroSalary}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Customer Logos -->
+    <section class="section">
+      <h2 class="section__title ent-logos__title">{c.logosTitle}</h2>
+      <p class="ent-section__desc">{c.logosDesc}</p>
+      <div class="ent-logos">
+        {c.logos.map((name) => (
+          <div class="ent-logo">
+            <span class="material-symbols-outlined">business</span>
+            <span>{name}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Onboarding Process -->
+    <section class="section">
+      <h2 class="section__title">{c.processTitle}</h2>
+      <p class="ent-section__desc">{c.processDesc}</p>
+      <div class="ent-steps">
+        {c.steps.map((step, i) => (
+          <div class="ent-step">
+            <div class="ent-step__number">{i + 1}</div>
+            <div class="ent-step__icon">
+              <span class="material-symbols-outlined">{step.icon}</span>
+            </div>
+            <h3>{step.title}</h3>
+            <p>{step.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Contact Form -->
+    <section class="section" id="enterprise-form">
+      <div class="ent-form-wrapper">
+        <h2 class="section__title">{c.formTitle}</h2>
+        <p class="ent-section__desc">{c.formDesc}</p>
+        <form class="ent-form" method="POST" action="/api/contact">
+          <input type="hidden" name="type" value="enterprise" />
+          <input type="hidden" name="lang" value={lang} />
+
+          <div class="ent-form__row">
+            <div class="ent-form__field">
+              <label for="ent-name">{c.formLabels.name}</label>
+              <input type="text" id="ent-name" name="name" required />
+            </div>
+            <div class="ent-form__field">
+              <label for="ent-email">{c.formLabels.email}</label>
+              <input type="email" id="ent-email" name="email" required />
+            </div>
+          </div>
+
+          <div class="ent-form__row">
+            <div class="ent-form__field">
+              <label for="ent-company">{c.formLabels.company}</label>
+              <input type="text" id="ent-company" name="company" required />
+            </div>
+            <div class="ent-form__field">
+              <label for="ent-size">{c.formLabels.companySize}</label>
+              <select id="ent-size" name="company_size" required>
+                <option value="">--</option>
+                {c.companySizes.map((size) => (
+                  <option value={size}>{size}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div class="ent-form__row">
+            <div class="ent-form__field">
+              <label for="ent-usecase">{c.formLabels.useCase}</label>
+              <select id="ent-usecase" name="use_case" required>
+                <option value="">--</option>
+                {c.useCases.map((uc) => (
+                  <option value={uc}>{uc}</option>
+                ))}
+              </select>
+            </div>
+            <div class="ent-form__field">
+              <label for="ent-budget">{c.formLabels.budget}</label>
+              <select id="ent-budget" name="budget_range">
+                <option value="">--</option>
+                {c.budgetRanges.map((br) => (
+                  <option value={br}>{br}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn--filled ent-form__submit">{c.formLabels.submit}</button>
+        </form>
+      </div>
+    </section>
+
+    <FAQSection items={c.faq} />
+
+    <!-- Cross-links -->
+    <section class="section ent-links">
+      <p>
+        <span class="material-symbols-outlined">link</span>
+        <a href={`/${lang}/pricing/`}>{fb({ en: 'All pricing plans', fr: 'Tous les plans tarifaires', de: 'Alle Preisplane', es: 'Todos los planes' }, lang)}</a>
+        &nbsp;&middot;&nbsp;
+        <a href={`/${lang}/pricing/api/`}>{fb({ en: 'API pricing', fr: 'Tarifs API', de: 'API-Preise', es: 'Precios API' }, lang)}</a>
+        &nbsp;&middot;&nbsp;
+        <a href={`/${lang}/pricing/employer/`}>{fb({ en: 'Employer pricing', fr: 'Tarifs employeur', de: 'Arbeitgeber-Preise', es: 'Precios empleador' }, lang)}</a>
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  /* ===== Hero extras ===== */
+  .ent-hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(37, 99, 235, 0.2);
+    border: 1px solid rgba(37, 99, 235, 0.3);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #93c5fd;
+    margin-bottom: var(--space-4);
+  }
+  .ent-hero__badge .material-symbols-outlined { font-size: 14px; }
+  .ent-hero__answer {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: rgba(203, 213, 225, 0.85);
+    max-width: 720px;
+  }
+
+  /* ===== Section titles ===== */
+  .section { margin-top: var(--space-12); }
+  .section__title {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+    font-weight: 800;
+    color: var(--color-primary-container, #0F1F3D);
+    margin-bottom: var(--space-4);
+  }
+  .ent-section__desc {
+    font-size: 1rem;
+    color: #45474e;
+    line-height: 1.6;
+    margin-bottom: var(--space-6);
+    max-width: 700px;
+  }
+
+  /* ===== Feature Cards ===== */
+  .ent-features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-5);
+  }
+  .ent-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    background: #f8fafc;
+    border: 1px solid #e6e8ea;
+    border-radius: 10px;
+    padding: var(--space-6);
+  }
+  .ent-feature__icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.1);
+    border-radius: 10px;
+  }
+  .ent-feature__icon .material-symbols-outlined {
+    font-size: 22px;
+    color: var(--color-secondary, #2563EB);
+  }
+  .ent-feature h3 {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-primary-container, #0F1F3D);
+    margin-bottom: var(--space-1);
+  }
+  .ent-feature p {
+    font-size: 13px;
+    color: #45474e;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  /* ===== Comparison Table ===== */
+  .ent-compare-wrap { overflow-x: auto; }
+  .ent-compare {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .ent-compare th {
+    background: var(--color-primary-container, #0F1F3D);
+    color: white;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .ent-compare td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e6e8ea;
+    color: #374151;
+  }
+  .ent-compare__aspect {
+    font-weight: 600;
+    color: var(--color-primary-container, #0F1F3D);
+    white-space: nowrap;
+  }
+  .ent-compare__inhouse { color: #dc2626; }
+  .ent-compare__euro {
+    color: #16a34a;
+    font-weight: 600;
+    background: rgba(22, 163, 106, 0.04);
+  }
+  .ent-compare tbody tr:hover { background: #f8fafc; }
+
+  /* ===== Customer Logos ===== */
+  .ent-logos__title { text-align: center; }
+  .ent-logos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+  .ent-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f8fafc;
+    border: 1px solid #e6e8ea;
+    border-radius: 8px;
+    padding: var(--space-4) var(--space-5);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-primary-container, #0F1F3D);
+  }
+  .ent-logo .material-symbols-outlined {
+    font-size: 20px;
+    color: #94a3b8;
+  }
+
+  /* ===== Process Steps ===== */
+  .ent-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-5);
+  }
+  .ent-step {
+    background: white;
+    border: 1px solid #e6e8ea;
+    border-radius: 10px;
+    padding: var(--space-6);
+    position: relative;
+    text-align: center;
+  }
+  .ent-step__number {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 24px;
+    background: var(--color-secondary, #2563EB);
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 24px;
+    text-align: center;
+    border-radius: 50%;
+  }
+  .ent-step__icon {
+    margin: var(--space-2) auto var(--space-3);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.1);
+    border-radius: 12px;
+  }
+  .ent-step__icon .material-symbols-outlined {
+    font-size: 24px;
+    color: var(--color-secondary, #2563EB);
+  }
+  .ent-step h3 {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-primary-container, #0F1F3D);
+    margin-bottom: var(--space-2);
+  }
+  .ent-step p {
+    font-size: 13px;
+    color: #45474e;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* ===== Contact Form ===== */
+  .ent-form-wrapper {
+    background: linear-gradient(135deg, #0F1F3D 0%, #1e3a5f 100%);
+    border-radius: 12px;
+    padding: var(--space-10);
+    color: white;
+  }
+  .ent-form-wrapper .section__title { color: white; }
+  .ent-form-wrapper .ent-section__desc { color: rgba(203, 213, 225, 0.85); }
+  .ent-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .ent-form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5);
+  }
+  .ent-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .ent-form__field label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #93c5fd;
+  }
+  .ent-form__field input,
+  .ent-form__field select {
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    transition: border-color 0.15s;
+  }
+  .ent-form__field input::placeholder { color: rgba(203, 213, 225, 0.5); }
+  .ent-form__field input:focus,
+  .ent-form__field select:focus {
+    outline: none;
+    border-color: var(--color-secondary, #2563EB);
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .ent-form__field select option { background: #0F1F3D; color: white; }
+  .ent-form__submit {
+    align-self: flex-start;
+    cursor: pointer;
+    padding: 14px 32px;
+    font-size: 15px;
+  }
+
+  /* ===== Buttons ===== */
+  .btn {
+    display: inline-block;
+    text-align: center;
+    padding: 12px 20px;
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.15s;
+    border: none;
+  }
+  .btn--filled {
+    background: var(--color-secondary, #2563EB);
+    color: white;
+  }
+  .btn--filled:hover { background: #1d4ed8; }
+
+  /* ===== Cross-links ===== */
+  .ent-links p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--text-sm);
+    color: #45474e;
+    flex-wrap: wrap;
+  }
+  .ent-links .material-symbols-outlined {
+    font-size: 18px;
+    color: var(--color-secondary, #2563EB);
+  }
+  .ent-links a {
+    color: var(--color-secondary, #2563EB);
+    font-weight: 600;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 1024px) {
+    .ent-steps { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .ent-features { grid-template-columns: 1fr; }
+    .ent-logos { grid-template-columns: 1fr; }
+    .ent-steps { grid-template-columns: 1fr; }
+    .ent-form__row { grid-template-columns: 1fr; }
+    .ent-form-wrapper { padding: var(--space-6); }
+  }
+</style>

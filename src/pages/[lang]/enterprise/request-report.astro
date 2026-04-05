@@ -1,0 +1,507 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+
+const i18n: Record<string, {
+  h1: string; metaTitle: string; metaDesc: string; home: string; enterprise: string; breadcrumb: string;
+  introAnswer: string; tldr: string[]; heroSubtitle: string;
+  sampleTitle: string; sampleDesc: string; sampleFeatures: { title: string; desc: string; icon: string }[];
+  pricingTitle: string; pricingDesc: string; pricingTiers: { name: string; price: string; features: string[] }[];
+  formTitle: string; formDesc: string;
+  formLabels: { name: string; email: string; company: string; countries: string; jobCategories: string; reportType: string; submit: string };
+  reportTypeOptions: string[];
+  successMsg: string;
+  faq: { question: string; answer: string }[];
+}> = {
+  en: {
+    h1: 'Need a Custom Salary Report Tailored to Your Markets?',
+    metaTitle: 'Request Custom Salary Report — Enterprise Reports | EuroSalary.eu',
+    metaDesc: 'Request a custom salary report covering your specific countries, job categories, and seniority levels. White-label ready, delivered within 5 business days.',
+    home: 'Home', enterprise: 'Enterprise', breadcrumb: 'Custom Report',
+    introAnswer: 'EuroSalary custom reports deliver institutional-grade salary benchmarking data for your specific countries, job categories, and seniority levels, white-label ready and delivered within 5 business days.',
+    tldr: [
+      'Custom reports covering any combination of 27 EU countries and 200+ job categories',
+      'White-label ready with your branding, logo, and colour scheme',
+      'Delivered within 5 business days in PDF, Excel, and interactive HTML formats',
+    ],
+    heroSubtitle: 'Stop paying for generic salary surveys. Get precise, actionable compensation data for exactly the markets and roles you need.',
+    sampleTitle: 'What Your Report Includes',
+    sampleDesc: 'Every custom report is built from our proprietary dataset of 12M+ salary data points, updated weekly from Eurostat, verified job postings, and anonymous employee reports.',
+    sampleFeatures: [
+      { title: 'Salary Benchmarks by Seniority', desc: 'Detailed salary ranges for junior, mid-level, and senior positions across all selected job categories and countries. Includes median, P25, P75, and P90 data points.', icon: 'bar_chart' },
+      { title: 'Cost of Living Adjustments', desc: 'Salary data normalised by purchasing power parity (PPP) for accurate cross-country comparisons. Includes city-level adjustments for major metropolitan areas.', icon: 'account_balance' },
+      { title: 'Gender Pay Gap Analysis', desc: 'Gender pay gap data for each job category and country, aligned with EU Pay Transparency Directive reporting requirements. Includes trend analysis over the past 3 years.', icon: 'balance' },
+      { title: 'Competitive Positioning', desc: 'See how your current compensation packages compare against market benchmarks. Includes heatmaps showing where you are above, at, or below market rates.', icon: 'leaderboard' },
+      { title: 'Trend Forecasts', desc: 'Year-over-year salary trend data with 12-month forward projections based on economic indicators, labour market supply-demand dynamics, and legislative changes.', icon: 'trending_up' },
+      { title: 'Regulatory Compliance Notes', desc: 'Country-specific compensation compliance notes covering minimum wage, mandatory benefits, collective bargaining coverage, and upcoming EU Pay Transparency Directive requirements.', icon: 'gavel' },
+    ],
+    pricingTitle: 'Report Pricing',
+    pricingDesc: 'Pricing is based on the scope of your report. All prices include white-labelling, PDF/Excel/HTML delivery, and one round of revisions.',
+    pricingTiers: [
+      { name: 'Single Country', price: 'From 990', features: ['1 country, up to 20 job categories', '3 seniority levels', 'PDF + Excel delivery', '5 business day turnaround'] },
+      { name: 'Multi-Country', price: 'From 2,490', features: ['3-5 countries, up to 50 job categories', '3 seniority levels', 'PDF + Excel + HTML delivery', 'Cross-country comparison tables'] },
+      { name: 'Pan-European', price: 'From 4,990', features: ['All 27 EU countries', 'Unlimited job categories', 'All seniority levels', 'Interactive HTML dashboard', 'Quarterly update subscription available'] },
+    ],
+    formTitle: 'Request Your Custom Report',
+    formDesc: 'Tell us what you need and we will send you a detailed proposal with pricing within 24 hours.',
+    formLabels: {
+      name: 'Full Name', email: 'Work Email', company: 'Company Name',
+      countries: 'Countries (select multiple)', jobCategories: 'Job Categories of Interest',
+      reportType: 'Report Type', submit: 'Request Custom Report',
+    },
+    reportTypeOptions: ['Single Country Report', 'Multi-Country Comparison', 'Pan-European Overview', 'Gender Pay Gap Audit', 'Custom / Not Sure'],
+    successMsg: 'Thank you! We will send you a detailed proposal within 24 hours.',
+    faq: [
+      { question: 'How long does it take to produce a custom report?', answer: 'Standard turnaround is 5 business days from brief confirmation. Rush delivery (2-3 business days) is available for an additional 30% fee. Pan-European reports may require up to 10 business days depending on scope.' },
+      { question: 'What data sources do you use?', answer: 'Our reports are built from 12M+ salary data points aggregated from Eurostat Structure of Earnings Survey, 500K+ verified job postings, anonymous employee salary reports, and national statistical office publications. All sources are transparent and auditable.' },
+      { question: 'Can we white-label the report?', answer: 'Yes. All reports can be fully white-labelled with your logo, colour scheme, fonts, and custom cover page. White-labelling is included in all pricing tiers at no additional cost.' },
+      { question: 'What formats are available?', answer: 'Reports are delivered in PDF (print-ready), Excel (raw data + pivot tables), and interactive HTML (embeddable dashboard). Enterprise clients also receive API access to the underlying dataset for custom analysis.' },
+      { question: 'Can we get regular updates?', answer: 'Yes. We offer quarterly and monthly update subscriptions at a 40% discount versus one-off reports. Updates include new data, trend analysis, and regulatory changes since the previous report.' },
+    ],
+  },
+  fr: {
+    h1: 'Besoin d\'un rapport salarial personnalise adapte a vos marches ?',
+    metaTitle: 'Demander un rapport salarial personnalise — Rapports entreprise | EuroSalary.eu',
+    metaDesc: 'Demandez un rapport salarial personnalise couvrant vos pays, categories d\'emploi et niveaux d\'experience. Marque blanche, livre en 5 jours ouvrables.',
+    home: 'Accueil', enterprise: 'Entreprise', breadcrumb: 'Rapport personnalise',
+    introAnswer: 'Les rapports personnalises EuroSalary fournissent des donnees de benchmarking salarial de qualite institutionnelle pour vos pays, categories d\'emploi et niveaux d\'experience specifiques, prets en marque blanche et livres en 5 jours ouvrables.',
+    tldr: [
+      'Rapports personnalises couvrant toute combinaison de 27 pays UE et 200+ categories d\'emploi',
+      'Prets en marque blanche avec votre branding, logo et palette de couleurs',
+      'Livres en 5 jours ouvrables en PDF, Excel et formats HTML interactifs',
+    ],
+    heroSubtitle: 'Arretez de payer pour des enquetes salariales generiques. Obtenez des donnees de remuneration precises pour les marches et roles dont vous avez besoin.',
+    sampleTitle: 'Ce que votre rapport inclut',
+    sampleDesc: 'Chaque rapport personnalise est construit a partir de notre jeu de donnees proprietaire de 12M+ points de donnees salariales, mis a jour chaque semaine.',
+    sampleFeatures: [
+      { title: 'Benchmarks par anciennete', desc: 'Fourchettes salariales detaillees pour les postes juniors, intermediaires et seniors. Inclut les medianes, P25, P75 et P90.', icon: 'bar_chart' },
+      { title: 'Ajustements cout de la vie', desc: 'Donnees salariales normalisees par parite de pouvoir d\'achat (PPA) pour des comparaisons precises entre pays.', icon: 'account_balance' },
+      { title: 'Analyse de l\'ecart salarial', desc: 'Donnees sur l\'ecart de remuneration entre les sexes pour chaque categorie d\'emploi et pays, alignees sur la directive UE.', icon: 'balance' },
+      { title: 'Positionnement concurrentiel', desc: 'Comparez vos packages de remuneration actuels aux benchmarks du marche avec des cartes thermiques.', icon: 'leaderboard' },
+      { title: 'Previsions de tendances', desc: 'Donnees de tendances salariales annuelles avec projections a 12 mois basees sur des indicateurs economiques.', icon: 'trending_up' },
+      { title: 'Notes de conformite', desc: 'Notes de conformite specifiques par pays couvrant le salaire minimum, les avantages obligatoires et la directive UE.', icon: 'gavel' },
+    ],
+    pricingTitle: 'Tarification des rapports',
+    pricingDesc: 'La tarification est basee sur la portee de votre rapport. Tous les prix incluent le white-labelling et une revision.',
+    pricingTiers: [
+      { name: 'Pays unique', price: 'A partir de 990', features: ['1 pays, jusqu\'a 20 categories d\'emploi', '3 niveaux d\'anciennete', 'Livraison PDF + Excel', '5 jours ouvrables'] },
+      { name: 'Multi-pays', price: 'A partir de 2 490', features: ['3-5 pays, jusqu\'a 50 categories', '3 niveaux d\'anciennete', 'PDF + Excel + HTML', 'Tableaux comparatifs entre pays'] },
+      { name: 'Pan-europeen', price: 'A partir de 4 990', features: ['Les 27 pays de l\'UE', 'Categories illimitees', 'Tous les niveaux', 'Dashboard HTML interactif', 'Abonnement de mise a jour trimestrielle'] },
+    ],
+    formTitle: 'Demandez votre rapport personnalise',
+    formDesc: 'Dites-nous ce dont vous avez besoin et nous vous enverrons une proposition detaillee avec tarification sous 24 heures.',
+    formLabels: { name: 'Nom complet', email: 'Email professionnel', company: 'Nom de l\'entreprise', countries: 'Pays (selection multiple)', jobCategories: 'Categories d\'emploi d\'interet', reportType: 'Type de rapport', submit: 'Demander un rapport personnalise' },
+    reportTypeOptions: ['Rapport pays unique', 'Comparaison multi-pays', 'Vue pan-europeenne', 'Audit ecart salarial H/F', 'Personnalise / Pas sur'],
+    successMsg: 'Merci ! Nous vous enverrons une proposition detaillee sous 24 heures.',
+    faq: [
+      { question: 'Combien de temps faut-il pour produire un rapport personnalise ?', answer: 'Le delai standard est de 5 jours ouvrables. La livraison express (2-3 jours) est disponible moyennant 30% de supplement.' },
+      { question: 'Quelles sources de donnees utilisez-vous ?', answer: 'Nos rapports sont construits a partir de 12M+ points de donnees agreges d\'Eurostat, 500K+ offres d\'emploi verifiees et rapports anonymes.' },
+      { question: 'Pouvons-nous personnaliser le rapport en marque blanche ?', answer: 'Oui. Tous les rapports peuvent etre entierement personnalises avec votre logo, couleurs et page de garde. Inclus dans tous les tarifs.' },
+      { question: 'Quels formats sont disponibles ?', answer: 'PDF, Excel et HTML interactif. Les clients enterprise recoivent aussi l\'acces API aux donnees sous-jacentes.' },
+      { question: 'Pouvons-nous obtenir des mises a jour regulieres ?', answer: 'Oui. Nous proposons des abonnements trimestriels et mensuels avec 40% de reduction par rapport aux rapports ponctuels.' },
+    ],
+  },
+  de: {
+    h1: 'Benotigen Sie einen massgeschneiderten Gehaltsbericht fur Ihre Markte?',
+    metaTitle: 'Individuellen Gehaltsbericht anfordern — Enterprise-Berichte | EuroSalary.eu',
+    metaDesc: 'Fordern Sie einen individuellen Gehaltsbericht an, der Ihre spezifischen Lander, Jobkategorien und Erfahrungsstufen abdeckt. White-Label-fertig, innerhalb von 5 Werktagen.',
+    home: 'Startseite', enterprise: 'Enterprise', breadcrumb: 'Individueller Bericht',
+    introAnswer: 'Individuelle EuroSalary-Berichte liefern institutionelle Gehalts-Benchmarking-Daten fur Ihre spezifischen Lander, Jobkategorien und Erfahrungsstufen, White-Label-fertig und innerhalb von 5 Werktagen geliefert.',
+    tldr: [
+      'Individuelle Berichte fur jede Kombination aus 27 EU-Landern und 200+ Jobkategorien',
+      'White-Label-fertig mit Ihrem Branding, Logo und Farbschema',
+      'Lieferung innerhalb von 5 Werktagen in PDF, Excel und interaktivem HTML',
+    ],
+    heroSubtitle: 'Horen Sie auf, fur generische Gehaltsumfragen zu bezahlen. Erhalten Sie prazise Vergutungsdaten fur genau die Markte und Rollen, die Sie benotigen.',
+    sampleTitle: 'Was Ihr Bericht beinhaltet',
+    sampleDesc: 'Jeder individuelle Bericht basiert auf unserem proprietaren Datensatz von 12M+ Gehaltsdatenpunkten, wochentlich aktualisiert.',
+    sampleFeatures: [
+      { title: 'Gehaltsbenchmarks nach Erfahrungsstufe', desc: 'Detaillierte Gehaltsspannen fur Junior-, Mid-Level- und Senior-Positionen. Inklusive Median, P25, P75 und P90.', icon: 'bar_chart' },
+      { title: 'Lebenshaltungskosten-Anpassungen', desc: 'Gehaltsdaten normalisiert nach Kaufkraftparitat (KKP) fur prazise Landervergleiche.', icon: 'account_balance' },
+      { title: 'Gender Pay Gap Analyse', desc: 'Gender Pay Gap Daten fur jede Jobkategorie und jedes Land, ausgerichtet auf die EU-Richtlinie.', icon: 'balance' },
+      { title: 'Wettbewerbspositionierung', desc: 'Vergleichen Sie Ihre aktuellen Vergutungspakete mit Markt-Benchmarks mittels Heatmaps.', icon: 'leaderboard' },
+      { title: 'Trendprognosen', desc: 'Jahrliche Gehaltstrends mit 12-Monats-Prognosen basierend auf Wirtschaftsindikatoren.', icon: 'trending_up' },
+      { title: 'Regulatorische Hinweise', desc: 'Landerspezifische Compliance-Hinweise zu Mindestlohn, Pflichtleistungen und EU-Richtlinie.', icon: 'gavel' },
+    ],
+    pricingTitle: 'Berichtspreise',
+    pricingDesc: 'Die Preisgestaltung basiert auf dem Umfang Ihres Berichts. Alle Preise beinhalten White-Labelling und eine Uberarbeitungsrunde.',
+    pricingTiers: [
+      { name: 'Einzelnes Land', price: 'Ab 990', features: ['1 Land, bis zu 20 Jobkategorien', '3 Erfahrungsstufen', 'PDF + Excel Lieferung', '5 Werktage Bearbeitungszeit'] },
+      { name: 'Mehrere Lander', price: 'Ab 2.490', features: ['3-5 Lander, bis zu 50 Jobkategorien', '3 Erfahrungsstufen', 'PDF + Excel + HTML', 'Landerubergreifende Vergleichstabellen'] },
+      { name: 'Paneuropaisch', price: 'Ab 4.990', features: ['Alle 27 EU-Lander', 'Unbegrenzte Jobkategorien', 'Alle Erfahrungsstufen', 'Interaktives HTML-Dashboard', 'Vierteljährliches Update-Abo verfugbar'] },
+    ],
+    formTitle: 'Fordern Sie Ihren individuellen Bericht an',
+    formDesc: 'Sagen Sie uns, was Sie benotigen, und wir senden Ihnen innerhalb von 24 Stunden ein detailliertes Angebot.',
+    formLabels: { name: 'Vollstandiger Name', email: 'Geschaftliche E-Mail', company: 'Firmenname', countries: 'Lander (Mehrfachauswahl)', jobCategories: 'Jobkategorien von Interesse', reportType: 'Berichtstyp', submit: 'Individuellen Bericht anfordern' },
+    reportTypeOptions: ['Einzelland-Bericht', 'Mehrlandervergleich', 'Paneuropaische Ubersicht', 'Gender Pay Gap Audit', 'Individuell / Unsicher'],
+    successMsg: 'Vielen Dank! Wir senden Ihnen innerhalb von 24 Stunden ein detailliertes Angebot.',
+    faq: [
+      { question: 'Wie lange dauert die Erstellung eines individuellen Berichts?', answer: 'Standardbearbeitungszeit sind 5 Werktage. Express-Lieferung (2-3 Tage) ist gegen 30% Aufpreis verfugbar.' },
+      { question: 'Welche Datenquellen verwenden Sie?', answer: 'Unsere Berichte basieren auf 12M+ Datenpunkten aus Eurostat, 500K+ verifizierten Stellenanzeigen und anonymen Mitarbeiterberichten.' },
+      { question: 'Konnen wir den Bericht mit unserem Branding versehen?', answer: 'Ja. Alle Berichte konnen vollstandig mit Ihrem Logo, Farben und Cover-Seite gebrandet werden. In allen Preisstufen enthalten.' },
+      { question: 'Welche Formate sind verfugbar?', answer: 'PDF, Excel und interaktives HTML. Enterprise-Kunden erhalten zusatzlich API-Zugang zu den zugrunde liegenden Daten.' },
+      { question: 'Konnen wir regelmasige Updates erhalten?', answer: 'Ja. Vierteljährliche und monatliche Update-Abonnements sind mit 40% Rabatt gegenuber Einzelberichten verfugbar.' },
+    ],
+  },
+  es: {
+    h1: 'Necesita un informe salarial personalizado para sus mercados?',
+    metaTitle: 'Solicitar informe salarial personalizado — Informes empresariales | EuroSalary.eu',
+    metaDesc: 'Solicite un informe salarial personalizado que cubra sus paises, categorias laborales y niveles de experiencia. Marca blanca, entregado en 5 dias habiles.',
+    home: 'Inicio', enterprise: 'Empresas', breadcrumb: 'Informe personalizado',
+    introAnswer: 'Los informes personalizados de EuroSalary proporcionan datos de benchmarking salarial de calidad institucional para sus paises, categorias laborales y niveles de experiencia especificos, listos en marca blanca y entregados en 5 dias habiles.',
+    tldr: ['Informes personalizados que cubren cualquier combinacion de 27 paises UE y 200+ categorias laborales', 'Listos en marca blanca con su branding, logo y paleta de colores', 'Entregados en 5 dias habiles en PDF, Excel y formatos HTML interactivos'],
+    heroSubtitle: 'Deje de pagar por encuestas salariales genericas. Obtenga datos de compensacion precisos para los mercados y roles que necesita.',
+    sampleTitle: 'Lo que incluye su informe',
+    sampleDesc: 'Cada informe personalizado se construye a partir de nuestro dataset propietario de 12M+ puntos de datos salariales, actualizado semanalmente.',
+    sampleFeatures: [
+      { title: 'Benchmarks por antiguedad', desc: 'Rangos salariales detallados para posiciones junior, intermedias y senior. Incluye mediana, P25, P75 y P90.', icon: 'bar_chart' },
+      { title: 'Ajustes por coste de vida', desc: 'Datos salariales normalizados por paridad de poder adquisitivo (PPA) para comparaciones precisas entre paises.', icon: 'account_balance' },
+      { title: 'Analisis de brecha salarial de genero', desc: 'Datos de brecha salarial para cada categoria laboral y pais, alineados con la directiva UE.', icon: 'balance' },
+      { title: 'Posicionamiento competitivo', desc: 'Compare sus paquetes de compensacion actuales con los benchmarks del mercado mediante mapas de calor.', icon: 'leaderboard' },
+      { title: 'Previsiones de tendencias', desc: 'Datos de tendencias salariales anuales con proyecciones a 12 meses basadas en indicadores economicos.', icon: 'trending_up' },
+      { title: 'Notas de cumplimiento normativo', desc: 'Notas de cumplimiento por pais sobre salario minimo, beneficios obligatorios y directiva UE.', icon: 'gavel' },
+    ],
+    pricingTitle: 'Precios de informes',
+    pricingDesc: 'Los precios se basan en el alcance de su informe. Todos incluyen marca blanca, entrega en PDF/Excel/HTML y una ronda de revisiones.',
+    pricingTiers: [
+      { name: 'Pais unico', price: 'Desde 990', features: ['1 pais, hasta 20 categorias', '3 niveles de antiguedad', 'Entrega PDF + Excel', '5 dias habiles'] },
+      { name: 'Multi-pais', price: 'Desde 2.490', features: ['3-5 paises, hasta 50 categorias', '3 niveles de antiguedad', 'PDF + Excel + HTML', 'Tablas comparativas entre paises'] },
+      { name: 'Paneuropeo', price: 'Desde 4.990', features: ['Los 27 paises de la UE', 'Categorias ilimitadas', 'Todos los niveles', 'Dashboard HTML interactivo', 'Suscripcion de actualizacion trimestral'] },
+    ],
+    formTitle: 'Solicite su informe personalizado',
+    formDesc: 'Cuentenos lo que necesita y le enviaremos una propuesta detallada con precios en 24 horas.',
+    formLabels: { name: 'Nombre completo', email: 'Email corporativo', company: 'Nombre de la empresa', countries: 'Paises (seleccion multiple)', jobCategories: 'Categorias laborales de interes', reportType: 'Tipo de informe', submit: 'Solicitar informe personalizado' },
+    reportTypeOptions: ['Informe de pais unico', 'Comparacion multi-pais', 'Vista paneuropea', 'Auditoria brecha salarial de genero', 'Personalizado / No seguro'],
+    successMsg: 'Gracias! Le enviaremos una propuesta detallada en 24 horas.',
+    faq: [
+      { question: 'Cuanto tiempo se tarda en producir un informe personalizado?', answer: 'El plazo estandar es de 5 dias habiles. La entrega express (2-3 dias) esta disponible con un cargo adicional del 30%.' },
+      { question: 'Que fuentes de datos utilizan?', answer: 'Nuestros informes se basan en 12M+ puntos de datos de Eurostat, 500K+ ofertas de empleo verificadas e informes anonimos.' },
+      { question: 'Podemos personalizar el informe con nuestra marca?', answer: 'Si. Todos los informes pueden personalizarse con su logo, colores y portada. Incluido en todos los precios.' },
+      { question: 'Que formatos estan disponibles?', answer: 'PDF, Excel y HTML interactivo. Los clientes enterprise reciben acceso API a los datos subyacentes.' },
+      { question: 'Podemos obtener actualizaciones regulares?', answer: 'Si. Ofrecemos suscripciones trimestrales y mensuales con un 40% de descuento respecto a informes puntuales.' },
+    ],
+  },
+  it: {
+    h1: 'Hai bisogno di un report salariale personalizzato per i tuoi mercati?',
+    metaTitle: 'Richiedi report salariale personalizzato — Report enterprise | EuroSalary.eu',
+    metaDesc: 'Richiedi un report salariale personalizzato per i tuoi paesi, categorie professionali e livelli di esperienza. White-label, consegnato in 5 giorni lavorativi.',
+    home: 'Home', enterprise: 'Enterprise', breadcrumb: 'Report personalizzato',
+    introAnswer: 'I report personalizzati EuroSalary forniscono dati di benchmarking salariale di qualita istituzionale per i tuoi paesi, categorie professionali e livelli di esperienza, pronti per il white-label e consegnati in 5 giorni lavorativi.',
+    tldr: ['Report personalizzati per qualsiasi combinazione di 27 paesi UE e 200+ categorie professionali', 'Pronti per il white-label con il tuo branding, logo e palette colori', 'Consegnati in 5 giorni lavorativi in PDF, Excel e HTML interattivo'],
+    heroSubtitle: 'Smetti di pagare per indagini salariali generiche. Ottieni dati retributivi precisi per i mercati e ruoli di cui hai bisogno.',
+    sampleTitle: 'Cosa include il tuo report',
+    sampleDesc: 'Ogni report personalizzato e costruito dal nostro dataset proprietario di 12M+ punti dati salariali, aggiornato settimanalmente.',
+    sampleFeatures: [
+      { title: 'Benchmark per anzianita', desc: 'Fasce salariali dettagliate per posizioni junior, mid-level e senior. Include mediana, P25, P75 e P90.', icon: 'bar_chart' },
+      { title: 'Adeguamenti costo della vita', desc: 'Dati salariali normalizzati per parita di potere d\'acquisto (PPA) per confronti accurati tra paesi.', icon: 'account_balance' },
+      { title: 'Analisi divario retributivo di genere', desc: 'Dati sul divario retributivo per ogni categoria e paese, allineati alla direttiva UE.', icon: 'balance' },
+      { title: 'Posizionamento competitivo', desc: 'Confronta i tuoi pacchetti retributivi attuali con i benchmark di mercato tramite heatmap.', icon: 'leaderboard' },
+      { title: 'Previsioni di tendenza', desc: 'Tendenze salariali annuali con proiezioni a 12 mesi basate su indicatori economici.', icon: 'trending_up' },
+      { title: 'Note di conformita normativa', desc: 'Note di conformita specifiche per paese su salario minimo, benefit obbligatori e direttiva UE.', icon: 'gavel' },
+    ],
+    pricingTitle: 'Prezzi dei report',
+    pricingDesc: 'I prezzi si basano sulla portata del report. Tutti includono white-labelling, consegna PDF/Excel/HTML e una revisione.',
+    pricingTiers: [
+      { name: 'Singolo paese', price: 'Da 990', features: ['1 paese, fino a 20 categorie', '3 livelli di anzianita', 'Consegna PDF + Excel', '5 giorni lavorativi'] },
+      { name: 'Multi-paese', price: 'Da 2.490', features: ['3-5 paesi, fino a 50 categorie', '3 livelli di anzianita', 'PDF + Excel + HTML', 'Tabelle comparative tra paesi'] },
+      { name: 'Paneuropeo', price: 'Da 4.990', features: ['Tutti i 27 paesi UE', 'Categorie illimitate', 'Tutti i livelli', 'Dashboard HTML interattivo', 'Abbonamento aggiornamento trimestrale'] },
+    ],
+    formTitle: 'Richiedi il tuo report personalizzato',
+    formDesc: 'Dicci di cosa hai bisogno e ti invieremo una proposta dettagliata con prezzi entro 24 ore.',
+    formLabels: { name: 'Nome completo', email: 'Email aziendale', company: 'Nome azienda', countries: 'Paesi (selezione multipla)', jobCategories: 'Categorie professionali di interesse', reportType: 'Tipo di report', submit: 'Richiedi report personalizzato' },
+    reportTypeOptions: ['Report singolo paese', 'Confronto multi-paese', 'Panoramica paneuropea', 'Audit divario retributivo di genere', 'Personalizzato / Non sicuro'],
+    successMsg: 'Grazie! Ti invieremo una proposta dettagliata entro 24 ore.',
+    faq: [
+      { question: 'Quanto tempo ci vuole per produrre un report personalizzato?', answer: 'I tempi standard sono di 5 giorni lavorativi. La consegna express (2-3 giorni) e disponibile con un supplemento del 30%.' },
+      { question: 'Quali fonti di dati utilizzate?', answer: 'I nostri report si basano su 12M+ punti dati da Eurostat, 500K+ annunci verificati e report anonimi.' },
+      { question: 'Possiamo personalizzare il report con il nostro brand?', answer: 'Si. Tutti i report possono essere completamente personalizzati con logo, colori e copertina. Incluso in tutti i prezzi.' },
+      { question: 'Quali formati sono disponibili?', answer: 'PDF, Excel e HTML interattivo. I clienti enterprise ricevono anche accesso API ai dati sottostanti.' },
+      { question: 'Possiamo ottenere aggiornamenti regolari?', answer: 'Si. Offriamo abbonamenti trimestrali e mensili con 40% di sconto rispetto ai report singoli.' },
+    ],
+  },
+  pt: {
+    h1: 'Precisa de um relatorio salarial personalizado para os seus mercados?',
+    metaTitle: 'Solicitar relatorio salarial personalizado — Relatorios enterprise | EuroSalary.eu',
+    metaDesc: 'Solicite um relatorio salarial personalizado para os seus paises, categorias profissionais e niveis de experiencia. White-label, entregue em 5 dias uteis.',
+    home: 'Inicio', enterprise: 'Enterprise', breadcrumb: 'Relatorio personalizado',
+    introAnswer: 'Os relatorios personalizados EuroSalary fornecem dados de benchmarking salarial de qualidade institucional para os seus paises, categorias profissionais e niveis de experiencia, prontos para white-label e entregues em 5 dias uteis.',
+    tldr: ['Relatorios personalizados para qualquer combinacao de 27 paises UE e 200+ categorias profissionais', 'Prontos para white-label com a sua marca, logo e paleta de cores', 'Entregues em 5 dias uteis em PDF, Excel e HTML interativo'],
+    heroSubtitle: 'Pare de pagar por pesquisas salariais genericas. Obtenha dados de compensacao precisos para os mercados e funcoes que precisa.',
+    sampleTitle: 'O que o seu relatorio inclui', sampleDesc: 'Cada relatorio e construido a partir do nosso dataset de 12M+ pontos de dados salariais, atualizado semanalmente.',
+    sampleFeatures: [
+      { title: 'Benchmarks por senioridade', desc: 'Faixas salariais detalhadas para posicoes junior, mid-level e senior. Inclui mediana, P25, P75 e P90.', icon: 'bar_chart' },
+      { title: 'Ajustes de custo de vida', desc: 'Dados salariais normalizados por paridade de poder de compra para comparacoes precisas entre paises.', icon: 'account_balance' },
+      { title: 'Analise de disparidade salarial de genero', desc: 'Dados de disparidade para cada categoria e pais, alinhados com a diretiva UE.', icon: 'balance' },
+      { title: 'Posicionamento competitivo', desc: 'Compare os seus pacotes de compensacao atuais com benchmarks de mercado atraves de mapas de calor.', icon: 'leaderboard' },
+      { title: 'Previsoes de tendencias', desc: 'Tendencias salariais anuais com projecoes a 12 meses baseadas em indicadores economicos.', icon: 'trending_up' },
+      { title: 'Notas de conformidade regulatoria', desc: 'Notas de conformidade por pais sobre salario minimo, beneficios obrigatorios e diretiva UE.', icon: 'gavel' },
+    ],
+    pricingTitle: 'Precos dos relatorios', pricingDesc: 'Os precos baseiam-se no ambito do relatorio. Todos incluem white-labelling e uma ronda de revisoes.',
+    pricingTiers: [
+      { name: 'Pais unico', price: 'Desde 990', features: ['1 pais, ate 20 categorias', '3 niveis de senioridade', 'Entrega PDF + Excel', '5 dias uteis'] },
+      { name: 'Multi-pais', price: 'Desde 2.490', features: ['3-5 paises, ate 50 categorias', '3 niveis', 'PDF + Excel + HTML', 'Tabelas comparativas entre paises'] },
+      { name: 'Pan-europeu', price: 'Desde 4.990', features: ['Todos os 27 paises da UE', 'Categorias ilimitadas', 'Todos os niveis', 'Dashboard HTML interativo', 'Subscricao de atualizacao trimestral'] },
+    ],
+    formTitle: 'Solicite o seu relatorio personalizado', formDesc: 'Diga-nos o que precisa e enviaremos uma proposta detalhada em 24 horas.',
+    formLabels: { name: 'Nome completo', email: 'Email profissional', company: 'Nome da empresa', countries: 'Paises (selecao multipla)', jobCategories: 'Categorias profissionais de interesse', reportType: 'Tipo de relatorio', submit: 'Solicitar relatorio personalizado' },
+    reportTypeOptions: ['Relatorio de pais unico', 'Comparacao multi-pais', 'Visao pan-europeia', 'Auditoria disparidade salarial de genero', 'Personalizado / Nao tenho a certeza'],
+    successMsg: 'Obrigado! Enviaremos uma proposta detalhada em 24 horas.',
+    faq: [
+      { question: 'Quanto tempo demora a produzir um relatorio personalizado?', answer: 'O prazo padrao e de 5 dias uteis. Entrega express (2-3 dias) disponivel com 30% de suplemento.' },
+      { question: 'Que fontes de dados utilizam?', answer: 'Os nossos relatorios baseiam-se em 12M+ pontos de dados do Eurostat, 500K+ anuncios verificados e relatorios anonimos.' },
+      { question: 'Podemos personalizar o relatorio com a nossa marca?', answer: 'Sim. Todos os relatorios podem ser totalmente personalizados. Incluido em todos os precos.' },
+      { question: 'Que formatos estao disponiveis?', answer: 'PDF, Excel e HTML interativo. Clientes enterprise recebem acesso API aos dados.' },
+      { question: 'Podemos obter atualizacoes regulares?', answer: 'Sim. Subscricoes trimestrais e mensais com 40% de desconto vs relatorios pontuais.' },
+    ],
+  },
+  nl: {
+    h1: 'Heeft u een salarisrapport op maat nodig voor uw markten?',
+    metaTitle: 'Vraag een salarisrapport op maat aan — Enterprise-rapporten | EuroSalary.eu',
+    metaDesc: 'Vraag een salarisrapport op maat aan voor uw specifieke landen, functieSategorien en ervaringsniveaus. White-label klaar, geleverd binnen 5 werkdagen.',
+    home: 'Home', enterprise: 'Enterprise', breadcrumb: 'Rapport op maat',
+    introAnswer: 'EuroSalary rapporten op maat leveren institutionele salarisbenchmarking-gegevens voor uw specifieke landen, functiecategorien en ervaringsniveaus.',
+    tldr: ['Rapporten op maat voor elke combinatie van 27 EU-landen en 200+ functiecategorien', 'White-label klaar met uw branding, logo en kleurenschema', 'Geleverd binnen 5 werkdagen in PDF, Excel en interactief HTML'],
+    heroSubtitle: 'Stop met betalen voor generieke salarisenquetes. Krijg precieze beloningsgegevens voor precies de markten en rollen die u nodig heeft.',
+    sampleTitle: 'Wat uw rapport bevat', sampleDesc: 'Elk rapport is gebouwd op onze dataset van 12M+ salarisdatapunten, wekelijks bijgewerkt.',
+    sampleFeatures: [{ title: 'Benchmarks per ervaringsniveau', desc: 'Gedetailleerde salarisranges voor junior, medior en senior posities.', icon: 'bar_chart' }, { title: 'Kosten van levensonderhoud aanpassingen', desc: 'Salarisgegevens genormaliseerd naar koopkrachtpariteit.', icon: 'account_balance' }, { title: 'Gender pay gap analyse', desc: 'Loonkloofgegevens per functiecategorie en land.', icon: 'balance' }, { title: 'Concurrentiepositie', desc: 'Vergelijk uw huidige beloningspakketten met marktbenchmarks.', icon: 'leaderboard' }, { title: 'Trendvoorspellingen', desc: 'Jaarlijkse salaristrends met 12-maands projecties.', icon: 'trending_up' }, { title: 'Regelgevingsnotities', desc: 'Landspecifieke compliance-notities over minimumloon en EU-richtlijn.', icon: 'gavel' }],
+    pricingTitle: 'Rapportprijzen', pricingDesc: 'Prijzen zijn gebaseerd op de reikwijdte van uw rapport. Alle prijzen zijn inclusief white-labelling.',
+    pricingTiers: [{ name: 'Enkel land', price: 'Vanaf 990', features: ['1 land, tot 20 categorien', '3 ervaringsniveaus', 'PDF + Excel', '5 werkdagen'] }, { name: 'Multi-land', price: 'Vanaf 2.490', features: ['3-5 landen, tot 50 categorien', '3 niveaus', 'PDF + Excel + HTML', 'Vergelijkingstabellen'] }, { name: 'Pan-Europees', price: 'Vanaf 4.990', features: ['Alle 27 EU-landen', 'Onbeperkte categorien', 'Alle niveaus', 'Interactief HTML-dashboard'] }],
+    formTitle: 'Vraag uw rapport op maat aan', formDesc: 'Vertel ons wat u nodig heeft en we sturen u binnen 24 uur een gedetailleerd voorstel.',
+    formLabels: { name: 'Volledige naam', email: 'Zakelijk e-mail', company: 'Bedrijfsnaam', countries: 'Landen (meervoudige selectie)', jobCategories: 'Functiecategorien van interesse', reportType: 'Rapporttype', submit: 'Rapport op maat aanvragen' },
+    reportTypeOptions: ['Enkelvoudig landrapport', 'Multi-land vergelijking', 'Pan-Europees overzicht', 'Gender pay gap audit', 'Aangepast / Niet zeker'],
+    successMsg: 'Bedankt! We sturen u binnen 24 uur een gedetailleerd voorstel.',
+    faq: [{ question: 'Hoe lang duurt het om een rapport op maat te maken?', answer: 'Standaard doorlooptijd is 5 werkdagen. Express (2-3 dagen) beschikbaar tegen 30% toeslag.' }, { question: 'Welke databronnen gebruiken jullie?', answer: 'Onze rapporten zijn gebaseerd op 12M+ datapunten van Eurostat, 500K+ geverifieerde vacatures en anonieme rapporten.' }, { question: 'Kunnen we het rapport white-labelen?', answer: 'Ja. Volledig aanpasbaar met uw logo en kleuren. Inbegrepen in alle prijzen.' }, { question: 'Welke formaten zijn beschikbaar?', answer: 'PDF, Excel en interactief HTML.' }, { question: 'Kunnen we regelmatige updates krijgen?', answer: 'Ja. Kwartaal- en maandabonnementen met 40% korting.' }],
+  },
+  pl: {
+    h1: 'Potrzebujesz niestandardowego raportu placowego dostosowanego do Twoich rynkow?',
+    metaTitle: 'Zamow raport placowy na zamowienie — Raporty enterprise | EuroSalary.eu',
+    metaDesc: 'Zamow raport placowy na zamowienie obejmujacy Twoje kraje, kategorie zawodowe i poziomy doswiadczenia. White-label, dostarczony w 5 dni roboczych.',
+    home: 'Strona glowna', enterprise: 'Enterprise', breadcrumb: 'Raport na zamowienie',
+    introAnswer: 'Raporty EuroSalary na zamowienie dostarczaja dane benchmarkingowe o wynagrodzeniach klasy instytucjonalnej dla Twoich krajow, kategorii zawodowych i poziomow doswiadczenia.',
+    tldr: ['Raporty na zamowienie dla dowolnej kombinacji 27 krajow UE i 200+ kategorii zawodowych', 'Gotowe do white-label z Twoim brandingiem i logo', 'Dostarczane w 5 dni roboczych w formatach PDF, Excel i interaktywnym HTML'],
+    heroSubtitle: 'Przestain placic za generyczne badania placowe. Uzyskaj precyzyjne dane o wynagrodzeniach dla rynkow i rol, ktorych potrzebujesz.',
+    sampleTitle: 'Co zawiera Twoj raport', sampleDesc: 'Kazdy raport jest tworzony na podstawie naszego zestawu danych 12M+ punktow danych placowych.',
+    sampleFeatures: [{ title: 'Benchmarki wg stazu', desc: 'Szczegolowe przedzialy placowe dla stanowisk junior, mid i senior.', icon: 'bar_chart' }, { title: 'Korekty kosztow zycia', desc: 'Dane placowe znormalizowane wg parytetu sily nabywczej.', icon: 'account_balance' }, { title: 'Analiza luki placowej', desc: 'Dane o luce placowej dla kazdej kategorii i kraju.', icon: 'balance' }, { title: 'Pozycjonowanie konkurencyjne', desc: 'Porownaj swoje pakiety wynagrodzen z benchmarkami rynkowymi.', icon: 'leaderboard' }, { title: 'Prognozy trendow', desc: 'Roczne trendy placowe z projekcjami na 12 miesiecy.', icon: 'trending_up' }, { title: 'Notatki regulacyjne', desc: 'Notatki o zgodnosci dla kazdego kraju obejmujace plcae minimalna i dyrektywe UE.', icon: 'gavel' }],
+    pricingTitle: 'Cennik raportow', pricingDesc: 'Ceny zaleza od zakresu raportu. Wszystkie obejmuja white-labelling i jedna runde poprawek.',
+    pricingTiers: [{ name: 'Pojedynczy kraj', price: 'Od 990', features: ['1 kraj, do 20 kategorii', '3 poziomy stazu', 'Dostawa PDF + Excel', '5 dni roboczych'] }, { name: 'Wiele krajow', price: 'Od 2 490', features: ['3-5 krajow, do 50 kategorii', '3 poziomy', 'PDF + Excel + HTML', 'Tabele porownawcze'] }, { name: 'Paneuropejski', price: 'Od 4 990', features: ['Wszystkie 27 krajow UE', 'Nieograniczone kategorie', 'Wszystkie poziomy', 'Interaktywny dashboard HTML'] }],
+    formTitle: 'Zamow swoj raport na zamowienie', formDesc: 'Powiedz nam, czego potrzebujesz, a wysleemy szczegolowa propozycje w ciagu 24 godzin.',
+    formLabels: { name: 'Imie i nazwisko', email: 'Email sluzbowy', company: 'Nazwa firmy', countries: 'Kraje (wybor wielokrotny)', jobCategories: 'Kategorie zawodowe', reportType: 'Typ raportu', submit: 'Zamow raport na zamowienie' },
+    reportTypeOptions: ['Raport jednego kraju', 'Porownanie wielu krajow', 'Przeglad paneuropejski', 'Audyt luki placowej', 'Niestandardowy / Nie jestem pewien'],
+    successMsg: 'Dziekujemy! Wysleemy szczegolowa propozycje w ciagu 24 godzin.',
+    faq: [{ question: 'Ile czasu zajmuje przygotowanie raportu?', answer: 'Standardowy czas to 5 dni roboczych. Dostawa ekspresowa (2-3 dni) dostepna za dodatkowe 30%.' }, { question: 'Jakie zrodla danych wykorzystujecie?', answer: 'Nasze raporty bazuja na 12M+ punktach danych z Eurostat, 500K+ zweryfikowanych ofert pracy i anonimowych raportach.' }, { question: 'Czy mozemy dodac nasze logo?', answer: 'Tak. Wszystkie raporty moga byc w pelni spersonalizowane. Wlaczone we wszystkie ceny.' }, { question: 'Jakie formaty sa dostepne?', answer: 'PDF, Excel i interaktywny HTML.' }, { question: 'Czy mozemy uzyskac regularne aktualizacje?', answer: 'Tak. Subskrypcje kwartalne i miesieczne z 40% rabatem.' }],
+  },
+  ro: {
+    h1: 'Aveti nevoie de un raport salarial personalizat pentru pietele dumneavoastra?',
+    metaTitle: 'Solicitati raport salarial personalizat — Rapoarte enterprise | EuroSalary.eu', metaDesc: 'Solicitati un raport salarial personalizat pentru tarile, categoriile de locuri de munca si nivelurile de experienta. White-label, livrat in 5 zile lucratoare.',
+    home: 'Acasa', enterprise: 'Enterprise', breadcrumb: 'Raport personalizat',
+    introAnswer: 'Rapoartele personalizate EuroSalary ofera date de benchmarking salarial de calitate institutionala pentru tarile, categoriile si nivelurile dumneavoastra specifice.',
+    tldr: ['Rapoarte personalizate pentru orice combinatie de 27 tari UE si 200+ categorii', 'Gata pentru white-label cu brandul, logo-ul si paleta de culori', 'Livrate in 5 zile lucratoare in PDF, Excel si HTML interactiv'],
+    heroSubtitle: 'Nu mai platiti pentru sondaje salariale generice. Obtineti date precise de compensare.',
+    sampleTitle: 'Ce include raportul', sampleDesc: 'Fiecare raport e construit din 12M+ puncte de date salariale.',
+    sampleFeatures: [{ title: 'Benchmarkuri pe senioritate', desc: 'Intervale salariale detaliate pentru pozitii junior, mid si senior.', icon: 'bar_chart' }, { title: 'Ajustari cost viata', desc: 'Date normalizate dupa paritatea puterii de cumparare.', icon: 'account_balance' }, { title: 'Analiza disparitatii salariale', desc: 'Date privind disparitatea pentru fiecare categorie si tara.', icon: 'balance' }, { title: 'Pozitionare competitiva', desc: 'Comparati pachetele de compensare cu benchmarkurile pietei.', icon: 'leaderboard' }, { title: 'Prognoze tendinte', desc: 'Tendinte salariale anuale cu proiectii pe 12 luni.', icon: 'trending_up' }, { title: 'Note de conformitate', desc: 'Note specifice per tara privind salariul minim si directiva UE.', icon: 'gavel' }],
+    pricingTitle: 'Preturi rapoarte', pricingDesc: 'Preturile se bazeaza pe aria raportului. Toate includ white-labelling.',
+    pricingTiers: [{ name: 'Tara unica', price: 'De la 990', features: ['1 tara, pana la 20 categorii', '3 niveluri', 'PDF + Excel', '5 zile lucratoare'] }, { name: 'Multi-tara', price: 'De la 2.490', features: ['3-5 tari, pana la 50 categorii', '3 niveluri', 'PDF + Excel + HTML', 'Tabele comparative'] }, { name: 'Pan-european', price: 'De la 4.990', features: ['Toate cele 27 tari UE', 'Categorii nelimitate', 'Toate nivelurile', 'Dashboard HTML interactiv'] }],
+    formTitle: 'Solicitati raportul personalizat', formDesc: 'Spuneti-ne ce aveti nevoie si va trimitem o propunere detaliata in 24 ore.',
+    formLabels: { name: 'Nume complet', email: 'Email profesional', company: 'Numele companiei', countries: 'Tari (selectie multipla)', jobCategories: 'Categorii profesionale', reportType: 'Tip raport', submit: 'Solicitati raport personalizat' },
+    reportTypeOptions: ['Raport tara unica', 'Comparatie multi-tara', 'Prezentare pan-europeana', 'Audit disparitate salariala', 'Personalizat / Nu sunt sigur'],
+    successMsg: 'Multumim! Va trimitem o propunere detaliata in 24 ore.',
+    faq: [{ question: 'Cat dureaza producerea unui raport?', answer: 'Termenul standard e 5 zile lucratoare. Livrare expres (2-3 zile) disponibila cu 30% suplimentar.' }, { question: 'Ce surse de date folositi?', answer: 'Rapoartele se bazeaza pe 12M+ puncte de date din Eurostat si 500K+ anunturi verificate.' }, { question: 'Putem personaliza raportul cu brandul nostru?', answer: 'Da. Toate rapoartele pot fi complet personalizate. Inclus in toate preturile.' }, { question: 'Ce formate sunt disponibile?', answer: 'PDF, Excel si HTML interactiv.' }, { question: 'Putem obtine actualizari regulate?', answer: 'Da. Abonamente trimestriale si lunare cu 40% reducere.' }],
+  },
+  cs: { h1: 'Potrebujete zakázkovou platovou zpravu pro vase trhy?', metaTitle: 'Zadejte o zakázkovou platovou zpravu | EuroSalary.eu', metaDesc: 'Zadejte o zakázkovou platovou zpravu pokryvajici vase zeme, kategorie pozic a urovne seniority.', home: 'Domov', enterprise: 'Enterprise', breadcrumb: 'Zakázkova zprava', introAnswer: 'Zakázkove zpravy EuroSalary dodavaji institucionalni data pro benchmarking platu.', tldr: ['Zpravy na miru pro 27 zemi EU a 200+ kategorii', 'White-label s vasim brandem', 'Dodani do 5 pracovnich dnu'], heroSubtitle: 'Prestan platit za genericke pruzkumy. Ziskejte presna data.', sampleTitle: 'Co zprava obsahuje', sampleDesc: 'Kazda zprava vychazi z 12M+ datovych bodu.', sampleFeatures: [{ title: 'Benchmarky dle seniority', desc: 'Detailni platove rozsahy.', icon: 'bar_chart' }, { title: 'Upravy nakladu na zivot', desc: 'Data normalizovana dle PPP.', icon: 'account_balance' }, { title: 'Analyza platoveho rozdilu', desc: 'Data o platovem rozdilu.', icon: 'balance' }, { title: 'Konkurencni pozice', desc: 'Porovnejte sve balicky.', icon: 'leaderboard' }, { title: 'Prognozy trendu', desc: 'Rocni trendy s projekcemi.', icon: 'trending_up' }, { title: 'Poznamky k regulaci', desc: 'Poznamky k souladu pro kazdou zemi.', icon: 'gavel' }], pricingTitle: 'Cennik zprav', pricingDesc: 'Ceny dle rozsahu. Vsechny zahrnuji white-labelling.', pricingTiers: [{ name: 'Jedna zeme', price: 'Od 990', features: ['1 zeme, do 20 kategorii', '3 urovne', 'PDF + Excel', '5 pracovnich dnu'] }, { name: 'Vice zemi', price: 'Od 2 490', features: ['3-5 zemi', '3 urovne', 'PDF + Excel + HTML'] }, { name: 'Celoevropska', price: 'Od 4 990', features: ['Vsech 27 zemi EU', 'Neomezene kategorie', 'Interaktivni dashboard'] }], formTitle: 'Zadejte o zpravu', formDesc: 'Vyplnte formular a posleme nabidku do 24 hodin.', formLabels: { name: 'Jmeno', email: 'Pracovni email', company: 'Firma', countries: 'Zeme', jobCategories: 'Kategorie pozic', reportType: 'Typ zpravy', submit: 'Zadat o zpravu' }, reportTypeOptions: ['Jednozemni zprava', 'Vicezemni srovnani', 'Celoevropsky prehled', 'Audit platoveho rozdilu', 'Na miru'], successMsg: 'Dekujeme! Posleme nabidku do 24 hodin.', faq: [{ question: 'Jak dlouho trva priprava zpravy?', answer: '5 pracovnich dnu. Express za 30% priplatek.' }, { question: 'Jake zdroje dat pouzivate?', answer: '12M+ bodu z Eurostatu a 500K+ overenych inzeratu.' }, { question: 'Muzeme pridat nase logo?', answer: 'Ano, white-labelling je zahrnut.' }, { question: 'Jake formaty?', answer: 'PDF, Excel a interaktivni HTML.' }, { question: 'Pravidelne aktualizace?', answer: 'Ano, s 40% slevou.' }] },
+  sv: { h1: 'Behover du en skraddarsydd lonerapport for dina marknader?', metaTitle: 'Begar skraddarsydd lonerapport | EuroSalary.eu', metaDesc: 'Begar en skraddarsydd lonerapport for dina lander, jobbkategorier och erfarenhetsnivåer.', home: 'Hem', enterprise: 'Enterprise', breadcrumb: 'Skraddarsydd rapport', introAnswer: 'EuroSalary skraddarsydda rapporter levererar institutionell lonebenchmarking-data for dina specifika marknader.', tldr: ['Rapporter for alla 27 EU-lander och 200+ jobbkategorier', 'White-label med ditt varumarke', 'Leverans inom 5 arbetsdagar'], heroSubtitle: 'Sluta betala for generiska loneundersokningar.', sampleTitle: 'Vad rapporten innehaller', sampleDesc: 'Varje rapport bygger pa 12M+ datapunkter.', sampleFeatures: [{ title: 'Benchmarks per erfarenhetsniva', desc: 'Detaljerade loneintervall.', icon: 'bar_chart' }, { title: 'Levnadskostnadsjusteringar', desc: 'PPP-normaliserade data.', icon: 'account_balance' }, { title: 'Konslonegapanalys', desc: 'Data per kategori och land.', icon: 'balance' }, { title: 'Konkurrenspositionering', desc: 'Jamfor dina paket med marknaden.', icon: 'leaderboard' }, { title: 'Trendprognoser', desc: 'Arliga trender med 12-manaders projektioner.', icon: 'trending_up' }, { title: 'Regulatoriska anteckningar', desc: 'Landsspecifika compliance-noteringar.', icon: 'gavel' }], pricingTitle: 'Rapportpriser', pricingDesc: 'Priser baserade pa rapportens omfattning.', pricingTiers: [{ name: 'Enstaka land', price: 'Fran 990', features: ['1 land, upp till 20 kategorier', '3 nivaer', 'PDF + Excel', '5 arbetsdagar'] }, { name: 'Flera lander', price: 'Fran 2 490', features: ['3-5 lander', 'PDF + Excel + HTML'] }, { name: 'Paneuropeisk', price: 'Fran 4 990', features: ['Alla 27 EU-lander', 'Interaktiv dashboard'] }], formTitle: 'Begar din rapport', formDesc: 'Beskriv dina behov sa skickar vi ett forslag inom 24 timmar.', formLabels: { name: 'Fullstandigt namn', email: 'Jobbmail', company: 'Foretagsnamn', countries: 'Lander', jobCategories: 'Jobbkategorier', reportType: 'Rapporttyp', submit: 'Begar rapport' }, reportTypeOptions: ['Enstaka land', 'Flerlandsjamforelse', 'Paneuropeisk oversikt', 'Konslonegap-audit', 'Anpassad'], successMsg: 'Tack! Vi skickar ett forslag inom 24 timmar.', faq: [{ question: 'Hur lang tid tar det?', answer: '5 arbetsdagar. Express 2-3 dagar.' }, { question: 'Vilka datakallor?', answer: '12M+ datapunkter fran Eurostat.' }, { question: 'Kan vi white-labela?', answer: 'Ja, ingar i priset.' }, { question: 'Vilka format?', answer: 'PDF, Excel och HTML.' }, { question: 'Regelbundna uppdateringar?', answer: 'Ja, med 40% rabatt.' }] },
+  da: { h1: 'Har du brug for en skraeddersyet lonsrapport til dine markeder?', metaTitle: 'Anmod om skraeddersyet lonsrapport | EuroSalary.eu', metaDesc: 'Anmod om en skraeddersyet lonsrapport for dine lande, jobkategorier og erfaringsniveauer.', home: 'Hjem', enterprise: 'Enterprise', breadcrumb: 'Skraeddersyet rapport', introAnswer: 'EuroSalary skraeddersyede rapporter leverer institutionel lonsbenchmarking-data.', tldr: ['Rapporter for 27 EU-lande og 200+ kategorier', 'White-label med dit brand', 'Levering inden for 5 arbejdsdage'], heroSubtitle: 'Stop med at betale for generiske lonsundersogelser.', sampleTitle: 'Hvad rapporten indeholder', sampleDesc: 'Hver rapport bygger pa 12M+ datapunkter.', sampleFeatures: [{ title: 'Benchmarks per erfaring', desc: 'Detaljerede lonsintervaller.', icon: 'bar_chart' }, { title: 'Leveomkostningsjusteringer', desc: 'PPP-normaliserede data.', icon: 'account_balance' }, { title: 'Konslonsgab-analyse', desc: 'Data per kategori og land.', icon: 'balance' }, { title: 'Konkurrencepositionering', desc: 'Sammenlign dine pakker.', icon: 'leaderboard' }, { title: 'Trendprognoser', desc: 'Arlige trends med projektioner.', icon: 'trending_up' }, { title: 'Reguleringsnoter', desc: 'Landespecifikke compliance-noter.', icon: 'gavel' }], pricingTitle: 'Rapportpriser', pricingDesc: 'Priser baseret pa rapportens omfang.', pricingTiers: [{ name: 'Enkelt land', price: 'Fra 990', features: ['1 land, op til 20 kategorier', 'PDF + Excel', '5 arbejdsdage'] }, { name: 'Flere lande', price: 'Fra 2.490', features: ['3-5 lande', 'PDF + Excel + HTML'] }, { name: 'Paneuropaeisk', price: 'Fra 4.990', features: ['Alle 27 EU-lande', 'Interaktivt dashboard'] }], formTitle: 'Anmod om din rapport', formDesc: 'Fortael os hvad du har brug for.', formLabels: { name: 'Fulde navn', email: 'Arbejdsmail', company: 'Virksomhed', countries: 'Lande', jobCategories: 'Jobkategorier', reportType: 'Rapporttype', submit: 'Anmod om rapport' }, reportTypeOptions: ['Enkelt land', 'Flerlandesammenligning', 'Paneuropaeisk', 'Lonsgab-audit', 'Tilpasset'], successMsg: 'Tak! Vi sender et forslag inden for 24 timer.', faq: [{ question: 'Hvor lang tid tager det?', answer: '5 arbejdsdage. Express 2-3 dage.' }, { question: 'Hvilke datakilder?', answer: '12M+ datapunkter fra Eurostat.' }, { question: 'Kan vi white-labele?', answer: 'Ja, inkluderet i prisen.' }, { question: 'Hvilke formater?', answer: 'PDF, Excel og HTML.' }, { question: 'Regelmæssige opdateringer?', answer: 'Ja, med 40% rabat.' }] },
+  fi: { h1: 'Tarvitsetko raataloitua palkkaraporttia markkinoillesi?', metaTitle: 'Pyda raaataloitu palkkaraportti | EuroSalary.eu', metaDesc: 'Pyda raataloitu palkkaraportti maittesi, ammattikategorioittesi ja kokemustasojesi mukaan.', home: 'Koti', enterprise: 'Enterprise', breadcrumb: 'Raataloitu raportti', introAnswer: 'EuroSalaryn raataloidyt raportit tarjoavat institutionaalista palkka-benchmarking-dataa.', tldr: ['Raportit 27 EU-maalle ja 200+ ammattikategorialle', 'White-label omalla brandillasi', 'Toimitus 5 arkipaivassa'], heroSubtitle: 'Lopeta yleisten palkkatutkimusten maksaminen.', sampleTitle: 'Mita raportti sisaltaa', sampleDesc: 'Jokainen raportti perustuu 12M+ datapisteeseen.', sampleFeatures: [{ title: 'Benchmarkit kokemustason mukaan', desc: 'Yksityiskohtaiset palkkahaitat.', icon: 'bar_chart' }, { title: 'Elinkustannuskorjaukset', desc: 'PPP-normalisoidut tiedot.', icon: 'account_balance' }, { title: 'Sukupuolten palkkakuiluanalyysi', desc: 'Tiedot kategorioittain ja maittain.', icon: 'balance' }, { title: 'Kilpailupositiointi', desc: 'Vertaa pakettejasi markkinaan.', icon: 'leaderboard' }, { title: 'Trendiennusteet', desc: 'Vuosittaiset trendit 12 kk ennusteilla.', icon: 'trending_up' }, { title: 'Saantelymuistiinpanot', desc: 'Maakohtaiset vaatimustenmukaisuusmerkinnst.', icon: 'gavel' }], pricingTitle: 'Raporttien hinnat', pricingDesc: 'Hinnat perustuvat raportin laajuuteen.', pricingTiers: [{ name: 'Yksittainen maa', price: 'Alkaen 990', features: ['1 maa, max 20 kategoriaa', 'PDF + Excel', '5 arkipaivaa'] }, { name: 'Useita maita', price: 'Alkaen 2 490', features: ['3-5 maata', 'PDF + Excel + HTML'] }, { name: 'Koko Eurooppa', price: 'Alkaen 4 990', features: ['Kaikki 27 EU-maata', 'Interaktiivinen dashboard'] }], formTitle: 'Pyda raporttisi', formDesc: 'Kerro tarpeesi ja lahetamme tarjouksen 24 tunnissa.', formLabels: { name: 'Koko nimi', email: 'Tyosahkoposti', company: 'Yritys', countries: 'Maat', jobCategories: 'Ammattikategoriat', reportType: 'Raporttityyppi', submit: 'Pyda raportti' }, reportTypeOptions: ['Yksittainen maa', 'Monimaavertailu', 'Koko Eurooppa', 'Palkkakuiluauditointi', 'Mukautettu'], successMsg: 'Kiitos! Lahetamme tarjouksen 24 tunnissa.', faq: [{ question: 'Kauanko raportin teko kestaa?', answer: '5 arkipaivaa. Express 2-3 paivaa.' }, { question: 'Mitka datalahteet?', answer: '12M+ datapistetta Eurostatista.' }, { question: 'Voimmeko white-labeloida?', answer: 'Kylla, sisaltyy hintaan.' }, { question: 'Mitka formaatit?', answer: 'PDF, Excel ja HTML.' }, { question: 'Saannolliset paivitykset?', answer: 'Kylla, 40% alennuksella.' }] },
+  el: { h1: 'Xreiazetse mia prosarmosmeni anafora misthon gia tis agores sas?', metaTitle: 'Aitiste prosarmosmeni anafora misthon | EuroSalary.eu', metaDesc: 'Aitiste prosarmosmeni anafora misthon gia tis xores, epagelmatikes katigories kai epipeda empeirias sas.', home: 'Arxiki', enterprise: 'Enterprise', breadcrumb: 'Prosarmosmeni anafora', introAnswer: 'Oi prosarmosmenes anafores EuroSalary parexoun thesmika dedomena benchmarking misthon.', tldr: ['Anafores gia 27 xores tis EE kai 200+ katigories', 'White-label me to brand sas', 'Paradosi se 5 ergasimes meres'], heroSubtitle: 'Stamatiste na plironete gia generikes erevnes misthon.', sampleTitle: 'Ti perilamvanei i anafora', sampleDesc: 'Kathe anafora vasizetai se 12M+ simeia dedomenon.', sampleFeatures: [{ title: 'Benchmarks ana epipedo', desc: 'Analutika fasmata misthon.', icon: 'bar_chart' }, { title: 'Prosarmoges kostous zois', desc: 'Dedomena kanonikopoimena me PPP.', icon: 'account_balance' }, { title: 'Analusi xasmatos misthon fulon', desc: 'Dedomena ana katigoria kai xora.', icon: 'balance' }, { title: 'Antagonistiki thetisi', desc: 'Sugkrinete ta paketa sas me tin agora.', icon: 'leaderboard' }, { title: 'Provlepseis taseon', desc: 'Etisies taseis me provlepseis 12 minon.', icon: 'trending_up' }, { title: 'Simeiosis rithmistikis sumorfosis', desc: 'Simeiosis ana xora gia katotatous misthous kai odigia EE.', icon: 'gavel' }], pricingTitle: 'Times anaforon', pricingDesc: 'Oi times vasizoontai sto evros tis anaforas.', pricingTiers: [{ name: 'Mia xora', price: 'Apo 990', features: ['1 xora, eos 20 katigories', 'PDF + Excel', '5 ergasimes meres'] }, { name: 'Polles xores', price: 'Apo 2.490', features: ['3-5 xores', 'PDF + Excel + HTML'] }, { name: 'Paneuropaiki', price: 'Apo 4.990', features: ['Oles 27 xores tis EE', 'Interaktivo dashboard'] }], formTitle: 'Aitiste tin anafora sas', formDesc: 'Peigrapste tis anagkes sas kai stelnoume protasi se 24 ores.', formLabels: { name: 'Plires onoma', email: 'Ergasiako email', company: 'Etaireia', countries: 'Xores', jobCategories: 'Katigories', reportType: 'Tipos anaforas', submit: 'Aitisi anaforas' }, reportTypeOptions: ['Mias xoras', 'Pollon xoron', 'Paneuropaiki', 'Elegxos xasmatos', 'Prosarmosmeni'], successMsg: 'Efxaristoume! Stelnoume protasi se 24 ores.', faq: [{ question: 'Poso xrono xreiazetai?', answer: '5 ergasimes meres.' }, { question: 'Poies piges dedomenon?', answer: '12M+ simeia apo Eurostat.' }, { question: 'Mporoume na valoume to logo mas?', answer: 'Nai, perilamvanetai stin timi.' }, { question: 'Poia format?', answer: 'PDF, Excel kai HTML.' }, { question: 'Taktikes enimerosis?', answer: 'Nai, me 40% ekptosi.' }] },
+  hu: { h1: 'Egyedi berjelentesre van szuksege a piacaihoz?', metaTitle: 'Egyedi berjelentes keres | EuroSalary.eu', metaDesc: 'Kerjen egyedi berjelentest az On orszagaihoz, munkakoreirehez es tapasztalati szintjeihez.', home: 'Fooldal', enterprise: 'Enterprise', breadcrumb: 'Egyedi jelentes', introAnswer: 'Az EuroSalary egyedi jelentsesek intezmenyi szintu ber-benchmarking adatokat nyujtanak.', tldr: ['Jelentesek 27 EU-orszagra es 200+ munkakorre', 'White-label az On brandingevel', 'Szallitas 5 munkanapon belul'], heroSubtitle: 'Ne fizessen generikus berfelmeresekert.', sampleTitle: 'Mit tartalmaz a jelentes', sampleDesc: 'Minden jelentes 12M+ adatponton alapul.', sampleFeatures: [{ title: 'Benchmarkok tapasztalati szint szerint', desc: 'Reszletes bersavok.', icon: 'bar_chart' }, { title: 'Megelhetsegi koltseg korrekcio', desc: 'PPP-normalizalt adatok.', icon: 'account_balance' }, { title: 'Nemek kozti berkulos elemzes', desc: 'Adatok kategorank es orszagonkent.', icon: 'balance' }, { title: 'Versenypozicio', desc: 'Hasonlitsa ossze csomagjait a piaccal.', icon: 'leaderboard' }, { title: 'Trendi elorejelzesek', desc: 'Eves trendek 12 honapos elorojelzesekkel.', icon: 'trending_up' }, { title: 'Szabalyozasi megjegyzesek', desc: 'Orszagonkenti megfelelesegi jegyzetik.', icon: 'gavel' }], pricingTitle: 'Jelentes arak', pricingDesc: 'Az arak a jelentes terjedelmn alapulnak.', pricingTiers: [{ name: 'Egyetlen orszag', price: '990-tol', features: ['1 orszag, max 20 kategoria', 'PDF + Excel', '5 munkanap'] }, { name: 'Tobb orszag', price: '2 490-tol', features: ['3-5 orszag', 'PDF + Excel + HTML'] }, { name: 'Paneuropai', price: '4 990-tol', features: ['Mind a 27 EU-orszag', 'Interaktiv dashboard'] }], formTitle: 'Kerje jelenteset', formDesc: 'Irja le igenyet es 24 oran belul kuldjuk az ajanlotot.', formLabels: { name: 'Teljes nev', email: 'Munkahelyi email', company: 'Cegnev', countries: 'Orszagok', jobCategories: 'Munkakorok', reportType: 'Jelentes tipusa', submit: 'Jelentes keres' }, reportTypeOptions: ['Egy orszag', 'Tobb orszag osszehasonlitas', 'Paneuropai', 'Berkulos audit', 'Egyedi'], successMsg: 'Koszonjuk! 24 oran belul kuldjuk az ajanlotot.', faq: [{ question: 'Mennyi ido?', answer: '5 munkanap. Express 2-3 nap.' }, { question: 'Milyen adatforrasok?', answer: '12M+ adatpont az Eurostatbol.' }, { question: 'White-label?', answer: 'Igen, az arba foglalt.' }, { question: 'Milyen formatumok?', answer: 'PDF, Excel es HTML.' }, { question: 'Rendszeres frissitesek?', answer: 'Igen, 40% kedvezmeny.' }] },
+  sk: { h1: 'Potrebujete zakazkovu platovu spravu pre vase trhy?', metaTitle: 'Poziadajte o zakazkovu platovu spravu | EuroSalary.eu', metaDesc: 'Poziadajte o zakazkovu platovu spravu pokryvajucu vase krajiny a kategorie pozicii.', home: 'Domov', enterprise: 'Enterprise', breadcrumb: 'Zakazkova sprava', introAnswer: 'Zakazkove spravy EuroSalary dodavaju institucionalne data pre benchmarking platov.', tldr: ['Spravy pre 27 krajin EU a 200+ kategorii', 'White-label s vasim brandem', 'Dodanie do 5 pracovnych dni'], heroSubtitle: 'Prestan platit za genericke prieskumy.', sampleTitle: 'Co sprava obsahuje', sampleDesc: 'Kazda sprava vychadza z 12M+ datovych bodov.', sampleFeatures: [{ title: 'Benchmarky podla seniority', desc: 'Detailne platove rozpätia.', icon: 'bar_chart' }, { title: 'Upravy nakladov na zivot', desc: 'Data normalizovane podla PPP.', icon: 'account_balance' }, { title: 'Analyza platoveho rozdielu', desc: 'Data o rozdiele pre kazdu kategoriu.', icon: 'balance' }, { title: 'Konkurencna pozicia', desc: 'Porovnajte svoje balicky s trhom.', icon: 'leaderboard' }, { title: 'Prognozy trendov', desc: 'Rocne trendy s projekciami.', icon: 'trending_up' }, { title: 'Regulacne poznamky', desc: 'Poznamky o sulade pre kazdu krajinu.', icon: 'gavel' }], pricingTitle: 'Cennik sprav', pricingDesc: 'Ceny podla rozsahu spravy.', pricingTiers: [{ name: 'Jedna krajina', price: 'Od 990', features: ['1 krajina, do 20 kategorii', 'PDF + Excel', '5 pracovnych dni'] }, { name: 'Viac krajin', price: 'Od 2 490', features: ['3-5 krajin', 'PDF + Excel + HTML'] }, { name: 'Celoeeuropska', price: 'Od 4 990', features: ['Vsetkych 27 krajin EU', 'Interaktivny dashboard'] }], formTitle: 'Poziadajte o spravu', formDesc: 'Vyplnte formular a posleme ponuku do 24 hodin.', formLabels: { name: 'Meno', email: 'Pracovny email', company: 'Firma', countries: 'Krajiny', jobCategories: 'Kategorie', reportType: 'Typ spravy', submit: 'Poziadat o spravu' }, reportTypeOptions: ['Jednorazova krajina', 'Viac krajin', 'Celoeeuropska', 'Audit rozdielu', 'Na mieru'], successMsg: 'Dakujeme! Posleme ponuku do 24 hodin.', faq: [{ question: 'Ako dlho trva priprava?', answer: '5 pracovnych dni.' }, { question: 'Jake zdroje dat?', answer: '12M+ bodov z Eurostatu.' }, { question: 'White-label?', answer: 'Ano, zahrute v cene.' }, { question: 'Formaty?', answer: 'PDF, Excel a HTML.' }, { question: 'Pravidelne aktualizacie?', answer: 'Ano, so 40% zlavou.' }] },
+  bg: { h1: 'Nuzhden li ste ot personaliziran doklad za zaplatite za vashite pazari?', metaTitle: 'Zajavete personaliziran doklad za zaplati | EuroSalary.eu', metaDesc: 'Zajavete personaliziran doklad za zaplatite za vashite strani i kategorii.', home: 'Nachalo', enterprise: 'Enterprise', breadcrumb: 'Personaliziran doklad', introAnswer: 'Personaliziranite dokladi na EuroSalary predostavyat institutsionalni danni za benchmarking na zaplatite.', tldr: ['Dokladi za 27 strani na ES i 200+ kategorii', 'White-label s vashiya brand', 'Dostavka za 5 rabotni dni'], heroSubtitle: 'Sprete da plashtate za generichni prouchvaniya.', sampleTitle: 'Kakvo sadarjda dokladat', sampleDesc: 'Vseki doklad e izyaden ot 12M+ tochki danni.', sampleFeatures: [{ title: 'Benchmarkove po opitnost', desc: 'Podrobni diapazonj na zaplatite.', icon: 'bar_chart' }, { title: 'Korektsjii na razkhodite', desc: 'Danni normalizirani po PPP.', icon: 'account_balance' }, { title: 'Analiz na razlikata v zaplashtaneto', desc: 'Danni po kategoriya i strana.', icon: 'balance' }, { title: 'Konkurentna pozitsiya', desc: 'Sravnete paketite si s pazara.', icon: 'leaderboard' }, { title: 'Prognozi na tendentsiite', desc: 'Godishni tendentsii s proektsii.', icon: 'trending_up' }, { title: 'Regulatorni belejki', desc: 'Belejki za saotvetstvie po strana.', icon: 'gavel' }], pricingTitle: 'Tseni na dokladite', pricingDesc: 'Tsenite se bazirat na obkhvata.', pricingTiers: [{ name: 'Edna strana', price: 'Ot 990', features: ['1 strana', 'PDF + Excel', '5 rabotni dni'] }, { name: 'Nyakolko strani', price: 'Ot 2 490', features: ['3-5 strani', 'PDF + Excel + HTML'] }, { name: 'Tsyala Evropa', price: 'Ot 4 990', features: ['Vsichki 27 strani', 'Interaktivno dashboard'] }], formTitle: 'Zajavete doklad', formDesc: 'Popalnete i izprashtame oferta za 24 chasa.', formLabels: { name: 'Ime', email: 'Slujeben email', company: 'Kompaniya', countries: 'Strani', jobCategories: 'Kategorii', reportType: 'Tip doklad', submit: 'Zajavete doklad' }, reportTypeOptions: ['Edna strana', 'Mnogo strani', 'Tsyala Evropa', 'Audit na razlikata', 'Po porchka'], successMsg: 'Blagodarim! Izprashtame oferta za 24 chasa.', faq: [{ question: 'Kolko vreme e nuzhno?', answer: '5 rabotni dni.' }, { question: 'Kakvi iztochnitsi?', answer: '12M+ tochki ot Eurostat.' }, { question: 'White-label?', answer: 'Da, vkljucheno v tsenata.' }, { question: 'Formati?', answer: 'PDF, Excel i HTML.' }, { question: 'Redovni aktualizatsii?', answer: 'Da, s 40% otstapka.' }] },
+  hr: { h1: 'Trebate li prilagodeno izvjesce o placama za svoja trzista?', metaTitle: 'Zatrazite prilagodeno izvjesce o placama | EuroSalary.eu', metaDesc: 'Zatrazite prilagodeno izvjesce o placama za vase zemlje, kategorije i razine iskustva.', home: 'Pocetna', enterprise: 'Enterprise', breadcrumb: 'Prilagodeno izvjesce', introAnswer: 'Prilagodena izvjesca EuroSalary pruzaju institucionalne benchmarking podatke o placama.', tldr: ['Izvjesca za 27 EU zemalja i 200+ kategorija', 'White-label s vasim brandom', 'Dostava u 5 radnih dana'], heroSubtitle: 'Prestanite placati za genericka istrazivanja.', sampleTitle: 'Sto izvjesce sadrzi', sampleDesc: 'Svako izvjesce temelji se na 12M+ podatkovnih tocaka.', sampleFeatures: [{ title: 'Benchmarkovi po razini', desc: 'Detaljni rasponi placa.', icon: 'bar_chart' }, { title: 'Prilagodbe troskova zivota', desc: 'Podaci normalizirani po PPP.', icon: 'account_balance' }, { title: 'Analiza jaza u placama', desc: 'Podaci po kategoriji i zemlji.', icon: 'balance' }, { title: 'Konkurentska pozicija', desc: 'Usporedite pakete s trzistem.', icon: 'leaderboard' }, { title: 'Prognoze trendova', desc: 'Godisnji trendovi s projekcijama.', icon: 'trending_up' }, { title: 'Regulatorne biljeske', desc: 'Biljeske o uskladenosti po zemlji.', icon: 'gavel' }], pricingTitle: 'Cijene izvjesca', pricingDesc: 'Cijene ovise o opsegu.', pricingTiers: [{ name: 'Jedna zemlja', price: 'Od 990', features: ['1 zemlja', 'PDF + Excel', '5 radnih dana'] }, { name: 'Vise zemalja', price: 'Od 2.490', features: ['3-5 zemalja', 'PDF + Excel + HTML'] }, { name: 'Paneuropsko', price: 'Od 4.990', features: ['Svih 27 EU zemalja', 'Interaktivna nadzorna ploca'] }], formTitle: 'Zatrazite izvjesce', formDesc: 'Ispunite obrazac i saljemo ponudu u 24 sata.', formLabels: { name: 'Ime', email: 'Poslovni email', company: 'Tvrtka', countries: 'Zemlje', jobCategories: 'Kategorije', reportType: 'Tip izvjesca', submit: 'Zatrazi izvjesce' }, reportTypeOptions: ['Jedna zemlja', 'Vise zemalja', 'Paneuropsko', 'Audit jaza', 'Prilagodeno'], successMsg: 'Hvala! Saljemo ponudu u 24 sata.', faq: [{ question: 'Koliko traje priprema?', answer: '5 radnih dana.' }, { question: 'Koji izvori podataka?', answer: '12M+ tocaka iz Eurostata.' }, { question: 'White-label?', answer: 'Da, ukljuceno u cijenu.' }, { question: 'Formati?', answer: 'PDF, Excel i HTML.' }, { question: 'Redovita azuriranja?', answer: 'Da, s 40% popustom.' }] },
+  sl: { h1: 'Potrebujete prilagojeno porocilo o placah za vase trge?', metaTitle: 'Zaprosite prilagojeno porocilo o placah | EuroSalary.eu', metaDesc: 'Zaprosite prilagojeno porocilo za vase drzave, kategorije delovnih mest in ravni izkusenj.', home: 'Domov', enterprise: 'Enterprise', breadcrumb: 'Prilagojeno porocilo', introAnswer: 'Prilagojena porocila EuroSalary zagotavljajo institucionalne podatke za primerjavo plac.', tldr: ['Porocila za 27 EU drzav in 200+ kategorij', 'White-label z vasim brandom', 'Dostava v 5 delovnih dneh'], heroSubtitle: 'Prenehajte placevati za genericne raziskave.', sampleTitle: 'Kaj porocilo vsebuje', sampleDesc: 'Vsako porocilo temelji na 12M+ podatkovnih tockah.', sampleFeatures: [{ title: 'Benchmarki po ravni', desc: 'Podrobni razponi plac.', icon: 'bar_chart' }, { title: 'Prilagoditve stroskov zivljenja', desc: 'Podatki normalizirani po PPP.', icon: 'account_balance' }, { title: 'Analiza placilne vrzeli', desc: 'Podatki po kategoriji in drzavi.', icon: 'balance' }, { title: 'Konkurencna pozicija', desc: 'Primerjajte pakete s trgom.', icon: 'leaderboard' }, { title: 'Napovedi trendov', desc: 'Letni trendi s projekcijami.', icon: 'trending_up' }, { title: 'Regulativne opombe', desc: 'Opombe o skladnosti za vsako drzavo.', icon: 'gavel' }], pricingTitle: 'Cene porocil', pricingDesc: 'Cene glede na obseg.', pricingTiers: [{ name: 'Ena drzava', price: 'Od 990', features: ['1 drzava', 'PDF + Excel', '5 delovnih dni'] }, { name: 'Vec drzav', price: 'Od 2.490', features: ['3-5 drzav', 'PDF + Excel + HTML'] }, { name: 'Vseevropsko', price: 'Od 4.990', features: ['Vseh 27 EU drzav', 'Interaktivna nadzorna plosca'] }], formTitle: 'Zaprosite porocilo', formDesc: 'Izpolnite obrazec in poslali bomo ponudbo v 24 urah.', formLabels: { name: 'Ime', email: 'Sluzbeni email', company: 'Podjetje', countries: 'Drzave', jobCategories: 'Kategorije', reportType: 'Tip porocila', submit: 'Zaprosite porocilo' }, reportTypeOptions: ['Ena drzava', 'Vec drzav', 'Vseevropsko', 'Audit vrzeli', 'Prilagojeno'], successMsg: 'Hvala! Poslali bomo ponudbo v 24 urah.', faq: [{ question: 'Koliko casa traja?', answer: '5 delovnih dni.' }, { question: 'Kateri viri podatkov?', answer: '12M+ tock iz Eurostata.' }, { question: 'White-label?', answer: 'Da, vkljuceno v ceno.' }, { question: 'Formati?', answer: 'PDF, Excel in HTML.' }, { question: 'Redne posodobitve?', answer: 'Da, s 40% popustom.' }] },
+  lt: { h1: 'Reikia individualios atlyginimo ataskaitos jusu rinkoms?', metaTitle: 'Usakykite individualia atlyginimo ataskaita | EuroSalary.eu', metaDesc: 'Usakykite individualia atlyginimo ataskaita jusu salims, darbo kategorijoms ir patirties lygiams.', home: 'Pradzia', enterprise: 'Enterprise', breadcrumb: 'Individuali ataskaita', introAnswer: 'EuroSalary individualios ataskaitos pateikia institucinius atlyginimo benchmarking duomenis.', tldr: ['Ataskaitos 27 ES salims ir 200+ kategorijoms', 'White-label su jusu prekzenklu', 'Pristatymas per 5 darbo dienas'], heroSubtitle: 'Nustokite moketi uz bendrines apklausas.', sampleTitle: 'Ka apima ataskaita', sampleDesc: 'Kiekviena ataskaita remiasi 12M+ duomenu tasku.', sampleFeatures: [{ title: 'Benchmarkai pagal lygi', desc: 'Detalus atlyginimo diapazonai.', icon: 'bar_chart' }, { title: 'Pragyvenimo isnlaidu koregavimai', desc: 'PPP normalizuoti duomenys.', icon: 'account_balance' }, { title: 'Lyciu darbo uzmokescio atotrukio analize', desc: 'Duomenys pagal kategorija ir sali.', icon: 'balance' }, { title: 'Konkurencine pozicija', desc: 'Palyginkite savo paketus su rinka.', icon: 'leaderboard' }, { title: 'Tendenciju prognozes', desc: 'Metines tendencijos su projekcijomis.', icon: 'trending_up' }, { title: 'Reguliavimo pastabos', desc: 'Saliu atitikties pastabos.', icon: 'gavel' }], pricingTitle: 'Ataskaitu kainos', pricingDesc: 'Kainos priklauso nuo apimties.', pricingTiers: [{ name: 'Viena salis', price: 'Nuo 990', features: ['1 salis', 'PDF + Excel', '5 darbo dienos'] }, { name: 'Kelios salys', price: 'Nuo 2 490', features: ['3-5 salys', 'PDF + Excel + HTML'] }, { name: 'Visa Europa', price: 'Nuo 4 990', features: ['Visos 27 ES salys', 'Interaktyvus dashboard'] }], formTitle: 'Usakykite ataskaita', formDesc: 'Uepildykite forma ir atsisesime pasiulyma per 24 val.', formLabels: { name: 'Vardas', email: 'Darbo el. pastas', company: 'Imone', countries: 'Salys', jobCategories: 'Kategorijos', reportType: 'Ataskaitos tipas', submit: 'Usakyti ataskaita' }, reportTypeOptions: ['Viena salis', 'Keliu saliu', 'Visa Europa', 'Atotrukio auditas', 'Individuali'], successMsg: 'Aciu! Issiusime pasiulyma per 24 val.', faq: [{ question: 'Kiek laiko uzima?', answer: '5 darbo dienos.' }, { question: 'Kokie saltiniai?', answer: '12M+ tasku is Eurostat.' }, { question: 'White-label?', answer: 'Taip, iskaityta i kaina.' }, { question: 'Formatai?', answer: 'PDF, Excel ir HTML.' }, { question: 'Reguliarus atnaujinimai?', answer: 'Taip, su 40% nuolaida.' }] },
+  lv: { h1: 'Vai jums ir nepieciesams personalizets algu parskats jusu tirgiem?', metaTitle: 'Pieprasiet personalizetu algu parskatu | EuroSalary.eu', metaDesc: 'Pieprasiet personalizetu algu parskatu jusu valstim, darba kategorijam un pieredzes limeniem.', home: 'Sakums', enterprise: 'Enterprise', breadcrumb: 'Personalizets parskats', introAnswer: 'EuroSalary personalizetie parskati sniedz institucionalus algu benchmarking datus.', tldr: ['Parskati 27 ES valstim un 200+ kategorijam', 'White-label ar jusu zimolu', 'Piegade 5 darba dienu laika'], heroSubtitle: 'Partrauciet maksat par visparigjam aptaujam.', sampleTitle: 'Ko parskats ietver', sampleDesc: 'Katrs parskats balstits uz 12M+ datu punktiem.', sampleFeatures: [{ title: 'Benchmarki pa limeni', desc: 'Detalizeti algu diapazoni.', icon: 'bar_chart' }, { title: 'Dzives izmaksu korekcijas', desc: 'PPP normalizeti dati.', icon: 'account_balance' }, { title: 'Dzimumu algu atskiribu analize', desc: 'Dati pa kategoriju un valsti.', icon: 'balance' }, { title: 'Konkurences pozicija', desc: 'Salidziniet savas paketes ar tirgu.', icon: 'leaderboard' }, { title: 'Tendencu prognozes', desc: 'Ikgadejas tendences ar projekcijam.', icon: 'trending_up' }, { title: 'Regulativas piezimes', desc: 'Atbilstibas piezimes katrai valstij.', icon: 'gavel' }], pricingTitle: 'Parskatu cenas', pricingDesc: 'Cenas atkaribas no apjoma.', pricingTiers: [{ name: 'Viena valsts', price: 'No 990', features: ['1 valsts', 'PDF + Excel', '5 darba dienas'] }, { name: 'Vairakas valstis', price: 'No 2 490', features: ['3-5 valstis', 'PDF + Excel + HTML'] }, { name: 'Visas Eiropas', price: 'No 4 990', features: ['Visas 27 ES valstis', 'Interaktivs dashboard'] }], formTitle: 'Pieprasiet parskatu', formDesc: 'Aizpildiet veidlapu un nosutisim piedavajumu 24 stundu laika.', formLabels: { name: 'Vards', email: 'Darba e-pasts', company: 'Uznemums', countries: 'Valstis', jobCategories: 'Kategorijas', reportType: 'Parskata tips', submit: 'Pieprasit parskatu' }, reportTypeOptions: ['Viena valsts', 'Vairakas valstis', 'Visa Eiropa', 'Atskiribu audits', 'Individuall'], successMsg: 'Paldies! Nosutisim piedavajumu 24 stundu laika.', faq: [{ question: 'Cik ilgi?', answer: '5 darba dienas.' }, { question: 'Kadi datu avoti?', answer: '12M+ punktu no Eurostat.' }, { question: 'White-label?', answer: 'Ja, ieklauts cena.' }, { question: 'Formati?', answer: 'PDF, Excel un HTML.' }, { question: 'Regulari atjauninajumi?', answer: 'Ja, ar 40% atlaidi.' }] },
+  et: { h1: 'Kas vajate kohandatud palgaaruannet oma turgude jaoks?', metaTitle: 'Taotlege kohandatud palgaaruannet | EuroSalary.eu', metaDesc: 'Taotlege kohandatud palgaaruannet oma riikide, ametikategooriate ja kogemustasemete jaoks.', home: 'Avaleht', enterprise: 'Enterprise', breadcrumb: 'Kohandatud aruanne', introAnswer: 'EuroSalary kohandatud aruanded pakuvad institutsionaalset palga-benchmarking andmeid.', tldr: ['Aruanded 27 EL-i riigile ja 200+ kategooriale', 'White-label teie brandinguga', 'Tarnimine 5 toopáeva jooksul'], heroSubtitle: 'Lopetage uldiste palgauuringute eest maksmine.', sampleTitle: 'Mida aruanne sisaldab', sampleDesc: 'Iga aruanne pohineb 12M+ andmepunktil.', sampleFeatures: [{ title: 'Benchmarkid taseme jargi', desc: 'Uksikasjalikud palgavahemikud.', icon: 'bar_chart' }, { title: 'Elukalliduse kohandused', desc: 'PPP-normaliseeritud andmed.', icon: 'account_balance' }, { title: 'Sooline palgaluhe analyys', desc: 'Andmed kategooria ja riigi kaupa.', icon: 'balance' }, { title: 'Konkurentsipositsioon', desc: 'Vordlege oma pakette turuga.', icon: 'leaderboard' }, { title: 'Trendiprognossid', desc: 'Aastased trendid 12 kuu prognoosidega.', icon: 'trending_up' }, { title: 'Regulatiivsed markmed', desc: 'Riigipohised vastavusmärkmed.', icon: 'gavel' }], pricingTitle: 'Aruannete hinnad', pricingDesc: 'Hinnad sooltuvad ulatusest.', pricingTiers: [{ name: 'Uks riik', price: 'Alates 990', features: ['1 riik', 'PDF + Excel', '5 toopaeva'] }, { name: 'Mitu riiki', price: 'Alates 2 490', features: ['3-5 riiki', 'PDF + Excel + HTML'] }, { name: 'Kogu Euroopa', price: 'Alates 4 990', features: ['Koik 27 EL-i riiki', 'Interaktiivne dashboard'] }], formTitle: 'Taotlege aruannet', formDesc: 'Taitke vorm ja saadame pakkumise 24 tunni jooksul.', formLabels: { name: 'Nimi', email: 'Too e-post', company: 'Ettevote', countries: 'Riigid', jobCategories: 'Kategooriad', reportType: 'Aruande tuup', submit: 'Taotle aruannet' }, reportTypeOptions: ['Uks riik', 'Mitu riiki', 'Kogu Euroopa', 'Palgaluhe audit', 'Kohandatud'], successMsg: 'Tanan! Saadame pakkumise 24 tunni jooksul.', faq: [{ question: 'Kui kaua?', answer: '5 toopaeva.' }, { question: 'Millised allikad?', answer: '12M+ punkti Eurostatist.' }, { question: 'White-label?', answer: 'Jah, hinnas sees.' }, { question: 'Formaadid?', answer: 'PDF, Excel ja HTML.' }, { question: 'Regulaarsed varskendused?', answer: 'Jah, 40% soodsamalt.' }] },
+  mt: { h1: 'Ghandek bzonn rapport personalizzat dwar is-salarji ghas-swieq tieghek?', metaTitle: 'Itlob rapport personalizzat dwar is-salarji | EuroSalary.eu', metaDesc: 'Itlob rapport personalizzat dwar is-salarji ghall-pajjizi, kategoriji u livelli ta esperjenza tieghek.', home: 'Dar', enterprise: 'Enterprise', breadcrumb: 'Rapport personalizzat', introAnswer: 'Ir-rapporti personalizzati ta EuroSalary jipprovdu dejta ta benchmarking tas-salarji ta livell istituzzjonali.', tldr: ['Rapporti ghal 27 pajjiz tal-UE u 200+ kategoriji', 'White-label bil-brand tieghek', 'Konsenja fi 5 ijiem tax-xoghol'], heroSubtitle: 'Ieqaf thallas ghal surveys generici dwar is-salarji.', sampleTitle: 'Xi fih ir-rapport', sampleDesc: 'Kull rapport huwa mibni minn 12M+ punti ta dejta.', sampleFeatures: [{ title: 'Benchmarks skont livell', desc: 'Medda dettaljati ta salarji.', icon: 'bar_chart' }, { title: 'Aggjustamenti ghall-gholi tal-hajja', desc: 'Dejta normalizzata bil-PPP.', icon: 'account_balance' }, { title: 'Analisi tal-qasma fis-salarji', desc: 'Dejta skont kategorija u pajjiz.', icon: 'balance' }, { title: 'Pozizzjoni kompetittiva', desc: 'Qabbel il-pakketti tieghek mas-suq.', icon: 'leaderboard' }, { title: 'Tbassir ta tendenzi', desc: 'Tendenzi annwali b\'projezzjonijiet.', icon: 'trending_up' }, { title: 'Noti regolatorji', desc: 'Noti ta konformita ghal kull pajjiz.', icon: 'gavel' }], pricingTitle: 'Prezzijiet tar-rapporti', pricingDesc: 'Il-prezzijiet huma bbazati fuq il-firxa.', pricingTiers: [{ name: 'Pajjiz wiehed', price: 'Minn 990', features: ['1 pajjiz', 'PDF + Excel', '5 ijiem tax-xoghol'] }, { name: 'Diversi pajjizi', price: 'Minn 2,490', features: ['3-5 pajjizi', 'PDF + Excel + HTML'] }, { name: 'Pan-Ewropea', price: 'Minn 4,990', features: ['27 pajjiz kollha', 'Dashboard interattiv'] }], formTitle: 'Itlob ir-rapport tieghek', formDesc: 'Imla l-formola u nibaghtuk proposta fi 24 siegha.', formLabels: { name: 'Isem', email: 'Email tax-xoghol', company: 'Kumpanija', countries: 'Pajjizi', jobCategories: 'Kategoriji', reportType: 'Tip ta rapport', submit: 'Itlob rapport' }, reportTypeOptions: ['Pajjiz wiehed', 'Diversi pajjizi', 'Pan-Ewropea', 'Awditu tal-qasma', 'Personalizzat'], successMsg: 'Grazzi! Nibaghtuk proposta fi 24 siegha.', faq: [{ question: 'Kemm jiehu zmien?', answer: '5 ijiem tax-xoghol.' }, { question: 'Liema sorsi ta dejta?', answer: '12M+ punti minn Eurostat.' }, { question: 'White-label?', answer: 'Iva, inkluza fil-prezz.' }, { question: 'Formats?', answer: 'PDF, Excel u HTML.' }, { question: 'Aggornar regolari?', answer: 'Iva, b\'40% skont.' }] },
+  ga: { h1: 'An bhfuil tuarascail tuarastail saincheaptha ag teastail uait do do mhargai?', metaTitle: 'Iarr tuarascail tuarastail saincheaptha | EuroSalary.eu', metaDesc: 'Iarr tuarascail tuarastail saincheaptha do do thiorda, catagoir post agus leibheil taithí.', home: 'Baile', enterprise: 'Fiontar', breadcrumb: 'Tuarascail saincheaptha', introAnswer: 'Solathraonn tuarascalacha saincheaptha EuroSalary sonrai tagarmarcaiochta tuarastail d\'institiuid.', tldr: ['Tuarascalacha do 27 tir AE agus 200+ catagoir', 'Bainleibheal le do bhrandu', 'Seachadadh i 5 la gno'], heroSubtitle: 'Stop ag ioc as suirbhenna generacha tuarastail.', sampleTitle: 'Cad ata sa tuarascail', sampleDesc: 'Ta gach tuarascail bunaithe ar 12M+ pointe sonrai.', sampleFeatures: [{ title: 'Tagarmarcanna de reir leibheil', desc: 'Raoin tuarastail mionsonraithe.', icon: 'bar_chart' }, { title: 'Coigeartuithe costais mhaireachtala', desc: 'Sonrai normalaithe de reir PPP.', icon: 'account_balance' }, { title: 'Anailisi ar an mbearna pha', desc: 'Sonrai de reir catagoir agus tir.', icon: 'balance' }, { title: 'Suiomh iomaioach', desc: 'Cuir do phacaisti i gcomparaid leis an margadh.', icon: 'leaderboard' }, { title: 'Reimhaisnéisí treochta', desc: 'Treochtai bliantuila le tuar 12 mi.', icon: 'trending_up' }, { title: 'Notai rialachatn', desc: 'Notai comhlionachta do gach tir.', icon: 'gavel' }], pricingTitle: 'Praghsail tuarascalacha', pricingDesc: 'Braitheann praghsanna ar raon feidhme.', pricingTiers: [{ name: 'Tir amhain', price: 'O 990', features: ['1 tir', 'PDF + Excel', '5 la gno'] }, { name: 'Il-thir', price: 'O 2,490', features: ['3-5 tir', 'PDF + Excel + HTML'] }, { name: 'Pan-Eorpach', price: 'O 4,990', features: ['Gach 27 tir AE', 'Deaisboird idirghniomhach'] }], formTitle: 'Iarr do thuarascail', formDesc: 'Lion an fhoirm agus seolfaimid togra i 24 uair.', formLabels: { name: 'Ainm', email: 'Rphost oibre', company: 'Cuideachta', countries: 'Tiorda', jobCategories: 'Catagoir', reportType: 'Cineail tuarascala', submit: 'Iarr tuarascail' }, reportTypeOptions: ['Tir amhain', 'Il-thir', 'Pan-Eorpach', 'Iniuchadh bearna', 'Saincheaptha'], successMsg: 'Go raibh maith agat! Seolfaimid togra i 24 uair.', faq: [{ question: 'Ce fhad?', answer: '5 la gno.' }, { question: 'Ce foinsí sonrai?', answer: '12M+ pointe o Eurostat.' }, { question: 'Bainleibheal?', answer: 'Sea, san aireamh sa phraghas.' }, { question: 'Formáidí?', answer: 'PDF, Excel agus HTML.' }, { question: 'Nuashonruithe rialta?', answer: 'Sea, le 40% lacaiste.' }] },
+};
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({ params: { lang }, props: { lang } }));
+}
+
+const { lang } = Astro.params;
+const t = fb(i18n, lang) || i18n.en;
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org', '@type': 'Article',
+    headline: t.h1,
+    author: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    datePublished: '2026-04-05', dateModified: '2026-04-05',
+    description: t.metaDesc,
+    mainEntityOfPage: `https://eurosalary.eu/${lang}/enterprise/request-report/`,
+  },
+  {
+    '@context': 'https://schema.org', '@type': 'FAQPage',
+    mainEntity: t.faq.map((item: any) => ({ '@type': 'Question', name: item.question, acceptedAnswer: { '@type': 'Answer', text: item.answer } })),
+  },
+];
+---
+
+<BaseLayout title={t.metaTitle} description={t.metaDesc} datePublished="2026-04-05" dateModified="2026-04-05" schema={pageSchema}>
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{t.home}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a href={`/${lang}/enterprise/`}>{t.enterprise}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{t.breadcrumb}</span>
+      </nav>
+      <h1 class="page-hero__title">{t.h1}</h1>
+      <p class="page-hero__desc">{t.introAnswer}</p>
+      <p class="hero-subtitle">{t.heroSubtitle}</p>
+    </div>
+  </section>
+
+  <article class="container page-body">
+    <TLDRBox items={t.tldr} />
+
+    <!-- Sample Report Preview -->
+    <section class="section">
+      <h2 class="section-title">{t.sampleTitle}</h2>
+      <p class="section-desc">{t.sampleDesc}</p>
+      <div class="features-grid">
+        {t.sampleFeatures.map((f) => (
+          <div class="feature-card">
+            <div class="feature-card__icon"><span class="material-symbols-outlined">{f.icon}</span></div>
+            <h3 class="feature-card__title">{f.title}</h3>
+            <p class="feature-card__desc">{f.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="section">
+      <h2 class="section-title">{t.pricingTitle}</h2>
+      <p class="section-desc">{t.pricingDesc}</p>
+      <div class="pricing-grid">
+        {t.pricingTiers.map((tier, i) => (
+          <div class:list={['pricing-card', { 'pricing-card--featured': i === 1 }]}>
+            <h3 class="pricing-card__name">{tier.name}</h3>
+            <p class="pricing-card__price">&euro;{tier.price}</p>
+            <ul class="pricing-card__features">
+              {tier.features.map((f) => (<li><span class="material-symbols-outlined" style="font-size:16px;color:#2563EB;vertical-align:middle;margin-right:6px;">check</span>{f}</li>))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Form -->
+    <section class="section contact-section" id="contact">
+      <h2 class="section-title">{t.formTitle}</h2>
+      <p class="section-desc">{t.formDesc}</p>
+      <form class="contact-form" id="report-form">
+        <input type="hidden" name="type" value="enterprise" />
+        <input type="hidden" name="source" value="request-report" />
+        <div class="contact-form__row">
+          <div class="contact-form__field">
+            <label for="rr-name">{t.formLabels.name}</label>
+            <input type="text" id="rr-name" name="name" required />
+          </div>
+          <div class="contact-form__field">
+            <label for="rr-email">{t.formLabels.email}</label>
+            <input type="email" id="rr-email" name="email" required />
+          </div>
+        </div>
+        <div class="contact-form__field">
+          <label for="rr-company">{t.formLabels.company}</label>
+          <input type="text" id="rr-company" name="company" required />
+        </div>
+        <div class="contact-form__row">
+          <div class="contact-form__field">
+            <label for="rr-countries">{t.formLabels.countries}</label>
+            <input type="text" id="rr-countries" name="countries" placeholder="e.g. Germany, France, Spain" />
+          </div>
+          <div class="contact-form__field">
+            <label for="rr-type">{t.formLabels.reportType}</label>
+            <select id="rr-type" name="report_type" required>
+              <option value="">—</option>
+              {t.reportTypeOptions.map((opt) => (<option value={opt}>{opt}</option>))}
+            </select>
+          </div>
+        </div>
+        <div class="contact-form__field">
+          <label for="rr-jobs">{t.formLabels.jobCategories}</label>
+          <input type="text" id="rr-jobs" name="job_categories" placeholder="e.g. Software Engineering, Finance, Marketing" />
+        </div>
+        <button type="submit" class="contact-form__submit">{t.formLabels.submit}</button>
+        <p class="form-success" id="report-success" style="display:none;">{t.successMsg}</p>
+      </form>
+    </section>
+
+    <FAQSection items={t.faq} />
+  </article>
+</BaseLayout>
+
+<script>
+  const form = document.getElementById('report-form') as HTMLFormElement;
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form));
+      try {
+        await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+        form.style.display = 'none';
+        document.getElementById('report-success')!.style.display = 'block';
+      } catch (err) { console.error(err); }
+    });
+  }
+</script>
+
+<style>
+  .page-body { padding-top: 2.5rem; padding-bottom: 4rem; }
+  .hero-subtitle { margin-top: 1.5rem; font-size: var(--text-sm); color: rgba(255,255,255,0.7); max-width: 700px; line-height: var(--leading-relaxed); }
+  .section-title { font-family: 'Public Sans', sans-serif; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; color: #0F1F3D; margin-bottom: 0.5rem; }
+  .section-desc { color: #4B5563; margin-bottom: 2rem; max-width: 600px; }
+  .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 1rem; }
+  .feature-card { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 2rem; transition: box-shadow 0.2s ease, border-color 0.2s ease; }
+  .feature-card:hover { border-color: #2563EB; box-shadow: 0 4px 24px rgba(37, 99, 235, 0.08); }
+  .feature-card__icon { width: 48px; height: 48px; border-radius: 10px; background: rgba(37, 99, 235, 0.08); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+  .feature-card__icon .material-symbols-outlined { font-size: 24px; color: #2563EB; }
+  .feature-card__title { font-family: 'Public Sans', sans-serif; font-size: 1.25rem; font-weight: 700; color: #0F1F3D; margin-bottom: 0.5rem; }
+  .feature-card__desc { font-size: var(--text-sm); color: #4B5563; line-height: var(--leading-relaxed); }
+
+  /* Pricing */
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
+  .pricing-card { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 2rem; }
+  .pricing-card--featured { border-color: #2563EB; box-shadow: 0 4px 24px rgba(37, 99, 235, 0.12); position: relative; }
+  .pricing-card__name { font-family: 'Public Sans', sans-serif; font-size: 1.25rem; font-weight: 700; color: #0F1F3D; margin-bottom: 0.5rem; }
+  .pricing-card__price { font-family: 'Public Sans', sans-serif; font-size: 2rem; font-weight: 800; color: #2563EB; margin-bottom: 1.5rem; }
+  .pricing-card__features { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+  .pricing-card__features li { font-size: var(--text-sm); color: #374151; line-height: 1.5; }
+
+  /* Contact form */
+  .contact-section { margin-top: 3rem; }
+  .contact-form { max-width: 640px; display: flex; flex-direction: column; gap: 1.25rem; }
+  .contact-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .contact-form__field { display: flex; flex-direction: column; gap: 0.375rem; }
+  .contact-form__field label { font-size: var(--text-sm); font-weight: 600; color: #0F1F3D; }
+  .contact-form__field input, .contact-form__field textarea, .contact-form__field select { padding: 0.75rem 1rem; border: 1px solid #D1D5DB; border-radius: 8px; font-size: var(--text-sm); color: #111827; background: #FFFFFF; transition: border-color 0.2s ease; }
+  .contact-form__field input:focus, .contact-form__field textarea:focus, .contact-form__field select:focus { outline: none; border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+  .contact-form__submit { align-self: flex-start; padding: 0.875rem 2rem; background: #2563EB; color: #FFFFFF; font-weight: 700; font-size: var(--text-sm); border: none; border-radius: 8px; cursor: pointer; transition: background 0.2s ease; }
+  .contact-form__submit:hover { background: #1D4ED8; }
+  .form-success { color: #16A34A; font-weight: 600; margin-top: 1rem; }
+
+  @media (max-width: 768px) {
+    .features-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .contact-form__row { grid-template-columns: 1fr; }
+  }
+</style>

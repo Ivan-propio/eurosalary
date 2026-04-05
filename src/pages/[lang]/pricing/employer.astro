@@ -1,0 +1,994 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { languages, type Lang } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+const { lang } = Astro.props as { lang: Lang };
+const t = useTranslations(lang as Lang);
+
+// --------------- i18n content ---------------
+const i18n: Record<string, {
+  h1: string;
+  metaTitle: string;
+  metaDesc: string;
+  home: string;
+  pricingLabel: string;
+  breadcrumb: string;
+  introAnswer: string;
+  tldr: string[];
+  plansTitle: string;
+  starter: { name: string; price: string; desc: string; cta: string; features: string[] };
+  pro: { name: string; price: string; desc: string; cta: string; badge: string; features: string[] };
+  ent: { name: string; price: string; desc: string; cta: string; features: string[] };
+  matrixTitle: string;
+  matrixHeaders: string[];
+  matrixRows: { feature: string; starter: string; pro: string; ent: string }[];
+  roiTitle: string;
+  roiDesc: string;
+  roiMetrics: { label: string; value: string }[];
+  useCaseTitle: string;
+  useCases: { title: string; tier: string; desc: string; icon: string }[];
+  trialTitle: string;
+  trialDesc: string;
+  trialCta: string;
+  faq: { question: string; answer: string }[];
+}> = {
+  en: {
+    h1: 'Which EuroSalary Plan Is Right for Your HR Team?',
+    metaTitle: 'Employer & HR Pricing: Starter, Professional & Enterprise | EuroSalary.eu',
+    metaDesc: 'EuroSalary employer pricing: Starter at 99/mo (5 countries), Professional at 299/mo (15 countries, API, custom reports), and Enterprise with full compliance suite.',
+    home: 'Home',
+    pricingLabel: 'Pricing',
+    breadcrumb: 'Employer Pricing',
+    introAnswer: 'EuroSalary offers three employer-focused plans to support compensation strategy at every scale. Starter covers 5 countries with basic reports for 99 per month. Professional expands to 15 countries with API access, custom reports, and priority support for 299 per month. Enterprise delivers everything plus SSO, a dedicated customer success manager, and full EU Pay Transparency compliance tooling.',
+    tldr: [
+      'Starter at 99 per month: 5 countries, basic reports, email support, free trial available',
+      'Professional at 299 per month: 15 countries, API access, custom reports, benchmarking tools',
+      'Enterprise: all features, SSO, dedicated CSM, compliance toolkit, custom pricing',
+    ],
+    plansTitle: 'Employer Plans',
+    starter: {
+      name: 'Starter',
+      price: '\u20AC99/mo',
+      desc: '5 countries, basic reports, and email support. Ideal for small HR teams.',
+      cta: 'Start Free Trial',
+      features: [
+        '5 EU countries',
+        '10 reports per month',
+        'Basic salary benchmarks',
+        'Email support',
+        '2 team seats',
+        'Monthly data updates',
+        'PDF export',
+      ],
+    },
+    pro: {
+      name: 'Professional',
+      price: '\u20AC299/mo',
+      desc: '15 countries, API access, and custom reports for growing teams.',
+      cta: 'Start Free Trial',
+      badge: 'Most Popular',
+      features: [
+        '15 EU countries',
+        '50 reports per month',
+        'Custom salary reports',
+        'API access (10K requests/day)',
+        'Compensation benchmarking',
+        'Priority email support',
+        '10 team seats',
+        'Weekly data updates',
+        'Gender pay gap analysis',
+        'CSV and Excel export',
+      ],
+    },
+    ent: {
+      name: 'Enterprise',
+      price: 'Custom',
+      desc: 'Full platform with SSO, dedicated CSM, and compliance tools.',
+      cta: 'Contact Sales',
+      features: [
+        'All EU countries',
+        'Unlimited reports',
+        'White-label reports',
+        'Full API access (unlimited)',
+        'SSO / SAML integration',
+        'Dedicated customer success manager',
+        'EU Pay Transparency compliance toolkit',
+        'Unlimited team seats',
+        'Real-time data updates',
+        'Custom integrations (SAP, Workday)',
+        'Compliance audit included',
+      ],
+    },
+    matrixTitle: 'Feature Comparison',
+    matrixHeaders: ['Feature', 'Starter', 'Professional', 'Enterprise'],
+    matrixRows: [
+      { feature: 'Countries covered', starter: '5', pro: '15', ent: 'All EU' },
+      { feature: 'Reports per month', starter: '10', pro: '50', ent: 'Unlimited' },
+      { feature: 'API access', starter: '\u2014', pro: '10K req/day', ent: 'Unlimited' },
+      { feature: 'Compliance toolkit', starter: '\u2014', pro: 'Basic', ent: 'Full suite' },
+      { feature: 'Benchmarking', starter: 'Basic', pro: 'Advanced', ent: 'Custom' },
+      { feature: 'Team seats', starter: '2', pro: '10', ent: 'Unlimited' },
+      { feature: 'Support level', starter: 'Email', pro: 'Priority email', ent: 'Dedicated CSM' },
+      { feature: 'Data refresh', starter: 'Monthly', pro: 'Weekly', ent: 'Real-time' },
+      { feature: 'Gender pay gap analysis', starter: '\u2014', pro: '\u2713', ent: '\u2713' },
+      { feature: 'Custom integrations', starter: '\u2014', pro: '\u2014', ent: '\u2713' },
+    ],
+    roiTitle: 'ROI: Why Companies Choose EuroSalary',
+    roiDesc: 'Companies using EuroSalary save an average of 15% on compensation benchmarking costs compared to traditional consulting engagements.',
+    roiMetrics: [
+      { label: 'Average savings on benchmarking costs', value: '15%' },
+      { label: 'Time saved per compensation review cycle', value: '70%' },
+      { label: 'Faster pay equity compliance readiness', value: '3x' },
+      { label: 'Average payback period', value: '< 2 months' },
+    ],
+    useCaseTitle: 'Best For',
+    useCases: [
+      { title: 'Small HR Teams', tier: 'Starter', desc: 'A startup with 50 employees in 2 EU markets needs basic salary benchmarks to set competitive offers. Starter provides the essential data without overwhelming complexity.', icon: 'groups' },
+      { title: 'Growing Compensation Teams', tier: 'Professional', desc: 'A mid-size company with 500 employees across 8 countries needs custom reports for board presentations and API access for their HRIS integration.', icon: 'trending_up' },
+      { title: 'Enterprise HR Operations', tier: 'Enterprise', desc: 'A multinational with 5,000+ employees needs white-label reports, SSO for their security team, and full compliance tooling for the EU Pay Transparency Directive.', icon: 'corporate_fare' },
+    ],
+    trialTitle: 'Start Your Free 14-Day Trial',
+    trialDesc: 'Try any plan risk-free for 14 days. No credit card required. Full access to all features in your chosen tier.',
+    trialCta: 'Start Free Trial',
+    faq: [
+      { question: 'What countries are covered in each plan?', answer: 'Starter covers the 5 largest EU economies: Germany, France, Italy, Spain, and the Netherlands. Professional covers all 15 EU countries in our database. Enterprise covers all EU countries with the option to add non-EU markets on request.' },
+      { question: 'Can we generate custom reports for board presentations?', answer: 'Professional and Enterprise plans include custom report generation. You can select specific countries, job families, seniority levels, and time periods. Reports are available in PDF, Excel, and interactive HTML formats with your company branding on Enterprise plans.' },
+      { question: 'How does the compensation benchmarking tool work?', answer: 'Upload your current salary bands and the tool compares them against EuroSalary market data, showing where you are positioned relative to the 25th, 50th, and 75th percentiles. Professional plans get basic benchmarking, Enterprise plans get custom peer group selection.' },
+      { question: 'Is the platform compliant with EU Pay Transparency requirements?', answer: 'Enterprise plans include a full EU Pay Transparency Directive compliance toolkit with automated gender pay gap analysis, country-specific disclosure templates, and audit-ready documentation. Professional plans include basic pay gap reporting.' },
+      { question: 'Can we integrate EuroSalary with our existing HR systems?', answer: 'Professional plans include API access for custom integrations. Enterprise plans offer pre-built connectors for SAP SuccessFactors, Workday, BambooHR, and Personio, plus custom integration support from our engineering team.' },
+      { question: 'What happens after the free trial ends?', answer: 'After 14 days, you can choose to subscribe to your selected plan or downgrade to the free tier. No automatic charges. Your data and configurations are preserved for 30 days after trial expiry so you can upgrade without losing work.' },
+    ],
+  },
+  fr: {
+    h1: 'Quel plan EuroSalary convient a votre equipe RH ?',
+    metaTitle: 'Tarifs Employeur & RH : Starter, Professionnel & Enterprise | EuroSalary.eu',
+    metaDesc: 'Tarifs employeur EuroSalary : Starter a 99/mois (5 pays), Professionnel a 299/mois (15 pays, API, rapports personnalises) et Enterprise avec suite de conformite.',
+    home: 'Accueil',
+    pricingLabel: 'Tarifs',
+    breadcrumb: 'Tarifs Employeur',
+    introAnswer: 'EuroSalary propose trois plans axes sur les employeurs pour accompagner la strategie de remuneration a toute echelle. Starter couvre 5 pays avec des rapports de base pour 99 par mois. Professionnel s\'etend a 15 pays avec acces API, rapports personnalises et support prioritaire pour 299 par mois. Enterprise offre tout plus SSO, un charge de compte dedie et la suite complete de conformite.',
+    tldr: [
+      'Starter a 99 par mois : 5 pays, rapports de base, support email, essai gratuit',
+      'Professionnel a 299 par mois : 15 pays, acces API, rapports personnalises, benchmarking',
+      'Enterprise : toutes les fonctionnalites, SSO, CSM dedie, conformite, tarif personnalise',
+    ],
+    plansTitle: 'Plans Employeur',
+    starter: {
+      name: 'Starter',
+      price: '\u20AC99/mois',
+      desc: '5 pays, rapports de base et support email. Ideal pour les petites equipes RH.',
+      cta: 'Essai gratuit',
+      features: [
+        '5 pays de l\'UE',
+        '10 rapports par mois',
+        'Benchmarks salariaux de base',
+        'Support email',
+        '2 sieges equipe',
+        'Mises a jour mensuelles',
+        'Export PDF',
+      ],
+    },
+    pro: {
+      name: 'Professionnel',
+      price: '\u20AC299/mois',
+      desc: '15 pays, acces API et rapports personnalises pour les equipes en croissance.',
+      cta: 'Essai gratuit',
+      badge: 'Le plus populaire',
+      features: [
+        '15 pays de l\'UE',
+        '50 rapports par mois',
+        'Rapports salariaux personnalises',
+        'Acces API (10K requetes/jour)',
+        'Benchmarking de remuneration',
+        'Support email prioritaire',
+        '10 sieges equipe',
+        'Mises a jour hebdomadaires',
+        'Analyse de l\'ecart salarial hommes-femmes',
+        'Export CSV et Excel',
+      ],
+    },
+    ent: {
+      name: 'Enterprise',
+      price: 'Sur mesure',
+      desc: 'Plateforme complete avec SSO, CSM dedie et outils de conformite.',
+      cta: 'Contacter les ventes',
+      features: [
+        'Tous les pays de l\'UE',
+        'Rapports illimites',
+        'Rapports en marque blanche',
+        'Acces API complet (illimite)',
+        'Integration SSO / SAML',
+        'Charge de compte dedie',
+        'Toolkit conformite transparence salariale UE',
+        'Sieges equipe illimites',
+        'Mises a jour en temps reel',
+        'Integrations personnalisees (SAP, Workday)',
+        'Audit de conformite inclus',
+      ],
+    },
+    matrixTitle: 'Comparaison des fonctionnalites',
+    matrixHeaders: ['Fonctionnalite', 'Starter', 'Professionnel', 'Enterprise'],
+    matrixRows: [
+      { feature: 'Pays couverts', starter: '5', pro: '15', ent: 'Tous UE' },
+      { feature: 'Rapports par mois', starter: '10', pro: '50', ent: 'Illimites' },
+      { feature: 'Acces API', starter: '\u2014', pro: '10K req/jour', ent: 'Illimite' },
+      { feature: 'Toolkit conformite', starter: '\u2014', pro: 'Basique', ent: 'Suite complete' },
+      { feature: 'Benchmarking', starter: 'Basique', pro: 'Avance', ent: 'Personnalise' },
+      { feature: 'Sieges equipe', starter: '2', pro: '10', ent: 'Illimites' },
+      { feature: 'Niveau de support', starter: 'Email', pro: 'Email prioritaire', ent: 'CSM dedie' },
+      { feature: 'Rafraichissement des donnees', starter: 'Mensuel', pro: 'Hebdomadaire', ent: 'Temps reel' },
+      { feature: 'Analyse ecart salarial', starter: '\u2014', pro: '\u2713', ent: '\u2713' },
+      { feature: 'Integrations personnalisees', starter: '\u2014', pro: '\u2014', ent: '\u2713' },
+    ],
+    roiTitle: 'ROI : Pourquoi les entreprises choisissent EuroSalary',
+    roiDesc: 'Les entreprises utilisant EuroSalary economisent en moyenne 15% sur les couts de benchmarking de remuneration par rapport aux missions de conseil traditionnelles.',
+    roiMetrics: [
+      { label: 'Economies moyennes sur les couts de benchmarking', value: '15%' },
+      { label: 'Temps gagne par cycle de revue de remuneration', value: '70%' },
+      { label: 'Conformite a l\'equite salariale plus rapide', value: '3x' },
+      { label: 'Delai moyen de retour sur investissement', value: '< 2 mois' },
+    ],
+    useCaseTitle: 'Ideal pour',
+    useCases: [
+      { title: 'Petites equipes RH', tier: 'Starter', desc: 'Une startup de 50 employes dans 2 marches UE a besoin de benchmarks salariaux de base pour fixer des offres competitives. Starter fournit les donnees essentielles.', icon: 'groups' },
+      { title: 'Equipes remuneration en croissance', tier: 'Professionnel', desc: 'Une entreprise de 500 employes dans 8 pays a besoin de rapports personnalises et d\'un acces API pour leur integration SIRH.', icon: 'trending_up' },
+      { title: 'Operations RH Enterprise', tier: 'Enterprise', desc: 'Une multinationale de 5 000+ employes a besoin de rapports marque blanche, SSO et de la suite complete de conformite a la transparence salariale UE.', icon: 'corporate_fare' },
+    ],
+    trialTitle: 'Commencez votre essai gratuit de 14 jours',
+    trialDesc: 'Essayez tout plan sans risque pendant 14 jours. Pas de carte bancaire requise. Acces complet a toutes les fonctionnalites.',
+    trialCta: 'Essai gratuit',
+    faq: [
+      { question: 'Quels pays sont couverts dans chaque plan ?', answer: 'Starter couvre les 5 plus grandes economies de l\'UE : Allemagne, France, Italie, Espagne et Pays-Bas. Professionnel couvre les 15 pays de l\'UE. Enterprise couvre tous les pays UE avec l\'option d\'ajouter des marches hors UE.' },
+      { question: 'Pouvons-nous generer des rapports personnalises pour le conseil d\'administration ?', answer: 'Les plans Professionnel et Enterprise incluent la generation de rapports personnalises. Vous pouvez selectionner des pays, familles de metiers, niveaux d\'anciennete et periodes specifiques. Les rapports sont disponibles en PDF, Excel et HTML interactif.' },
+      { question: 'Comment fonctionne l\'outil de benchmarking de remuneration ?', answer: 'Telechargez vos bandes salariales actuelles et l\'outil les compare aux donnees de marche EuroSalary, montrant votre positionnement par rapport aux 25e, 50e et 75e centiles. Professionnel offre le benchmarking de base, Enterprise le benchmarking personnalise.' },
+      { question: 'La plateforme est-elle conforme aux exigences de transparence salariale UE ?', answer: 'Enterprise inclut une suite complete de conformite a la directive sur la transparence salariale avec analyse automatisee de l\'ecart salarial, modeles de divulgation par pays et documentation prete pour l\'audit.' },
+      { question: 'Pouvons-nous integrer EuroSalary a nos systemes RH existants ?', answer: 'Professionnel inclut l\'acces API. Enterprise offre des connecteurs pre-construits pour SAP SuccessFactors, Workday, BambooHR et Personio, plus un support d\'integration personnalise.' },
+      { question: 'Que se passe-t-il apres la fin de l\'essai gratuit ?', answer: 'Apres 14 jours, vous pouvez souscrire ou passer au niveau gratuit. Pas de facturation automatique. Vos donnees sont conservees 30 jours apres expiration de l\'essai.' },
+    ],
+  },
+  de: {
+    h1: 'Welcher EuroSalary-Plan passt zu Ihrem HR-Team?',
+    metaTitle: 'Arbeitgeber & HR-Preise: Starter, Professional & Enterprise | EuroSalary.eu',
+    metaDesc: 'EuroSalary Arbeitgeber-Preise: Starter ab 99/Monat (5 Lander), Professional ab 299/Monat (15 Lander, API, individuelle Berichte) und Enterprise mit Compliance-Suite.',
+    home: 'Startseite',
+    pricingLabel: 'Preise',
+    breadcrumb: 'Arbeitgeber-Preise',
+    introAnswer: 'EuroSalary bietet drei auf Arbeitgeber zugeschnittene Plane zur Unterstutzung der Vergutungsstrategie auf jeder Ebene. Starter deckt 5 Lander mit Basisberichten fur 99 pro Monat ab. Professional erweitert auf 15 Lander mit API-Zugang, individuellen Berichten und Priority-Support fur 299 pro Monat. Enterprise bietet alles plus SSO, einen dedizierten Customer Success Manager und vollstandige EU-Compliance-Tools.',
+    tldr: [
+      'Starter ab 99 pro Monat: 5 Lander, Basisberichte, E-Mail-Support, kostenlose Testversion',
+      'Professional ab 299 pro Monat: 15 Lander, API-Zugang, individuelle Berichte, Benchmarking',
+      'Enterprise: alle Funktionen, SSO, dedizierter CSM, Compliance-Toolkit, individuelle Preise',
+    ],
+    plansTitle: 'Arbeitgeber-Plane',
+    starter: {
+      name: 'Starter',
+      price: '\u20AC99/Monat',
+      desc: '5 Lander, Basisberichte und E-Mail-Support. Ideal fur kleine HR-Teams.',
+      cta: 'Kostenlos testen',
+      features: [
+        '5 EU-Lander',
+        '10 Berichte pro Monat',
+        'Grundlegende Gehalts-Benchmarks',
+        'E-Mail-Support',
+        '2 Teamplatze',
+        'Monatliche Datenaktualisierungen',
+        'PDF-Export',
+      ],
+    },
+    pro: {
+      name: 'Professional',
+      price: '\u20AC299/Monat',
+      desc: '15 Lander, API-Zugang und individuelle Berichte fur wachsende Teams.',
+      cta: 'Kostenlos testen',
+      badge: 'Am beliebtesten',
+      features: [
+        '15 EU-Lander',
+        '50 Berichte pro Monat',
+        'Individuelle Gehaltsberichte',
+        'API-Zugang (10K Anfragen/Tag)',
+        'Vergutungs-Benchmarking',
+        'Priority-E-Mail-Support',
+        '10 Teamplatze',
+        'Wochentliche Datenaktualisierungen',
+        'Gender-Pay-Gap-Analyse',
+        'CSV- und Excel-Export',
+      ],
+    },
+    ent: {
+      name: 'Enterprise',
+      price: 'Individuell',
+      desc: 'Vollstandige Plattform mit SSO, dediziertem CSM und Compliance-Tools.',
+      cta: 'Vertrieb kontaktieren',
+      features: [
+        'Alle EU-Lander',
+        'Unbegrenzte Berichte',
+        'White-Label-Berichte',
+        'Voller API-Zugang (unbegrenzt)',
+        'SSO / SAML-Integration',
+        'Dedizierter Customer Success Manager',
+        'EU-Entgelttransparenz-Compliance-Toolkit',
+        'Unbegrenzte Teamplatze',
+        'Echtzeit-Datenaktualisierungen',
+        'Individuelle Integrationen (SAP, Workday)',
+        'Compliance-Audit inklusive',
+      ],
+    },
+    matrixTitle: 'Funktionsvergleich',
+    matrixHeaders: ['Funktion', 'Starter', 'Professional', 'Enterprise'],
+    matrixRows: [
+      { feature: 'Abgedeckte Lander', starter: '5', pro: '15', ent: 'Alle EU' },
+      { feature: 'Berichte pro Monat', starter: '10', pro: '50', ent: 'Unbegrenzt' },
+      { feature: 'API-Zugang', starter: '\u2014', pro: '10K Anfr./Tag', ent: 'Unbegrenzt' },
+      { feature: 'Compliance-Toolkit', starter: '\u2014', pro: 'Basis', ent: 'Vollstandige Suite' },
+      { feature: 'Benchmarking', starter: 'Basis', pro: 'Erweitert', ent: 'Individuell' },
+      { feature: 'Teamplatze', starter: '2', pro: '10', ent: 'Unbegrenzt' },
+      { feature: 'Support-Level', starter: 'E-Mail', pro: 'Priority-E-Mail', ent: 'Dedizierter CSM' },
+      { feature: 'Datenaktualisierung', starter: 'Monatlich', pro: 'Wochentlich', ent: 'Echtzeit' },
+      { feature: 'Gender-Pay-Gap-Analyse', starter: '\u2014', pro: '\u2713', ent: '\u2713' },
+      { feature: 'Individuelle Integrationen', starter: '\u2014', pro: '\u2014', ent: '\u2713' },
+    ],
+    roiTitle: 'ROI: Warum Unternehmen EuroSalary wahlen',
+    roiDesc: 'Unternehmen, die EuroSalary nutzen, sparen durchschnittlich 15% bei den Kosten fur Vergutungs-Benchmarking im Vergleich zu traditionellen Beratungsmandaten.',
+    roiMetrics: [
+      { label: 'Durchschnittliche Einsparungen bei Benchmarking-Kosten', value: '15%' },
+      { label: 'Zeitersparnis pro Vergutungsprufungszyklus', value: '70%' },
+      { label: 'Schnellere Entgeltgleichheits-Compliance', value: '3x' },
+      { label: 'Durchschnittliche Amortisationszeit', value: '< 2 Monate' },
+    ],
+    useCaseTitle: 'Am besten fur',
+    useCases: [
+      { title: 'Kleine HR-Teams', tier: 'Starter', desc: 'Ein Startup mit 50 Mitarbeitern in 2 EU-Markten braucht grundlegende Gehalts-Benchmarks fur wettbewerbsfahige Angebote. Starter liefert die wesentlichen Daten.', icon: 'groups' },
+      { title: 'Wachsende Vergutungsteams', tier: 'Professional', desc: 'Ein mittelstandisches Unternehmen mit 500 Mitarbeitern in 8 Landern braucht individuelle Berichte und API-Zugang fur die HRIS-Integration.', icon: 'trending_up' },
+      { title: 'Enterprise-HR-Betrieb', tier: 'Enterprise', desc: 'Ein multinationales Unternehmen mit 5.000+ Mitarbeitern braucht White-Label-Berichte, SSO und die vollstandige Compliance-Suite fur die EU-Entgelttransparenzrichtlinie.', icon: 'corporate_fare' },
+    ],
+    trialTitle: 'Starten Sie Ihre kostenlose 14-Tage-Testversion',
+    trialDesc: 'Testen Sie jeden Plan 14 Tage risikofrei. Keine Kreditkarte erforderlich. Voller Zugang zu allen Funktionen.',
+    trialCta: 'Kostenlos testen',
+    faq: [
+      { question: 'Welche Lander sind in jedem Plan abgedeckt?', answer: 'Starter deckt die 5 grossten EU-Volkswirtschaften ab: Deutschland, Frankreich, Italien, Spanien und die Niederlande. Professional deckt alle 15 EU-Lander ab. Enterprise deckt alle EU-Lander ab mit der Option, Nicht-EU-Markte hinzuzufugen.' },
+      { question: 'Konnen wir individuelle Berichte fur Vorstandsprasentationen erstellen?', answer: 'Professional- und Enterprise-Plane umfassen individuelle Berichtserstellung. Sie konnen Lander, Berufsfamilien, Senioritatsstufen und Zeitraume wahlen. Berichte sind als PDF, Excel und interaktives HTML verfugbar.' },
+      { question: 'Wie funktioniert das Vergutungs-Benchmarking-Tool?', answer: 'Laden Sie Ihre aktuellen Gehaltsbander hoch und das Tool vergleicht sie mit EuroSalary-Marktdaten, zeigt Ihre Positionierung relativ zum 25., 50. und 75. Perzentil. Professional bietet Basis-Benchmarking, Enterprise individuelles Benchmarking.' },
+      { question: 'Ist die Plattform konform mit EU-Entgelttransparenzanforderungen?', answer: 'Enterprise beinhaltet ein vollstandiges Compliance-Toolkit mit automatisierter Gender-Pay-Gap-Analyse, landerspezifischen Offenlegungsvorlagen und auditbereiter Dokumentation.' },
+      { question: 'Konnen wir EuroSalary in unsere bestehenden HR-Systeme integrieren?', answer: 'Professional beinhaltet API-Zugang. Enterprise bietet vorgefertigte Konnektoren fur SAP SuccessFactors, Workday, BambooHR und Personio plus individuellen Integrations-Support.' },
+      { question: 'Was passiert nach Ende der kostenlosen Testversion?', answer: 'Nach 14 Tagen konnen Sie abonnieren oder zum kostenlosen Plan wechseln. Keine automatische Belastung. Ihre Daten werden 30 Tage nach Ablauf aufbewahrt.' },
+    ],
+  },
+  es: {
+    h1: 'Cual es el plan EuroSalary adecuado para su equipo de RRHH?',
+    metaTitle: 'Precios Empleador & RRHH: Starter, Profesional y Enterprise | EuroSalary.eu',
+    metaDesc: 'Precios para empleadores EuroSalary: Starter a 99/mes (5 paises), Profesional a 299/mes (15 paises, API, informes personalizados) y Enterprise con suite de cumplimiento.',
+    home: 'Inicio',
+    pricingLabel: 'Precios',
+    breadcrumb: 'Precios Empleador',
+    introAnswer: 'EuroSalary ofrece tres planes enfocados en empleadores para apoyar la estrategia de compensacion a cualquier escala. Starter cubre 5 paises con informes basicos por 99 al mes. Profesional se expande a 15 paises con acceso API, informes personalizados y soporte prioritario por 299 al mes. Enterprise ofrece todo mas SSO, un gestor de exito dedicado y herramientas completas de cumplimiento.',
+    tldr: [
+      'Starter a 99 por mes: 5 paises, informes basicos, soporte email, prueba gratuita',
+      'Profesional a 299 por mes: 15 paises, acceso API, informes personalizados, benchmarking',
+      'Enterprise: todas las funciones, SSO, CSM dedicado, cumplimiento, precios personalizados',
+    ],
+    plansTitle: 'Planes para Empleadores',
+    starter: {
+      name: 'Starter',
+      price: '\u20AC99/mes',
+      desc: '5 paises, informes basicos y soporte email. Ideal para equipos de RRHH pequenos.',
+      cta: 'Prueba gratuita',
+      features: [
+        '5 paises de la UE',
+        '10 informes por mes',
+        'Benchmarks salariales basicos',
+        'Soporte email',
+        '2 puestos de equipo',
+        'Actualizaciones mensuales',
+        'Exportacion PDF',
+      ],
+    },
+    pro: {
+      name: 'Profesional',
+      price: '\u20AC299/mes',
+      desc: '15 paises, acceso API e informes personalizados para equipos en crecimiento.',
+      cta: 'Prueba gratuita',
+      badge: 'Mas popular',
+      features: [
+        '15 paises de la UE',
+        '50 informes por mes',
+        'Informes salariales personalizados',
+        'Acceso API (10K solicitudes/dia)',
+        'Benchmarking de compensacion',
+        'Soporte email prioritario',
+        '10 puestos de equipo',
+        'Actualizaciones semanales',
+        'Analisis de brecha salarial de genero',
+        'Exportacion CSV y Excel',
+      ],
+    },
+    ent: {
+      name: 'Enterprise',
+      price: 'Personalizado',
+      desc: 'Plataforma completa con SSO, CSM dedicado y herramientas de cumplimiento.',
+      cta: 'Contactar ventas',
+      features: [
+        'Todos los paises de la UE',
+        'Informes ilimitados',
+        'Informes marca blanca',
+        'Acceso API completo (ilimitado)',
+        'Integracion SSO / SAML',
+        'Gestor de exito dedicado',
+        'Toolkit de cumplimiento de transparencia salarial UE',
+        'Puestos de equipo ilimitados',
+        'Actualizaciones en tiempo real',
+        'Integraciones personalizadas (SAP, Workday)',
+        'Auditoria de cumplimiento incluida',
+      ],
+    },
+    matrixTitle: 'Comparacion de funciones',
+    matrixHeaders: ['Funcion', 'Starter', 'Profesional', 'Enterprise'],
+    matrixRows: [
+      { feature: 'Paises cubiertos', starter: '5', pro: '15', ent: 'Todos UE' },
+      { feature: 'Informes por mes', starter: '10', pro: '50', ent: 'Ilimitados' },
+      { feature: 'Acceso API', starter: '\u2014', pro: '10K sol./dia', ent: 'Ilimitado' },
+      { feature: 'Toolkit cumplimiento', starter: '\u2014', pro: 'Basico', ent: 'Suite completa' },
+      { feature: 'Benchmarking', starter: 'Basico', pro: 'Avanzado', ent: 'Personalizado' },
+      { feature: 'Puestos de equipo', starter: '2', pro: '10', ent: 'Ilimitados' },
+      { feature: 'Nivel de soporte', starter: 'Email', pro: 'Email prioritario', ent: 'CSM dedicado' },
+      { feature: 'Actualizacion de datos', starter: 'Mensual', pro: 'Semanal', ent: 'Tiempo real' },
+      { feature: 'Analisis brecha salarial', starter: '\u2014', pro: '\u2713', ent: '\u2713' },
+      { feature: 'Integraciones personalizadas', starter: '\u2014', pro: '\u2014', ent: '\u2713' },
+    ],
+    roiTitle: 'ROI: Por que las empresas eligen EuroSalary',
+    roiDesc: 'Las empresas que usan EuroSalary ahorran en promedio un 15% en costes de benchmarking de compensacion comparado con consultoria tradicional.',
+    roiMetrics: [
+      { label: 'Ahorro promedio en costes de benchmarking', value: '15%' },
+      { label: 'Tiempo ahorrado por ciclo de revision', value: '70%' },
+      { label: 'Cumplimiento de equidad salarial mas rapido', value: '3x' },
+      { label: 'Periodo promedio de recuperacion', value: '< 2 meses' },
+    ],
+    useCaseTitle: 'Ideal para',
+    useCases: [
+      { title: 'Equipos de RRHH pequenos', tier: 'Starter', desc: 'Una startup con 50 empleados en 2 mercados UE necesita benchmarks salariales basicos para ofertas competitivas. Starter proporciona los datos esenciales.', icon: 'groups' },
+      { title: 'Equipos de compensacion en crecimiento', tier: 'Profesional', desc: 'Una empresa mediana con 500 empleados en 8 paises necesita informes personalizados y acceso API para su HRIS.', icon: 'trending_up' },
+      { title: 'Operaciones HR Enterprise', tier: 'Enterprise', desc: 'Una multinacional con 5.000+ empleados necesita informes marca blanca, SSO y la suite completa de cumplimiento de la directiva de transparencia salarial UE.', icon: 'corporate_fare' },
+    ],
+    trialTitle: 'Comience su prueba gratuita de 14 dias',
+    trialDesc: 'Pruebe cualquier plan sin riesgo durante 14 dias. Sin tarjeta de credito. Acceso completo a todas las funciones.',
+    trialCta: 'Prueba gratuita',
+    faq: [
+      { question: 'Que paises estan cubiertos en cada plan?', answer: 'Starter cubre las 5 mayores economias de la UE: Alemania, Francia, Italia, Espana y Paises Bajos. Profesional cubre los 15 paises de la UE. Enterprise cubre todos los paises UE con opcion de anadir mercados fuera de la UE.' },
+      { question: 'Podemos generar informes personalizados para presentaciones al consejo?', answer: 'Los planes Profesional y Enterprise incluyen generacion de informes personalizados. Puede seleccionar paises, familias de puestos, niveles de antiguedad y periodos. Disponibles en PDF, Excel y HTML interactivo.' },
+      { question: 'Como funciona la herramienta de benchmarking de compensacion?', answer: 'Cargue sus bandas salariales actuales y la herramienta las compara con datos de mercado de EuroSalary, mostrando su posicion relativa a los percentiles 25, 50 y 75. Profesional ofrece benchmarking basico, Enterprise personalizado.' },
+      { question: 'La plataforma cumple con los requisitos de transparencia salarial de la UE?', answer: 'Enterprise incluye un toolkit completo de cumplimiento con analisis automatizado de brecha salarial, plantillas de divulgacion por pais y documentacion lista para auditoria.' },
+      { question: 'Podemos integrar EuroSalary con nuestros sistemas HR existentes?', answer: 'Profesional incluye acceso API. Enterprise ofrece conectores pre-construidos para SAP SuccessFactors, Workday, BambooHR y Personio, mas soporte de integracion personalizado.' },
+      { question: 'Que pasa despues de que termina la prueba gratuita?', answer: 'Despues de 14 dias, puede suscribirse o pasar al nivel gratuito. Sin cargos automaticos. Sus datos se conservan 30 dias despues de la expiracion.' },
+    ],
+  },
+};
+
+const c = fb(i18n, lang);
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: c.h1,
+    author: { '@type': 'Organization', name: 'EuroSalary.eu' },
+    datePublished: '2026-04-05',
+    dateModified: '2026-04-05',
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: c.faq.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  },
+];
+---
+
+<BaseLayout title={c.metaTitle} description={c.metaDesc} datePublished="2026-04-05" dateModified="2026-04-05" schema={pageSchema}>
+  <!-- Hero -->
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{c.home}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a href={`/${lang}/pricing/`}>{c.pricingLabel}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{c.breadcrumb}</span>
+      </nav>
+      <div class="emp-hero__badge">
+        <span class="material-symbols-outlined">business</span>
+        {c.breadcrumb}
+      </div>
+      <h1>{c.h1}</h1>
+      <p class="emp-hero__answer">{c.introAnswer}</p>
+    </div>
+  </section>
+
+  <article class="container page-body">
+    <TLDRBox items={c.tldr} />
+
+    <!-- Pricing Cards -->
+    <section class="section">
+      <h2 class="section__title">{c.plansTitle}</h2>
+      <div class="emp-cards">
+        <!-- Starter -->
+        <div class="emp-card">
+          <div class="emp-card__header">
+            <h3>{c.starter.name}</h3>
+            <p class="emp-card__desc">{c.starter.desc}</p>
+          </div>
+          <div class="emp-card__price">
+            <span class="emp-card__amount">{c.starter.price}</span>
+          </div>
+          <a href="#" class="btn btn--outline">{c.starter.cta}</a>
+          <ul class="emp-card__features">
+            {c.starter.features.map((f) => (
+              <li><span class="emp-card__check">&#10003;</span>{f}</li>
+            ))}
+          </ul>
+        </div>
+
+        <!-- Professional -->
+        <div class="emp-card emp-card--featured">
+          <div class="emp-card__popular">{c.pro.badge}</div>
+          <div class="emp-card__header">
+            <h3>{c.pro.name}</h3>
+            <p class="emp-card__desc">{c.pro.desc}</p>
+          </div>
+          <div class="emp-card__price">
+            <span class="emp-card__amount">{c.pro.price}</span>
+          </div>
+          <a href="#" class="btn btn--filled">{c.pro.cta}</a>
+          <ul class="emp-card__features">
+            {c.pro.features.map((f) => (
+              <li><span class="emp-card__check emp-card__check--featured">&#10003;</span>{f}</li>
+            ))}
+          </ul>
+        </div>
+
+        <!-- Enterprise -->
+        <div class="emp-card">
+          <div class="emp-card__header">
+            <h3>{c.ent.name}</h3>
+            <p class="emp-card__desc">{c.ent.desc}</p>
+          </div>
+          <div class="emp-card__price">
+            <span class="emp-card__amount">{c.ent.price}</span>
+          </div>
+          <a href={`/${lang}/pricing/enterprise/`} class="btn btn--outline">{c.ent.cta}</a>
+          <ul class="emp-card__features">
+            {c.ent.features.map((f) => (
+              <li><span class="emp-card__check">&#10003;</span>{f}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature Matrix -->
+    <section class="section">
+      <h2 class="section__title">{c.matrixTitle}</h2>
+      <div class="emp-matrix-wrap">
+        <table class="data-table emp-matrix">
+          <thead>
+            <tr>
+              {c.matrixHeaders.map((h) => <th>{h}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {c.matrixRows.map((row) => (
+              <tr>
+                <td class="emp-matrix__feature">{row.feature}</td>
+                <td>{row.starter}</td>
+                <td class="emp-matrix__pro">{row.pro}</td>
+                <td>{row.ent}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ROI Section -->
+    <section class="section">
+      <h2 class="section__title">{c.roiTitle}</h2>
+      <p class="emp-roi__desc">{c.roiDesc}</p>
+      <div class="emp-roi__grid">
+        {c.roiMetrics.map((metric) => (
+          <div class="emp-roi__card">
+            <span class="emp-roi__value">{metric.value}</span>
+            <span class="emp-roi__label">{metric.label}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Use Cases -->
+    <section class="section">
+      <h2 class="section__title">{c.useCaseTitle}</h2>
+      <div class="emp-usecases">
+        {c.useCases.map((uc) => (
+          <div class="emp-usecase">
+            <div class="emp-usecase__icon">
+              <span class="material-symbols-outlined">{uc.icon}</span>
+            </div>
+            <div>
+              <h3>{uc.title} <span class="emp-usecase__tier">{uc.tier}</span></h3>
+              <p>{uc.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Trial CTA -->
+    <section class="section">
+      <div class="emp-trial">
+        <span class="material-symbols-outlined">rocket_launch</span>
+        <div>
+          <strong>{c.trialTitle}</strong>
+          <p>{c.trialDesc}</p>
+        </div>
+        <a href="#" class="btn btn--filled">{c.trialCta}</a>
+      </div>
+    </section>
+
+    <FAQSection items={c.faq} />
+
+    <!-- Cross-links -->
+    <section class="section emp-links">
+      <p>
+        <span class="material-symbols-outlined">link</span>
+        <a href={`/${lang}/pricing/`}>{fb({ en: 'All pricing plans', fr: 'Tous les plans tarifaires', de: 'Alle Preisplane', es: 'Todos los planes' }, lang)}</a>
+        &nbsp;&middot;&nbsp;
+        <a href={`/${lang}/pricing/api/`}>{fb({ en: 'API pricing', fr: 'Tarifs API', de: 'API-Preise', es: 'Precios API' }, lang)}</a>
+        &nbsp;&middot;&nbsp;
+        <a href={`/${lang}/pricing/enterprise/`}>{fb({ en: 'Enterprise solutions', fr: 'Solutions entreprise', de: 'Enterprise-Losungen', es: 'Soluciones empresariales' }, lang)}</a>
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  /* ===== Hero extras ===== */
+  .emp-hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(37, 99, 235, 0.2);
+    border: 1px solid rgba(37, 99, 235, 0.3);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #93c5fd;
+    margin-bottom: var(--space-4);
+  }
+  .emp-hero__badge .material-symbols-outlined { font-size: 14px; }
+  .emp-hero__answer {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: rgba(203, 213, 225, 0.85);
+    max-width: 720px;
+  }
+
+  /* ===== Section titles ===== */
+  .section { margin-top: var(--space-12); }
+  .section__title {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+    font-weight: 800;
+    color: var(--color-primary-container, #0F1F3D);
+    margin-bottom: var(--space-6);
+  }
+
+  /* ===== Cards ===== */
+  .emp-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+    align-items: start;
+  }
+  .emp-card {
+    background: white;
+    border: 1px solid #e6e8ea;
+    border-radius: 10px;
+    padding: var(--space-7);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .emp-card--featured {
+    border-color: var(--color-secondary, #2563EB);
+    border-width: 2px;
+    box-shadow: 0 4px 24px rgba(37, 99, 235, 0.12);
+    padding-top: calc(var(--space-7) + 8px);
+  }
+  .emp-card__popular {
+    position: absolute;
+    top: -13px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-secondary, #2563EB);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 16px;
+    border-radius: 12px;
+    white-space: nowrap;
+  }
+  .emp-card__header h3 {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-primary-container, #0F1F3D);
+    margin-bottom: var(--space-1);
+  }
+  .emp-card__desc {
+    font-size: 13px;
+    color: #75777e;
+    line-height: 1.5;
+    margin-bottom: var(--space-5);
+  }
+  .emp-card__price {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-bottom: var(--space-5);
+  }
+  .emp-card__amount {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-primary-container, #0F1F3D);
+    letter-spacing: -0.02em;
+  }
+  .emp-card__features {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-5) 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .emp-card__features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+    color: #374151;
+    line-height: 1.45;
+  }
+  .emp-card__check {
+    flex-shrink: 0;
+    color: #16a34a;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.3;
+  }
+  .emp-card__check--featured { color: var(--color-secondary, #2563EB); }
+
+  /* ===== Buttons ===== */
+  .btn {
+    display: block;
+    text-align: center;
+    padding: 12px 20px;
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .btn--outline {
+    border: 2px solid var(--color-secondary, #2563EB);
+    color: var(--color-secondary, #2563EB);
+    background: transparent;
+  }
+  .btn--outline:hover { background: var(--color-secondary, #2563EB); color: white; }
+  .btn--filled {
+    background: var(--color-secondary, #2563EB);
+    color: white;
+    border: 2px solid var(--color-secondary, #2563EB);
+  }
+  .btn--filled:hover { background: #1d4ed8; border-color: #1d4ed8; }
+
+  /* ===== Matrix ===== */
+  .emp-matrix-wrap { overflow-x: auto; }
+  .emp-matrix {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .emp-matrix th {
+    background: var(--color-primary-container, #0F1F3D);
+    color: white;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .emp-matrix td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e6e8ea;
+    color: #374151;
+  }
+  .emp-matrix__feature {
+    font-weight: 600;
+    color: var(--color-primary-container, #0F1F3D);
+    white-space: nowrap;
+  }
+  .emp-matrix__pro {
+    background: rgba(37, 99, 235, 0.04);
+    font-weight: 600;
+  }
+  .emp-matrix tbody tr:hover { background: #f8fafc; }
+
+  /* ===== ROI ===== */
+  .emp-roi__desc {
+    font-size: 1rem;
+    color: #45474e;
+    line-height: 1.6;
+    margin-bottom: var(--space-6);
+    max-width: 680px;
+  }
+  .emp-roi__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-5);
+  }
+  .emp-roi__card {
+    background: #f8fafc;
+    border: 1px solid #e6e8ea;
+    border-radius: 10px;
+    padding: var(--space-6);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .emp-roi__value {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-secondary, #2563EB);
+    letter-spacing: -0.02em;
+  }
+  .emp-roi__label {
+    font-size: 13px;
+    color: #75777e;
+    line-height: 1.4;
+  }
+
+  /* ===== Use Cases ===== */
+  .emp-usecases {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .emp-usecase {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-5);
+    background: #f8fafc;
+    border: 1px solid #e6e8ea;
+    border-radius: 10px;
+    padding: var(--space-6);
+  }
+  .emp-usecase__icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.1);
+    border-radius: 10px;
+  }
+  .emp-usecase__icon .material-symbols-outlined {
+    font-size: 24px;
+    color: var(--color-secondary, #2563EB);
+  }
+  .emp-usecase h3 {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-primary-container, #0F1F3D);
+    margin-bottom: var(--space-2);
+  }
+  .emp-usecase__tier {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--color-secondary, #2563EB);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+  }
+  .emp-usecase p {
+    font-size: 13px;
+    color: #45474e;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  /* ===== Trial CTA ===== */
+  .emp-trial {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    background: linear-gradient(135deg, #0F1F3D 0%, #1e3a5f 100%);
+    border-radius: 10px;
+    padding: var(--space-7);
+    color: white;
+  }
+  .emp-trial .material-symbols-outlined {
+    font-size: 36px;
+    color: #93c5fd;
+    flex-shrink: 0;
+  }
+  .emp-trial strong {
+    display: block;
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin-bottom: var(--space-1);
+  }
+  .emp-trial p {
+    font-size: 13px;
+    color: rgba(203, 213, 225, 0.85);
+    line-height: 1.5;
+    margin: 0;
+  }
+  .emp-trial .btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* ===== Cross-links ===== */
+  .emp-links p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--text-sm);
+    color: #45474e;
+    flex-wrap: wrap;
+  }
+  .emp-links .material-symbols-outlined {
+    font-size: 18px;
+    color: var(--color-secondary, #2563EB);
+  }
+  .emp-links a {
+    color: var(--color-secondary, #2563EB);
+    font-weight: 600;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 1024px) {
+    .emp-roi__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .emp-cards { grid-template-columns: 1fr; }
+    .emp-roi__grid { grid-template-columns: 1fr; }
+    .emp-trial { flex-direction: column; text-align: center; }
+  }
+</style>

@@ -1,0 +1,623 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+
+// --------------- i18n strings ---------------
+const i18n: Record<string, {
+  h1: string;
+  metaTitle: string;
+  metaDesc: string;
+  home: string;
+  partners: string;
+  breadcrumb: string;
+  introAnswer: string;
+  tldr: string[];
+  heroSubtitle: string;
+  dataTitle: string;
+  dataDesc: string;
+  dataPoints: { label: string; value: string }[];
+  tiersTitle: string;
+  tiersDesc: string;
+  tiers: { name: string; price: string; frequency: string; features: string[] }[];
+  formatsTitle: string;
+  formats: { name: string; desc: string; icon: string }[];
+  useCasesTitle: string;
+  useCases: { title: string; desc: string; icon: string }[];
+  contactTitle: string;
+  contactDesc: string;
+  formLabels: { company: string; email: string; useCase: string; volumeEstimate: string; message: string; submit: string };
+  useCaseOptions: string[];
+  faq: { question: string; answer: string }[];
+}> = {
+  en: {
+    h1: 'How Can You License EuroSalary Data for Your Business?',
+    metaTitle: 'Data Licensing: Bulk Salary Data for Research, Consulting & HR Tech | EuroSalary.eu',
+    metaDesc: 'License EuroSalary bulk salary data covering 15 EU countries, 21 jobs, 4 seniority levels. CSV, JSON, or API delivery. Standard, Premium, and Enterprise tiers.',
+    home: 'Home',
+    partners: 'Partners',
+    breadcrumb: 'Data Licensing',
+    introAnswer: 'EuroSalary data licensing gives compensation consultancies, market research firms, and HR tech companies access to structured salary data across 15 EU countries, 21 job roles, and 4 seniority levels, delivered as CSV, JSON, or via real-time API.',
+    tldr: [
+      'Structured salary data covering 15 EU countries, 21 job roles, 4 seniority levels, and historical trends',
+      'Three delivery formats: CSV bulk download, JSON data feed, or real-time REST API access',
+      'Flexible licensing tiers from quarterly updates to real-time API with custom SLA',
+    ],
+    heroSubtitle: 'Turn Europe\'s most comprehensive salary dataset into a competitive advantage. Whether you need quarterly market reports or real-time API access, our licensing program delivers.',
+    dataTitle: 'What Data Is Available',
+    dataDesc: 'Our salary dataset is sourced from Eurostat, verified job postings, and anonymous contributor reports. Every data point is cross-validated for accuracy.',
+    dataPoints: [
+      { label: 'Countries', value: '15 EU member states' },
+      { label: 'Job Roles', value: '21 standardised roles' },
+      { label: 'Seniority Levels', value: 'Junior, Mid, Senior, Lead' },
+      { label: 'Metrics per Entry', value: 'Median, P25, P75, net estimate, CoL index' },
+      { label: 'Historical Depth', value: 'Up to 3 years of quarterly snapshots' },
+      { label: 'Update Frequency', value: 'Monthly (Eurostat + job postings)' },
+      { label: 'Minimum Wage', value: 'Current + historical for all 15 countries' },
+      { label: 'City-Level Data', value: '24 major European cities' },
+    ],
+    tiersTitle: 'Licensing Tiers',
+    tiersDesc: 'Choose the tier that matches your data consumption needs. All tiers include commercial usage rights.',
+    tiers: [
+      { name: 'Standard', price: '499/quarter', frequency: 'Quarterly updates', features: ['Full dataset CSV download', 'Quarterly refresh', '15 countries, 21 jobs, 4 levels', 'Commercial usage rights', 'Email support', 'Up to 3 internal users'] },
+      { name: 'Premium', price: '299/month', frequency: 'Monthly updates', features: ['CSV + JSON delivery', 'Monthly refresh', 'Historical data (12 months)', 'City-level breakdowns', 'Priority email support', 'Up to 10 internal users', 'Custom data cuts'] },
+      { name: 'Enterprise', price: 'Custom', frequency: 'Real-time API', features: ['Full REST API access', 'Real-time data', 'Full historical archive (3 years)', 'City + sector breakdowns', 'Dedicated account manager', 'Unlimited users', 'Custom SLA', 'White-label rights available'] },
+    ],
+    formatsTitle: 'Delivery Formats',
+    formats: [
+      { name: 'CSV', desc: 'Flat-file bulk exports updated on your tier schedule. Ready for Excel, R, Python, or any BI tool. UTF-8 encoded with standardised column headers.', icon: 'table_view' },
+      { name: 'JSON', desc: 'Structured data feed delivered via secure download link or webhook. Ideal for automated data pipelines and internal dashboards.', icon: 'data_object' },
+      { name: 'REST API', desc: 'Real-time programmatic access to the full dataset. Query by country, job, level, and city. JSON responses with sub-200ms latency.', icon: 'api' },
+    ],
+    useCasesTitle: 'Who Uses Licensed Data',
+    useCases: [
+      { title: 'Compensation Consultancies', desc: 'Build client-facing salary reports and benchmarking studies using verified European data. Replace expensive survey subscriptions with a single, comprehensive source.', icon: 'business' },
+      { title: 'Market Research Firms', desc: 'Incorporate salary data into industry reports, labour market analyses, and economic forecasts. Historical data supports trend analysis and predictive modelling.', icon: 'monitoring' },
+      { title: 'HR Tech Companies', desc: 'Power your compensation module, pay equity tool, or total rewards platform with real European market data. Integrate via API or batch import.', icon: 'memory' },
+      { title: 'Academic Institutions', desc: 'Use structured salary data for labour economics research, migration studies, and workforce planning analysis. Academic licensing terms available.', icon: 'school' },
+    ],
+    contactTitle: 'Request a Data Licensing Quote',
+    contactDesc: 'Tell us about your data needs and we will prepare a tailored licensing proposal within 24 hours.',
+    formLabels: { company: 'Company Name', email: 'Work Email', useCase: 'Primary Use Case', volumeEstimate: 'Estimated Data Volume', message: 'Tell us about your data needs', submit: 'Request Licensing Quote' },
+    useCaseOptions: ['Compensation Consulting', 'Market Research', 'HR Tech / SaaS Product', 'Academic Research', 'Internal HR Analytics', 'Other'],
+    faq: [
+      { question: 'What salary data is included in a license?', answer: 'Every license includes gross annual salary (median, P25, P75), net salary estimates, cost of living index, minimum wage, and source metadata for 15 EU countries, 21 standardised job roles, and 4 seniority levels. Premium and Enterprise tiers add city-level and historical data.' },
+      { question: 'Can I use the data in commercial products?', answer: 'Yes. All licensing tiers include commercial usage rights. You can embed the data in client reports, SaaS products, internal dashboards, and published research. White-label redistribution requires an Enterprise license.' },
+      { question: 'How often is the data updated?', answer: 'The underlying data is refreshed monthly from Eurostat, verified job postings, and anonymous contributor reports. Standard licenses receive quarterly deliveries. Premium receives monthly deliveries. Enterprise gets real-time API access.' },
+      { question: 'What delivery formats are available?', answer: 'We offer CSV (UTF-8, standardised headers), JSON (structured data feeds), and REST API (real-time access). CSV and JSON are delivered via secure download link. The API uses Bearer token authentication with JSON responses.' },
+      { question: 'Is historical data available?', answer: 'Premium licenses include 12 months of historical quarterly snapshots. Enterprise licenses include the full 3-year archive. Historical data enables trend analysis, seasonal adjustment, and predictive compensation modelling.' },
+      { question: 'Do you offer academic or non-profit pricing?', answer: 'Yes. We offer discounted licensing terms for accredited academic institutions and registered non-profit organisations conducting labour market research. Contact us with your institutional details for a custom quote.' },
+      { question: 'What are the minimum contract terms?', answer: 'Standard and Premium licenses are available on quarterly or annual contracts. Enterprise licenses require a 12-month minimum commitment. All contracts include a 14-day evaluation period with full data access.' },
+    ],
+  },
+  fr: {
+    h1: 'Comment licencier les donnees salariales EuroSalary pour votre entreprise ?',
+    metaTitle: 'Licence de donnees : donnees salariales en masse pour la recherche, le conseil et la tech RH | EuroSalary.eu',
+    metaDesc: 'Licenciez les donnees salariales EuroSalary couvrant 15 pays UE, 21 metiers, 4 niveaux. Livraison CSV, JSON ou API. Niveaux Standard, Premium et Enterprise.',
+    home: 'Accueil',
+    partners: 'Partenaires',
+    breadcrumb: 'Licence de donnees',
+    introAnswer: 'La licence de donnees EuroSalary donne aux cabinets de conseil en remuneration, aux societes d\'etudes de marche et aux entreprises tech RH l\'acces a des donnees salariales structurees couvrant 15 pays UE, 21 metiers et 4 niveaux.',
+    tldr: [
+      'Donnees salariales structurees couvrant 15 pays UE, 21 metiers, 4 niveaux et tendances historiques',
+      'Trois formats de livraison : telechargement CSV, flux JSON ou acces API REST en temps reel',
+      'Niveaux de licence flexibles, des mises a jour trimestrielles a l\'API temps reel avec SLA personnalise',
+    ],
+    heroSubtitle: 'Transformez le jeu de donnees salariales le plus complet d\'Europe en avantage concurrentiel. Que vous ayez besoin de rapports trimestriels ou d\'un acces API en temps reel.',
+    dataTitle: 'Quelles donnees sont disponibles',
+    dataDesc: 'Notre jeu de donnees est source d\'Eurostat, d\'offres d\'emploi verifiees et de rapports anonymes. Chaque point de donnee est croise-valide.',
+    dataPoints: [
+      { label: 'Pays', value: '15 etats membres UE' },
+      { label: 'Metiers', value: '21 roles standardises' },
+      { label: 'Niveaux', value: 'Junior, Intermediaire, Senior, Lead' },
+      { label: 'Metriques', value: 'Mediane, P25, P75, estimation nette, indice CdV' },
+      { label: 'Profondeur historique', value: 'Jusqu\'a 3 ans de cliches trimestriels' },
+      { label: 'Frequence MAJ', value: 'Mensuelle (Eurostat + offres)' },
+      { label: 'Salaire minimum', value: 'Actuel + historique pour 15 pays' },
+      { label: 'Donnees par ville', value: '24 grandes villes europeennes' },
+    ],
+    tiersTitle: 'Niveaux de licence',
+    tiersDesc: 'Choisissez le niveau correspondant a vos besoins. Tous les niveaux incluent les droits d\'utilisation commerciale.',
+    tiers: [
+      { name: 'Standard', price: '499/trimestre', frequency: 'MAJ trimestrielles', features: ['Telechargement CSV complet', 'Rafraichissement trimestriel', '15 pays, 21 metiers, 4 niveaux', 'Droits d\'utilisation commerciale', 'Support email', 'Jusqu\'a 3 utilisateurs'] },
+      { name: 'Premium', price: '299/mois', frequency: 'MAJ mensuelles', features: ['Livraison CSV + JSON', 'Rafraichissement mensuel', 'Donnees historiques (12 mois)', 'Details par ville', 'Support email prioritaire', 'Jusqu\'a 10 utilisateurs', 'Coupes de donnees personnalisees'] },
+      { name: 'Enterprise', price: 'Sur mesure', frequency: 'API temps reel', features: ['Acces API REST complet', 'Donnees temps reel', 'Archive historique complete (3 ans)', 'Details ville + secteur', 'Account manager dedie', 'Utilisateurs illimites', 'SLA personnalise', 'Droits marque blanche disponibles'] },
+    ],
+    formatsTitle: 'Formats de livraison',
+    formats: [
+      { name: 'CSV', desc: 'Exports en masse mis a jour selon votre calendrier. Compatible Excel, R, Python ou tout outil BI. Encodage UTF-8 avec en-tetes standardises.', icon: 'table_view' },
+      { name: 'JSON', desc: 'Flux de donnees structurees via lien de telechargement securise ou webhook. Ideal pour les pipelines automatises et dashboards internes.', icon: 'data_object' },
+      { name: 'API REST', desc: 'Acces programmatique en temps reel. Interrogez par pays, metier, niveau et ville. Reponses JSON avec latence inferieure a 200ms.', icon: 'api' },
+    ],
+    useCasesTitle: 'Qui utilise les donnees sous licence',
+    useCases: [
+      { title: 'Cabinets de conseil en remuneration', desc: 'Construisez des rapports salariaux et des etudes de benchmarking pour vos clients avec des donnees europeennes verifiees.', icon: 'business' },
+      { title: 'Societes d\'etudes de marche', desc: 'Integrez les donnees salariales dans vos rapports sectoriels, analyses du marche du travail et previsions economiques.', icon: 'monitoring' },
+      { title: 'Entreprises tech RH', desc: 'Alimentez votre module de remuneration, outil d\'equite salariale ou plateforme de recompenses avec des donnees de marche europeennes reelles.', icon: 'memory' },
+      { title: 'Institutions academiques', desc: 'Utilisez des donnees salariales structurees pour la recherche en economie du travail et les etudes de migration.', icon: 'school' },
+    ],
+    contactTitle: 'Demander un devis de licence',
+    contactDesc: 'Decrivez vos besoins en donnees et nous preparerons une proposition sur mesure sous 24 heures.',
+    formLabels: { company: 'Nom de l\'entreprise', email: 'Email professionnel', useCase: 'Cas d\'utilisation principal', volumeEstimate: 'Volume de donnees estime', message: 'Decrivez vos besoins', submit: 'Demander un devis' },
+    useCaseOptions: ['Conseil en remuneration', 'Etude de marche', 'Tech RH / Produit SaaS', 'Recherche academique', 'Analytique RH interne', 'Autre'],
+    faq: [
+      { question: 'Quelles donnees salariales sont incluses dans une licence ?', answer: 'Chaque licence inclut le salaire brut annuel (mediane, P25, P75), les estimations nettes, l\'indice du cout de la vie, le salaire minimum et les metadonnees pour 15 pays UE, 21 metiers et 4 niveaux. Premium et Enterprise ajoutent les donnees par ville et historiques.' },
+      { question: 'Puis-je utiliser les donnees dans des produits commerciaux ?', answer: 'Oui. Tous les niveaux incluent les droits d\'utilisation commerciale. Vous pouvez integrer les donnees dans des rapports clients, produits SaaS et recherches publiees. La redistribution en marque blanche necessite une licence Enterprise.' },
+      { question: 'A quelle frequence les donnees sont-elles mises a jour ?', answer: 'Les donnees sont rafraichies mensuellement depuis Eurostat et les offres d\'emploi verifiees. Standard recoit des livraisons trimestrielles, Premium mensuelles, Enterprise un acces API temps reel.' },
+      { question: 'Quels formats de livraison sont disponibles ?', answer: 'Nous proposons CSV (UTF-8), JSON (flux structures) et API REST (acces temps reel). CSV et JSON sont livres via lien securise. L\'API utilise l\'authentification Bearer token.' },
+      { question: 'Les donnees historiques sont-elles disponibles ?', answer: 'Premium inclut 12 mois de cliches trimestriels historiques. Enterprise inclut l\'archive complete de 3 ans pour l\'analyse de tendances et la modelisation predictive.' },
+      { question: 'Proposez-vous des tarifs academiques ?', answer: 'Oui. Nous offrons des conditions preferentielles aux institutions academiques accreditees et aux ONG pour la recherche sur le marche du travail.' },
+      { question: 'Quelles sont les durees minimales de contrat ?', answer: 'Standard et Premium sont disponibles en contrats trimestriels ou annuels. Enterprise necessite un engagement minimum de 12 mois. Tous les contrats incluent 14 jours d\'evaluation.' },
+    ],
+  },
+  de: {
+    h1: 'Wie konnen Sie EuroSalary-Daten fur Ihr Unternehmen lizenzieren?',
+    metaTitle: 'Datenlizenzierung: Gehaltsdaten in Masse fur Forschung, Beratung & HR-Tech | EuroSalary.eu',
+    metaDesc: 'Lizenzieren Sie EuroSalary-Gehaltsdaten fur 15 EU-Lander, 21 Berufe, 4 Erfahrungsstufen. CSV-, JSON- oder API-Lieferung. Standard-, Premium- und Enterprise-Stufen.',
+    home: 'Startseite',
+    partners: 'Partner',
+    breadcrumb: 'Datenlizenzierung',
+    introAnswer: 'Die EuroSalary-Datenlizenzierung gibt Vergutungsberatungen, Marktforschungsunternehmen und HR-Tech-Firmen Zugang zu strukturierten Gehaltsdaten uber 15 EU-Lander, 21 Berufsrollen und 4 Erfahrungsstufen.',
+    tldr: [
+      'Strukturierte Gehaltsdaten fur 15 EU-Lander, 21 Berufe, 4 Stufen und historische Trends',
+      'Drei Lieferformate: CSV-Massendownload, JSON-Datenfeed oder Echtzeit-REST-API',
+      'Flexible Lizenzstufen von quartalsweisen Updates bis Echtzeit-API mit individuellem SLA',
+    ],
+    heroSubtitle: 'Verwandeln Sie Europas umfassendsten Gehaltsdatensatz in einen Wettbewerbsvorteil. Ob quartalsweise Marktberichte oder Echtzeit-API — unser Lizenzprogramm liefert.',
+    dataTitle: 'Verfugbare Daten',
+    dataDesc: 'Unser Datensatz basiert auf Eurostat, verifizierten Stellenanzeigen und anonymen Berichten. Jeder Datenpunkt wird kreuzvalidiert.',
+    dataPoints: [
+      { label: 'Lander', value: '15 EU-Mitgliedstaaten' },
+      { label: 'Berufe', value: '21 standardisierte Rollen' },
+      { label: 'Erfahrungsstufen', value: 'Junior, Mid, Senior, Lead' },
+      { label: 'Metriken pro Eintrag', value: 'Median, P25, P75, Nettoschatzung, LHK-Index' },
+      { label: 'Historische Tiefe', value: 'Bis zu 3 Jahre quartalsweise Snapshots' },
+      { label: 'Update-Frequenz', value: 'Monatlich (Eurostat + Stellenanzeigen)' },
+      { label: 'Mindestlohn', value: 'Aktuell + historisch fur alle 15 Lander' },
+      { label: 'Stadtebene', value: '24 europaische Grossstadte' },
+    ],
+    tiersTitle: 'Lizenzstufen',
+    tiersDesc: 'Wahlen Sie die Stufe, die zu Ihrem Datenbedarf passt. Alle Stufen beinhalten kommerzielle Nutzungsrechte.',
+    tiers: [
+      { name: 'Standard', price: '499/Quartal', frequency: 'Quartals-Updates', features: ['Vollstandiger CSV-Download', 'Quartalsweise Aktualisierung', '15 Lander, 21 Berufe, 4 Stufen', 'Kommerzielle Nutzungsrechte', 'E-Mail-Support', 'Bis zu 3 interne Nutzer'] },
+      { name: 'Premium', price: '299/Monat', frequency: 'Monatliche Updates', features: ['CSV + JSON-Lieferung', 'Monatliche Aktualisierung', 'Historische Daten (12 Monate)', 'Stadtebene', 'Prioritats-Support', 'Bis zu 10 interne Nutzer', 'Individuelle Datenschnitte'] },
+      { name: 'Enterprise', price: 'Individuell', frequency: 'Echtzeit-API', features: ['Voller REST-API-Zugang', 'Echtzeit-Daten', 'Vollstandiges Archiv (3 Jahre)', 'Stadt + Branche', 'Dedizierter Account Manager', 'Unbegrenzte Nutzer', 'Individuelles SLA', 'White-Label-Rechte verfugbar'] },
+    ],
+    formatsTitle: 'Lieferformate',
+    formats: [
+      { name: 'CSV', desc: 'Massenexporte nach Ihrem Zeitplan. Kompatibel mit Excel, R, Python oder jedem BI-Tool. UTF-8-kodiert mit standardisierten Spaltenuberschriften.', icon: 'table_view' },
+      { name: 'JSON', desc: 'Strukturierter Datenfeed per sicherem Download-Link oder Webhook. Ideal fur automatisierte Datenpipelines und interne Dashboards.', icon: 'data_object' },
+      { name: 'REST API', desc: 'Programmatischer Echtzeit-Zugriff auf den gesamten Datensatz. Abfragen nach Land, Beruf, Stufe und Stadt. JSON-Antworten unter 200ms.', icon: 'api' },
+    ],
+    useCasesTitle: 'Wer lizenzierte Daten nutzt',
+    useCases: [
+      { title: 'Vergutungsberatungen', desc: 'Erstellen Sie Gehaltsberichte und Benchmarking-Studien fur Kunden mit verifizierten europaischen Daten.', icon: 'business' },
+      { title: 'Marktforschungsunternehmen', desc: 'Integrieren Sie Gehaltsdaten in Branchenberichte, Arbeitsmarktanalysen und Wirtschaftsprognosen.', icon: 'monitoring' },
+      { title: 'HR-Tech-Unternehmen', desc: 'Betreiben Sie Ihr Vergutungsmodul oder Pay-Equity-Tool mit echten europaischen Marktdaten.', icon: 'memory' },
+      { title: 'Akademische Institutionen', desc: 'Nutzen Sie strukturierte Gehaltsdaten fur Arbeitsokonomie-Forschung und Migrationsstudien.', icon: 'school' },
+    ],
+    contactTitle: 'Lizenzangebot anfordern',
+    contactDesc: 'Beschreiben Sie Ihren Datenbedarf und wir erstellen innerhalb von 24 Stunden ein massgeschneidertes Angebot.',
+    formLabels: { company: 'Firmenname', email: 'Geschaftliche E-Mail', useCase: 'Hauptanwendungsfall', volumeEstimate: 'Geschatztes Datenvolumen', message: 'Beschreiben Sie Ihren Datenbedarf', submit: 'Angebot anfordern' },
+    useCaseOptions: ['Vergutungsberatung', 'Marktforschung', 'HR-Tech / SaaS-Produkt', 'Akademische Forschung', 'Interne HR-Analytik', 'Sonstiges'],
+    faq: [
+      { question: 'Welche Gehaltsdaten sind in einer Lizenz enthalten?', answer: 'Jede Lizenz umfasst Bruttojahresgehalt (Median, P25, P75), Nettoschatzungen, Lebenshaltungskostenindex, Mindestlohn und Quellmetadaten fur 15 EU-Lander, 21 Berufe und 4 Stufen. Premium und Enterprise erganzen Stadt- und historische Daten.' },
+      { question: 'Kann ich die Daten in kommerziellen Produkten verwenden?', answer: 'Ja. Alle Stufen beinhalten kommerzielle Nutzungsrechte. White-Label-Weiterverteilung erfordert eine Enterprise-Lizenz.' },
+      { question: 'Wie oft werden die Daten aktualisiert?', answer: 'Monatlich aus Eurostat und verifizierten Stellenanzeigen. Standard erhalt quartalsweise, Premium monatlich, Enterprise Echtzeit-API.' },
+      { question: 'Welche Lieferformate gibt es?', answer: 'CSV (UTF-8), JSON (strukturierte Feeds) und REST API (Echtzeit). CSV und JSON per sicherem Download-Link.' },
+      { question: 'Sind historische Daten verfugbar?', answer: 'Premium beinhaltet 12 Monate historische Quartalssnapshots. Enterprise das vollstandige 3-Jahres-Archiv.' },
+      { question: 'Gibt es akademische Preise?', answer: 'Ja. Vergustigte Konditionen fur akkreditierte akademische Institutionen und gemeinnuetzige Organisationen.' },
+      { question: 'Was sind die Mindestvertragslaufzeiten?', answer: 'Standard und Premium: quartalsweise oder jahrlich. Enterprise: mindestens 12 Monate. Alle Vertrage beinhalten 14 Tage Evaluierungszeit.' },
+    ],
+  },
+  es: {
+    h1: 'Como puede licenciar datos salariales de EuroSalary para su empresa?',
+    metaTitle: 'Licencia de datos: datos salariales masivos para investigacion, consultoria y tech HR | EuroSalary.eu',
+    metaDesc: 'Licencie datos salariales de EuroSalary que cubren 15 paises UE, 21 puestos, 4 niveles. Entrega CSV, JSON o API. Niveles Standard, Premium y Enterprise.',
+    home: 'Inicio',
+    partners: 'Socios',
+    breadcrumb: 'Licencia de datos',
+    introAnswer: 'La licencia de datos de EuroSalary ofrece a consultorias de compensacion, firmas de investigacion de mercado y empresas de tech HR acceso a datos salariales estructurados de 15 paises UE, 21 puestos y 4 niveles.',
+    tldr: [
+      'Datos salariales estructurados que cubren 15 paises UE, 21 puestos, 4 niveles y tendencias historicas',
+      'Tres formatos de entrega: descarga masiva CSV, feed JSON o acceso API REST en tiempo real',
+      'Niveles de licencia flexibles desde actualizaciones trimestrales hasta API en tiempo real con SLA personalizado',
+    ],
+    heroSubtitle: 'Convierta el conjunto de datos salariales mas completo de Europa en una ventaja competitiva.',
+    dataTitle: 'Que datos estan disponibles',
+    dataDesc: 'Nuestros datos provienen de Eurostat, ofertas de empleo verificadas e informes anonimos. Cada punto esta validado cruzado.',
+    dataPoints: [
+      { label: 'Paises', value: '15 estados miembros UE' },
+      { label: 'Puestos', value: '21 roles estandarizados' },
+      { label: 'Niveles', value: 'Junior, Intermedio, Senior, Lead' },
+      { label: 'Metricas', value: 'Mediana, P25, P75, estimacion neta, indice CdV' },
+      { label: 'Profundidad historica', value: 'Hasta 3 anos de capturas trimestrales' },
+      { label: 'Frecuencia de actualizacion', value: 'Mensual (Eurostat + ofertas)' },
+      { label: 'Salario minimo', value: 'Actual + historico para 15 paises' },
+      { label: 'Datos por ciudad', value: '24 grandes ciudades europeas' },
+    ],
+    tiersTitle: 'Niveles de licencia',
+    tiersDesc: 'Elija el nivel que se ajuste a sus necesidades. Todos incluyen derechos de uso comercial.',
+    tiers: [
+      { name: 'Standard', price: '499/trimestre', frequency: 'Actualizaciones trimestrales', features: ['Descarga CSV completa', 'Actualizacion trimestral', '15 paises, 21 puestos, 4 niveles', 'Derechos de uso comercial', 'Soporte por email', 'Hasta 3 usuarios internos'] },
+      { name: 'Premium', price: '299/mes', frequency: 'Actualizaciones mensuales', features: ['Entrega CSV + JSON', 'Actualizacion mensual', 'Datos historicos (12 meses)', 'Desglose por ciudad', 'Soporte prioritario', 'Hasta 10 usuarios', 'Cortes de datos personalizados'] },
+      { name: 'Enterprise', price: 'Personalizado', frequency: 'API en tiempo real', features: ['Acceso API REST completo', 'Datos en tiempo real', 'Archivo historico completo (3 anos)', 'Ciudad + sector', 'Account manager dedicado', 'Usuarios ilimitados', 'SLA personalizado', 'Derechos de marca blanca disponibles'] },
+    ],
+    formatsTitle: 'Formatos de entrega',
+    formats: [
+      { name: 'CSV', desc: 'Exportaciones masivas actualizadas segun su plan. Compatible con Excel, R, Python o cualquier herramienta BI. Codificacion UTF-8.', icon: 'table_view' },
+      { name: 'JSON', desc: 'Feed de datos estructurados via enlace seguro o webhook. Ideal para pipelines automatizados y dashboards internos.', icon: 'data_object' },
+      { name: 'API REST', desc: 'Acceso programatico en tiempo real al dataset completo. Consultas por pais, puesto, nivel y ciudad. Respuestas JSON < 200ms.', icon: 'api' },
+    ],
+    useCasesTitle: 'Quien usa datos licenciados',
+    useCases: [
+      { title: 'Consultorias de compensacion', desc: 'Construya informes salariales y estudios de benchmarking para clientes con datos europeos verificados.', icon: 'business' },
+      { title: 'Firmas de investigacion de mercado', desc: 'Incorpore datos salariales en informes sectoriales, analisis del mercado laboral y previsiones economicas.', icon: 'monitoring' },
+      { title: 'Empresas de tech HR', desc: 'Alimente su modulo de compensacion o herramienta de equidad salarial con datos reales del mercado europeo.', icon: 'memory' },
+      { title: 'Instituciones academicas', desc: 'Use datos salariales estructurados para investigacion en economia laboral y estudios de migracion.', icon: 'school' },
+    ],
+    contactTitle: 'Solicitar presupuesto de licencia',
+    contactDesc: 'Describanos sus necesidades de datos y prepararemos una propuesta personalizada en 24 horas.',
+    formLabels: { company: 'Nombre de la empresa', email: 'Email profesional', useCase: 'Caso de uso principal', volumeEstimate: 'Volumen estimado', message: 'Describa sus necesidades', submit: 'Solicitar presupuesto' },
+    useCaseOptions: ['Consultoria de compensacion', 'Investigacion de mercado', 'Tech HR / Producto SaaS', 'Investigacion academica', 'Analitica HR interna', 'Otro'],
+    faq: [
+      { question: 'Que datos salariales incluye una licencia?', answer: 'Salario bruto anual (mediana, P25, P75), estimaciones netas, indice de coste de vida, salario minimo y metadatos para 15 paises UE, 21 puestos y 4 niveles. Premium y Enterprise anaden datos por ciudad e historicos.' },
+      { question: 'Puedo usar los datos en productos comerciales?', answer: 'Si. Todos los niveles incluyen derechos de uso comercial. La redistribucion en marca blanca requiere licencia Enterprise.' },
+      { question: 'Con que frecuencia se actualizan los datos?', answer: 'Mensualmente desde Eurostat y ofertas verificadas. Standard recibe entregas trimestrales, Premium mensuales, Enterprise API en tiempo real.' },
+      { question: 'Que formatos de entrega hay disponibles?', answer: 'CSV (UTF-8), JSON (feeds estructurados) y API REST (tiempo real). CSV y JSON por enlace seguro.' },
+      { question: 'Hay datos historicos disponibles?', answer: 'Premium incluye 12 meses de capturas trimestrales. Enterprise el archivo completo de 3 anos.' },
+      { question: 'Ofrecen precios academicos?', answer: 'Si. Condiciones preferenciales para instituciones academicas acreditadas y ONGs.' },
+      { question: 'Cuales son los plazos minimos de contrato?', answer: 'Standard y Premium: trimestral o anual. Enterprise: minimo 12 meses. Todos incluyen 14 dias de evaluacion.' },
+    ],
+  },
+  it: {
+    h1: 'Come potete licenziare i dati salariali EuroSalary per la vostra azienda?',
+    metaTitle: 'Licenza dati: dati salariali in blocco per ricerca, consulenza e HR tech | EuroSalary.eu',
+    metaDesc: 'Licenziate i dati salariali EuroSalary per 15 paesi UE, 21 professioni, 4 livelli. Consegna CSV, JSON o API.',
+    home: 'Home', partners: 'Partner', breadcrumb: 'Licenza dati',
+    introAnswer: 'La licenza dati EuroSalary offre a societa di consulenza retributiva, istituti di ricerca di mercato e aziende HR tech l\'accesso a dati salariali strutturati per 15 paesi UE.',
+    tldr: ['Dati salariali strutturati per 15 paesi UE, 21 professioni, 4 livelli e trend storici', 'Tre formati: download CSV, feed JSON o accesso API REST in tempo reale', 'Livelli flessibili da aggiornamenti trimestrali ad API in tempo reale'],
+    heroSubtitle: 'Trasformate il dataset salariale piu completo d\'Europa in un vantaggio competitivo.',
+    dataTitle: 'Dati disponibili', dataDesc: 'Il nostro dataset proviene da Eurostat, annunci verificati e report anonimi.',
+    dataPoints: [
+      { label: 'Paesi', value: '15 stati membri UE' }, { label: 'Professioni', value: '21 ruoli standardizzati' }, { label: 'Livelli', value: 'Junior, Mid, Senior, Lead' },
+      { label: 'Metriche', value: 'Mediana, P25, P75, stima netta, indice CdV' }, { label: 'Storico', value: 'Fino a 3 anni trimestrali' }, { label: 'Aggiornamento', value: 'Mensile' },
+      { label: 'Salario minimo', value: 'Attuale + storico per 15 paesi' }, { label: 'Dati citta', value: '24 grandi citta europee' },
+    ],
+    tiersTitle: 'Livelli di licenza', tiersDesc: 'Scegliete il livello adatto. Tutti includono diritti d\'uso commerciale.',
+    tiers: [
+      { name: 'Standard', price: '499/trimestre', frequency: 'Aggiornamenti trimestrali', features: ['Download CSV completo', 'Aggiornamento trimestrale', '15 paesi, 21 professioni, 4 livelli', 'Diritti commerciali', 'Supporto email', 'Fino a 3 utenti'] },
+      { name: 'Premium', price: '299/mese', frequency: 'Aggiornamenti mensili', features: ['Consegna CSV + JSON', 'Aggiornamento mensile', 'Dati storici (12 mesi)', 'Dettaglio citta', 'Supporto prioritario', 'Fino a 10 utenti', 'Tagli dati personalizzati'] },
+      { name: 'Enterprise', price: 'Personalizzato', frequency: 'API tempo reale', features: ['Accesso API REST completo', 'Dati tempo reale', 'Archivio completo (3 anni)', 'Citta + settore', 'Account manager dedicato', 'Utenti illimitati', 'SLA personalizzato', 'Diritti white-label'] },
+    ],
+    formatsTitle: 'Formati di consegna',
+    formats: [
+      { name: 'CSV', desc: 'Esportazioni in blocco aggiornate secondo il vostro piano. Compatibili con Excel, R, Python.', icon: 'table_view' },
+      { name: 'JSON', desc: 'Feed dati strutturati via link sicuro o webhook. Ideale per pipeline automatizzate.', icon: 'data_object' },
+      { name: 'API REST', desc: 'Accesso programmatico in tempo reale. Query per paese, professione, livello e citta.', icon: 'api' },
+    ],
+    useCasesTitle: 'Chi usa i dati licenziati',
+    useCases: [
+      { title: 'Consulenze retributive', desc: 'Create report salariali e studi di benchmarking per clienti con dati europei verificati.', icon: 'business' },
+      { title: 'Ricerche di mercato', desc: 'Integrate dati salariali in report settoriali e analisi del mercato del lavoro.', icon: 'monitoring' },
+      { title: 'Aziende HR tech', desc: 'Alimentate il vostro modulo di compensazione con dati reali del mercato europeo.', icon: 'memory' },
+      { title: 'Istituzioni accademiche', desc: 'Usate dati salariali strutturati per ricerca in economia del lavoro.', icon: 'school' },
+    ],
+    contactTitle: 'Richiedi un preventivo di licenza', contactDesc: 'Descriveteci le vostre esigenze e preparareremo una proposta personalizzata entro 24 ore.',
+    formLabels: { company: 'Nome azienda', email: 'Email aziendale', useCase: 'Caso d\'uso principale', volumeEstimate: 'Volume stimato', message: 'Descrivete le vostre esigenze', submit: 'Richiedi preventivo' },
+    useCaseOptions: ['Consulenza retributiva', 'Ricerca di mercato', 'HR Tech / Prodotto SaaS', 'Ricerca accademica', 'Analitica HR interna', 'Altro'],
+    faq: [
+      { question: 'Quali dati salariali sono inclusi?', answer: 'Stipendio lordo annuale (mediana, P25, P75), stime netto, indice costo vita, salario minimo e metadati per 15 paesi UE, 21 professioni e 4 livelli.' },
+      { question: 'Posso usare i dati in prodotti commerciali?', answer: 'Si. Tutti i livelli includono diritti commerciali. White-label richiede licenza Enterprise.' },
+      { question: 'Con che frequenza vengono aggiornati?', answer: 'Mensilmente da Eurostat. Standard trimestrale, Premium mensile, Enterprise API tempo reale.' },
+      { question: 'Quali formati di consegna sono disponibili?', answer: 'CSV (UTF-8), JSON (feed strutturati) e REST API (tempo reale).' },
+      { question: 'Sono disponibili dati storici?', answer: 'Premium include 12 mesi. Enterprise l\'archivio completo di 3 anni.' },
+      { question: 'Offrite prezzi accademici?', answer: 'Si. Condizioni agevolate per istituzioni accademiche e organizzazioni non profit.' },
+      { question: 'Quali sono i termini minimi di contratto?', answer: 'Standard e Premium: trimestrale o annuale. Enterprise: minimo 12 mesi. 14 giorni di valutazione inclusi.' },
+    ],
+  },
+  pt: {
+    h1: 'Como pode licenciar dados salariais do EuroSalary para o seu negocio?', metaTitle: 'Licenciamento de dados salariais | EuroSalary.eu', metaDesc: 'Licencie dados salariais EuroSalary para 15 paises UE. CSV, JSON ou API.',
+    home: 'Inicio', partners: 'Parceiros', breadcrumb: 'Licenciamento de dados',
+    introAnswer: 'O licenciamento de dados EuroSalary oferece acesso a dados salariais estruturados de 15 paises UE, 21 profissoes e 4 niveis.',
+    tldr: ['Dados salariais para 15 paises UE, 21 profissoes, 4 niveis e historico', 'Tres formatos: CSV, JSON ou API REST', 'Niveis flexiveis de licenciamento'],
+    heroSubtitle: 'Transforme os dados salariais mais completos da Europa numa vantagem competitiva.',
+    dataTitle: 'Dados disponiveis', dataDesc: 'Dados de Eurostat, ofertas verificadas e relatorios anonimos.',
+    dataPoints: [{ label: 'Paises', value: '15 estados-membros UE' }, { label: 'Profissoes', value: '21 funcoes padronizadas' }, { label: 'Niveis', value: 'Junior, Mid, Senior, Lead' }, { label: 'Metricas', value: 'Mediana, P25, P75, estimativa liquida' }, { label: 'Historico', value: 'Ate 3 anos trimestrais' }, { label: 'Atualizacao', value: 'Mensal' }, { label: 'Salario minimo', value: 'Atual + historico' }, { label: 'Cidades', value: '24 grandes cidades' }],
+    tiersTitle: 'Niveis de licenca', tiersDesc: 'Todos os niveis incluem direitos de uso comercial.',
+    tiers: [
+      { name: 'Standard', price: '499/trimestre', frequency: 'Atualizacoes trimestrais', features: ['Download CSV completo', 'Atualizacao trimestral', '15 paises, 21 profissoes, 4 niveis', 'Direitos comerciais', 'Suporte por email', 'Ate 3 utilizadores'] },
+      { name: 'Premium', price: '299/mes', frequency: 'Atualizacoes mensais', features: ['CSV + JSON', 'Atualizacao mensal', 'Historico (12 meses)', 'Detalhe por cidade', 'Suporte prioritario', 'Ate 10 utilizadores', 'Cortes personalizados'] },
+      { name: 'Enterprise', price: 'Personalizado', frequency: 'API tempo real', features: ['API REST completa', 'Dados tempo real', 'Arquivo completo (3 anos)', 'Cidade + setor', 'Account manager dedicado', 'Utilizadores ilimitados', 'SLA personalizado', 'Direitos white-label'] },
+    ],
+    formatsTitle: 'Formatos de entrega', formats: [{ name: 'CSV', desc: 'Exportacoes em massa. Compativel com Excel, R, Python.', icon: 'table_view' }, { name: 'JSON', desc: 'Feed de dados estruturados via link seguro.', icon: 'data_object' }, { name: 'API REST', desc: 'Acesso programatico em tempo real.', icon: 'api' }],
+    useCasesTitle: 'Quem usa dados licenciados', useCases: [{ title: 'Consultorias de compensacao', desc: 'Construa relatorios salariais para clientes com dados europeus.', icon: 'business' }, { title: 'Pesquisa de mercado', desc: 'Incorpore dados em relatorios setoriais.', icon: 'monitoring' }, { title: 'Empresas HR tech', desc: 'Alimente o seu modulo de compensacao com dados reais.', icon: 'memory' }, { title: 'Instituicoes academicas', desc: 'Dados para pesquisa em economia do trabalho.', icon: 'school' }],
+    contactTitle: 'Solicitar orcamento de licenca', contactDesc: 'Descreva as suas necessidades e preparamos uma proposta em 24 horas.',
+    formLabels: { company: 'Nome da empresa', email: 'Email profissional', useCase: 'Caso de uso', volumeEstimate: 'Volume estimado', message: 'Descreva as suas necessidades', submit: 'Solicitar orcamento' },
+    useCaseOptions: ['Consultoria de compensacao', 'Pesquisa de mercado', 'HR Tech / SaaS', 'Pesquisa academica', 'Analitica HR interna', 'Outro'],
+    faq: [
+      { question: 'Que dados estao incluidos?', answer: 'Salario bruto anual (mediana, P25, P75), estimativas liquidas, indice custo de vida, salario minimo para 15 paises UE, 21 profissoes e 4 niveis.' },
+      { question: 'Posso usar comercialmente?', answer: 'Sim. Todos os niveis incluem direitos comerciais.' },
+      { question: 'Com que frequencia sao atualizados?', answer: 'Mensalmente. Standard trimestral, Premium mensal, Enterprise tempo real.' },
+      { question: 'Que formatos existem?', answer: 'CSV, JSON e REST API.' },
+      { question: 'Ha dados historicos?', answer: 'Premium 12 meses, Enterprise 3 anos completos.' },
+      { question: 'Oferecem precos academicos?', answer: 'Sim, para instituicoes academicas e ONGs.' },
+      { question: 'Quais os prazos minimos?', answer: 'Standard/Premium: trimestral ou anual. Enterprise: 12 meses. 14 dias de avaliacao.' },
+    ],
+  },
+  nl: {
+    h1: 'Hoe kunt u EuroSalary-data licencieren voor uw bedrijf?', metaTitle: 'Datalicentie: salarisdata in bulk | EuroSalary.eu', metaDesc: 'Licentieer EuroSalary salarisdata voor 15 EU-landen. CSV, JSON of API.',
+    home: 'Home', partners: 'Partners', breadcrumb: 'Datalicentie',
+    introAnswer: 'EuroSalary datalicenties geven beloningsadviesbureaus, marktonderzoeksbureaus en HR-tech bedrijven toegang tot gestructureerde salarisdata voor 15 EU-landen.',
+    tldr: ['Gestructureerde salarisdata voor 15 EU-landen, 21 functies, 4 niveaus en historische trends', 'Drie formaten: CSV, JSON of REST API', 'Flexibele licentieniveaus'],
+    heroSubtitle: 'Maak van Europa\'s meest uitgebreide salarisdataset een concurrentievoordeel.',
+    dataTitle: 'Beschikbare data', dataDesc: 'Data uit Eurostat, geverifieerde vacatures en anonieme rapporten.',
+    dataPoints: [{ label: 'Landen', value: '15 EU-lidstaten' }, { label: 'Functies', value: '21 gestandaardiseerde rollen' }, { label: 'Niveaus', value: 'Junior, Mid, Senior, Lead' }, { label: 'Metrieken', value: 'Mediaan, P25, P75, nettoschatting' }, { label: 'Historisch', value: 'Tot 3 jaar kwartaalgegevens' }, { label: 'Updates', value: 'Maandelijks' }, { label: 'Minimumloon', value: 'Huidig + historisch' }, { label: 'Steden', value: '24 grote steden' }],
+    tiersTitle: 'Licentieniveaus', tiersDesc: 'Alle niveaus bevatten commerciele gebruiksrechten.',
+    tiers: [
+      { name: 'Standard', price: '499/kwartaal', frequency: 'Kwartaalupdates', features: ['Volledige CSV-download', 'Kwartaalupdate', '15 landen, 21 functies, 4 niveaus', 'Commerciele rechten', 'E-mailsupport', 'Tot 3 gebruikers'] },
+      { name: 'Premium', price: '299/maand', frequency: 'Maandelijkse updates', features: ['CSV + JSON', 'Maandelijkse update', 'Historische data (12 maanden)', 'Stadsniveau', 'Prioriteitssupport', 'Tot 10 gebruikers', 'Aangepaste datasneden'] },
+      { name: 'Enterprise', price: 'Op maat', frequency: 'Realtime API', features: ['Volledige REST API', 'Realtime data', 'Volledig archief (3 jaar)', 'Stad + sector', 'Dedicated accountmanager', 'Onbeperkte gebruikers', 'Aangepaste SLA', 'White-labelrechten'] },
+    ],
+    formatsTitle: 'Leveringsformaten', formats: [{ name: 'CSV', desc: 'Bulkexports op uw schema. Compatibel met Excel, R, Python.', icon: 'table_view' }, { name: 'JSON', desc: 'Gestructureerde datafeed via beveiligde link.', icon: 'data_object' }, { name: 'REST API', desc: 'Realtime programmatische toegang.', icon: 'api' }],
+    useCasesTitle: 'Wie gebruikt gelicentieerde data', useCases: [{ title: 'Beloningsadviesbureaus', desc: 'Bouw salarisrapporten voor klanten met geverifieerde data.', icon: 'business' }, { title: 'Marktonderzoeksbureaus', desc: 'Integreer salarisdata in sectorrapporten.', icon: 'monitoring' }, { title: 'HR-tech bedrijven', desc: 'Voed uw beloningsmodule met echte marktdata.', icon: 'memory' }, { title: 'Academische instellingen', desc: 'Data voor arbeidseconomisch onderzoek.', icon: 'school' }],
+    contactTitle: 'Licentieofferte aanvragen', contactDesc: 'Beschrijf uw databehoeften. Wij bereiden binnen 24 uur een voorstel voor.',
+    formLabels: { company: 'Bedrijfsnaam', email: 'Zakelijk e-mail', useCase: 'Gebruik', volumeEstimate: 'Geschat volume', message: 'Beschrijf uw behoeften', submit: 'Offerte aanvragen' },
+    useCaseOptions: ['Beloningsadvies', 'Marktonderzoek', 'HR Tech / SaaS', 'Academisch onderzoek', 'Interne HR-analytics', 'Anders'],
+    faq: [
+      { question: 'Welke salarisdata is inbegrepen?', answer: 'Bruto jaarsalaris (mediaan, P25, P75), nettoschattingen, kostenindex, minimumloon voor 15 EU-landen, 21 functies, 4 niveaus.' },
+      { question: 'Mag ik de data commercieel gebruiken?', answer: 'Ja. Alle niveaus bevatten commerciele rechten.' },
+      { question: 'Hoe vaak worden data bijgewerkt?', answer: 'Maandelijks. Standard kwartaal, Premium maandelijks, Enterprise realtime.' },
+      { question: 'Welke formaten zijn beschikbaar?', answer: 'CSV, JSON en REST API.' },
+      { question: 'Zijn historische data beschikbaar?', answer: 'Premium 12 maanden, Enterprise 3 jaar.' },
+      { question: 'Bieden jullie academische prijzen?', answer: 'Ja, voor geaccrediteerde instellingen en non-profits.' },
+      { question: 'Wat zijn de minimale contracttermijnen?', answer: 'Standard/Premium: kwartaal of jaarlijks. Enterprise: 12 maanden minimum.' },
+    ],
+  },
+  pl: {
+    h1: 'Jak mozna licencjonowac dane EuroSalary dla swojej firmy?', metaTitle: 'Licencjonowanie danych placowych | EuroSalary.eu', metaDesc: 'Licencjonuj dane placowe EuroSalary dla 15 krajow UE. CSV, JSON lub API.',
+    home: 'Strona glowna', partners: 'Partnerzy', breadcrumb: 'Licencjonowanie danych',
+    introAnswer: 'Licencjonowanie danych EuroSalary daje firmom konsultingowym, badawczym i HR-tech dostep do strukturalnych danych placowych z 15 krajow UE.',
+    tldr: ['Dane placowe dla 15 krajow UE, 21 stanowisk, 4 poziomow i historii', 'Trzy formaty: CSV, JSON lub REST API', 'Elastyczne poziomy licencji'],
+    heroSubtitle: 'Przeksztalc najbardziej kompleksowy europejski zbior danych placowych w przewage konkurencyjna.',
+    dataTitle: 'Dostepne dane', dataDesc: 'Dane z Eurostat, zweryfikowanych ofert pracy i anonimowych raportow.',
+    dataPoints: [{ label: 'Kraje', value: '15 panstw czlonkowskich UE' }, { label: 'Stanowiska', value: '21 standardowych rol' }, { label: 'Poziomy', value: 'Junior, Mid, Senior, Lead' }, { label: 'Metryki', value: 'Mediana, P25, P75, szacunek netto' }, { label: 'Glebokoes historyczna', value: 'Do 3 lat kwartalnych' }, { label: 'Aktualizacje', value: 'Miesieczne' }, { label: 'Placa minimalna', value: 'Aktualna + historyczna' }, { label: 'Miasta', value: '24 duze miasta' }],
+    tiersTitle: 'Poziomy licencji', tiersDesc: 'Wszystkie poziomy obejmuja prawa do uzycia komercyjnego.',
+    tiers: [
+      { name: 'Standard', price: '499/kwartal', frequency: 'Aktualizacje kwartalne', features: ['Pelne pobranie CSV', 'Aktualizacja kwartalna', '15 krajow, 21 stanowisk, 4 poziomy', 'Prawa komercyjne', 'Wsparcie email', 'Do 3 uzytkownikow'] },
+      { name: 'Premium', price: '299/miesiac', frequency: 'Aktualizacje miesieczne', features: ['CSV + JSON', 'Aktualizacja miesieczna', 'Dane historyczne (12 mies.)', 'Poziom miasta', 'Wsparcie priorytetowe', 'Do 10 uzytkownikow', 'Niestandardowe ciecia danych'] },
+      { name: 'Enterprise', price: 'Indywidualnie', frequency: 'API w czasie rzeczywistym', features: ['Pelny REST API', 'Dane w czasie rzeczywistym', 'Pelne archiwum (3 lata)', 'Miasto + sektor', 'Dedykowany opiekun', 'Bez limitu uzytkownikow', 'Indywidualne SLA', 'Prawa white-label'] },
+    ],
+    formatsTitle: 'Formaty dostawy', formats: [{ name: 'CSV', desc: 'Eksporty masowe zgodne z Excel, R, Python.', icon: 'table_view' }, { name: 'JSON', desc: 'Strukturalny feed danych przez bezpieczny link.', icon: 'data_object' }, { name: 'API REST', desc: 'Programatyczny dostep w czasie rzeczywistym.', icon: 'api' }],
+    useCasesTitle: 'Kto korzysta z licencjonowanych danych', useCases: [{ title: 'Firmy doradztwa placowego', desc: 'Buduj raporty placowe dla klientow z zweryfikowanymi danymi.', icon: 'business' }, { title: 'Firmy badawcze', desc: 'Wlacz dane placowe do raportow branzowych.', icon: 'monitoring' }, { title: 'Firmy HR tech', desc: 'Zasilaj modul wynagrodzen realnymi danymi rynkowymi.', icon: 'memory' }, { title: 'Instytucje akademickie', desc: 'Dane do badan ekonomii pracy.', icon: 'school' }],
+    contactTitle: 'Popros o wycene licencji', contactDesc: 'Opisz swoje potrzeby. Przygotujemy oferte w 24 godziny.',
+    formLabels: { company: 'Nazwa firmy', email: 'Email sluzbowy', useCase: 'Przypadek uzycia', volumeEstimate: 'Szacowany wolumen', message: 'Opisz potrzeby', submit: 'Popros o wycene' },
+    useCaseOptions: ['Doradztwo placowe', 'Badania rynku', 'HR Tech / SaaS', 'Badania akademickie', 'Wewnetrzna analityka HR', 'Inne'],
+    faq: [
+      { question: 'Jakie dane sa wlaczone w licencje?', answer: 'Wynagrodzenie brutto roczne (mediana, P25, P75), szacunki netto, indeks kosztow zycia, placa minimalna dla 15 krajow UE, 21 stanowisk i 4 poziomow.' },
+      { question: 'Czy moge uzywac danych komercyjnie?', answer: 'Tak. Wszystkie poziomy obejmuja prawa komercyjne.' },
+      { question: 'Jak czesto dane sa aktualizowane?', answer: 'Miesieczne z Eurostat. Standard kwartalnie, Premium miesiecznie, Enterprise w czasie rzeczywistym.' },
+      { question: 'Jakie formaty sa dostepne?', answer: 'CSV, JSON i REST API.' },
+      { question: 'Czy sa dane historyczne?', answer: 'Premium 12 miesiecy, Enterprise 3 lata.' },
+      { question: 'Czy sa ceny akademickie?', answer: 'Tak, dla akredytowanych instytucji i organizacji non-profit.' },
+      { question: 'Jakie sa minimalne okresy umowy?', answer: 'Standard/Premium: kwartal lub rok. Enterprise: 12 miesiecy minimum.' },
+    ],
+  },
+  ro: { h1: 'Cum puteti licentia datele salariale EuroSalary pentru afacerea dvs.?', metaTitle: 'Licentiere date salariale | EuroSalary.eu', metaDesc: 'Licentiati date salariale EuroSalary pentru 15 tari UE. CSV, JSON sau API.', home: 'Acasa', partners: 'Parteneri', breadcrumb: 'Licentiere date', introAnswer: 'Licentierea datelor EuroSalary ofera acces la date salariale structurate din 15 tari UE.', tldr: ['Date salariale pentru 15 tari UE, 21 posturi, 4 niveluri', 'Trei formate: CSV, JSON sau API REST', 'Niveluri flexibile de licentiere'], heroSubtitle: 'Transformati cele mai complete date salariale europene intr-un avantaj competitiv.', dataTitle: 'Date disponibile', dataDesc: 'Date din Eurostat, anunturi verificate si rapoarte anonime.', dataPoints: [{ label: 'Tari', value: '15 state membre UE' }, { label: 'Posturi', value: '21 roluri standardizate' }, { label: 'Niveluri', value: 'Junior, Mid, Senior, Lead' }, { label: 'Metrici', value: 'Mediana, P25, P75' }, { label: 'Istoric', value: 'Pana la 3 ani' }, { label: 'Actualizare', value: 'Lunara' }, { label: 'Salariu minim', value: 'Actual + istoric' }, { label: 'Orase', value: '24 orase mari' }], tiersTitle: 'Niveluri de licenta', tiersDesc: 'Toate nivelurile includ drepturi de utilizare comerciala.', tiers: [{ name: 'Standard', price: '499/trimestru', frequency: 'Actualizari trimestriale', features: ['Download CSV complet', 'Actualizare trimestriala', '15 tari, 21 posturi, 4 niveluri', 'Drepturi comerciale', 'Suport email', 'Pana la 3 utilizatori'] }, { name: 'Premium', price: '299/luna', frequency: 'Actualizari lunare', features: ['CSV + JSON', 'Actualizare lunara', 'Date istorice (12 luni)', 'Nivel oras', 'Suport prioritar', 'Pana la 10 utilizatori', 'Selectii personalizate'] }, { name: 'Enterprise', price: 'Personalizat', frequency: 'API timp real', features: ['API REST complet', 'Date timp real', 'Arhiva completa (3 ani)', 'Oras + sector', 'Account manager dedicat', 'Utilizatori nelimitati', 'SLA personalizat', 'Drepturi white-label'] }], formatsTitle: 'Formate de livrare', formats: [{ name: 'CSV', desc: 'Exporturi in masa compatibile cu Excel, R, Python.', icon: 'table_view' }, { name: 'JSON', desc: 'Feed de date structurate prin link securizat.', icon: 'data_object' }, { name: 'API REST', desc: 'Acces programatic in timp real.', icon: 'api' }], useCasesTitle: 'Cine foloseste date licentiate', useCases: [{ title: 'Consultante de compensatii', desc: 'Construiti rapoarte salariale cu date europene verificate.', icon: 'business' }, { title: 'Firme de cercetare', desc: 'Incorporati date salariale in rapoarte sectoriale.', icon: 'monitoring' }, { title: 'Companii HR tech', desc: 'Alimentati modulul de compensatii cu date reale.', icon: 'memory' }, { title: 'Institutii academice', desc: 'Date pentru cercetare in economia muncii.', icon: 'school' }], contactTitle: 'Solicitati oferta de licentiere', contactDesc: 'Descrieti nevoile dvs. Pregatim o propunere in 24 ore.', formLabels: { company: 'Numele companiei', email: 'Email profesional', useCase: 'Caz de utilizare', volumeEstimate: 'Volum estimat', message: 'Descrieti nevoile', submit: 'Solicitati oferta' }, useCaseOptions: ['Consultanta compensatii', 'Cercetare de piata', 'HR Tech / SaaS', 'Cercetare academica', 'Analitica HR interna', 'Altul'], faq: [{ question: 'Ce date sunt incluse?', answer: 'Salariu brut anual, estimari neto, indice cost viata, salariu minim pentru 15 tari UE, 21 posturi si 4 niveluri.' }, { question: 'Pot folosi datele comercial?', answer: 'Da. Toate nivelurile includ drepturi comerciale.' }, { question: 'Cat de des sunt actualizate?', answer: 'Lunar. Standard trimestrial, Premium lunar, Enterprise timp real.' }, { question: 'Ce formate sunt disponibile?', answer: 'CSV, JSON si REST API.' }, { question: 'Sunt disponibile date istorice?', answer: 'Premium 12 luni, Enterprise 3 ani.' }, { question: 'Oferiti preturi academice?', answer: 'Da, pentru institutii acreditate.' }, { question: 'Care sunt termenii minimi?', answer: 'Standard/Premium: trimestru sau an. Enterprise: 12 luni minim.' }] },
+  cs: { h1: 'Jak muzete licencovat data EuroSalary pro sve podnikani?', metaTitle: 'Licencovani platovych dat | EuroSalary.eu', metaDesc: 'Licencujte platova data EuroSalary pro 15 zemi EU. CSV, JSON nebo API.', home: 'Domov', partners: 'Partneri', breadcrumb: 'Licencovani dat', introAnswer: 'Licencovani dat EuroSalary dava firmam pristup ke strukturovanym platovym datum z 15 zemi EU.', tldr: ['Platova data pro 15 zemi EU, 21 pozic, 4 urovne', 'Tri formaty: CSV, JSON nebo REST API', 'Flexibilni urovne licenci'], heroSubtitle: 'Premente nejkomplexnejsi evropsky platovy dataset v konkurencni vyhodu.', dataTitle: 'Dostupna data', dataDesc: 'Data z Eurostat, overenych nabidek prace a anonymnich reportu.', dataPoints: [{ label: 'Zeme', value: '15 clenskych statu EU' }, { label: 'Pozice', value: '21 standardizovanych roli' }, { label: 'Urovne', value: 'Junior, Mid, Senior, Lead' }, { label: 'Metriky', value: 'Median, P25, P75' }, { label: 'Historie', value: 'Az 3 roky' }, { label: 'Aktualizace', value: 'Mesicni' }, { label: 'Minimalni mzda', value: 'Aktualni + historicka' }, { label: 'Mesta', value: '24 velkych mest' }], tiersTitle: 'Urovne licenci', tiersDesc: 'Vsechny urovne zahrnuji komercni prava.', tiers: [{ name: 'Standard', price: '499/ctvrtleti', frequency: 'Ctvrtletni aktualizace', features: ['Kompletni CSV', 'Ctvrtletni obnova', '15 zemi, 21 pozic, 4 urovne', 'Komercni prava', 'E-mail podpora', 'Az 3 uzivatele'] }, { name: 'Premium', price: '299/mesic', frequency: 'Mesicni aktualizace', features: ['CSV + JSON', 'Mesicni obnova', 'Historicka data (12 mesicu)', 'Uroven mest', 'Prioritni podpora', 'Az 10 uzivatelu', 'Vlastni rezy'] }, { name: 'Enterprise', price: 'Individualni', frequency: 'Realtime API', features: ['Plny REST API', 'Realtime data', 'Kompletni archiv (3 roky)', 'Mesto + sektor', 'Dedikovat account manager', 'Neomezeni uzivatele', 'Individualni SLA', 'White-label prava'] }], formatsTitle: 'Formaty dodani', formats: [{ name: 'CSV', desc: 'Hromadne exporty pro Excel, R, Python.', icon: 'table_view' }, { name: 'JSON', desc: 'Strukturovany datafeed pres zabezpeceny odkaz.', icon: 'data_object' }, { name: 'REST API', desc: 'Programaticky pristup v realnem case.', icon: 'api' }], useCasesTitle: 'Kdo pouziva licencovana data', useCases: [{ title: 'Poradenstvi v odmenach', desc: 'Stavte platove reporty pro klienty s overenymi daty.', icon: 'business' }, { title: 'Vyzkumne firmy', desc: 'Zahrnte platova data do oborovych reportu.', icon: 'monitoring' }, { title: 'HR tech firmy', desc: 'Napajejte modul odmenovani realnymi daty.', icon: 'memory' }, { title: 'Akademicke instituce', desc: 'Data pro vyzkum ekonomiky prace.', icon: 'school' }], contactTitle: 'Pozadejte o cenovou nabidku', contactDesc: 'Popiste sve potreby. Nabidku pripravime do 24 hodin.', formLabels: { company: 'Nazev firmy', email: 'Pracovni email', useCase: 'Pripad pouziti', volumeEstimate: 'Odhadovany objem', message: 'Popiste sve potreby', submit: 'Pozadat o nabidku' }, useCaseOptions: ['Poradenstvi v odmenach', 'Vyzkum trhu', 'HR Tech / SaaS', 'Akademicky vyzkum', 'Interni HR analytika', 'Jiny'], faq: [{ question: 'Jaka data jsou zahrnuta?', answer: 'Hruby rocni plat (median, P25, P75), odhady cisteho platu, index zivota, minimalni mzda pro 15 zemi EU, 21 pozic a 4 urovne.' }, { question: 'Mohu data pouzit komercne?', answer: 'Ano. Vsechny urovne zahrnuji komercni prava.' }, { question: 'Jak casto se data aktualizuji?', answer: 'Mesicne. Standard ctvrtletne, Premium mesicne, Enterprise realtime.' }, { question: 'Jake formaty jsou k dispozici?', answer: 'CSV, JSON a REST API.' }, { question: 'Jsou k dispozici historicka data?', answer: 'Premium 12 mesicu, Enterprise 3 roky.' }, { question: 'Nabizite akademicke ceny?', answer: 'Ano pro akreditovane instituce.' }, { question: 'Jake jsou minimalni smluvni podminky?', answer: 'Standard/Premium: ctvrtleti nebo rok. Enterprise: 12 mesicu minimum.' }] },
+  sv: { h1: 'Hur kan du licensiera EuroSalary-data for ditt foretag?', metaTitle: 'Datalicensiering: lonedata i bulk | EuroSalary.eu', metaDesc: 'Licensiera EuroSalary lonedata for 15 EU-lander. CSV, JSON eller API.', home: 'Hem', partners: 'Partners', breadcrumb: 'Datalicensiering', introAnswer: 'EuroSalary datalicensiering ger kompensationskonsulter, marknadsforskningsforetag och HR-techbolag tillgang till strukturerad lonedata for 15 EU-lander.', tldr: ['Strukturerad lonedata for 15 EU-lander, 21 yrken, 4 nivaer', 'Tre format: CSV, JSON eller REST API', 'Flexibla licensnivaer'], heroSubtitle: 'Forvandla Europas mest omfattande lonedataset till en konkurrensfordel.', dataTitle: 'Tillganglig data', dataDesc: 'Data fran Eurostat, verifierade jobbannonser och anonyma rapporter.', dataPoints: [{ label: 'Lander', value: '15 EU-medlemsstater' }, { label: 'Yrken', value: '21 standardiserade roller' }, { label: 'Nivaer', value: 'Junior, Mid, Senior, Lead' }, { label: 'Maten', value: 'Median, P25, P75' }, { label: 'Historik', value: 'Upp till 3 ar' }, { label: 'Uppdatering', value: 'Manatlig' }, { label: 'Minimilon', value: 'Aktuell + historisk' }, { label: 'Stader', value: '24 stora stader' }], tiersTitle: 'Licensnivaer', tiersDesc: 'Alla nivaer inkluderar kommersiella anvandningsrattigheter.', tiers: [{ name: 'Standard', price: '499/kvartal', frequency: 'Kvartalsuppdateringar', features: ['Fullstandig CSV', 'Kvartalsuppdatering', '15 lander, 21 yrken, 4 nivaer', 'Kommersiella rattigheter', 'E-postsupport', 'Upp till 3 anvandare'] }, { name: 'Premium', price: '299/manad', frequency: 'Manatliga uppdateringar', features: ['CSV + JSON', 'Manatlig uppdatering', 'Historik (12 manader)', 'Stadsniva', 'Prioritetssupport', 'Upp till 10 anvandare', 'Anpassade datasnitt'] }, { name: 'Enterprise', price: 'Anpassat', frequency: 'Realtids-API', features: ['Full REST API', 'Realtidsdata', 'Fullstandigt arkiv (3 ar)', 'Stad + sektor', 'Dedikerad kontaktperson', 'Obegransat antal anvandare', 'Anpassat SLA', 'White-label-rattigheter'] }], formatsTitle: 'Leveransformat', formats: [{ name: 'CSV', desc: 'Bulkexporter for Excel, R, Python.', icon: 'table_view' }, { name: 'JSON', desc: 'Strukturerad datafeed via saker lank.', icon: 'data_object' }, { name: 'REST API', desc: 'Programmatisk realtidsatkomst.', icon: 'api' }], useCasesTitle: 'Vem anvander licensierad data', useCases: [{ title: 'Kompensationskonsulter', desc: 'Bygg lonerapporter for kunder med verifierad data.', icon: 'business' }, { title: 'Marknadsforskningsforetag', desc: 'Integrera lonedata i branschrapporter.', icon: 'monitoring' }, { title: 'HR-techforetag', desc: 'Driv din kompensationsmodul med riktig marknadsdata.', icon: 'memory' }, { title: 'Akademiska institutioner', desc: 'Data for arbetsekonomisk forskning.', icon: 'school' }], contactTitle: 'Begar licensoffert', contactDesc: 'Beskriv dina databehov sa forbereder vi ett forslag inom 24 timmar.', formLabels: { company: 'Foretag', email: 'Jobbmail', useCase: 'Anvandningsfall', volumeEstimate: 'Uppskattat volym', message: 'Beskriv dina behov', submit: 'Begar offert' }, useCaseOptions: ['Kompensationsradgivning', 'Marknadsforskning', 'HR Tech / SaaS', 'Akademisk forskning', 'Intern HR-analys', 'Ovrigt'], faq: [{ question: 'Vilken data ingar?', answer: 'Bruttolon (median, P25, P75), nettoupskattningar, levnadskostnadsindex, minimilon for 15 EU-lander, 21 yrken, 4 nivaer.' }, { question: 'Kan jag anvanda data kommersiellt?', answer: 'Ja. Alla nivaer inkluderar kommersiella rattigheter.' }, { question: 'Hur ofta uppdateras data?', answer: 'Manatligt. Standard kvartal, Premium manatligt, Enterprise realtid.' }, { question: 'Vilka format finns?', answer: 'CSV, JSON och REST API.' }, { question: 'Finns historisk data?', answer: 'Premium 12 manader, Enterprise 3 ar.' }, { question: 'Finns akademiska priser?', answer: 'Ja for ackrediterade institutioner.' }, { question: 'Vilka ar minimala avtalstider?', answer: 'Standard/Premium: kvartal eller ar. Enterprise: 12 manader minimum.' }] },
+  da: { h1: 'Hvordan kan du licensere EuroSalary-data til din virksomhed?', metaTitle: 'Datalicensering: londata i bulk | EuroSalary.eu', metaDesc: 'Licenser EuroSalary londata for 15 EU-lande. CSV, JSON eller API.', home: 'Hjem', partners: 'Partnere', breadcrumb: 'Datalicensering', introAnswer: 'EuroSalary datalicensering giver kompensationskonsulenter, markedsforskningsvirksomheder og HR-techfirmaer adgang til struktureret londata for 15 EU-lande.', tldr: ['Struktureret londata for 15 EU-lande, 21 stillinger, 4 niveauer', 'Tre formater: CSV, JSON eller REST API', 'Fleksible licensniveauer'], heroSubtitle: 'Forvandl Europas mest omfattende londata til en konkurrencefordel.', dataTitle: 'Tilgaengelige data', dataDesc: 'Data fra Eurostat, verificerede jobannoncer og anonyme rapporter.', dataPoints: [{ label: 'Lande', value: '15 EU-medlemsstater' }, { label: 'Stillinger', value: '21 standardiserede roller' }, { label: 'Niveauer', value: 'Junior, Mid, Senior, Lead' }, { label: 'Maelepunkter', value: 'Median, P25, P75' }, { label: 'Historik', value: 'Op til 3 ar' }, { label: 'Opdatering', value: 'Manedlig' }, { label: 'Minimumslon', value: 'Aktuel + historisk' }, { label: 'Byer', value: '24 store byer' }], tiersTitle: 'Licensniveauer', tiersDesc: 'Alle niveauer inkluderer kommercielle rettigheder.', tiers: [{ name: 'Standard', price: '499/kvartal', frequency: 'Kvartalsopdateringer', features: ['Komplet CSV', 'Kvartalsopdatering', '15 lande, 21 stillinger, 4 niveauer', 'Kommercielle rettigheder', 'E-mailsupport', 'Op til 3 brugere'] }, { name: 'Premium', price: '299/maned', frequency: 'Manedlige opdateringer', features: ['CSV + JSON', 'Manedlig opdatering', 'Historik (12 maneder)', 'Byniveau', 'Prioritetssupport', 'Op til 10 brugere', 'Tilpassede datasnit'] }, { name: 'Enterprise', price: 'Tilpasset', frequency: 'Realtids-API', features: ['Fuld REST API', 'Realtidsdata', 'Komplet arkiv (3 ar)', 'By + sektor', 'Dedikeret kontaktperson', 'Ubegraenset antal brugere', 'Tilpasset SLA', 'White-label-rettigheder'] }], formatsTitle: 'Leveringsformater', formats: [{ name: 'CSV', desc: 'Bulkeksporter til Excel, R, Python.', icon: 'table_view' }, { name: 'JSON', desc: 'Struktureret datafeed via sikkert link.', icon: 'data_object' }, { name: 'REST API', desc: 'Programmatisk realtidsadgang.', icon: 'api' }], useCasesTitle: 'Hvem bruger licenseret data', useCases: [{ title: 'Kompensationskonsulenter', desc: 'Byg lonrapporter for kunder med verificeret data.', icon: 'business' }, { title: 'Markedsforskningsfirmaer', desc: 'Integrer londata i brancherapporter.', icon: 'monitoring' }, { title: 'HR-techvirksomheder', desc: 'Driv dit kompensationsmodul med rigtig markedsdata.', icon: 'memory' }, { title: 'Akademiske institutioner', desc: 'Data til arbejdsokonomisk forskning.', icon: 'school' }], contactTitle: 'Anmod om licenspris', contactDesc: 'Beskriv dine databehov. Vi forbereder et forslag inden for 24 timer.', formLabels: { company: 'Virksomhedsnavn', email: 'Arbejdsmail', useCase: 'Anvendelse', volumeEstimate: 'Estimeret volumen', message: 'Beskriv dine behov', submit: 'Anmod om pris' }, useCaseOptions: ['Kompensationsradgivning', 'Markedsforskning', 'HR Tech / SaaS', 'Akademisk forskning', 'Intern HR-analyse', 'Andet'], faq: [{ question: 'Hvilke data er inkluderet?', answer: 'Bruttolon, nettoestimat, leveomkostningsindeks, minimumlon for 15 EU-lande, 21 stillinger, 4 niveauer.' }, { question: 'Kan jeg bruge data kommercielt?', answer: 'Ja. Alle niveauer inkluderer kommercielle rettigheder.' }, { question: 'Hvor ofte opdateres data?', answer: 'Manedligt. Standard kvartal, Premium manedligt, Enterprise realtid.' }, { question: 'Hvilke formater findes?', answer: 'CSV, JSON og REST API.' }, { question: 'Er historiske data tilgaengelige?', answer: 'Premium 12 maneder, Enterprise 3 ar.' }, { question: 'Tilbyder I akademiske priser?', answer: 'Ja for akkrediterede institutioner.' }, { question: 'Hvad er minimale kontraktperioder?', answer: 'Standard/Premium: kvartal eller ar. Enterprise: 12 maneder minimum.' }] },
+  fi: { h1: 'Miten voit lisensoida EuroSalary-tietoja yrityksellesi?', metaTitle: 'Tietojen lisensointi | EuroSalary.eu', metaDesc: 'Lisensoi EuroSalaryn palkkatiedot 15 EU-maalle. CSV, JSON tai API.', home: 'Etusivu', partners: 'Kumppanit', breadcrumb: 'Tietojen lisensointi', introAnswer: 'EuroSalary-tietojen lisensointi tarjoaa palkkaneuvontayrityksille ja HR-tech-yrityksille paasyn strukturoituihin palkkatietoihin 15 EU-maasta.', tldr: ['Palkkatiedot 15 EU-maata, 21 ammattia, 4 tasoa', 'Kolme muotoa: CSV, JSON tai REST API', 'Joustavat lisenssitasot'], heroSubtitle: 'Muuta Euroopan kattavin palkkatietojoukko kilpailueduksi.', dataTitle: 'Saatavilla olevat tiedot', dataDesc: 'Tiedot Eurostatista, varmennetuista tyopaikkailmoituksista ja nimettomista raporteista.', dataPoints: [{ label: 'Maat', value: '15 EU-jasenvaltioita' }, { label: 'Ammatit', value: '21 standardoitua roolia' }, { label: 'Tasot', value: 'Junior, Mid, Senior, Lead' }, { label: 'Mittarit', value: 'Mediaani, P25, P75' }, { label: 'Historia', value: 'Jopa 3 vuotta' }, { label: 'Paivitys', value: 'Kuukausittain' }, { label: 'Minimipalkka', value: 'Nykyinen + historiallinen' }, { label: 'Kaupungit', value: '24 suurta kaupunkia' }], tiersTitle: 'Lisenssitasot', tiersDesc: 'Kaikki tasot sisaltavat kaupalliset oikeudet.', tiers: [{ name: 'Standard', price: '499/neljannesvuosi', frequency: 'Neljannesvuosittain', features: ['Taysi CSV', 'Neljannesvuosittainen paivitys', '15 maata, 21 ammattia, 4 tasoa', 'Kaupalliset oikeudet', 'Sahkopostituki', 'Jopa 3 kayttajaa'] }, { name: 'Premium', price: '299/kuukausi', frequency: 'Kuukausittain', features: ['CSV + JSON', 'Kuukausittainen paivitys', 'Historia (12 kk)', 'Kaupunkitaso', 'Prioriteettituki', 'Jopa 10 kayttajaa', 'Mukautetut leikkeet'] }, { name: 'Enterprise', price: 'Mukautettu', frequency: 'Reaaliaikainen API', features: ['Taysi REST API', 'Reaaliaikaiset tiedot', 'Taysi arkisto (3 vuotta)', 'Kaupunki + toimiala', 'Omistautunut yhteyshenkilo', 'Rajaton kayttajat', 'Mukautettu SLA', 'White-label-oikeudet'] }], formatsTitle: 'Toimitusmuodot', formats: [{ name: 'CSV', desc: 'Massakiviennit Excelille, R:lle, Pythonille.', icon: 'table_view' }, { name: 'JSON', desc: 'Rakenteellinen tieto turvallisen linkin kautta.', icon: 'data_object' }, { name: 'REST API', desc: 'Ohjelmoinnillinen reaaliaikainen paasy.', icon: 'api' }], useCasesTitle: 'Kuka kayttaa lisensoituja tietoja', useCases: [{ title: 'Palkkaneuvonta', desc: 'Rakenna palkkaraportteja asiakkaille varmennetulla tiedolla.', icon: 'business' }, { title: 'Markkinatutkimus', desc: 'Sisallyta palkkatiedot toimialaraportteihin.', icon: 'monitoring' }, { title: 'HR-tech-yritykset', desc: 'Syota palkkamoduuliasi aidoilla markkinatiedoilla.', icon: 'memory' }, { title: 'Akateemiset laitokset', desc: 'Tietoja tyotaloustieteelliseen tutkimukseen.', icon: 'school' }], contactTitle: 'Pyuda lisenssihintatarjous', contactDesc: 'Kuvaile tietotarpeesi. Valmistelemme ehdotuksen 24 tunnissa.', formLabels: { company: 'Yrityksen nimi', email: 'Tyosahkoposti', useCase: 'Kayttotarkoitus', volumeEstimate: 'Arvioitu volyymi', message: 'Kuvaile tarpeesi', submit: 'Pyuda tarjous' }, useCaseOptions: ['Palkkaneuvonta', 'Markkinatutkimus', 'HR Tech / SaaS', 'Akateeminen tutkimus', 'Sisainen HR-analyysi', 'Muu'], faq: [{ question: 'Mita tietoja sisaltyy?', answer: 'Vuosipalkka (mediaani, P25, P75), nettoarviot, elinkustannusindeksi, minimipalkka 15 EU-maalle.' }, { question: 'Voinko kayttaa kaupallisesti?', answer: 'Kylla. Kaikki tasot sisaltavat kaupalliset oikeudet.' }, { question: 'Kuinka usein paivitetaan?', answer: 'Kuukausittain. Standard neljannesvuosittain, Premium kuukausittain, Enterprise reaaliaikainen.' }, { question: 'Mitka muodot ovat saatavilla?', answer: 'CSV, JSON ja REST API.' }, { question: 'Onko historiallista tietoa?', answer: 'Premium 12 kuukautta, Enterprise 3 vuotta.' }, { question: 'Onko akateeminen hinnasto?', answer: 'Kylla akkreditoiduille laitoksille.' }, { question: 'Mitka ovat vahahimaissopimusehdot?', answer: 'Standard/Premium: neljannesvuosi tai vuosi. Enterprise: vahintaan 12 kuukautta.' }] },
+  el: { h1: 'Pos mporite na adeiodotisete dedomena EuroSalary gia tin epicheirisi sas?', metaTitle: 'Adeiodotisi dedomenon | EuroSalary.eu', metaDesc: 'Adeiodotiste dedomena misthon EuroSalary gia 15 chores EE. CSV, JSON i API.', home: 'Archiki', partners: 'Synergates', breadcrumb: 'Adeiodotisi dedomenon', introAnswer: 'I adeiodotisi dedomenon EuroSalary prosferei prosvasi se domimena dedomena misthon apo 15 chores EE.', tldr: ['Dedomena misthon gia 15 chores EE, 21 theseis, 4 epipeda', 'Tria formats: CSV, JSON i REST API', 'Efkampta epipeda adeiodotisis'], heroSubtitle: 'Metatrepste to pio plires set dedomenon misthon tis Evropis se antagonistiko pleonektima.', dataTitle: 'Diathesima dedomena', dataDesc: 'Dedomena apo Eurostat, epivevaomenes aggelies kai anonyma repor.', dataPoints: [{ label: 'Chores', value: '15 krati meli EE' }, { label: 'Theseis', value: '21 tipopoiimenes' }, { label: 'Epipeda', value: 'Junior, Mid, Senior, Lead' }, { label: 'Metrikes', value: 'Diamessos, P25, P75' }, { label: 'Istoriko', value: 'Eos 3 eti' }, { label: 'Enimerosi', value: 'Miniaia' }, { label: 'Katotatosa', value: 'Trechon + istoriko' }, { label: 'Poleis', value: '24 megales poleis' }], tiersTitle: 'Epipeda adeiodotisis', tiersDesc: 'Ola ta epipeda perilamvanoun emporika dikaiomata.', tiers: [{ name: 'Standard', price: '499/trimino', frequency: 'Triminiees enimeroseis', features: ['Plires CSV', 'Triminiaia enimerosi', '15 chores, 21 theseis, 4 epipeda', 'Emporika dikaiomata', 'Email ypostirixi', 'Eos 3 christes'] }, { name: 'Premium', price: '299/mina', frequency: 'Miniaies enimeroseis', features: ['CSV + JSON', 'Miniaia enimerosi', 'Istoriko (12 mines)', 'Epipedo polis', 'Proteraiotita ypostirxis', 'Eos 10 christes', 'Prosarmismenes tomes'] }, { name: 'Enterprise', price: 'Exatomikeymeno', frequency: 'API pragmatikou chronou', features: ['Plires REST API', 'Pragmatikos chronos', 'Plires archeio (3 eti)', 'Poli + tomeas', 'Afierommenos ypefthynos', 'Aperioristoi christes', 'SLA', 'White-label'] }], formatsTitle: 'Formats paradosis', formats: [{ name: 'CSV', desc: 'Mazikes exagoges gia Excel, R, Python.', icon: 'table_view' }, { name: 'JSON', desc: 'Domimeno feed mesw asfalis syndesmos.', icon: 'data_object' }, { name: 'REST API', desc: 'Programmatiki prosvasi se pragmatiko chrono.', icon: 'api' }], useCasesTitle: 'Poios chrisimopoiei adeiodotimena dedomena', useCases: [{ title: 'Symvouleytikes apodochon', desc: 'Dimiourgiste anafores misthon gia pelates me epivevaomena dedomena.', icon: 'business' }, { title: 'Etaireies erevnas agoras', desc: 'Ensomatoste dedomena misthon se klodikes anafores.', icon: 'monitoring' }, { title: 'Etaireies HR tech', desc: 'Trofodotiste to modul apodochon me pragmatika dedomena.', icon: 'memory' }, { title: 'Akadimika idrimata', desc: 'Dedomena gia erevna ergasiakis oikonomias.', icon: 'school' }], contactTitle: 'Zitiste prosfora adeiodotisis', contactDesc: 'Perigrapste tis anagkes sas. Etoimazoume protasi se 24 ores.', formLabels: { company: 'Onoma etaireias', email: 'Epaggelmatiko email', useCase: 'Periptosi chrisis', volumeEstimate: 'Ektimimenos ogkos', message: 'Perigrapste tis anagkes sas', submit: 'Zitiste prosfora' }, useCaseOptions: ['Symvouleytiki apodochon', 'Erevna agoras', 'HR Tech / SaaS', 'Akadimiki erevna', 'Esoteriki HR analytiki', 'Allo'], faq: [{ question: 'Ti dedomena perilamvanontai?', answer: 'Etisios misthos (diamessos, P25, P75), ektimiseis katharou, deiktis zois, katotatosa gia 15 chores EE.' }, { question: 'Mporo na ta chrisimopoiiso emporika?', answer: 'Nai. Ola ta epipeda perilamvanoun emporika dikaiomata.' }, { question: 'Posp sychna enimeronnontai?', answer: 'Miniaia. Standard triminiaia, Premium miniaia, Enterprise pragmatikos chronos.' }, { question: 'Poia formats yparxoun?', answer: 'CSV, JSON kai REST API.' }, { question: 'Yparxoun istorika dedomena?', answer: 'Premium 12 mines, Enterprise 3 eti.' }, { question: 'Prosferte akadimikes times?', answer: 'Nai gia pistopoiimena idrimata.' }, { question: 'Poioi einai oi elachistoi oroi?', answer: 'Standard/Premium: trimino i etos. Enterprise: 12 mines elachisto.' }] },
+  hu: { h1: 'Hogyan licencelheti az EuroSalary adatait vallalkozasa szamara?', metaTitle: 'Adatlicencelees | EuroSalary.eu', metaDesc: 'Licencelje az EuroSalary beradatait 15 EU orszagra. CSV, JSON vagy API.', home: 'Fooldal', partners: 'Partnerek', breadcrumb: 'Adatlicencelees', introAnswer: 'Az EuroSalary adatlicencelees hozzaferest biztosit 15 EU orszag strukturalt beradataihoz.', tldr: ['Beradatok 15 EU orszag, 21 munkakor, 4 szint', 'Harom formatum: CSV, JSON vagy REST API', 'Rugalmas licencszintek'], heroSubtitle: 'Valtoztassa Europa legteljesebb beradatkeszletet versenyelonye.', dataTitle: 'Elerheto adatok', dataDesc: 'Adatok az Eurostatbol, ellenorzott allashirdetesekbol es nevelten jelentesekbol.', dataPoints: [{ label: 'Orszagok', value: '15 EU tagallam' }, { label: 'Munkakoorok', value: '21 szabvanyositott szerep' }, { label: 'Szintek', value: 'Junior, Mid, Senior, Lead' }, { label: 'Merozsaamok', value: 'Median, P25, P75' }, { label: 'Tortenelmi', value: 'Akar 3 ev' }, { label: 'Frissites', value: 'Havi' }, { label: 'Minimaalber', value: 'Aktuaalis + tortenelmi' }, { label: 'Varosok', value: '24 nagy varos' }], tiersTitle: 'Licencszintek', tiersDesc: 'Minden szint kereskedelmi jogokat tartalmaz.', tiers: [{ name: 'Standard', price: '499/negyedev', frequency: 'Negyedeves frissitesek', features: ['Teljes CSV', 'Negyedeves frissites', '15 orszag, 21 munkakor, 4 szint', 'Kereskedelmi jogok', 'Email tamogatas', 'Max 3 felhasznalo'] }, { name: 'Premium', price: '299/ho', frequency: 'Havi frissitesek', features: ['CSV + JSON', 'Havi frissites', 'Tortenelmi adatok (12 ho)', 'Varosi szint', 'Prioritasos tamogatas', 'Max 10 felhasznalo', 'Egyedi adatvagasok'] }, { name: 'Enterprise', price: 'Egyedi', frequency: 'Valos ideju API', features: ['Teljes REST API', 'Valos ideju adatok', 'Teljes archivum (3 ev)', 'Varos + szektor', 'Dedikalt kapcsolattarto', 'Korlatlan felhasznalok', 'Egyedi SLA', 'White-label jogok'] }], formatsTitle: 'Szallitasi formatumok', formats: [{ name: 'CSV', desc: 'Tomegexportok Excel, R, Python szamara.', icon: 'table_view' }, { name: 'JSON', desc: 'Strukturalt adatfolyam biztonsgos linken.', icon: 'data_object' }, { name: 'REST API', desc: 'Programozott valos ideju hozzaferes.', icon: 'api' }], useCasesTitle: 'Ki hasznalja a licencelt adatokat', useCases: [{ title: 'Javadalmazasi tanacsadok', desc: 'Keszitsen berjelenteseket ellenorzott adatokkal.', icon: 'business' }, { title: 'Piackutato cegek', desc: 'Epitsen be beradatokat iparagi jelentesekbe.', icon: 'monitoring' }, { title: 'HR tech cegek', desc: 'Taplalja javadalmazasi moduljat valos piaci adatokkal.', icon: 'memory' }, { title: 'Akademiai intezmenyek', desc: 'Adatok munkagazdasagtani kutatashoz.', icon: 'school' }], contactTitle: 'Licencajanlat kerese', contactDesc: 'Irja le adatigenyeit. 24 oran belul ajaalatot keszitunk.', formLabels: { company: 'Cegnev', email: 'Munkahelyi email', useCase: 'Felhasznalasi eset', volumeEstimate: 'Becsult mennyiseg', message: 'Irja le igenyeit', submit: 'Ajanlat kerese' }, useCaseOptions: ['Javadalmazasi tanacsadas', 'Piackutatas', 'HR Tech / SaaS', 'Akademiai kutatas', 'Belso HR elemzes', 'Egyeb'], faq: [{ question: 'Milyen adatok jarnak?', answer: 'Eves brutto ber, netto becslesek, megelheteesi koltseg, minimalber 15 EU orszagra.' }, { question: 'Hasznalhatom kereskedelmileg?', answer: 'Igen, minden szint tartalmazza.' }, { question: 'Milyen gyakran frissul?', answer: 'Havonta. Standard negyedevente, Premium havonta, Enterprise valos ideju.' }, { question: 'Milyen formatumok vannak?', answer: 'CSV, JSON es REST API.' }, { question: 'Van tortenelmi adat?', answer: 'Premium 12 ho, Enterprise 3 ev.' }, { question: 'Van akademiai ar?', answer: 'Igen, akkreditalt intezmenyeknek.' }, { question: 'Mik a minimum szerzodesi feltetelek?', answer: 'Standard/Premium: negyedev vagy ev. Enterprise: minimum 12 ho.' }] },
+  sk: { h1: 'Ako mozete licencovat data EuroSalary pre vase podnikanie?', metaTitle: 'Licencovanie platovych dat | EuroSalary.eu', metaDesc: 'Licencujte platove data EuroSalary pre 15 krajin EU. CSV, JSON alebo API.', home: 'Domov', partners: 'Partneri', breadcrumb: 'Licencovanie dat', introAnswer: 'Licencovanie dat EuroSalary dava firmam pristup k strukturovanym platovym datam z 15 krajin EU.', tldr: ['Platove data pre 15 krajin EU, 21 pozicii, 4 urovne', 'Tri formaty: CSV, JSON alebo REST API', 'Flexibilne urovne licencii'], heroSubtitle: 'Premente najkomplexnejsi europsky platovy dataset v konkurencnu vyhodu.', dataTitle: 'Dostupne data', dataDesc: 'Data z Eurostat, overenych ponuk prace a anonymnych reportov.', dataPoints: [{ label: 'Krajiny', value: '15 clenov EU' }, { label: 'Pozicie', value: '21 standardizovanych' }, { label: 'Urovne', value: 'Junior, Mid, Senior, Lead' }, { label: 'Metriky', value: 'Median, P25, P75' }, { label: 'Historia', value: 'Az 3 roky' }, { label: 'Aktualizacia', value: 'Mesacna' }, { label: 'Minimalna mzda', value: 'Aktualna + historicka' }, { label: 'Mesta', value: '24 velkych miest' }], tiersTitle: 'Urovne licencii', tiersDesc: 'Vsetky urovne zahrnaju komercne prava.', tiers: [{ name: 'Standard', price: '499/stvrtrrok', frequency: 'Stvrtrocne', features: ['Kompletny CSV', 'Stvrtrocna obnova', '15 krajin, 21 pozicii, 4 urovne', 'Komercne prava', 'Email podpora', 'Az 3 pouzivatelia'] }, { name: 'Premium', price: '299/mesiac', frequency: 'Mesacne', features: ['CSV + JSON', 'Mesacna obnova', 'Historicke data (12 mes.)', 'Uroven miest', 'Prioritna podpora', 'Az 10 pouzivatelov', 'Vlastne rezy'] }, { name: 'Enterprise', price: 'Individualne', frequency: 'Realtime API', features: ['Plny REST API', 'Realtime data', 'Kompletny archiv (3 roky)', 'Mesto + sektor', 'Dedickovany manazer', 'Neobmedzeni pouzivatelia', 'Individualne SLA', 'White-label prava'] }], formatsTitle: 'Formaty dodania', formats: [{ name: 'CSV', desc: 'Hromadne exporty pre Excel, R, Python.', icon: 'table_view' }, { name: 'JSON', desc: 'Strukturovany datafeed cez bezpecny odkaz.', icon: 'data_object' }, { name: 'REST API', desc: 'Programaticky pristup v realnom case.', icon: 'api' }], useCasesTitle: 'Kto pouziva licencovane data', useCases: [{ title: 'Poradenstvo v odmenach', desc: 'Stavajte platove reporty pre klientov s overenymi datami.', icon: 'business' }, { title: 'Vyskumne firmy', desc: 'Zahrnte platove data do oborovych reportov.', icon: 'monitoring' }, { title: 'HR tech firmy', desc: 'Napajajte modul odmenovania realnymi datami.', icon: 'memory' }, { title: 'Akademicke institucie', desc: 'Data pre vyskum ekonomiky prace.', icon: 'school' }], contactTitle: 'Poziadajte o cenovu ponuku', contactDesc: 'Popiste svoje potreby. Ponuku pripravime do 24 hodin.', formLabels: { company: 'Nazov firmy', email: 'Pracovny email', useCase: 'Pripad pouzitia', volumeEstimate: 'Odhadovany objem', message: 'Popiste svoje potreby', submit: 'Poziadat o ponuku' }, useCaseOptions: ['Poradenstvo v odmenach', 'Vyskum trhu', 'HR Tech / SaaS', 'Akademicky vyskum', 'Interna HR analytika', 'Iny'], faq: [{ question: 'Ake data su zahrnute?', answer: 'Hruby rocny plat, odhady cisteho platu, index zivota, minimalna mzda pre 15 krajin EU.' }, { question: 'Mozem data pouzit komercne?', answer: 'Ano. Vsetky urovne zahrnaju komercne prava.' }, { question: 'Ako casto sa data aktualizuju?', answer: 'Mesacne. Standard stvrtrocne, Premium mesacne, Enterprise realtime.' }, { question: 'Jake formaty su k dispozicii?', answer: 'CSV, JSON a REST API.' }, { question: 'Su k dispozicii historicke data?', answer: 'Premium 12 mesiacov, Enterprise 3 roky.' }, { question: 'Ponukate akademicke ceny?', answer: 'Ano pre akreditovane institucie.' }, { question: 'Ake su minimalne zmluvne podmienky?', answer: 'Standard/Premium: stvrtrrok alebo rok. Enterprise: 12 mesiacov minimum.' }] },
+  bg: { h1: 'Kak mozhete da litsenzirte dannite na EuroSalary za vashiya biznes?', metaTitle: 'Litsenzirane na danni za zaplati | EuroSalary.eu', metaDesc: 'Litsenzirajte danni za zaplati ot EuroSalary za 15 strani ot ES. CSV, JSON ili API.', home: 'Nachalo', partners: 'Partnyori', breadcrumb: 'Litsenzirane na danni', introAnswer: 'Litsenziraneto na danni ot EuroSalary dava dostup do strukturirani danni za zaplati ot 15 strani ot ES.', tldr: ['Danni za zaplati za 15 strani ot ES, 21 pozitsii, 4 niva', 'Tri formata: CSV, JSON ili REST API', 'Gibkavi niva na litsenz'], heroSubtitle: 'Prevarnet nay-pulniya evropeyski dataset za zaplati v konkurentno predimstvo.', dataTitle: 'Nalichni danni', dataDesc: 'Danni ot Eurostat, verificirani obyavi i anonimni dokladi.', dataPoints: [{ label: 'Strani', value: '15 chlenki na ES' }, { label: 'Pozitsii', value: '21 standartizirani' }, { label: 'Niva', value: 'Junior, Mid, Senior, Lead' }, { label: 'Metriki', value: 'Mediana, P25, P75' }, { label: 'Istoriya', value: 'Do 3 godini' }, { label: 'Aktualizatsiya', value: 'Mesechna' }, { label: 'Minimalna zaplata', value: 'Tekushta + istoricheska' }, { label: 'Gradove', value: '24 golemi grada' }], tiersTitle: 'Niva na litsenz', tiersDesc: 'Vsichki niva vklyuchvat torgovski prava.', tiers: [{ name: 'Standard', price: '499/trimesechie', frequency: 'Trimesechni aktualizatsii', features: ['Pulen CSV', 'Trimesechna obnova', '15 strani, 21 pozitsii, 4 niva', 'Torgovski prava', 'Email poddrzhka', 'Do 3 potrebiteli'] }, { name: 'Premium', price: '299/mesec', frequency: 'Mesechni aktualizatsii', features: ['CSV + JSON', 'Mesechna obnova', 'Istoricheski danni (12 mes.)', 'Nivo grad', 'Prioritetna poddrzhka', 'Do 10 potrebiteli', 'Personalizirani rezki'] }, { name: 'Enterprise', price: 'Individualno', frequency: 'Realno vreme API', features: ['Pulen REST API', 'Realno vreme', 'Pulen arkhiv (3 godini)', 'Grad + sektor', 'Dediciran menidzher', 'Neogranicheni potrebiteli', 'Individualen SLA', 'White-label prava'] }], formatsTitle: 'Formati na dostavka', formats: [{ name: 'CSV', desc: 'Masovi eksporti za Excel, R, Python.', icon: 'table_view' }, { name: 'JSON', desc: 'Strukturiran feed chrez siguiren link.', icon: 'data_object' }, { name: 'REST API', desc: 'Programen dostp v realno vreme.', icon: 'api' }], useCasesTitle: 'Koy polzva litsenzirani danni', useCases: [{ title: 'Konsultantski firmi', desc: 'Izgrazhdajte dokladi za klienti s verificirani danni.', icon: 'business' }, { title: 'Izsledovatelski firmi', desc: 'Vklyuchete danni v otraslovi dokladi.', icon: 'monitoring' }, { title: 'HR tech kompanii', desc: 'Zahrvanete modul za vuznagrazhdeniya s realni danni.', icon: 'memory' }, { title: 'Akademichni institutsii', desc: 'Danni za izsledvane na ikonomika na truda.', icon: 'school' }], contactTitle: 'Poiskajte oferta za litsenz', contactDesc: 'Opishete nuzhdte si. Podgotvyame predlozhenie za 24 chasa.', formLabels: { company: 'Ime na firmata', email: 'Sluzheben email', useCase: 'Sluchay na upotreba', volumeEstimate: 'Otsenen obem', message: 'Opishete nuzhdte si', submit: 'Poiskajte oferta' }, useCaseOptions: ['Konsultirane po vuznagrazhdeniya', 'Izsledvane na pazara', 'HR Tech / SaaS', 'Akademichno izsledvane', 'Vtreshna HR analitika', 'Drugo'], faq: [{ question: 'Kakvi danni sa vklyucheni?', answer: 'Godishna bruto zaplata, neto otsenki, indeks na zhivot, minimalna zaplata za 15 strani ot ES.' }, { question: 'Moga li da gi polzvam torgovski?', answer: 'Da. Vsichki niva vklyuchvat torgovski prava.' }, { question: 'Kolko chesto se aktualizirat?', answer: 'Mesechno. Standard trimesechno, Premium mesechno, Enterprise realno vreme.' }, { question: 'Kakvi formati ima?', answer: 'CSV, JSON i REST API.' }, { question: 'Ima li istoricheski danni?', answer: 'Premium 12 mesetsa, Enterprise 3 godini.' }, { question: 'Predlagate li akademichni tseni?', answer: 'Da za akreditirani institutsii.' }, { question: 'Kakvi sa minimalnite usloviya?', answer: 'Standard/Premium: trimesechie ili godina. Enterprise: 12 mesetsa minimum.' }] },
+  hr: { h1: 'Kako mozete licencirati EuroSalary podatke za svoju tvrtku?', metaTitle: 'Licenciranje podataka o placama | EuroSalary.eu', metaDesc: 'Licencirajte podatke o placama EuroSalary za 15 EU zemalja. CSV, JSON ili API.', home: 'Pocetna', partners: 'Partneri', breadcrumb: 'Licenciranje podataka', introAnswer: 'Licenciranje podataka EuroSalary pruza pristup strukturiranim podacima o placama iz 15 EU zemalja.', tldr: ['Podaci o placama za 15 EU zemalja, 21 radno mjesto, 4 razine', 'Tri formata: CSV, JSON ili REST API', 'Fleksibilne razine licenciranja'], heroSubtitle: 'Pretvorite najopseznije europske podatke o placama u konkurentsku prednost.', dataTitle: 'Dostupni podaci', dataDesc: 'Podaci iz Eurostata, verificiranih oglasa i anonimnih izvjesca.', dataPoints: [{ label: 'Zemlje', value: '15 clanica EU' }, { label: 'Radna mjesta', value: '21 standardiziranih' }, { label: 'Razine', value: 'Junior, Mid, Senior, Lead' }, { label: 'Metrike', value: 'Medijan, P25, P75' }, { label: 'Povijesni', value: 'Do 3 godine' }, { label: 'Azuriranje', value: 'Mjesecno' }, { label: 'Minimalna placa', value: 'Trenutna + povijesna' }, { label: 'Gradovi', value: '24 velika grada' }], tiersTitle: 'Razine licencije', tiersDesc: 'Sve razine ukljucuju komercijalna prava.', tiers: [{ name: 'Standard', price: '499/tromjesecje', frequency: 'Tromjesecna azuriranja', features: ['Potpuni CSV', 'Tromjesecno azuriranje', '15 zemalja, 21 radno mjesto, 4 razine', 'Komercijalna prava', 'Email podrska', 'Do 3 korisnika'] }, { name: 'Premium', price: '299/mjesec', frequency: 'Mjesecna azuriranja', features: ['CSV + JSON', 'Mjesecno azuriranje', 'Povijesni podaci (12 mj.)', 'Razina grada', 'Prioritetna podrska', 'Do 10 korisnika', 'Prilagodeni rezovi'] }, { name: 'Enterprise', price: 'Prilagodeno', frequency: 'Stvarnovremeni API', features: ['Potpuni REST API', 'Stvarnovremeni podaci', 'Potpuni arhiv (3 godine)', 'Grad + sektor', 'Dedicirani upravitelj', 'Neograniceni korisnici', 'Prilagodeni SLA', 'White-label prava'] }], formatsTitle: 'Formati isporuke', formats: [{ name: 'CSV', desc: 'Masovni izvozi za Excel, R, Python.', icon: 'table_view' }, { name: 'JSON', desc: 'Strukturirani feed putem sigurne veze.', icon: 'data_object' }, { name: 'REST API', desc: 'Programski pristup u stvarnom vremenu.', icon: 'api' }], useCasesTitle: 'Tko koristi licencirane podatke', useCases: [{ title: 'Konzultanti za naknade', desc: 'Izradite izvjesca o placama za klijente.', icon: 'business' }, { title: 'Istrazivacke tvrtke', desc: 'Ukljucite podatke u sektorska izvjesca.', icon: 'monitoring' }, { title: 'HR tech tvrtke', desc: 'Napajajte modul naknada stvarnim podacima.', icon: 'memory' }, { title: 'Akademske institucije', desc: 'Podaci za istrazivanje trzista rada.', icon: 'school' }], contactTitle: 'Zatrazite ponudu za licenciju', contactDesc: 'Opisite svoje potrebe. Pripremamo ponudu u 24 sata.', formLabels: { company: 'Naziv tvrtke', email: 'Poslovni email', useCase: 'Slucaj koristenja', volumeEstimate: 'Procijenjeni volumen', message: 'Opisite svoje potrebe', submit: 'Zatrazite ponudu' }, useCaseOptions: ['Savjetovanje o naknadama', 'Istrazivanje trzista', 'HR Tech / SaaS', 'Akademsko istrazivanje', 'Interna HR analitika', 'Ostalo'], faq: [{ question: 'Koji podaci su ukljuceni?', answer: 'Godisnja bruto placa, neto procjene, indeks troskova zivota, minimalna placa za 15 EU zemalja.' }, { question: 'Mogu li koristiti podatke komercijalno?', answer: 'Da. Sve razine ukljucuju komercijalna prava.' }, { question: 'Koliko cesto se azuriraju?', answer: 'Mjesecno. Standard tromjesecno, Premium mjesecno, Enterprise stvarnovremeno.' }, { question: 'Koji formati postoje?', answer: 'CSV, JSON i REST API.' }, { question: 'Postoje li povijesni podaci?', answer: 'Premium 12 mjeseci, Enterprise 3 godine.' }, { question: 'Nudite li akademske cijene?', answer: 'Da za akreditirane institucije.' }, { question: 'Koji su minimalni uvjeti ugovora?', answer: 'Standard/Premium: tromjesecje ili godina. Enterprise: 12 mjeseci minimum.' }] },
+  sl: { h1: 'Kako lahko licencirate podatke EuroSalary za svoje podjetje?', metaTitle: 'Licenciranje podatkov o placah | EuroSalary.eu', metaDesc: 'Licencirajte podatke o placah EuroSalary za 15 drzav EU. CSV, JSON ali API.', home: 'Domov', partners: 'Partnerji', breadcrumb: 'Licenciranje podatkov', introAnswer: 'Licenciranje podatkov EuroSalary omogoca dostop do strukturiranih podatkov o placah iz 15 drzav EU.', tldr: ['Podatki o placah za 15 drzav EU, 21 delovnih mest, 4 ravni', 'Trije formati: CSV, JSON ali REST API', 'Prilagodljive ravni licenciranja'], heroSubtitle: 'Spremenite najbolj celovite evropske podatke o placah v konkurencno prednost.', dataTitle: 'Razpolozljivi podatki', dataDesc: 'Podatki iz Eurostata, preverjenih oglasov in anonimnih porocil.', dataPoints: [{ label: 'Drzave', value: '15 clanic EU' }, { label: 'Delovna mesta', value: '21 standardiziranih' }, { label: 'Ravni', value: 'Junior, Mid, Senior, Lead' }, { label: 'Meritve', value: 'Mediana, P25, P75' }, { label: 'Zgodovina', value: 'Do 3 leta' }, { label: 'Posodobitev', value: 'Mesecna' }, { label: 'Minimalna placa', value: 'Trenutna + zgodovinska' }, { label: 'Mesta', value: '24 velikih mest' }], tiersTitle: 'Ravni licenciranja', tiersDesc: 'Vse ravni vkljucujejo komercialne pravice.', tiers: [{ name: 'Standard', price: '499/cetrtletje', frequency: 'Cetrtletne posodobitve', features: ['Polni CSV', 'Cetrtletna posodobitev', '15 drzav, 21 mest, 4 ravni', 'Komercialne pravice', 'E-posstna podpora', 'Do 3 uporabniki'] }, { name: 'Premium', price: '299/mesec', frequency: 'Mesecne posodobitve', features: ['CSV + JSON', 'Mesecna posodobitev', 'Zgodovinski podatki (12 mes.)', 'Raven mesta', 'Prednostna podpora', 'Do 10 uporabnikov', 'Prilagojeni rezi'] }, { name: 'Enterprise', price: 'Po meri', frequency: 'API v realnem casu', features: ['Polni REST API', 'Podatki v realnem casu', 'Poln arhiv (3 leta)', 'Mesto + sektor', 'Namenski upravitelj', 'Neomejeni uporabniki', 'Prilagojen SLA', 'White-label pravice'] }], formatsTitle: 'Formati dostave', formats: [{ name: 'CSV', desc: 'Masovni izvozi za Excel, R, Python.', icon: 'table_view' }, { name: 'JSON', desc: 'Strukturiran tok podatkov prek varne povezave.', icon: 'data_object' }, { name: 'REST API', desc: 'Programski dostop v realnem casu.', icon: 'api' }], useCasesTitle: 'Kdo uporablja licencirane podatke', useCases: [{ title: 'Svetovalci za nagrajevanje', desc: 'Pripravite porocila o placah za stranke.', icon: 'business' }, { title: 'Raziskovalne druzbe', desc: 'Vkljucite podatke v panozna porocila.', icon: 'monitoring' }, { title: 'HR tech podjetja', desc: 'Napajajte modul za nagrajevanje z resnicnimi podatki.', icon: 'memory' }, { title: 'Akademske ustanove', desc: 'Podatki za raziskave trga dela.', icon: 'school' }], contactTitle: 'Zahtevajte ponudbo za licenco', contactDesc: 'Opisite svoje potrebe. Ponudbo pripravimo v 24 urah.', formLabels: { company: 'Ime podjetja', email: 'Sluzbeni email', useCase: 'Primer uporabe', volumeEstimate: 'Ocenjeni obseg', message: 'Opisite svoje potrebe', submit: 'Zahtevajte ponudbo' }, useCaseOptions: ['Svetovanje o nagrajevanju', 'Raziskava trga', 'HR Tech / SaaS', 'Akademska raziskava', 'Notranja HR analitika', 'Drugo'], faq: [{ question: 'Kateri podatki so vkljuceni?', answer: 'Letna bruto placa, ocene neto place, indeks stroskov, minimalna placa za 15 drzav EU.' }, { question: 'Lahko jih uporabim komercialno?', answer: 'Da. Vse ravni vkljucujejo komercialne pravice.' }, { question: 'Kako pogosto se posodabljajo?', answer: 'Mesecno. Standard cetrtletno, Premium mesecno, Enterprise realni cas.' }, { question: 'Kateri formati so na voljo?', answer: 'CSV, JSON in REST API.' }, { question: 'So na voljo zgodovinski podatki?', answer: 'Premium 12 mesecev, Enterprise 3 leta.' }, { question: 'Nudite akademske cene?', answer: 'Da za akreditirane ustanove.' }, { question: 'Kaksni so minimalni pogoji?', answer: 'Standard/Premium: cetrtletje ali leto. Enterprise: 12 mesecev minimum.' }] },
+  lt: { h1: 'Kaip galite licencijuoti EuroSalary duomenis savo verslui?', metaTitle: 'Duomenu licencijavimas | EuroSalary.eu', metaDesc: 'Licencijuokite EuroSalary atlyginimo duomenis 15 ES saliu. CSV, JSON arba API.', home: 'Pradzia', partners: 'Partneriai', breadcrumb: 'Duomenu licencijavimas', introAnswer: 'EuroSalary duomenu licencijavimas suteikia prieiga prie strukturuotu atlyginimo duomenu is 15 ES saliu.', tldr: ['Atlyginimo duomenys 15 ES saliu, 21 pareigybe, 4 lygiai', 'Trys formatai: CSV, JSON arba REST API', 'Lankstuus licencijos lygiai'], heroSubtitle: 'Paverskite islsamiausaia Europos atlyginimo duomenu rinkini konkurenciniu pranasumu.', dataTitle: 'Prieinami duomenys', dataDesc: 'Duomenys is Eurostat, patikrintu skelbimu ir anoniminiu ataskaitu.', dataPoints: [{ label: 'Salys', value: '15 ES nariu' }, { label: 'Pareigybes', value: '21 standartizuotu' }, { label: 'Lygiai', value: 'Junior, Mid, Senior, Lead' }, { label: 'Metrikos', value: 'Mediana, P25, P75' }, { label: 'Istorija', value: 'Iki 3 metu' }, { label: 'Atnaujinimas', value: 'Menesinis' }, { label: 'Minimali alga', value: 'Dabartine + istorine' }, { label: 'Miestai', value: '24 dideli miestai' }], tiersTitle: 'Licencijos lygiai', tiersDesc: 'Visi lygiai apima komercines teises.', tiers: [{ name: 'Standard', price: '499/ketvirtis', frequency: 'Ketvirciio atnaujinimai', features: ['Pilnas CSV', 'Ketvircio atnaujinimas', '15 saliu, 21 pareigybe, 4 lygiai', 'Komercines teises', 'El. pasto palaikymas', 'Iki 3 vartotoju'] }, { name: 'Premium', price: '299/menesi', frequency: 'Menesiniai atnaujinimai', features: ['CSV + JSON', 'Menesinis atnaujinimas', 'Istoriniai duomenys (12 men.)', 'Miesto lygis', 'Prioritetinis palaikymas', 'Iki 10 vartotoju', 'Individualus pjooviai'] }, { name: 'Enterprise', price: 'Individualiai', frequency: 'Realaus laiko API', features: ['Pilnas REST API', 'Realaus laiko duomenys', 'Pilnas archyvas (3 metai)', 'Miestas + sektorius', 'Skirtas vadybininkas', 'Neriboti vartotojai', 'Individualus SLA', 'White-label teises'] }], formatsTitle: 'Pristatymo formatai', formats: [{ name: 'CSV', desc: 'Masinio eksporto Excel, R, Python.', icon: 'table_view' }, { name: 'JSON', desc: 'Strukturuotas duomenu srautas per saugia nuoroda.', icon: 'data_object' }, { name: 'REST API', desc: 'Programine prieiga realiu laiku.', icon: 'api' }], useCasesTitle: 'Kas naudoja licencijuotus duomenis', useCases: [{ title: 'Atlygio konsultantai', desc: 'Kurkite atlyginimo ataskaitas klientams.', icon: 'business' }, { title: 'Rinkos tyrimo imones', desc: 'Itraukite duomenis i srities ataskaitas.', icon: 'monitoring' }, { title: 'HR tech imones', desc: 'Maitinkite atlygio moduli tikrais duomenimis.', icon: 'memory' }, { title: 'Akademines istaigos', desc: 'Duomenys darbo ekonomikos tyrimams.', icon: 'school' }], contactTitle: 'Prasyti licencijos kainos', contactDesc: 'Aprasykte savo poreikius. Pasiulyma parengsime per 24 val.', formLabels: { company: 'Imones pavadinimas', email: 'Darbo el. pastas', useCase: 'Naudojimo atvejis', volumeEstimate: 'Numatomas turis', message: 'Aprasykte poreikius', submit: 'Prasyti kainos' }, useCaseOptions: ['Atlygio konsultavimas', 'Rinkos tyrimas', 'HR Tech / SaaS', 'Akademinis tyrimas', 'Vidine HR analitika', 'Kita'], faq: [{ question: 'Kokie duomenys itraukiami?', answer: 'Metinis bruto atlyginimas, neto iverciiai, gyvenimo kainu indeksas, minimali alga 15 ES saliu.' }, { question: 'Ar galiu naudoti komerciskai?', answer: 'Taip. Visi lygiai apima komercines teises.' }, { question: 'Kaip daznai atnaujinama?', answer: 'Kas menesi. Standard kas ketvirtii, Premium kas menesi, Enterprise realiu laiku.' }, { question: 'Kokie formatai yra?', answer: 'CSV, JSON ir REST API.' }, { question: 'Ar yra istoriniu duomenu?', answer: 'Premium 12 men., Enterprise 3 metai.' }, { question: 'Ar yra akademines kainos?', answer: 'Taip akredituotoms istaigoms.' }, { question: 'Kokios minimalios sutarties salygos?', answer: 'Standard/Premium: ketvirtis arba metai. Enterprise: 12 men. minimum.' }] },
+  lv: { h1: 'Ka jus varat licencet EuroSalary datus savam biznesam?', metaTitle: 'Datu licencesana | EuroSalary.eu', metaDesc: 'Licencejiet EuroSalary algu datus 15 ES valsitm. CSV, JSON vai API.', home: 'Sakums', partners: 'Partneri', breadcrumb: 'Datu licencesana', introAnswer: 'EuroSalary datu licencesana piedava pieeju strukturetiem algu datiem no 15 ES valstim.', tldr: ['Algu dati 15 ES valsitm, 21 amatam, 4 limeniem', 'Tris formati: CSV, JSON vai REST API', 'Elastigi licences limeni'], heroSubtitle: 'Parveidojiet Eiropas visaptverosakos algu datus konkurences priekssrociba.', dataTitle: 'Pieejamie dati', dataDesc: 'Dati no Eurostat, verificetam vakanceem un anonimiem zinoojumiem.', dataPoints: [{ label: 'Valstis', value: '15 ES dalibvalstis' }, { label: 'Amati', value: '21 standartizeti' }, { label: 'Limeni', value: 'Junior, Mid, Senior, Lead' }, { label: 'Metrikas', value: 'Mediana, P25, P75' }, { label: 'Vesture', value: 'Lidz 3 gadiem' }, { label: 'Atjauninajums', value: 'Ikkmenesa' }, { label: 'Minimala alga', value: 'Pasreizeja + vesturiska' }, { label: 'Pilsetas', value: '24 lielas pilsetas' }], tiersTitle: 'Licences limeni', tiersDesc: 'Visi limeni ietver komercialas tiesibas.', tiers: [{ name: 'Standard', price: '499/ceturksnis', frequency: 'Ceturksna atjauninajumi', features: ['Pilns CSV', 'Ceturksna atjauninajums', '15 valstis, 21 amats, 4 limeni', 'Komercialas tiesibas', 'E-pasta atbalsts', 'Lidz 3 lietotajiem'] }, { name: 'Premium', price: '299/menesis', frequency: 'Ikkmenesa atjauninajumi', features: ['CSV + JSON', 'Ikkmenesa atjauninajums', 'Vesturiskie dati (12 men.)', 'Pilsetas limens', 'Prioritars atbalsts', 'Lidz 10 lietotajiem', 'Pielagoti griezumi'] }, { name: 'Enterprise', price: 'Individuali', frequency: 'Reallaika API', features: ['Pilns REST API', 'Reallaika dati', 'Pilns arhivs (3 gadi)', 'Pilseta + nozare', 'Veltits menedzeris', 'Neierobezoti lietotaji', 'Individuals SLA', 'White-label tiesibas'] }], formatsTitle: 'Piegades formati', formats: [{ name: 'CSV', desc: 'Masveida eksporti Excel, R, Python.', icon: 'table_view' }, { name: 'JSON', desc: 'Strukturets datu plsma caur drosu saiti.', icon: 'data_object' }, { name: 'REST API', desc: 'Programmatiska pieeja realla laika.', icon: 'api' }], useCasesTitle: 'Kas izmanto licencetus datus', useCases: [{ title: 'Atlidzibas konsultanti', desc: 'Veidojiet algu parskatus klientiem ar verificetiem datiem.', icon: 'business' }, { title: 'Tirgus peetniecibas uznemumi', desc: 'Ieklaujiet algu datus nozares parskatos.', icon: 'monitoring' }, { title: 'HR tech uznemumi', desc: 'Barojiet atlidzibas moduli ar reealiem datiem.', icon: 'memory' }, { title: 'Akademiskas iestades', desc: 'Dati darba ekonomikas petijumiem.', icon: 'school' }], contactTitle: 'Pieprasiet licences cenu', contactDesc: 'Aprakstiet savas vajadzibas. Piedavajumu sagatavoism 24 stundu laika.', formLabels: { company: 'Uznemuma nosaukums', email: 'Darba e-pasts', useCase: 'Lietosanas gadijums', volumeEstimate: 'Aptuvenais apjoms', message: 'Aprakstiet vajadzibas', submit: 'Pieprasit cenu' }, useCaseOptions: ['Atlidzibas konsultacijas', 'Tirgus peetnieciba', 'HR Tech / SaaS', 'Akademiska peetnieciba', 'Ieksseja HR analitika', 'Cits'], faq: [{ question: 'Kadi dati ir ieklauti?', answer: 'Gada bruto alga, neto apleeses, dzives izmaksu indekss, minimala alga 15 ES valsitm.' }, { question: 'Vai varu izmantot komerciiali?', answer: 'Ja. Visi limeni ietver komercialas tiesibas.' }, { question: 'Cik biezi dati tiek atjaunoti?', answer: 'Katru menesi. Standard ceturksni, Premium katru menesi, Enterprise reallaika.' }, { question: 'Kadi formati ir pieejami?', answer: 'CSV, JSON un REST API.' }, { question: 'Vai ir vesturiski dati?', answer: 'Premium 12 menesi, Enterprise 3 gadi.' }, { question: 'Vai piedavajat akademiskas cenas?', answer: 'Ja akreditetam iestadem.' }, { question: 'Kadi ir minimalie noteikumi?', answer: 'Standard/Premium: ceturksnis vai gads. Enterprise: 12 menesi minimums.' }] },
+  et: { h1: 'Kuidas saate EuroSalary andmeid oma ettevottele litsentseerida?', metaTitle: 'Andmete litsentseerimine | EuroSalary.eu', metaDesc: 'Litsentseerige EuroSalary palgaandmeid 15 EL riigi kohta. CSV, JSON voi API.', home: 'Avaleht', partners: 'Partnerid', breadcrumb: 'Andmete litsentseerimine', introAnswer: 'EuroSalary andmete litsentseerimine annab juurdepaaasu struktureeritud palgaandmetele 15 EL riigist.', tldr: ['Palgaandmed 15 EL riiki, 21 ametikohta, 4 taset', 'Kolm formaati: CSV, JSON voi REST API', 'Paindlikud litsentstasemed'], heroSubtitle: 'Muutke Euroopa koige pohjalikumad palgaandmed konkurentsieeliseks.', dataTitle: 'Saadaolevad andmed', dataDesc: 'Andmed Eurostatist, kontrollitud kuulutustest ja anonuumsetest aruannetest.', dataPoints: [{ label: 'Riigid', value: '15 EL liikmesriiki' }, { label: 'Ametikohad', value: '21 standarditud' }, { label: 'Tasemed', value: 'Junior, Mid, Senior, Lead' }, { label: 'Mootdikud', value: 'Mediaan, P25, P75' }, { label: 'Ajalugu', value: 'Kuni 3 aastat' }, { label: 'Varskendus', value: 'Igakuine' }, { label: 'Miinimumpalk', value: 'Praegune + ajalooline' }, { label: 'Linnad', value: '24 suurt linna' }], tiersTitle: 'Litsentsi tasemed', tiersDesc: 'Koik tasemed sisaldavad kaubanduslikke oigusi.', tiers: [{ name: 'Standard', price: '499/kvartal', frequency: 'Kvartaalsed uuendused', features: ['Tais CSV', 'Kvartaalne uuendus', '15 riiki, 21 ametikohta, 4 taset', 'Kaubanduslikud oigused', 'E-posti tugi', 'Kuni 3 kasutajat'] }, { name: 'Premium', price: '299/kuu', frequency: 'Igakuised uuendused', features: ['CSV + JSON', 'Igakuine uuendus', 'Ajaloolised andmed (12 kuud)', 'Linna tase', 'Prioriteetne tugi', 'Kuni 10 kasutajat', 'Kohandatud loiked'] }, { name: 'Enterprise', price: 'Kohandatud', frequency: 'Reaalajas API', features: ['Tais REST API', 'Reaalajas andmed', 'Tais arhiiv (3 aastat)', 'Linn + sektor', 'Puhendunud haldur', 'Piiramatuid kasutajaid', 'Kohandatud SLA', 'White-label oigused'] }], formatsTitle: 'Tarneformaadid', formats: [{ name: 'CSV', desc: 'Hulgieksport Excelile, R-ile, Pythonile.', icon: 'table_view' }, { name: 'JSON', desc: 'Struktureeritud andmevoog turvalise lingi kaudu.', icon: 'data_object' }, { name: 'REST API', desc: 'Programmeeritav reaalajas juurdepaaas.', icon: 'api' }], useCasesTitle: 'Kes kasutab litsentseeritud andmeid', useCases: [{ title: 'Tasustamisnoustajad', desc: 'Koostage palgaaruandeid klientidele.', icon: 'business' }, { title: 'Turu-uuringufirmad', desc: 'Lisage palgaandmed toostusaruannetesse.', icon: 'monitoring' }, { title: 'HR-tech ettevotted', desc: 'Toitke tasustamismoodulit toodiste andmetega.', icon: 'memory' }, { title: 'Akadeemilised asutused', desc: 'Andmed toomajanduse uuringuteks.', icon: 'school' }], contactTitle: 'Kuusige litsentsi hinnapakkumist', contactDesc: 'Kirjeldage oma vajadusi. Valmistame pakkumise 24 tunni jooksul.', formLabels: { company: 'Ettevotte nimi', email: 'Too e-post', useCase: 'Kasutusjuht', volumeEstimate: 'Hinnanguline maht', message: 'Kirjeldage vajadusi', submit: 'Kuusige pakkumist' }, useCaseOptions: ['Tasustamisnoustamine', 'Turu-uuring', 'HR Tech / SaaS', 'Akadeemiline uuring', 'Sisene HR-analuutika', 'Muu'], faq: [{ question: 'Milliseid andmeid sisaldab?', answer: 'Aastane brutopalk, netopalk, elukallliduse indeks, miinimumpalk 15 EL riigi kohta.' }, { question: 'Kas saan kasutada kaubanduslikult?', answer: 'Jah. Koik tasemed sisaldavad kaubanduslikke oigusi.' }, { question: 'Kui tihti uuendatakse?', answer: 'Igakuiselt. Standard kvartaalselt, Premium igakuiselt, Enterprise reaalajas.' }, { question: 'Millised formaadid on saadaval?', answer: 'CSV, JSON ja REST API.' }, { question: 'Kas ajaloolisi andmeid on?', answer: 'Premium 12 kuud, Enterprise 3 aastat.' }, { question: 'Kas on akadeemiline hind?', answer: 'Jah akrediteeritud asutustele.' }, { question: 'Millised on minimaalsed tingimused?', answer: 'Standard/Premium: kvartal voi aasta. Enterprise: 12 kuud miinimum.' }] },
+  mt: { h1: 'Kif tista tillicenzja d-data ta\' EuroSalary ghan-negozju tieghek?', metaTitle: 'Licenzjar tad-data tas-salarji | EuroSalary.eu', metaDesc: 'Illicenzja data ta\' salarji EuroSalary ghal 15-il pajjiz UE. CSV, JSON jew API.', home: 'Pagna Ewlenija', partners: 'Shab', breadcrumb: 'Licenzjar tad-data', introAnswer: 'Il-licenzjar tad-data ta\' EuroSalary jaghti access ghal data strutturata ta\' salarji minn 15-il pajjiz UE.', tldr: ['Data ta\' salarji ghal 15-il pajjiz UE, 21 impjieg, 4 livelli', 'Tliet formati: CSV, JSON jew REST API', 'Livelli flessibbli ta\' licenzja'], heroSubtitle: 'Ibdel l-aktar dataset shih ta\' salarji fl-Ewropa f\'vantadd kompetittiv.', dataTitle: 'Data disponibbli', dataDesc: 'Data minn Eurostat, reklami verifikati u rapporti anonimi.', dataPoints: [{ label: 'Pajjizi', value: '15-il membru UE' }, { label: 'Impjiegi', value: '21 standardizzati' }, { label: 'Livelli', value: 'Junior, Mid, Senior, Lead' }, { label: 'Metriki', value: 'Medjana, P25, P75' }, { label: 'Storja', value: 'Sa 3 snin' }, { label: 'Aggornament', value: 'Ta\' kull xahar' }, { label: 'Paga minima', value: 'Attwali + storika' }, { label: 'Bliet', value: '24 belt kbar' }], tiersTitle: 'Livelli ta\' licenzja', tiersDesc: 'Il-livelli kollha jinkludu drittijiet kummerali.', tiers: [{ name: 'Standard', price: '499/kwart', frequency: 'Aggornamenti kull kwart', features: ['CSV shih', 'Aggornament kull kwart', '15 pajjiz, 21 impjieg, 4 livelli', 'Drittijiet kummerali', 'Support bl-email', 'Sa 3 utenti'] }, { name: 'Premium', price: '299/xahar', frequency: 'Aggornamenti ta\' kull xahar', features: ['CSV + JSON', 'Aggornament ta\' kull xahar', 'Data storika (12-il xahar)', 'Livell belt', 'Support ta\' prijorita', 'Sa 10 utenti', 'Tqassim personalizzat'] }, { name: 'Enterprise', price: 'Personalizzat', frequency: 'API fi zmien reali', features: ['REST API shih', 'Data fi zmien reali', 'Arkivju shih (3 snin)', 'Belt + settur', 'Manigar dedikat', 'Utenti illimitati', 'SLA personalizzat', 'Drittijiet white-label'] }], formatsTitle: 'Formati ta\' konsenja', formats: [{ name: 'CSV', desc: 'Esportazzjonijiet bl-ingrossa ghall-Excel, R, Python.', icon: 'table_view' }, { name: 'JSON', desc: 'Feed ta\' data strutturata permezz ta\' link sigur.', icon: 'data_object' }, { name: 'REST API', desc: 'Access programmatiku fi zmien reali.', icon: 'api' }], useCasesTitle: 'Min juza data licenzjata', useCases: [{ title: 'Konsulenti ta\' kumpens', desc: 'Ibni rapporti ta\' salarji ghall-klijenti.', icon: 'business' }, { title: 'Ricerka tas-suq', desc: 'Inkludi data ta\' salarji f\'rapporti settorjali.', icon: 'monitoring' }, { title: 'Kumpaniji HR tech', desc: 'Itma\' l-modulu tal-kumpens b\'data reali.', icon: 'memory' }, { title: 'Istituzzjonijiet akkademici', desc: 'Data ghar-ricerka tal-ekonomija tax-xoghol.', icon: 'school' }], contactTitle: 'Itlob kwotazzjoni ghal-licenzja', contactDesc: 'Iddeskrivi l-htigijiet tieghek. Nippreparaw proposta fi 24 siegha.', formLabels: { company: 'Isem il-kumpanija', email: 'Email tax-xoghol', useCase: 'Kaz ta\' uzu', volumeEstimate: 'Volum stmat', message: 'Iddeskrivi l-htigijiet tieghek', submit: 'Itlob kwotazzjoni' }, useCaseOptions: ['Konsulenza tal-kumpens', 'Ricerka tas-suq', 'HR Tech / SaaS', 'Ricerka akkademika', 'Analitika HR interna', 'Iehor'], faq: [{ question: 'X\'data hija inkluza?', answer: 'Salarju gross annwali, stimi nett, indici tal-gholi tal-hajja, paga minima ghal 15-il pajjiz UE.' }, { question: 'Nista nuzaha kummerbjalment?', answer: 'Iva. Il-livelli kollha jinkludu drittijiet kummerali.' }, { question: 'Kemm spiss jigu aggornati?', answer: 'Kull xahar. Standard kull kwart, Premium kull xahar, Enterprise zmien reali.' }, { question: 'X\'formati hemm?', answer: 'CSV, JSON u REST API.' }, { question: 'Hemm data storika?', answer: 'Premium 12-il xahar, Enterprise 3 snin.' }, { question: 'Toffru prezzijiet akkademici?', answer: 'Iva ghal istituzzjonijiet akkreditati.' }, { question: 'X\'inhuma t-termini minimi?', answer: 'Standard/Premium: kwart jew sena. Enterprise: 12-il xahar minimu.' }] },
+  ga: { h1: 'Conas is feidir leat sonrai EuroSalary a cheadunu do do ghnolacht?', metaTitle: 'Ceadunu sonrai tuarastail | EuroSalary.eu', metaDesc: 'Ceadaigh sonrai tuarastail EuroSalary do 15 tir AE. CSV, JSON no API.', home: 'Baile', partners: 'Comhphairtigh', breadcrumb: 'Ceadunu sonrai', introAnswer: 'Tugann ceadunu sonrai EuroSalary rochtain ar shonrai tuarastail struchturdha o 15 tir AE.', tldr: ['Sonrai tuarastail do 15 tir AE, 21 post, 4 leibheal', 'Tri fhormaidi: CSV, JSON no REST API', 'Leibheil cheadunais solubtha'], heroSubtitle: 'Athraigh an tacar sonrai tuarastail is cuimsithis san Eoraip ina bhuntaiste iomaiocha.', dataTitle: 'Sonrai ar fail', dataDesc: 'Sonrai o Eurostat, fograiochtai deimhnithe agus tuairiscil gan ainm.', dataPoints: [{ label: 'Tithe', value: '15 ballstat AE' }, { label: 'Poist', value: '21 rol caighdeanaithe' }, { label: 'Leibheil', value: 'Soisearach, Mean, Sinsearach, Ceannaire' }, { label: 'Meadrachain', value: 'Mean, P25, P75' }, { label: 'Stair', value: 'Suas le 3 bliana' }, { label: 'Nuashonru', value: 'Miosuil' }, { label: 'Iosphá', value: 'Reatha + stairiuil' }, { label: 'Cathracha', value: '24 cathair mhor' }], tiersTitle: 'Leibheil cheadunais', tiersDesc: 'Cuimsionn gach leibheal cearta trachtala.', tiers: [{ name: 'Caighdeanach', price: '499/raithe', frequency: 'Nuashonruithe raithiula', features: ['CSV iomlan', 'Nuashonru raithiuil', '15 tir, 21 post, 4 leibheal', 'Cearta trachtala', 'Tacaiocht rphost', 'Suas le 3 usaideoir'] }, { name: 'Premium', price: '299/mi', frequency: 'Nuashonruithe miosula', features: ['CSV + JSON', 'Nuashonru miosuil', 'Sonrai stairiula (12 mi)', 'Leibheal cathrach', 'Tacaiocht tosaochta', 'Suas le 10 n-usaideoir', 'Gearrthacha saincheaptha'] }, { name: 'Fiontar', price: 'Saincheaptha', frequency: 'API fior-ama', features: ['API REST iomlan', 'Sonrai fior-ama', 'Cartlann iomlan (3 bliana)', 'Cathair + earnaail', 'Bainisteoir tiomanta', 'Usaideoiri gan teorainn', 'SLA saincheaptha', 'Cearta lipead ban'] }], formatsTitle: 'Formaidi seachadta', formats: [{ name: 'CSV', desc: 'Easportalacha ollmhora do Excel, R, Python.', icon: 'table_view' }, { name: 'JSON', desc: 'Sreabhadh sonrai struchturdha tri nasc slan.', icon: 'data_object' }, { name: 'REST API', desc: 'Rochtain riomlarcach fior-ama.', icon: 'api' }], useCasesTitle: 'Ce a usaideann sonrai ceadunaithe', useCases: [{ title: 'Comhairligh cuiteamh', desc: 'Tog tuairiscil tuarastail do chliaint.', icon: 'business' }, { title: 'Cuideachtai taighde margaidh', desc: 'Cuir sonrai tuarastail san aireamh i dtuairiscil.', icon: 'monitoring' }, { title: 'Cuideachtai AD tech', desc: 'Cothaigh do mhodual cuiteamh le sonrai iontaofa.', icon: 'memory' }, { title: 'Institiuidi acadula', desc: 'Sonrai do thaighde eacnamaiocht saothair.', icon: 'school' }], contactTitle: 'Iarr luachan ceadunais', contactDesc: 'Cur sios ar do chuid riachtanas. Ullmhoiimid togra laistigh de 24 uair.', formLabels: { company: 'Ainm na cuideachta', email: 'Rphost oibre', useCase: 'Cas usaide', volumeEstimate: 'Meid measta', message: 'Cur sios ar do riachtanais', submit: 'Iarr luachan' }, useCaseOptions: ['Comhairleacht cuiteamh', 'Taighde margaidh', 'AD Tech / SaaS', 'Taighde acaduil', 'Anailitice AD inmheanach', 'Eile'], faq: [{ question: 'Cen sonrai ata san aireamh?', answer: 'Tuarastal comhlan bliantuil, meastachan glan, inneacs costas, iosphá do 15 tir AE.' }, { question: 'An feidir liom usaid a bhaint trachtala?', answer: 'Is feidir. Cuimsionn gach leibheal cearta trachtala.' }, { question: 'Ce chomh minic a nuashonraitear?', answer: 'Gach mi. Caighdeanach gach raithe, Premium gach mi, Fiontar fior-am.' }, { question: 'Cen formaidi ata ar fail?', answer: 'CSV, JSON agus REST API.' }, { question: 'An bhfuil sonrai stairiula ar fail?', answer: 'Premium 12 mi, Fiontar 3 bliana.' }, { question: 'An dtairgeann sibh praghsail acaduil?', answer: 'Tairgimid do institiuidi creidiunithe.' }, { question: 'Cad iad na tearmtai iosta?', answer: 'Caighdeanach/Premium: raithe no bliain. Fiontar: 12 mi ar a laghad.' }] },
+};
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+const t = fb(i18n, lang);
+---
+<BaseLayout title={t.metaTitle} description={t.metaDesc} lang={lang}>
+
+  <!-- Breadcrumbs -->
+  <nav class="max-w-5xl mx-auto px-4 pt-6 text-sm text-slate-400" aria-label="Breadcrumb">
+    <ol class="flex items-center gap-2">
+      <li><a href={`/${lang}/`} class="hover:text-blue-400 transition-colors">{t.home}</a></li>
+      <li class="text-slate-600">/</li>
+      <li><a href={`/${lang}/partners/`} class="hover:text-blue-400 transition-colors">{t.partners}</a></li>
+      <li class="text-slate-600">/</li>
+      <li class="text-slate-300">{t.breadcrumb}</li>
+    </ol>
+  </nav>
+
+  <!-- Hero -->
+  <section class="max-w-5xl mx-auto px-4 py-12 text-center">
+    <h1 class="text-3xl md:text-4xl font-bold text-white mb-4 font-['Public_Sans']">{t.h1}</h1>
+    <p class="text-lg text-slate-300 max-w-3xl mx-auto mb-6">{t.introAnswer}</p>
+    <p class="text-slate-400 max-w-2xl mx-auto">{t.heroSubtitle}</p>
+  </section>
+
+  <!-- TL;DR -->
+  <TLDRBox items={t.tldr} />
+
+  <!-- What Data Is Available -->
+  <section class="max-w-5xl mx-auto px-4 py-12">
+    <h2 class="text-2xl font-bold text-white text-center mb-2 font-['Public_Sans']">{t.dataTitle}</h2>
+    <p class="text-slate-400 text-center mb-8 max-w-2xl mx-auto">{t.dataDesc}</p>
+    <div class="max-w-3xl mx-auto bg-[#162A4A] border border-slate-700/50 rounded-xl overflow-hidden">
+      <table class="w-full">
+        <tbody>
+          {t.dataPoints.map((dp, i) => (
+            <tr class={i % 2 === 0 ? 'bg-[#162A4A]' : 'bg-[#1a3055]'}>
+              <td class="px-6 py-3 text-sm text-slate-400 font-medium">{dp.label}</td>
+              <td class="px-6 py-3 text-sm text-white font-semibold text-right">{dp.value}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Licensing Tiers -->
+  <section class="max-w-5xl mx-auto px-4 py-12">
+    <h2 class="text-2xl font-bold text-white text-center mb-2 font-['Public_Sans']">{t.tiersTitle}</h2>
+    <p class="text-slate-400 text-center mb-10 max-w-2xl mx-auto">{t.tiersDesc}</p>
+    <div class="grid md:grid-cols-3 gap-8">
+      {t.tiers.map((tier, i) => (
+        <div class={`bg-[#162A4A] border rounded-xl p-6 flex flex-col ${i === 1 ? 'border-blue-500 ring-1 ring-blue-500/50' : 'border-slate-700/50'}`}>
+          <h3 class="text-xl font-bold text-white mb-1 font-['Public_Sans']">{tier.name}</h3>
+          <div class="text-2xl font-bold text-blue-400 mb-1">{tier.price.includes('Custom') || tier.price.includes('mesure') || tier.price.includes('Individuell') || tier.price.includes('Personalizado') || tier.price.includes('Personalizzato') || tier.price.includes('maat') || tier.price.includes('Indywidualnie') || tier.price.includes('Personalizat') || tier.price.includes('Individualni') || tier.price.includes('Anpassat') || tier.price.includes('Tilpasset') || tier.price.includes('Mukautettu') || tier.price.includes('Exatomikeymeno') || tier.price.includes('Egyedi') || tier.price.includes('Individualne') || tier.price.includes('Individualno') || tier.price.includes('Prilagodeno') || tier.price.includes('meri') || tier.price.includes('Individualiai') || tier.price.includes('Individuali') || tier.price.includes('Kohandatud') || tier.price.includes('Personalizzat') || tier.price.includes('Saincheaptha') ? tier.price : `\u20ac${tier.price}`}</div>
+          <div class="text-sm text-slate-400 mb-6">{tier.frequency}</div>
+          <ul class="space-y-3 flex-1">
+            {tier.features.map((f) => (
+              <li class="flex items-start gap-2 text-sm text-slate-300">
+                <span class="material-symbols-outlined text-green-400 text-base mt-0.5">check_circle</span>
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Delivery Formats -->
+  <section class="max-w-5xl mx-auto px-4 py-12">
+    <h2 class="text-2xl font-bold text-white text-center mb-8 font-['Public_Sans']">{t.formatsTitle}</h2>
+    <div class="grid md:grid-cols-3 gap-8">
+      {t.formats.map((fmt) => (
+        <div class="bg-[#162A4A] border border-slate-700/50 rounded-xl p-6 text-center">
+          <span class="material-symbols-outlined text-blue-400 text-4xl mb-4">{fmt.icon}</span>
+          <h3 class="text-lg font-bold text-white mb-3 font-['Public_Sans']">{fmt.name}</h3>
+          <p class="text-slate-400 text-sm">{fmt.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Use Cases -->
+  <section class="max-w-5xl mx-auto px-4 py-12">
+    <h2 class="text-2xl font-bold text-white text-center mb-8 font-['Public_Sans']">{t.useCasesTitle}</h2>
+    <div class="grid md:grid-cols-2 gap-8">
+      {t.useCases.map((uc) => (
+        <div class="bg-[#162A4A] border border-slate-700/50 rounded-xl p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="material-symbols-outlined text-blue-400 text-3xl">{uc.icon}</span>
+            <h3 class="text-xl font-bold text-white font-['Public_Sans']">{uc.title}</h3>
+          </div>
+          <p class="text-slate-300 text-sm leading-relaxed">{uc.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Contact Form -->
+  <section class="max-w-3xl mx-auto px-4 py-12" id="apply">
+    <h2 class="text-2xl font-bold text-white text-center mb-2 font-['Public_Sans']">{t.contactTitle}</h2>
+    <p class="text-slate-400 text-center mb-8">{t.contactDesc}</p>
+    <form id="data-licensing-form" class="bg-[#162A4A] border border-slate-700/50 rounded-xl p-8 space-y-6">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">{t.formLabels.company}</label>
+          <input type="text" name="company" required class="w-full bg-[#0F1F3D] border border-slate-600 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
+        </div>
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">{t.formLabels.email}</label>
+          <input type="email" name="email" required class="w-full bg-[#0F1F3D] border border-slate-600 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
+        </div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">{t.formLabels.useCase}</label>
+          <select name="use_case" required class="w-full bg-[#0F1F3D] border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-blue-500 focus:outline-none">
+            <option value="" disabled selected>--</option>
+            {t.useCaseOptions.map((opt) => (
+              <option value={opt}>{opt}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">{t.formLabels.volumeEstimate}</label>
+          <input type="text" name="volume_estimate" class="w-full bg-[#0F1F3D] border border-slate-600 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-400 mb-1">{t.formLabels.message}</label>
+        <textarea name="message" rows="4" class="w-full bg-[#0F1F3D] border border-slate-600 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none resize-none"></textarea>
+      </div>
+      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors">
+        {t.formLabels.submit}
+      </button>
+      <div id="form-status" class="text-center text-sm hidden"></div>
+    </form>
+  </section>
+
+  <!-- FAQ -->
+  <FAQSection items={t.faq} />
+
+  <!-- Schema Markup -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": t.h1,
+    "description": t.metaDesc,
+    "dateModified": "2026-04-05",
+    "publisher": { "@type": "Organization", "name": "EuroSalary.eu" },
+  })} />
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": t.faq.map((f) => ({
+      "@type": "Question",
+      "name": f.question,
+      "acceptedAnswer": { "@type": "Answer", "text": f.answer },
+    })),
+  })} />
+
+  <!-- hreflang -->
+  {Object.keys(languages).map((l) => (
+    <link slot="head" rel="alternate" hreflang={l} href={`https://eurosalary.eu/${l}/partners/data-licensing/`} />
+  ))}
+
+  <!-- Form Script -->
+  <script>
+    const form = document.getElementById('data-licensing-form') as HTMLFormElement;
+    const status = document.getElementById('form-status') as HTMLElement;
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form));
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...data, type: 'partner', source: 'data-licensing' }),
+        });
+        if (res.ok) {
+          status.textContent = 'Request submitted! We will be in touch within 24 hours.';
+          status.className = 'text-center text-sm text-green-400';
+          form.reset();
+        } else {
+          status.textContent = 'Something went wrong. Please try again.';
+          status.className = 'text-center text-sm text-red-400';
+        }
+      } catch {
+        status.textContent = 'Network error. Please try again.';
+        status.className = 'text-center text-sm text-red-400';
+      }
+    });
+  </script>
+
+</BaseLayout>

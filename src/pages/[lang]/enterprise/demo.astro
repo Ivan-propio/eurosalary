@@ -1,0 +1,971 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+
+// --------------- i18n strings (all 24 EU languages) ---------------
+const i18n: Record<string, {
+  h1: string;
+  metaTitle: string;
+  metaDesc: string;
+  home: string;
+  enterprise: string;
+  breadcrumb: string;
+  introAnswer: string;
+  tldr: string[];
+  heroSubtitle: string;
+  trustTitle: string;
+  trustCards: { label: string; value: string; icon: string }[];
+  socialProofTitle: string;
+  socialProofItems: { name: string; role: string; quote: string }[];
+  certTitle: string;
+  certItems: string[];
+  formTitle: string;
+  formDesc: string;
+  formLabels: { name: string; email: string; company: string; companySize: string; countries: string; message: string; submit: string };
+  companySizeOptions: string[];
+  successMsg: string;
+  faq: { question: string; answer: string }[];
+}> = {
+  en: {
+    h1: 'Want to See How EuroSalary Enterprise Works for Your Organisation?',
+    metaTitle: 'Request Enterprise Demo — Salary Intelligence Platform | EuroSalary.eu',
+    metaDesc: 'Request a personalised demo of EuroSalary Enterprise. See white-label reports, custom API, SSO integration, and EU compliance tools built for large organisations.',
+    home: 'Home',
+    enterprise: 'Enterprise',
+    breadcrumb: 'Request Demo',
+    introAnswer: 'Book a personalised demo with our enterprise team to see how EuroSalary salary intelligence, white-label reports, and compliance tools can transform your compensation strategy across EU markets.',
+    tldr: [
+      '30-minute personalised demo tailored to your industry and headcount',
+      'See live white-label reports, API integration, and compliance dashboards',
+      'Free consultation on EU Pay Transparency Directive readiness included',
+    ],
+    heroSubtitle: 'Join 200+ enterprise clients across 27 EU countries who trust EuroSalary for salary benchmarking, compliance, and compensation intelligence.',
+    trustTitle: 'Why Enterprises Trust EuroSalary',
+    trustCards: [
+      { label: 'Countries covered', value: '27', icon: 'public' },
+      { label: 'Salary data points', value: '12M+', icon: 'database' },
+      { label: 'Enterprise clients', value: '200+', icon: 'corporate_fare' },
+      { label: 'Data update frequency', value: 'Weekly', icon: 'update' },
+      { label: 'Uptime SLA', value: '99.9%', icon: 'verified' },
+      { label: 'Average onboarding', value: '48h', icon: 'speed' },
+    ],
+    socialProofTitle: 'What Enterprise Clients Say',
+    socialProofItems: [
+      { name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary cut our benchmarking cycle from 6 weeks to 3 days. The white-label reports are indistinguishable from our own brand materials.' },
+      { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'We white-label EuroSalary reports for our consulting clients. It has generated over 340K in additional annual recurring revenue.' },
+      { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'The API integration with our SAP SuccessFactors instance was seamless. Pay band updates across 200+ job families are now fully automated.' },
+    ],
+    certTitle: 'Compliance & Certifications',
+    certItems: [
+      'SOC 2 Type II certified infrastructure',
+      'GDPR-compliant processing with EU data residency (Frankfurt)',
+      'EU Pay Transparency Directive readiness assessments',
+      'ISO 27001 aligned security practices',
+      'Data Processing Agreements provided as standard',
+    ],
+    formTitle: 'Request Your Enterprise Demo',
+    formDesc: 'Fill in the form below and our enterprise team will reach out within 24 hours to schedule your personalised demo.',
+    formLabels: {
+      name: 'Full Name',
+      email: 'Work Email',
+      company: 'Company Name',
+      companySize: 'Company Size',
+      countries: 'Countries of Interest',
+      message: 'Tell us about your needs',
+      submit: 'Request Enterprise Demo',
+    },
+    companySizeOptions: ['50-249 employees', '250-999 employees', '1,000-4,999 employees', '5,000-9,999 employees', '10,000+ employees'],
+    successMsg: 'Thank you! Our enterprise team will contact you within 24 hours.',
+    faq: [
+      { question: 'How long does the enterprise demo take?', answer: 'A standard enterprise demo lasts 30 minutes and is tailored to your specific industry, countries of operation, and headcount. We can extend to 60 minutes for deeper technical dives into API integration, SSO setup, or compliance tooling.' },
+      { question: 'Is there any cost for the demo?', answer: 'The demo is completely free with no obligation. We also include a complimentary EU Pay Transparency Directive readiness assessment as part of the demo process.' },
+      { question: 'What should I prepare for the demo?', answer: 'No preparation is required. However, if you can share your countries of operation, approximate headcount, and current benchmarking tools beforehand, we can customise the demo to show the most relevant features and data.' },
+      { question: 'Can multiple team members join the demo?', answer: 'Absolutely. We encourage HR leaders, compensation analysts, and IT stakeholders to join. We can also run separate technical sessions for your engineering team if API integration is a priority.' },
+      { question: 'How quickly can we go live after the demo?', answer: 'Enterprise onboarding is completed within 48 hours after contract signing. This includes SSO setup, API key provisioning, custom report branding, and a dedicated Slack channel with your account team.' },
+    ],
+  },
+  fr: {
+    h1: 'Vous souhaitez decouvrir comment EuroSalary Enterprise fonctionne pour votre organisation ?',
+    metaTitle: 'Demander une demo entreprise — Plateforme d\'intelligence salariale | EuroSalary.eu',
+    metaDesc: 'Demandez une demo personnalisee d\'EuroSalary Enterprise. Decouvrez les rapports marque blanche, l\'API personnalisee, l\'integration SSO et les outils de conformite UE.',
+    home: 'Accueil',
+    enterprise: 'Entreprise',
+    breadcrumb: 'Demande de demo',
+    introAnswer: 'Reservez une demo personnalisee avec notre equipe entreprise pour decouvrir comment l\'intelligence salariale EuroSalary, les rapports marque blanche et les outils de conformite peuvent transformer votre strategie de remuneration dans les marches europeens.',
+    tldr: [
+      'Demo personnalisee de 30 minutes adaptee a votre secteur et effectif',
+      'Decouvrez en direct les rapports marque blanche, l\'integration API et les tableaux de bord de conformite',
+      'Consultation gratuite sur la preparation a la directive europeenne sur la transparence salariale incluse',
+    ],
+    heroSubtitle: 'Rejoignez plus de 200 clients entreprise dans 27 pays de l\'UE qui font confiance a EuroSalary pour le benchmarking salarial, la conformite et l\'intelligence de remuneration.',
+    trustTitle: 'Pourquoi les entreprises font confiance a EuroSalary',
+    trustCards: [
+      { label: 'Pays couverts', value: '27', icon: 'public' },
+      { label: 'Points de donnees salariales', value: '12M+', icon: 'database' },
+      { label: 'Clients entreprise', value: '200+', icon: 'corporate_fare' },
+      { label: 'Frequence de mise a jour', value: 'Hebdo', icon: 'update' },
+      { label: 'SLA de disponibilite', value: '99,9%', icon: 'verified' },
+      { label: 'Onboarding moyen', value: '48h', icon: 'speed' },
+    ],
+    socialProofTitle: 'Ce que disent les clients entreprise',
+    socialProofItems: [
+      { name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary a reduit notre cycle de benchmarking de 6 semaines a 3 jours. Les rapports marque blanche sont indiscernables de nos propres supports.' },
+      { name: 'Marco Benedetti', role: 'Associe directeur, AlpineHR', quote: 'Nous utilisons les rapports EuroSalary en marque blanche pour nos clients de conseil. Cela a genere plus de 340K de revenus recurrents annuels supplementaires.' },
+      { name: 'Dr. Katrin Meier', role: 'DRH, MedEuropa Healthcare', quote: 'L\'integration API avec notre instance SAP SuccessFactors a ete transparente. Les mises a jour des bandes salariales pour 200+ familles de postes sont entierement automatisees.' },
+    ],
+    certTitle: 'Conformite et certifications',
+    certItems: [
+      'Infrastructure certifiee SOC 2 Type II',
+      'Traitement conforme au RGPD avec residence des donnees en UE (Francfort)',
+      'Evaluations de preparation a la directive sur la transparence salariale',
+      'Pratiques de securite alignees ISO 27001',
+      'Accords de traitement des donnees fournis en standard',
+    ],
+    formTitle: 'Demandez votre demo entreprise',
+    formDesc: 'Remplissez le formulaire ci-dessous et notre equipe entreprise vous contactera sous 24 heures pour planifier votre demo personnalisee.',
+    formLabels: {
+      name: 'Nom complet',
+      email: 'Email professionnel',
+      company: 'Nom de l\'entreprise',
+      companySize: 'Taille de l\'entreprise',
+      countries: 'Pays d\'interet',
+      message: 'Decrivez vos besoins',
+      submit: 'Demander une demo entreprise',
+    },
+    companySizeOptions: ['50-249 employes', '250-999 employes', '1 000-4 999 employes', '5 000-9 999 employes', '10 000+ employes'],
+    successMsg: 'Merci ! Notre equipe entreprise vous contactera sous 24 heures.',
+    faq: [
+      { question: 'Combien de temps dure la demo entreprise ?', answer: 'Une demo entreprise standard dure 30 minutes et est adaptee a votre secteur, pays d\'operation et effectif. Nous pouvons etendre a 60 minutes pour des approfondissements techniques sur l\'integration API, la configuration SSO ou les outils de conformite.' },
+      { question: 'La demo est-elle payante ?', answer: 'La demo est entierement gratuite et sans engagement. Nous incluons egalement une evaluation gratuite de la preparation a la directive europeenne sur la transparence salariale.' },
+      { question: 'Que dois-je preparer pour la demo ?', answer: 'Aucune preparation n\'est necessaire. Cependant, si vous pouvez partager vos pays d\'operation, effectif approximatif et outils de benchmarking actuels, nous pouvons personnaliser la demo.' },
+      { question: 'Plusieurs membres de l\'equipe peuvent-ils participer ?', answer: 'Absolument. Nous encourageons les responsables RH, analystes de remuneration et parties prenantes IT a participer. Nous pouvons egalement organiser des sessions techniques separees pour votre equipe d\'ingenierie.' },
+      { question: 'En combien de temps pouvons-nous etre operationnels apres la demo ?', answer: 'L\'onboarding entreprise est complete en 48 heures apres la signature du contrat. Cela inclut la configuration SSO, le provisionnement des cles API, le branding des rapports personnalises et un canal Slack dedie.' },
+    ],
+  },
+  de: {
+    h1: 'Mochten Sie sehen, wie EuroSalary Enterprise fur Ihre Organisation funktioniert?',
+    metaTitle: 'Enterprise-Demo anfordern — Gehaltsintelligenz-Plattform | EuroSalary.eu',
+    metaDesc: 'Fordern Sie eine personalisierte Demo von EuroSalary Enterprise an. Erleben Sie White-Label-Berichte, individuelle API, SSO-Integration und EU-Compliance-Tools.',
+    home: 'Startseite',
+    enterprise: 'Enterprise',
+    breadcrumb: 'Demo anfordern',
+    introAnswer: 'Buchen Sie eine personalisierte Demo mit unserem Enterprise-Team, um zu sehen, wie EuroSalary Gehaltsintelligenz, White-Label-Berichte und Compliance-Tools Ihre Vergutungsstrategie in EU-Markten transformieren konnen.',
+    tldr: [
+      '30-minutige personalisierte Demo zugeschnitten auf Ihre Branche und Mitarbeiterzahl',
+      'Erleben Sie live White-Label-Berichte, API-Integration und Compliance-Dashboards',
+      'Kostenlose Beratung zur Bereitschaft fur die EU-Entgelttransparenzrichtlinie inklusive',
+    ],
+    heroSubtitle: 'Schliessen Sie sich uber 200 Enterprise-Kunden in 27 EU-Landern an, die EuroSalary fur Gehalts-Benchmarking, Compliance und Vergutungsintelligenz vertrauen.',
+    trustTitle: 'Warum Unternehmen EuroSalary vertrauen',
+    trustCards: [
+      { label: 'Abgedeckte Lander', value: '27', icon: 'public' },
+      { label: 'Gehaltsdatenpunkte', value: '12M+', icon: 'database' },
+      { label: 'Enterprise-Kunden', value: '200+', icon: 'corporate_fare' },
+      { label: 'Aktualisierungshaufigkeit', value: 'Wochentlich', icon: 'update' },
+      { label: 'Verfugbarkeits-SLA', value: '99,9%', icon: 'verified' },
+      { label: 'Durchschnittliches Onboarding', value: '48h', icon: 'speed' },
+    ],
+    socialProofTitle: 'Was Enterprise-Kunden sagen',
+    socialProofItems: [
+      { name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary hat unseren Benchmarking-Zyklus von 6 Wochen auf 3 Tage verkurzt. Die White-Label-Berichte sind von unseren eigenen Markenmaterialien nicht zu unterscheiden.' },
+      { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Wir nutzen EuroSalary-Berichte als White-Label fur unsere Beratungskunden. Das hat uber 340K zusatzlichen jahrlichen Umsatz generiert.' },
+      { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'Die API-Integration mit unserer SAP SuccessFactors-Instanz war nahtlos. Gehaltsbandaktualisierungen fur 200+ Jobfamilien sind jetzt vollstandig automatisiert.' },
+    ],
+    certTitle: 'Compliance und Zertifizierungen',
+    certItems: [
+      'SOC 2 Typ II zertifizierte Infrastruktur',
+      'DSGVO-konforme Verarbeitung mit EU-Datenresidenz (Frankfurt)',
+      'Bewertungen zur EU-Entgelttransparenzrichtlinie',
+      'ISO 27001 ausgerichtete Sicherheitspraktiken',
+      'Auftragsverarbeitungsvertrage standardmassig bereitgestellt',
+    ],
+    formTitle: 'Fordern Sie Ihre Enterprise-Demo an',
+    formDesc: 'Fullen Sie das Formular aus und unser Enterprise-Team meldet sich innerhalb von 24 Stunden bei Ihnen, um Ihre personalisierte Demo zu planen.',
+    formLabels: {
+      name: 'Vollstandiger Name',
+      email: 'Geschaftliche E-Mail',
+      company: 'Firmenname',
+      companySize: 'Unternehmengrosse',
+      countries: 'Lander von Interesse',
+      message: 'Beschreiben Sie Ihre Anforderungen',
+      submit: 'Enterprise-Demo anfordern',
+    },
+    companySizeOptions: ['50-249 Mitarbeiter', '250-999 Mitarbeiter', '1.000-4.999 Mitarbeiter', '5.000-9.999 Mitarbeiter', '10.000+ Mitarbeiter'],
+    successMsg: 'Vielen Dank! Unser Enterprise-Team wird Sie innerhalb von 24 Stunden kontaktieren.',
+    faq: [
+      { question: 'Wie lange dauert die Enterprise-Demo?', answer: 'Eine Standard-Enterprise-Demo dauert 30 Minuten und ist auf Ihre Branche, Betriebslander und Mitarbeiterzahl zugeschnitten. Wir konnen auf 60 Minuten erweitern fur tiefere technische Einblicke in API-Integration, SSO-Setup oder Compliance-Tools.' },
+      { question: 'Ist die Demo kostenpflichtig?', answer: 'Die Demo ist vollig kostenlos und unverbindlich. Wir bieten auch eine kostenlose Bewertung der Bereitschaft fur die EU-Entgelttransparenzrichtlinie als Teil des Demo-Prozesses an.' },
+      { question: 'Was sollte ich fur die Demo vorbereiten?', answer: 'Keine Vorbereitung erforderlich. Wenn Sie jedoch Ihre Betriebslander, ungefähre Mitarbeiterzahl und aktuelle Benchmarking-Tools teilen konnen, passen wir die Demo entsprechend an.' },
+      { question: 'Konnen mehrere Teammitglieder an der Demo teilnehmen?', answer: 'Absolut. Wir empfehlen HR-Fuhrungskraften, Vergutungsanalysten und IT-Stakeholdern teilzunehmen. Wir konnen auch separate technische Sessions fur Ihr Engineering-Team durchfuhren.' },
+      { question: 'Wie schnell konnen wir nach der Demo live gehen?', answer: 'Enterprise-Onboarding wird innerhalb von 48 Stunden nach Vertragsunterzeichnung abgeschlossen. Dies umfasst SSO-Setup, API-Schlussel-Bereitstellung, individuelles Report-Branding und einen dedizierten Slack-Kanal.' },
+    ],
+  },
+  es: {
+    h1: 'Quiere ver como funciona EuroSalary Enterprise para su organizacion?',
+    metaTitle: 'Solicitar demo empresarial — Plataforma de inteligencia salarial | EuroSalary.eu',
+    metaDesc: 'Solicite una demo personalizada de EuroSalary Enterprise. Vea informes marca blanca, API personalizada, integracion SSO y herramientas de cumplimiento UE.',
+    home: 'Inicio',
+    enterprise: 'Empresas',
+    breadcrumb: 'Solicitar demo',
+    introAnswer: 'Reserve una demo personalizada con nuestro equipo empresarial para descubrir como la inteligencia salarial de EuroSalary, los informes marca blanca y las herramientas de cumplimiento pueden transformar su estrategia de compensacion en los mercados de la UE.',
+    tldr: [
+      'Demo personalizada de 30 minutos adaptada a su sector y plantilla',
+      'Vea en directo informes marca blanca, integracion API y paneles de cumplimiento',
+      'Consulta gratuita sobre preparacion para la directiva de transparencia salarial de la UE incluida',
+    ],
+    heroSubtitle: 'Unase a mas de 200 clientes empresariales en 27 paises de la UE que confian en EuroSalary para benchmarking salarial, cumplimiento e inteligencia de compensacion.',
+    trustTitle: 'Por que las empresas confian en EuroSalary',
+    trustCards: [
+      { label: 'Paises cubiertos', value: '27', icon: 'public' },
+      { label: 'Puntos de datos salariales', value: '12M+', icon: 'database' },
+      { label: 'Clientes empresariales', value: '200+', icon: 'corporate_fare' },
+      { label: 'Frecuencia de actualizacion', value: 'Semanal', icon: 'update' },
+      { label: 'SLA de disponibilidad', value: '99,9%', icon: 'verified' },
+      { label: 'Onboarding promedio', value: '48h', icon: 'speed' },
+    ],
+    socialProofTitle: 'Lo que dicen los clientes empresariales',
+    socialProofItems: [
+      { name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary redujo nuestro ciclo de benchmarking de 6 semanas a 3 dias. Los informes marca blanca son indistinguibles de nuestros propios materiales de marca.' },
+      { name: 'Marco Benedetti', role: 'Socio director, AlpineHR', quote: 'Usamos los informes EuroSalary en marca blanca para nuestros clientes de consultoria. Ha generado mas de 340K en ingresos recurrentes anuales adicionales.' },
+      { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'La integracion API con nuestra instancia SAP SuccessFactors fue perfecta. Las actualizaciones de bandas salariales para mas de 200 familias de puestos estan totalmente automatizadas.' },
+    ],
+    certTitle: 'Cumplimiento y certificaciones',
+    certItems: [
+      'Infraestructura certificada SOC 2 Tipo II',
+      'Procesamiento conforme al RGPD con residencia de datos en la UE (Frankfurt)',
+      'Evaluaciones de preparacion para la directiva de transparencia salarial',
+      'Practicas de seguridad alineadas con ISO 27001',
+      'Acuerdos de procesamiento de datos proporcionados como estandar',
+    ],
+    formTitle: 'Solicite su demo empresarial',
+    formDesc: 'Complete el formulario y nuestro equipo empresarial se pondra en contacto en 24 horas para programar su demo personalizada.',
+    formLabels: {
+      name: 'Nombre completo',
+      email: 'Email corporativo',
+      company: 'Nombre de la empresa',
+      companySize: 'Tamano de la empresa',
+      countries: 'Paises de interes',
+      message: 'Describa sus necesidades',
+      submit: 'Solicitar demo empresarial',
+    },
+    companySizeOptions: ['50-249 empleados', '250-999 empleados', '1.000-4.999 empleados', '5.000-9.999 empleados', '10.000+ empleados'],
+    successMsg: 'Gracias! Nuestro equipo empresarial le contactara en 24 horas.',
+    faq: [
+      { question: 'Cuanto dura la demo empresarial?', answer: 'Una demo empresarial estandar dura 30 minutos y esta adaptada a su sector, paises de operacion y plantilla. Podemos ampliar a 60 minutos para profundizaciones tecnicas en integracion API, configuracion SSO o herramientas de cumplimiento.' },
+      { question: 'La demo tiene algun coste?', answer: 'La demo es completamente gratuita y sin compromiso. Tambien incluimos una evaluacion gratuita de preparacion para la directiva de transparencia salarial de la UE.' },
+      { question: 'Que debo preparar para la demo?', answer: 'No se requiere preparacion. Sin embargo, si puede compartir sus paises de operacion, plantilla aproximada y herramientas de benchmarking actuales, podemos personalizar la demo.' },
+      { question: 'Pueden participar varios miembros del equipo?', answer: 'Por supuesto. Animamos a lideres de RRHH, analistas de compensacion y responsables de TI a participar. Tambien podemos organizar sesiones tecnicas separadas para su equipo de ingenieria.' },
+      { question: 'En cuanto tiempo podemos estar operativos tras la demo?', answer: 'El onboarding empresarial se completa en 48 horas tras la firma del contrato. Incluye configuracion SSO, provision de claves API, branding de informes personalizados y un canal Slack dedicado.' },
+    ],
+  },
+  it: {
+    h1: 'Vuoi vedere come funziona EuroSalary Enterprise per la tua organizzazione?',
+    metaTitle: 'Richiedi demo aziendale — Piattaforma di intelligence salariale | EuroSalary.eu',
+    metaDesc: 'Richiedi una demo personalizzata di EuroSalary Enterprise. Scopri report white-label, API personalizzata, integrazione SSO e strumenti di conformita UE.',
+    home: 'Home',
+    enterprise: 'Enterprise',
+    breadcrumb: 'Richiedi demo',
+    introAnswer: 'Prenota una demo personalizzata con il nostro team enterprise per scoprire come l\'intelligence salariale EuroSalary, i report white-label e gli strumenti di conformita possono trasformare la tua strategia retributiva nei mercati UE.',
+    tldr: [
+      'Demo personalizzata di 30 minuti su misura per il tuo settore e organico',
+      'Scopri dal vivo report white-label, integrazione API e dashboard di conformita',
+      'Consulenza gratuita sulla preparazione alla direttiva UE sulla trasparenza retributiva inclusa',
+    ],
+    heroSubtitle: 'Unisciti a oltre 200 clienti enterprise in 27 paesi UE che si affidano a EuroSalary per benchmarking salariale, conformita e intelligence retributiva.',
+    trustTitle: 'Perche le aziende si fidano di EuroSalary',
+    trustCards: [
+      { label: 'Paesi coperti', value: '27', icon: 'public' },
+      { label: 'Dati salariali', value: '12M+', icon: 'database' },
+      { label: 'Clienti enterprise', value: '200+', icon: 'corporate_fare' },
+      { label: 'Frequenza aggiornamento', value: 'Settimanale', icon: 'update' },
+      { label: 'SLA disponibilita', value: '99,9%', icon: 'verified' },
+      { label: 'Onboarding medio', value: '48h', icon: 'speed' },
+    ],
+    socialProofTitle: 'Cosa dicono i clienti enterprise',
+    socialProofItems: [
+      { name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary ha ridotto il nostro ciclo di benchmarking da 6 settimane a 3 giorni. I report white-label sono indistinguibili dai nostri materiali aziendali.' },
+      { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Utilizziamo i report EuroSalary in white-label per i nostri clienti di consulenza. Ha generato oltre 340K di ricavi ricorrenti annuali aggiuntivi.' },
+      { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'L\'integrazione API con la nostra istanza SAP SuccessFactors e stata impeccabile. Gli aggiornamenti delle fasce retributive per oltre 200 famiglie professionali sono completamente automatizzati.' },
+    ],
+    certTitle: 'Conformita e certificazioni',
+    certItems: [
+      'Infrastruttura certificata SOC 2 Type II',
+      'Trattamento conforme al GDPR con residenza dati in UE (Francoforte)',
+      'Valutazioni di preparazione alla direttiva sulla trasparenza retributiva',
+      'Pratiche di sicurezza allineate ISO 27001',
+      'Accordi per il trattamento dei dati forniti come standard',
+    ],
+    formTitle: 'Richiedi la tua demo enterprise',
+    formDesc: 'Compila il modulo e il nostro team enterprise ti contatterà entro 24 ore per programmare la tua demo personalizzata.',
+    formLabels: { name: 'Nome completo', email: 'Email aziendale', company: 'Nome azienda', companySize: 'Dimensione azienda', countries: 'Paesi di interesse', message: 'Descrivi le tue esigenze', submit: 'Richiedi demo enterprise' },
+    companySizeOptions: ['50-249 dipendenti', '250-999 dipendenti', '1.000-4.999 dipendenti', '5.000-9.999 dipendenti', '10.000+ dipendenti'],
+    successMsg: 'Grazie! Il nostro team enterprise ti contatterà entro 24 ore.',
+    faq: [
+      { question: 'Quanto dura la demo enterprise?', answer: 'Una demo enterprise standard dura 30 minuti ed e personalizzata per il tuo settore, paesi di operazione e organico. Possiamo estendere a 60 minuti per approfondimenti tecnici su integrazione API, configurazione SSO o strumenti di conformita.' },
+      { question: 'La demo ha un costo?', answer: 'La demo e completamente gratuita e senza impegno. Includiamo anche una valutazione gratuita sulla preparazione alla direttiva UE sulla trasparenza retributiva.' },
+      { question: 'Cosa devo preparare per la demo?', answer: 'Nessuna preparazione necessaria. Tuttavia, se puoi condividere i paesi di operazione, organico approssimativo e strumenti di benchmarking attuali, possiamo personalizzare la demo.' },
+      { question: 'Possono partecipare piu membri del team?', answer: 'Assolutamente. Incoraggiamo leader HR, analisti retributivi e stakeholder IT a partecipare. Possiamo anche organizzare sessioni tecniche separate per il team di ingegneria.' },
+      { question: 'Quanto tempo per essere operativi dopo la demo?', answer: 'L\'onboarding enterprise viene completato entro 48 ore dalla firma del contratto. Include configurazione SSO, provisioning chiavi API, branding dei report personalizzati e un canale Slack dedicato.' },
+    ],
+  },
+  pt: {
+    h1: 'Quer ver como o EuroSalary Enterprise funciona para a sua organizacao?',
+    metaTitle: 'Solicitar demo empresarial — Plataforma de inteligencia salarial | EuroSalary.eu',
+    metaDesc: 'Solicite uma demo personalizada do EuroSalary Enterprise. Veja relatorios white-label, API personalizada, integracao SSO e ferramentas de conformidade UE.',
+    home: 'Inicio',
+    enterprise: 'Enterprise',
+    breadcrumb: 'Solicitar demo',
+    introAnswer: 'Agende uma demo personalizada com a nossa equipa enterprise para descobrir como a inteligencia salarial EuroSalary, relatorios white-label e ferramentas de conformidade podem transformar a sua estrategia de compensacao nos mercados da UE.',
+    tldr: [
+      'Demo personalizada de 30 minutos adaptada ao seu setor e numero de colaboradores',
+      'Veja ao vivo relatorios white-label, integracao API e paineis de conformidade',
+      'Consultoria gratuita sobre preparacao para a diretiva de transparencia salarial da UE incluida',
+    ],
+    heroSubtitle: 'Junte-se a mais de 200 clientes enterprise em 27 paises da UE que confiam no EuroSalary para benchmarking salarial, conformidade e inteligencia de compensacao.',
+    trustTitle: 'Porque as empresas confiam no EuroSalary',
+    trustCards: [
+      { label: 'Paises cobertos', value: '27', icon: 'public' },
+      { label: 'Pontos de dados salariais', value: '12M+', icon: 'database' },
+      { label: 'Clientes enterprise', value: '200+', icon: 'corporate_fare' },
+      { label: 'Frequencia de atualizacao', value: 'Semanal', icon: 'update' },
+      { label: 'SLA de disponibilidade', value: '99,9%', icon: 'verified' },
+      { label: 'Onboarding medio', value: '48h', icon: 'speed' },
+    ],
+    socialProofTitle: 'O que dizem os clientes enterprise',
+    socialProofItems: [
+      { name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'O EuroSalary reduziu o nosso ciclo de benchmarking de 6 semanas para 3 dias. Os relatorios white-label sao indistinguiveis dos nossos proprios materiais de marca.' },
+      { name: 'Marco Benedetti', role: 'Socio-gerente, AlpineHR', quote: 'Usamos os relatorios EuroSalary em white-label para os nossos clientes de consultoria. Gerou mais de 340K em receitas recorrentes anuais adicionais.' },
+      { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'A integracao API com a nossa instancia SAP SuccessFactors foi perfeita. As atualizacoes de faixas salariais para mais de 200 familias de cargos estao totalmente automatizadas.' },
+    ],
+    certTitle: 'Conformidade e certificacoes',
+    certItems: [
+      'Infraestrutura certificada SOC 2 Type II',
+      'Processamento conforme ao RGPD com residencia de dados na UE (Frankfurt)',
+      'Avaliacoes de preparacao para a diretiva de transparencia salarial',
+      'Praticas de seguranca alinhadas com ISO 27001',
+      'Acordos de processamento de dados fornecidos como padrao',
+    ],
+    formTitle: 'Solicite a sua demo enterprise',
+    formDesc: 'Preencha o formulario e a nossa equipa enterprise entrara em contacto em 24 horas para agendar a sua demo personalizada.',
+    formLabels: { name: 'Nome completo', email: 'Email profissional', company: 'Nome da empresa', companySize: 'Dimensao da empresa', countries: 'Paises de interesse', message: 'Descreva as suas necessidades', submit: 'Solicitar demo enterprise' },
+    companySizeOptions: ['50-249 colaboradores', '250-999 colaboradores', '1.000-4.999 colaboradores', '5.000-9.999 colaboradores', '10.000+ colaboradores'],
+    successMsg: 'Obrigado! A nossa equipa enterprise contactara em 24 horas.',
+    faq: [
+      { question: 'Quanto tempo dura a demo enterprise?', answer: 'Uma demo enterprise padrao dura 30 minutos e e adaptada ao seu setor, paises de operacao e numero de colaboradores. Podemos estender para 60 minutos para aprofundamentos tecnicos em integracao API, configuracao SSO ou ferramentas de conformidade.' },
+      { question: 'A demo tem algum custo?', answer: 'A demo e completamente gratuita e sem compromisso. Incluimos tambem uma avaliacao gratuita de preparacao para a diretiva de transparencia salarial da UE.' },
+      { question: 'O que devo preparar para a demo?', answer: 'Nenhuma preparacao necessaria. No entanto, se puder partilhar os paises de operacao, numero aproximado de colaboradores e ferramentas de benchmarking atuais, podemos personalizar a demo.' },
+      { question: 'Varios membros da equipa podem participar?', answer: 'Absolutamente. Encorajamos lideres de RH, analistas de compensacao e stakeholders de TI a participar. Tambem podemos realizar sessoes tecnicas separadas para a equipa de engenharia.' },
+      { question: 'Quanto tempo para ficar operacional apos a demo?', answer: 'O onboarding enterprise e concluido em 48 horas apos a assinatura do contrato. Inclui configuracao SSO, provisionamento de chaves API, branding de relatorios personalizados e um canal Slack dedicado.' },
+    ],
+  },
+  nl: {
+    h1: 'Wilt u zien hoe EuroSalary Enterprise werkt voor uw organisatie?',
+    metaTitle: 'Enterprise-demo aanvragen — Salarisintelligentie platform | EuroSalary.eu',
+    metaDesc: 'Vraag een gepersonaliseerde demo aan van EuroSalary Enterprise. Bekijk white-label rapporten, aangepaste API, SSO-integratie en EU-compliancetools.',
+    home: 'Home', enterprise: 'Enterprise', breadcrumb: 'Demo aanvragen',
+    introAnswer: 'Boek een gepersonaliseerde demo met ons enterprise-team om te zien hoe EuroSalary salarisintelligentie, white-label rapporten en compliancetools uw beloningsstrategie in EU-markten kunnen transformeren.',
+    tldr: ['30 minuten gepersonaliseerde demo afgestemd op uw branche en personeelsomvang', 'Bekijk live white-label rapporten, API-integratie en compliance-dashboards', 'Gratis consultatie over EU-loontransparantierichtlijn-gereedheid inbegrepen'],
+    heroSubtitle: 'Sluit u aan bij 200+ enterprise-klanten in 27 EU-landen die vertrouwen op EuroSalary voor salarisbenchmarking, compliance en beloningsintelligentie.',
+    trustTitle: 'Waarom ondernemingen EuroSalary vertrouwen',
+    trustCards: [{ label: 'Landen gedekt', value: '27', icon: 'public' }, { label: 'Salarisdatapunten', value: '12M+', icon: 'database' }, { label: 'Enterprise-klanten', value: '200+', icon: 'corporate_fare' }, { label: 'Updatefrequentie', value: 'Wekelijks', icon: 'update' }, { label: 'Beschikbaarheids-SLA', value: '99,9%', icon: 'verified' }, { label: 'Gemiddelde onboarding', value: '48u', icon: 'speed' }],
+    socialProofTitle: 'Wat enterprise-klanten zeggen',
+    socialProofItems: [{ name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary verkort onze benchmarkingcyclus van 6 weken naar 3 dagen. De white-label rapporten zijn niet te onderscheiden van ons eigen merkmateriaal.' }, { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'We gebruiken EuroSalary-rapporten als white-label voor onze adviesklanten. Het heeft meer dan 340K aan extra jaarlijkse terugkerende omzet gegenereerd.' }, { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'De API-integratie met onze SAP SuccessFactors-instantie was naadloos. Salarisband-updates voor 200+ functiefamilies zijn nu volledig geautomatiseerd.' }],
+    certTitle: 'Compliance en certificeringen',
+    certItems: ['SOC 2 Type II gecertificeerde infrastructuur', 'AVG-conforme verwerking met EU-dataresidentie (Frankfurt)', 'Beoordelingen EU-loontransparantierichtlijn-gereedheid', 'ISO 27001 afgestemde beveiligingspraktijken', 'Verwerkersovereenkomsten standaard meegeleverd'],
+    formTitle: 'Vraag uw enterprise-demo aan',
+    formDesc: 'Vul het formulier in en ons enterprise-team neemt binnen 24 uur contact op om uw gepersonaliseerde demo te plannen.',
+    formLabels: { name: 'Volledige naam', email: 'Zakelijk e-mail', company: 'Bedrijfsnaam', companySize: 'Bedrijfsomvang', countries: 'Landen van interesse', message: 'Vertel over uw behoeften', submit: 'Enterprise-demo aanvragen' },
+    companySizeOptions: ['50-249 medewerkers', '250-999 medewerkers', '1.000-4.999 medewerkers', '5.000-9.999 medewerkers', '10.000+ medewerkers'],
+    successMsg: 'Bedankt! Ons enterprise-team neemt binnen 24 uur contact op.',
+    faq: [{ question: 'Hoe lang duurt de enterprise-demo?', answer: 'Een standaard enterprise-demo duurt 30 minuten en is afgestemd op uw branche, landen van activiteit en personeelsomvang. We kunnen uitbreiden naar 60 minuten voor diepere technische sessies.' }, { question: 'Zijn er kosten verbonden aan de demo?', answer: 'De demo is volledig gratis en vrijblijvend. We bieden ook een gratis beoordeling van de EU-loontransparantierichtlijn-gereedheid.' }, { question: 'Wat moet ik voorbereiden?', answer: 'Geen voorbereiding nodig. Als u uw landen, geschat personeelsbestand en huidige benchmarkingtools kunt delen, passen we de demo aan.' }, { question: 'Kunnen meerdere teamleden deelnemen?', answer: 'Absoluut. We moedigen HR-leiders, beloningsanalisten en IT-stakeholders aan om deel te nemen.' }, { question: 'Hoe snel zijn we operationeel na de demo?', answer: 'Enterprise-onboarding wordt binnen 48 uur na contractondertekening afgerond. Dit omvat SSO-setup, API-sleutelprovisioning, aangepaste rapportbranding en een toegewijd Slack-kanaal.' }],
+  },
+  pl: {
+    h1: 'Chcesz zobaczyc, jak EuroSalary Enterprise dziala w Twojej organizacji?',
+    metaTitle: 'Zamow demo Enterprise — Platforma analizy wynagrodzen | EuroSalary.eu',
+    metaDesc: 'Zamow spersonalizowane demo EuroSalary Enterprise. Zobacz raporty white-label, API, integracje SSO i narzedzia zgodnosci z UE.',
+    home: 'Strona glowna', enterprise: 'Enterprise', breadcrumb: 'Zamow demo',
+    introAnswer: 'Umow spersonalizowane demo z naszym zespolem enterprise, aby zobaczyc, jak analiza wynagrodzen EuroSalary, raporty white-label i narzedzia zgodnosci moga przeksztalcic Twoja strategie wynagrodzen na rynkach UE.',
+    tldr: ['30-minutowe spersonalizowane demo dostosowane do Twojej branzy i wielkosci firmy', 'Zobacz na zywo raporty white-label, integracje API i panele zgodnosci', 'Bezplatna konsultacja dotyczaca gotowosci na dyrektywe UE o przejrzystosci wynagrodzen w cenie'],
+    heroSubtitle: 'Dolacz do ponad 200 klientow enterprise w 27 krajach UE, ktorzy ufaja EuroSalary w zakresie benchmarkingu wynagrodzen, zgodnosci i analizy plac.',
+    trustTitle: 'Dlaczego przedsiebiorstwa ufaja EuroSalary',
+    trustCards: [{ label: 'Kraje objete', value: '27', icon: 'public' }, { label: 'Punkty danych placowych', value: '12M+', icon: 'database' }, { label: 'Klienci enterprise', value: '200+', icon: 'corporate_fare' }, { label: 'Czestotliwosc aktualizacji', value: 'Tygodniowo', icon: 'update' }, { label: 'SLA dostepnosci', value: '99,9%', icon: 'verified' }, { label: 'Sredni onboarding', value: '48h', icon: 'speed' }],
+    socialProofTitle: 'Co mowia klienci enterprise',
+    socialProofItems: [{ name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary skrocil nasz cykl benchmarkingu z 6 tygodni do 3 dni.' }, { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Uzywamy raportow EuroSalary white-label dla naszych klientow doradczych. Wygenerowalo to ponad 340K dodatkowych rocznych przychodow.' }, { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'Integracja API z naszym SAP SuccessFactors byla bezproblemowa.' }],
+    certTitle: 'Zgodnosc i certyfikaty',
+    certItems: ['Infrastruktura certyfikowana SOC 2 Type II', 'Przetwarzanie zgodne z RODO z rezydencja danych w UE (Frankfurt)', 'Oceny gotowosci na dyrektywe o przejrzystosci wynagrodzen', 'Praktyki bezpieczenstwa zgodne z ISO 27001', 'Umowy o przetwarzanie danych dostarczane standardowo'],
+    formTitle: 'Zamow swoje demo enterprise',
+    formDesc: 'Wypelnij formularz, a nasz zespol enterprise skontaktuje sie w ciagu 24 godzin.',
+    formLabels: { name: 'Imie i nazwisko', email: 'Email sluzbowy', company: 'Nazwa firmy', companySize: 'Wielkosc firmy', countries: 'Kraje zainteresowania', message: 'Opisz swoje potrzeby', submit: 'Zamow demo enterprise' },
+    companySizeOptions: ['50-249 pracownikow', '250-999 pracownikow', '1 000-4 999 pracownikow', '5 000-9 999 pracownikow', '10 000+ pracownikow'],
+    successMsg: 'Dziekujemy! Nasz zespol enterprise skontaktuje sie w ciagu 24 godzin.',
+    faq: [{ question: 'Ile trwa demo enterprise?', answer: 'Standardowe demo trwa 30 minut i jest dostosowane do Twojej branzy, krajow dzialania i wielkosci firmy.' }, { question: 'Czy demo jest platne?', answer: 'Demo jest calkowicie bezplatne i niezobowiazujace.' }, { question: 'Co powinienem przygotowac?', answer: 'Nie jest wymagane przygotowanie. Jesli mozesz udostepnic kraje dzialania i narzedzia benchmarkingowe, dostosujemy demo.' }, { question: 'Czy moze uczestniczyc kilku czlonkow zespolu?', answer: 'Oczywiscie. Zachecamy liderow HR, analitykow wynagrodzen i interesariuszy IT.' }, { question: 'Jak szybko mozemy rozpoczac po demo?', answer: 'Onboarding enterprise jest zakonczony w ciagu 48 godzin od podpisania umowy.' }],
+  },
+  ro: {
+    h1: 'Doriti sa vedeti cum functioneaza EuroSalary Enterprise pentru organizatia dumneavoastra?',
+    metaTitle: 'Solicitati demo Enterprise — Platforma de inteligenta salariala | EuroSalary.eu',
+    metaDesc: 'Solicitati un demo personalizat EuroSalary Enterprise. Vedeti rapoarte white-label, API personalizat, integrare SSO si instrumente de conformitate UE.',
+    home: 'Acasa', enterprise: 'Enterprise', breadcrumb: 'Solicitati demo',
+    introAnswer: 'Programati un demo personalizat cu echipa noastra enterprise pentru a descoperi cum inteligenta salariala EuroSalary, rapoartele white-label si instrumentele de conformitate va pot transforma strategia de compensare pe pietele UE.',
+    tldr: ['Demo personalizat de 30 de minute adaptat industriei si numarului de angajati', 'Vedeti live rapoarte white-label, integrare API si panouri de conformitate', 'Consultanta gratuita privind pregatirea pentru directiva UE de transparenta salariala inclusa'],
+    heroSubtitle: 'Alaturati-va celor peste 200 de clienti enterprise din 27 de tari UE care au incredere in EuroSalary.',
+    trustTitle: 'De ce intreprinderile au incredere in EuroSalary',
+    trustCards: [{ label: 'Tari acoperite', value: '27', icon: 'public' }, { label: 'Puncte de date salariale', value: '12M+', icon: 'database' }, { label: 'Clienti enterprise', value: '200+', icon: 'corporate_fare' }, { label: 'Frecventa actualizare', value: 'Saptamanal', icon: 'update' }, { label: 'SLA disponibilitate', value: '99,9%', icon: 'verified' }, { label: 'Onboarding mediu', value: '48h', icon: 'speed' }],
+    socialProofTitle: 'Ce spun clientii enterprise',
+    socialProofItems: [{ name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary a redus ciclul nostru de benchmarking de la 6 saptamani la 3 zile.' }, { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Folosim rapoartele EuroSalary white-label pentru clientii nostri de consultanta.' }, { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'Integrarea API cu instanta noastra SAP SuccessFactors a fost perfecta.' }],
+    certTitle: 'Conformitate si certificari',
+    certItems: ['Infrastructura certificata SOC 2 Type II', 'Procesare conforma GDPR cu rezidenta datelor in UE (Frankfurt)', 'Evaluari de pregatire pentru directiva de transparenta salariala', 'Practici de securitate aliniate ISO 27001', 'Acorduri de procesare a datelor furnizate standard'],
+    formTitle: 'Solicitati demo-ul enterprise',
+    formDesc: 'Completati formularul si echipa noastra enterprise va va contacta in 24 de ore.',
+    formLabels: { name: 'Nume complet', email: 'Email profesional', company: 'Numele companiei', companySize: 'Dimensiunea companiei', countries: 'Tari de interes', message: 'Descrieti nevoile', submit: 'Solicitati demo enterprise' },
+    companySizeOptions: ['50-249 angajati', '250-999 angajati', '1.000-4.999 angajati', '5.000-9.999 angajati', '10.000+ angajati'],
+    successMsg: 'Multumim! Echipa noastra enterprise va va contacta in 24 de ore.',
+    faq: [{ question: 'Cat dureaza demo-ul enterprise?', answer: 'Un demo enterprise standard dureaza 30 de minute si este adaptat industriei si numarului de angajati.' }, { question: 'Demo-ul este gratuit?', answer: 'Demo-ul este complet gratuit si fara obligatii.' }, { question: 'Ce trebuie sa pregatesc?', answer: 'Nu este necesara nicio pregatire. Daca puteti partaja tarile de operare si instrumentele actuale, personalizam demo-ul.' }, { question: 'Pot participa mai multi membri ai echipei?', answer: 'Absolut. Incurajam liderii HR si analistii de compensare sa participe.' }, { question: 'Cat de repede putem fi operationali dupa demo?', answer: 'Onboarding-ul enterprise se finalizeaza in 48 de ore de la semnarea contractului.' }],
+  },
+  cs: {
+    h1: 'Chcete videt, jak EuroSalary Enterprise funguje pro vasi organizaci?',
+    metaTitle: 'Zadejte o enterprise demo — Platforma pro analyzu platu | EuroSalary.eu',
+    metaDesc: 'Zadejte o personalizovane demo EuroSalary Enterprise. Podivejte se na white-label reporty, vlastni API, SSO integraci a nastroje pro soulad s EU.',
+    home: 'Domov', enterprise: 'Enterprise', breadcrumb: 'Zadat o demo',
+    introAnswer: 'Rezervujte si personalizovane demo s nasim enterprise tymem a zjistete, jak platova inteligence EuroSalary, white-label reporty a nastroje pro soulad mohou transformovat vasi strategii odmenovani na trzich EU.',
+    tldr: ['30minutove personalizovane demo prizpusobene vasemu odvetvi a poctu zamestnancu', 'Podivejte se nazivo na white-label reporty, API integraci a dashboardy pro soulad', 'Bezplatna konzultace o pripravenosti na smernici EU o transparentnosti odmenovani'],
+    heroSubtitle: 'Pridejte se k vice nez 200 enterprise klientum ve 27 zemich EU, kteri duveri EuroSalary.',
+    trustTitle: 'Proc podniky duveri EuroSalary',
+    trustCards: [{ label: 'Pokrytych zemi', value: '27', icon: 'public' }, { label: 'Platovych datovych bodu', value: '12M+', icon: 'database' }, { label: 'Enterprise klientu', value: '200+', icon: 'corporate_fare' }, { label: 'Frekvence aktualizace', value: 'Tydne', icon: 'update' }, { label: 'SLA dostupnosti', value: '99,9%', icon: 'verified' }, { label: 'Prumerny onboarding', value: '48h', icon: 'speed' }],
+    socialProofTitle: 'Co rikaji enterprise klienti',
+    socialProofItems: [{ name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary zkratil nas benchmarkingovy cyklus ze 6 tydnu na 3 dny.' }, { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Pouzivame EuroSalary reporty jako white-label pro nase poradenske klienty.' }, { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'API integrace s nasi instanci SAP SuccessFactors byla bezchybna.' }],
+    certTitle: 'Soulad a certifikace',
+    certItems: ['Infrastruktura certifikovana SOC 2 Type II', 'Zpracovani v souladu s GDPR s rezidenci dat v EU (Frankfurt)', 'Hodnoceni pripravenosti na smernici o transparentnosti odmenovani', 'Bezpecnostni postupy v souladu s ISO 27001', 'Smlouvy o zpracovani dat poskytovany standardne'],
+    formTitle: 'Zadejte o vase enterprise demo',
+    formDesc: 'Vyplnte formular a nas enterprise tym vas kontaktuje do 24 hodin.',
+    formLabels: { name: 'Cele jmeno', email: 'Pracovni email', company: 'Nazev spolecnosti', companySize: 'Velikost spolecnosti', countries: 'Zeme zajmu', message: 'Popiste sve potreby', submit: 'Zadat o enterprise demo' },
+    companySizeOptions: ['50-249 zamestnancu', '250-999 zamestnancu', '1 000-4 999 zamestnancu', '5 000-9 999 zamestnancu', '10 000+ zamestnancu'],
+    successMsg: 'Dekujeme! Nas enterprise tym vas kontaktuje do 24 hodin.',
+    faq: [{ question: 'Jak dlouho trva enterprise demo?', answer: 'Standardni enterprise demo trva 30 minut a je prizpusobeno vasemu odvetvi a velikosti.' }, { question: 'Je demo zdarma?', answer: 'Demo je zcela zdarma a nezavazne.' }, { question: 'Co bych mel pripravit?', answer: 'Zadna priprava neni nutna.' }, { question: 'Mohou se zucastnit vice clenu tymu?', answer: 'Samozrejme. Doporucujeme ucast HR leaderu a analytiků odmenovani.' }, { question: 'Jak rychle muzeme zacit po demu?', answer: 'Enterprise onboarding je dokoncen do 48 hodin od podpisu smlouvy.' }],
+  },
+  sv: {
+    h1: 'Vill du se hur EuroSalary Enterprise fungerar for din organisation?',
+    metaTitle: 'Begar Enterprise-demo — Plattform for loneintelligens | EuroSalary.eu',
+    metaDesc: 'Begar en personlig demo av EuroSalary Enterprise. Se white-label-rapporter, anpassat API, SSO-integration och EU-complianceverktyg.',
+    home: 'Hem', enterprise: 'Enterprise', breadcrumb: 'Begar demo',
+    introAnswer: 'Boka en personlig demo med vart enterprise-team for att se hur EuroSalarys loneintelligens, white-label-rapporter och complianceverktyg kan transformera din ersattningsstrategi pa EU-marknader.',
+    tldr: ['30 minuters personlig demo anpassad till din bransch och personalstyrka', 'Se live white-label-rapporter, API-integration och compliance-dashboards', 'Gratis radgivning om EU-lonetransparensdirektivet ingar'],
+    heroSubtitle: 'Ga med bland 200+ enterprise-kunder i 27 EU-lander som litar pa EuroSalary.',
+    trustTitle: 'Darfor litar foretag pa EuroSalary',
+    trustCards: [{ label: 'Tackta lander', value: '27', icon: 'public' }, { label: 'Lonedatapunkter', value: '12M+', icon: 'database' }, { label: 'Enterprise-kunder', value: '200+', icon: 'corporate_fare' }, { label: 'Uppdateringsfrekvens', value: 'Veckovis', icon: 'update' }, { label: 'Tillganglighets-SLA', value: '99,9%', icon: 'verified' }, { label: 'Genomsnittlig onboarding', value: '48t', icon: 'speed' }],
+    socialProofTitle: 'Vad enterprise-kunder sager',
+    socialProofItems: [{ name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary kortade var benchmarkingcykel fran 6 veckor till 3 dagar.' }, { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Vi anvander EuroSalary-rapporter som white-label for vara konsultingkunder.' }, { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'API-integrationen med vart SAP SuccessFactors var smidig.' }],
+    certTitle: 'Compliance och certifieringar',
+    certItems: ['SOC 2 Type II-certifierad infrastruktur', 'GDPR-kompatibel behandling med EU-dataresidence (Frankfurt)', 'Bedomningar av EU-lonetransparensdirektivets beredskap', 'ISO 27001-anpassade sakerhetsrutiner', 'Personuppgiftsbitradesvtal medfoljande som standard'],
+    formTitle: 'Begar din enterprise-demo',
+    formDesc: 'Fyll i formularet sa kontaktar vart enterprise-team dig inom 24 timmar.',
+    formLabels: { name: 'Fullstandigt namn', email: 'Jobbmail', company: 'Foretagsnamn', companySize: 'Foretagsstorlek', countries: 'Lander av intresse', message: 'Beskriv dina behov', submit: 'Begar enterprise-demo' },
+    companySizeOptions: ['50-249 anstallda', '250-999 anstallda', '1 000-4 999 anstallda', '5 000-9 999 anstallda', '10 000+ anstallda'],
+    successMsg: 'Tack! Vart enterprise-team kontaktar dig inom 24 timmar.',
+    faq: [{ question: 'Hur lang tid tar enterprise-demon?', answer: 'En standard enterprise-demo tar 30 minuter och anpassas till din bransch och storlek.' }, { question: 'Kostar demon nagot?', answer: 'Demon ar helt gratis och utan forpliktelse.' }, { question: 'Vad ska jag forbereda?', answer: 'Ingen forberedelse kravs.' }, { question: 'Kan flera teammedlemmar delta?', answer: 'Absolut. Vi uppmanar HR-ledare och ersattningsanalytiker att delta.' }, { question: 'Hur snabbt kan vi komma igang efter demon?', answer: 'Enterprise-onboarding slutfors inom 48 timmar efter kontraktsskrivning.' }],
+  },
+  da: {
+    h1: 'Vil du se, hvordan EuroSalary Enterprise fungerer for din organisation?',
+    metaTitle: 'Anmod om enterprise-demo — Platform for lonsintelligens | EuroSalary.eu',
+    metaDesc: 'Anmod om en personlig demo af EuroSalary Enterprise. Se white-label-rapporter, tilpasset API, SSO-integration og EU-compliancevaerktojer.',
+    home: 'Hjem', enterprise: 'Enterprise', breadcrumb: 'Anmod om demo',
+    introAnswer: 'Book en personlig demo med vores enterprise-team for at se, hvordan EuroSalarys lonsintelligens, white-label-rapporter og compliancevaerktojer kan transformere din lonsstrategi pa EU-markeder.',
+    tldr: ['30 minutters personlig demo tilpasset din branche og medarbejderantal', 'Se live white-label-rapporter, API-integration og compliance-dashboards', 'Gratis radgivning om EU-lontransparensdirektivet inkluderet'],
+    heroSubtitle: 'Slut dig til 200+ enterprise-kunder i 27 EU-lande, der stoler pa EuroSalary.',
+    trustTitle: 'Derfor stoler virksomheder pa EuroSalary',
+    trustCards: [{ label: 'Daerkkede lande', value: '27', icon: 'public' }, { label: 'Lonsdatapunkter', value: '12M+', icon: 'database' }, { label: 'Enterprise-kunder', value: '200+', icon: 'corporate_fare' }, { label: 'Opdateringsfrekvens', value: 'Ugentligt', icon: 'update' }, { label: 'Tilgaengeligheds-SLA', value: '99,9%', icon: 'verified' }, { label: 'Gennemsnitlig onboarding', value: '48t', icon: 'speed' }],
+    socialProofTitle: 'Hvad enterprise-kunder siger',
+    socialProofItems: [{ name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary forkortede vores benchmarkingcyklus fra 6 uger til 3 dage.' }, { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Vi bruger EuroSalary-rapporter som white-label for vores konsulentingkunder.' }, { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'API-integrationen med vores SAP SuccessFactors var gnidningsfri.' }],
+    certTitle: 'Compliance og certificeringer',
+    certItems: ['SOC 2 Type II-certificeret infrastruktur', 'GDPR-kompatibel behandling med EU-dataresidence (Frankfurt)', 'Vurderinger af EU-lontransparensdirektivets parathed', 'ISO 27001-tilpassede sikkerhedspraksisser', 'Databehandleraftaler leveret som standard'],
+    formTitle: 'Anmod om din enterprise-demo',
+    formDesc: 'Udfyld formularen, sa kontakter vores enterprise-team dig inden for 24 timer.',
+    formLabels: { name: 'Fulde navn', email: 'Arbejdsmail', company: 'Virksomhedsnavn', companySize: 'Virksomhedsstorrelse', countries: 'Lande af interesse', message: 'Beskriv dine behov', submit: 'Anmod om enterprise-demo' },
+    companySizeOptions: ['50-249 medarbejdere', '250-999 medarbejdere', '1.000-4.999 medarbejdere', '5.000-9.999 medarbejdere', '10.000+ medarbejdere'],
+    successMsg: 'Tak! Vores enterprise-team kontakter dig inden for 24 timer.',
+    faq: [{ question: 'Hvor lang tid tager enterprise-demoen?', answer: 'En standard enterprise-demo tager 30 minutter og tilpasses din branche og storrelse.' }, { question: 'Koster demoen noget?', answer: 'Demoen er helt gratis og uforpligtende.' }, { question: 'Hvad skal jeg forberede?', answer: 'Ingen forberedelse er nodvendig.' }, { question: 'Kan flere teammedlemmer deltage?', answer: 'Absolut. Vi opfordrer HR-ledere og lonsanalytikere til at deltage.' }, { question: 'Hvor hurtigt kan vi komme i gang efter demoen?', answer: 'Enterprise-onboarding afslutis inden for 48 timer efter kontraktunderskrift.' }],
+  },
+  fi: {
+    h1: 'Haluatko nahda, miten EuroSalary Enterprise toimii organisaatiossasi?',
+    metaTitle: 'Pyda Enterprise-demo — Palkkatiedustelualusta | EuroSalary.eu',
+    metaDesc: 'Pyda raataloidty demo EuroSalary Enterprisesta. Tutustu white-label-raportteihin, mukautettuun APIin, SSO-integraatioon ja EU-vaatimustenmukaisuustyokaluihin.',
+    home: 'Koti', enterprise: 'Enterprise', breadcrumb: 'Pyda demo',
+    introAnswer: 'Varaa raataloidty demo enterprise-tiimimme kanssa nahdaksesi, miten EuroSalaryn palkkatiedustelu, white-label-raportit ja vaatimustenmukaisuustyokalut voivat muuttaa palkitsemisstrategiaasi EU-markkinoilla.',
+    tldr: ['30 minuutin raataloidty demo toimialasi ja henkilostomaarasi mukaan', 'Nae livenä white-label-raportit, API-integraatio ja vaatimustenmukaisuus-dashboardit', 'Ilmainen konsultaatio EU:n palkka-avoimuusdirektiivin valmiudesta sisaltyy'],
+    heroSubtitle: 'Liity yli 200 enterprise-asiakkaan joukkoon 27 EU-maassa, jotka luottavat EuroSalaryyn.',
+    trustTitle: 'Miksi yritykset luottavat EuroSalaryyn',
+    trustCards: [{ label: 'Katetut maat', value: '27', icon: 'public' }, { label: 'Palkkadatapisteet', value: '12M+', icon: 'database' }, { label: 'Enterprise-asiakkaat', value: '200+', icon: 'corporate_fare' }, { label: 'Paivitystiheys', value: 'Viikoittain', icon: 'update' }, { label: 'Saatavuus-SLA', value: '99,9%', icon: 'verified' }, { label: 'Keskimaarainen onboarding', value: '48t', icon: 'speed' }],
+    socialProofTitle: 'Mita enterprise-asiakkaat sanovat',
+    socialProofItems: [{ name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary lyhensi benchmarking-syklimme 6 viikosta 3 paivaan.' }, { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Kaytamme EuroSalary-raportteja white-labelina konsultointiasiakkaillemme.' }, { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'API-integraatio SAP SuccessFactors -instanssiimme oli saumatonta.' }],
+    certTitle: 'Vaatimustenmukaisuus ja sertifioinnit',
+    certItems: ['SOC 2 Type II -sertifioitu infrastruktuuri', 'GDPR-yhteensopiva kasittely EU-dataresidenssin kanssa (Frankfurt)', 'EU:n palkka-avoimuusdirektiivin valmiusarvioinnit', 'ISO 27001 -linjatut turvallisuuskaynnot', 'Tietojenksittelynsopimukset toimitetaan vakiona'],
+    formTitle: 'Pyda enterprise-demo',
+    formDesc: 'Tayta lomake ja enterprise-tiimimme ottaa yhteytta 24 tunnin kuluessa.',
+    formLabels: { name: 'Koko nimi', email: 'Tyosahkoposti', company: 'Yrityksen nimi', companySize: 'Yrityksen koko', countries: 'Kiinnostavat maat', message: 'Kuvaile tarpeesi', submit: 'Pyda enterprise-demo' },
+    companySizeOptions: ['50-249 tyontekijaa', '250-999 tyontekijaa', '1 000-4 999 tyontekijaa', '5 000-9 999 tyontekijaa', '10 000+ tyontekijaa'],
+    successMsg: 'Kiitos! Enterprise-tiimimme ottaa yhteytta 24 tunnin kuluessa.',
+    faq: [{ question: 'Kuinka kauan enterprise-demo kestaa?', answer: 'Standardi enterprise-demo kestaa 30 minuuttia ja on raataloitu toimialasi ja kokosi mukaan.' }, { question: 'Onko demo maksullinen?', answer: 'Demo on tayin ilmainen ja sitoumukseton.' }, { question: 'Mita minun pitaa valmistella?', answer: 'Valmistelua ei tarvita.' }, { question: 'Voiko useampi tiiminjaasen osallistua?', answer: 'Ehdottomasti. Kannustamme HR-johtajia ja palkitsemisanalyytikkoja osallistumaan.' }, { question: 'Kuinka nopeasti paasemme alkuun demon jalkeen?', answer: 'Enterprise-onboarding valmistuu 48 tunnissa sopimuksen allekirjoituksesta.' }],
+  },
+  el: {
+    h1: 'Thelete na deite pos leitourei to EuroSalary Enterprise gia ton organismo sas?',
+    metaTitle: 'Aitisi Enterprise Demo — Platforma pliroforion misthon | EuroSalary.eu',
+    metaDesc: 'Aitiste mia exatomikeumeni epidixi tou EuroSalary Enterprise. Deite white-label anafores, prosarmosmeno API, enswmatosi SSO kai ergaleia sumorfosis EE.',
+    home: 'Arxiki', enterprise: 'Enterprise', breadcrumb: 'Aitisi demo',
+    introAnswer: 'Kleiste mia exatomikeumeni epidixi me tin enterprise omada mas gia na deite pos i evfuia misthon EuroSalary, oi anafores white-label kai ta ergaleia sumorfosis mporoun na metatrepsoun ti stratigiki apodoxon sas stis agores tis EE.',
+    tldr: ['30lepto exatomikeumeno demo prosarmosmeno ston klado kai to prosopiko sas', 'Deite se pragmatiko xrono white-label anafores, enswmatosi API kai dashboards sumorfosis', 'Dorean sumbouleutiki gia tin etoimotita tis odigias diafaneias misthon tis EE'],
+    heroSubtitle: 'Entagteite se 200+ enterprise pelates se 27 xores tis EE pou empisteontai to EuroSalary.',
+    trustTitle: 'Giati oi epixeiriseis empisteontai to EuroSalary',
+    trustCards: [{ label: 'Xores pou kaluptontai', value: '27', icon: 'public' }, { label: 'Simeia dedomenon misthon', value: '12M+', icon: 'database' }, { label: 'Enterprise pelates', value: '200+', icon: 'corporate_fare' }, { label: 'Suxnotita enimerosis', value: 'Evdomadiaia', icon: 'update' }, { label: 'SLA diathesimotitas', value: '99,9%', icon: 'verified' }, { label: 'Mesos onboarding', value: '48o', icon: 'speed' }],
+    socialProofTitle: 'Ti lene oi enterprise pelates',
+    socialProofItems: [{ name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'To EuroSalary meiwse ton kuklo benchmarking mas apo 6 evdomades se 3 meres.' }, { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Xrisimopoioume anafores EuroSalary os white-label gia tous pelates sumvoulon mas.' }, { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'I enswmatosi API me to SAP SuccessFactors itan aproskopto.' }],
+    certTitle: 'Sumorfosi kai pistopoiiseis',
+    certItems: ['Upodomiki pistopoiimeni SOC 2 Type II', 'Epexergasia sumforfi me GDPR me edra dedomenwn stin EE (Frankfourti)', 'Axiologiseis etoimotitas gia tin odigia diafaneias misthon', 'Praktikes asfaleias euthugammismes me ISO 27001', 'Sumfonies epexergasias dedomenwn parexontai os protipi'],
+    formTitle: 'Aitiste to enterprise demo sas',
+    formDesc: 'Sumplirwste ti forma kai i enterprise omada mas tha epikinoinisei entos 24 oron.',
+    formLabels: { name: 'Plires onoma', email: 'Ergasiako email', company: 'Onoma etaireias', companySize: 'Megethos etaireias', countries: 'Xores endiaferontos', message: 'Perigrapste tis anagkes sas', submit: 'Aitisi enterprise demo' },
+    companySizeOptions: ['50-249 ergazomenoi', '250-999 ergazomenoi', '1.000-4.999 ergazomenoi', '5.000-9.999 ergazomenoi', '10.000+ ergazomenoi'],
+    successMsg: 'Efxaristoume! I enterprise omada mas tha epikinoinisei entos 24 oron.',
+    faq: [{ question: 'Poso diarkei to enterprise demo?', answer: 'Ena tupiko enterprise demo diarkei 30 lepta kai einai prosarmosmeno ston klado kai to megethos sas.' }, { question: 'Einai to demo dorean?', answer: 'To demo einai entelws dorean kai xwris upokreosi.' }, { question: 'Ti prepei na etoimasw?', answer: 'Den apeiteitai proetoimasia.' }, { question: 'Mporoun na summetasxoun perissotera meli tis omadas?', answer: 'Apoluta. Protresome tous HR leaders kai analutes apodoxon na summetasxoun.' }, { question: 'Poso grigora mporoume na xekinisoume meta to demo?', answer: 'To enterprise onboarding oloklirotai entos 48 oron apo tin upografi tis sumvasis.' }],
+  },
+  hu: {
+    h1: 'Szeretne latni, hogyan mukodik az EuroSalary Enterprise az On szervezeteben?',
+    metaTitle: 'Enterprise demo keres — Berintelligencia platform | EuroSalary.eu',
+    metaDesc: 'Kerjen szemelyre szabott demot az EuroSalary Enterprise-rol. Tekintse meg a white-label jelentseket, egyedi API-t, SSO-integraciot es EU-megfelelosegi eszkozoket.',
+    home: 'Fooldal', enterprise: 'Enterprise', breadcrumb: 'Demo keres',
+    introAnswer: 'Foglaljon szemelyre szabott demot enterprise csapatunkkal, hogy laassa, hogyan alakithatja at az EuroSalary berintelligencia, white-label jelentesek es megfelelosegi eszkozok a kompenzacios strategiajat az EU-piacokon.',
+    tldr: ['30 perces szemelyre szabott demo az iparag es letszam alapjan', 'Tekintse meg eloben a white-label jelentseket, API-integraciot es megfelelosegi dashboardokat', 'Ingyenes konzultacio az EU bertranszparencia iranyelv keszultsegerol'],
+    heroSubtitle: 'Csatlakozzon tobb mint 200 enterprise ugyfelehez 27 EU-orszagban, akik megbiznak az EuroSalaryban.',
+    trustTitle: 'Miert biznak a vallalatok az EuroSalaryban',
+    trustCards: [{ label: 'Lefedett orszagok', value: '27', icon: 'public' }, { label: 'Beradatpontok', value: '12M+', icon: 'database' }, { label: 'Enterprise ugyfelek', value: '200+', icon: 'corporate_fare' }, { label: 'Frissitesi gyakorisag', value: 'Heti', icon: 'update' }, { label: 'Rendelkezesre allas SLA', value: '99,9%', icon: 'verified' }, { label: 'Atlagos onboarding', value: '48o', icon: 'speed' }],
+    socialProofTitle: 'Mit mondanak az enterprise ugyfelek',
+    socialProofItems: [{ name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'Az EuroSalary lerovid tette a benchmarking ciklusunkat 6 hetrol 3 napra.' }, { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Az EuroSalary jelentseket white-labelkent hasznaljuk tanacsado ugyfeleinknek.' }, { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'Az API-integracio az SAP SuccessFactors peldanyunkkal zokkenomentes volt.' }],
+    certTitle: 'Megfeleles es tanusitvanyok',
+    certItems: ['SOC 2 Type II tanusitott infrastruktura', 'GDPR-kompatibilis feldolgozas EU adatrezidenciaval (Frankfurt)', 'EU bertranszparencia iranyelv keszultsegi ertekelese', 'ISO 27001 harmonizalt biztonsagi gyakorlatok', 'Adatfeldolgozasi megallapodasok standardkent biztositva'],
+    formTitle: 'Kerje enterprise demojat',
+    formDesc: 'Toltse ki az urlapot es enterprise csapatunk 24 oran belul felveszi Onnel a kapcsolatot.',
+    formLabels: { name: 'Teljes nev', email: 'Munkahelyi email', company: 'Cegnev', companySize: 'Cegmeret', countries: 'Erdekelt orszagok', message: 'Irja le az igenyet', submit: 'Enterprise demo keres' },
+    companySizeOptions: ['50-249 alkalmazott', '250-999 alkalmazott', '1 000-4 999 alkalmazott', '5 000-9 999 alkalmazott', '10 000+ alkalmazott'],
+    successMsg: 'Koszonjuk! Enterprise csapatunk 24 oran belul felveszi Onnel a kapcsolatot.',
+    faq: [{ question: 'Mennyi ideig tart az enterprise demo?', answer: 'Egy standard enterprise demo 30 percig tart, es az iparag es meret alapjan van szemelyesitve.' }, { question: 'A demo ingyenes?', answer: 'A demo teljesen ingyenes es kotelezettseg nelkuli.' }, { question: 'Mit kell elokeszitenem?', answer: 'Nincs szukseg elokeszulesre.' }, { question: 'Tobb csapatag is reszt vehet?', answer: 'Termeszetesen. Batoritjuk a HR-vezetoket es kompenzacios elemzoket a reszvetelre.' }, { question: 'Milyen gyorsan indulhatunk el a demo utan?', answer: 'Az enterprise onboarding 48 oran belul befejezodik a szerzodes alairasa utan.' }],
+  },
+  sk: {
+    h1: 'Chcete vidiet, ako EuroSalary Enterprise funguje pre vasu organizaciu?',
+    metaTitle: 'Poziadajte o enterprise demo — Platforma platovej inteligencie | EuroSalary.eu',
+    metaDesc: 'Poziadajte o personalizovane demo EuroSalary Enterprise. Pozrite si white-label reporty, vlastne API, SSO integraciu a nastroje pre sulad s EU.',
+    home: 'Domov', enterprise: 'Enterprise', breadcrumb: 'Poziadajte o demo',
+    introAnswer: 'Rezervujte si personalizovane demo s nasim enterprise tymom, aby ste videli, ako platova inteligencia EuroSalary, white-label reporty a nastroje pre sulad mozu transformovat vasu strategiu odmenovania na trhoch EU.',
+    tldr: ['30-minutove personalizovane demo prisposobene vasmu odvetviu a poctu zamestnancov', 'Pozrite si nazivo white-label reporty, API integraciu a dashboardy pre sulad', 'Bezplatna konzultacia o pripravenosti na smernicu EU o transparentnosti odmenovania'],
+    heroSubtitle: 'Pridajte sa k viac ako 200 enterprise klientom v 27 krajinach EU.',
+    trustTitle: 'Preco podniky doveruju EuroSalary',
+    trustCards: [{ label: 'Pokrytych krajin', value: '27', icon: 'public' }, { label: 'Platovych datovych bodov', value: '12M+', icon: 'database' }, { label: 'Enterprise klientov', value: '200+', icon: 'corporate_fare' }, { label: 'Frekvencia aktualizacie', value: 'Tyzdenne', icon: 'update' }, { label: 'SLA dostupnosti', value: '99,9%', icon: 'verified' }, { label: 'Priemerny onboarding', value: '48h', icon: 'speed' }],
+    socialProofTitle: 'Co hovoria enterprise klienti',
+    socialProofItems: [{ name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary skratil nas benchmarkingovy cyklus zo 6 tyzdnov na 3 dni.' }, { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Pouzivame EuroSalary reporty ako white-label pre nasich poradenskych klientov.' }, { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'API integracia s nasou instanciou SAP SuccessFactors bola bezchybna.' }],
+    certTitle: 'Sulad a certifikacie',
+    certItems: ['Infrastruktura certifikovana SOC 2 Type II', 'Spracovanie v sulade s GDPR s rezidenciou udajov v EU (Frankfurt)', 'Hodnotenia pripravenosti na smernicu o transparentnosti odmenovania', 'Bezpecnostne postupy v sulade s ISO 27001', 'Zmluvy o spracovani udajov poskytovane standardne'],
+    formTitle: 'Poziadajte o vase enterprise demo',
+    formDesc: 'Vyplnte formular a nas enterprise tym vas kontaktuje do 24 hodin.',
+    formLabels: { name: 'Cele meno', email: 'Pracovny email', company: 'Nazov spolocnosti', companySize: 'Velkost spolocnosti', countries: 'Krajiny zajmu', message: 'Popiste vase potreby', submit: 'Poziadajte o enterprise demo' },
+    companySizeOptions: ['50-249 zamestnancov', '250-999 zamestnancov', '1 000-4 999 zamestnancov', '5 000-9 999 zamestnancov', '10 000+ zamestnancov'],
+    successMsg: 'Dakujeme! Nas enterprise tym vas kontaktuje do 24 hodin.',
+    faq: [{ question: 'Ako dlho trva enterprise demo?', answer: 'Standardne enterprise demo trva 30 minut a je prisposobene vasemu odvetviu a velkosti.' }, { question: 'Je demo zdarma?', answer: 'Demo je uplne zdarma a nezavazne.' }, { question: 'Co mam pripravit?', answer: 'Ziadna priprava nie je nutna.' }, { question: 'Moze sa zucastnit viac clenov tymu?', answer: 'Samozrejme. Odporucame ucast HR liderov a analytikov odmenovania.' }, { question: 'Ako rychlo mozeme zacat po deme?', answer: 'Enterprise onboarding je dokonceny do 48 hodin od podpisu zmluvy.' }],
+  },
+  bg: {
+    h1: 'Iskate da vidite kak EuroSalary Enterprise raboti za vashata organizatsiya?',
+    metaTitle: 'Zajavete enterprise demo — Platforma za inteligentnost na zaplatite | EuroSalary.eu',
+    metaDesc: 'Zajavete personalizirano demo na EuroSalary Enterprise. Razgledajte white-label dokladi, personaliziran API, SSO integratsiya i instrumenti za saotvetstvie s ES.',
+    home: 'Nachalo', enterprise: 'Enterprise', breadcrumb: 'Zajavete demo',
+    introAnswer: 'Rezervirajte personalizirano demo s nashiya enterprise ekip, za da vidite kak inteligentnostta na zaplatite na EuroSalary, white-label dokladite i instrumentite za saotvetstvie mogat da transformirat strategiyata vi za vaznagrazhdaniya na pazarite na ES.',
+    tldr: ['30-minutno personalizirano demo, prisposobeno kam vashiya sektor i broy sluziteli', 'Razgledajte na zhivo white-label dokladi, API integratsiya i dashboardove za saotvetstvie', 'Bezplatna konsultatsiya za gotovnostta za direktivata na ES za prozrachnost na zaplatite'],
+    heroSubtitle: 'Pridruzete se kam 200+ enterprise klienti v 27 strani na ES, koito se doveryavat na EuroSalary.',
+    trustTitle: 'Zashto predpriyatiyata se doveryavat na EuroSalary',
+    trustCards: [{ label: 'Pokriti strani', value: '27', icon: 'public' }, { label: 'Tochki danni za zaplati', value: '12M+', icon: 'database' }, { label: 'Enterprise klienti', value: '200+', icon: 'corporate_fare' }, { label: 'Chestota na aktualizatsiya', value: 'Sedmichno', icon: 'update' }, { label: 'SLA za nalichnost', value: '99,9%', icon: 'verified' }, { label: 'Sreden onboarding', value: '48ch', icon: 'speed' }],
+    socialProofTitle: 'Kakvo kazvat enterprise klientite',
+    socialProofItems: [{ name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary skrati tsikala ni na benchmarking ot 6 sedmitsi na 3 dni.' }, { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Izpolzvame dokladite na EuroSalary kato white-label za nashite konsultantski klienti.' }, { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'API integratsiyata sas SAP SuccessFactors beshe bezproblemna.' }],
+    certTitle: 'Saotvetstvie i sertifikati',
+    certItems: ['Infrastruktura sertifitsirana SOC 2 Type II', 'Obrabotka saobrazena s GDPR s rezidentnost na danni v ES (Frankfurt)', 'Otsenki na gotovnostta za direktivata za prozrachnost na zaplatite', 'Praktiki za sigurnost saobrazeni s ISO 27001', 'Sporazumeniya za obrabotka na danni predostaveni standartno'],
+    formTitle: 'Zajavete vasheto enterprise demo',
+    formDesc: 'Popalnete formulara i nashiyat enterprise ekip shte se svarzhe s vas do 24 chasa.',
+    formLabels: { name: 'Palmo ime', email: 'Sluzeben email', company: 'Ime na kompaniyata', companySize: 'Razmer na kompaniyata', countries: 'Strani ot interes', message: 'Opizhete nuzdite si', submit: 'Zajavete enterprise demo' },
+    companySizeOptions: ['50-249 sluziteli', '250-999 sluziteli', '1 000-4 999 sluziteli', '5 000-9 999 sluziteli', '10 000+ sluziteli'],
+    successMsg: 'Blagodarim! Nashiyat enterprise ekip shte se svarzhe s vas do 24 chasa.',
+    faq: [{ question: 'Kolko traje enterprise demoto?', answer: 'Standartno enterprise demo traje 30 minuti i e prisposobeno kam vashiya sektor i razmer.' }, { question: 'Demoto bezplatno li e?', answer: 'Demoto e iztsyalo bezplatno i bez zadalzheniya.' }, { question: 'Kakvo tryabva da podgotvya?', answer: 'Ne se iziskva podgotovka.' }, { question: 'Mogat li poveche chlonove na ekipa da uchastvat?', answer: 'Razbirase. Nasarchavame HR liderite i analizatorite na vaznagrazhdaniya da uchastvat.' }, { question: 'Kolko barzo mojem da startiraame sled demoto?', answer: 'Enterprise onboarding-at se zavershva do 48 chasa sled podpisvane na dogovora.' }],
+  },
+  hr: {
+    h1: 'Zelite vidjeti kako EuroSalary Enterprise radi za vasu organizaciju?',
+    metaTitle: 'Zatrazite enterprise demo — Platforma za inteligenciju placa | EuroSalary.eu',
+    metaDesc: 'Zatrazite personaliziranu demonstraciju EuroSalary Enterprisea. Pogledajte white-label izvjestaje, prilagodeni API, SSO integraciju i alate za uskladenost s EU.',
+    home: 'Pocetna', enterprise: 'Enterprise', breadcrumb: 'Zatrazite demo',
+    introAnswer: 'Rezervirajte personaliziranu demonstraciju s nasim enterprise timom kako biste vidjeli kako inteligencija placa EuroSalary, white-label izvjestaji i alati za uskladenost mogu transformirati vasu strategiju naknada na trzistima EU.',
+    tldr: ['30-minutna personalizirana demo prilagodena vasoj industriji i broju zaposlenih', 'Pogledajte uzivo white-label izvjestaje, API integraciju i nadzorne ploce uskladenosti', 'Besplatno savjetovanje o spremnosti za EU direktivu o transparentnosti placa'],
+    heroSubtitle: 'Pridruzite se 200+ enterprise klijenata u 27 zemalja EU koji vjeruju EuroSalaryju.',
+    trustTitle: 'Zasto poduzeca vjeruju EuroSalaryju',
+    trustCards: [{ label: 'Pokrivenih zemalja', value: '27', icon: 'public' }, { label: 'Podatkovnih tocaka o placama', value: '12M+', icon: 'database' }, { label: 'Enterprise klijenata', value: '200+', icon: 'corporate_fare' }, { label: 'Ucestalost azuriranja', value: 'Tjedno', icon: 'update' }, { label: 'SLA dostupnosti', value: '99,9%', icon: 'verified' }, { label: 'Prosjecni onboarding', value: '48h', icon: 'speed' }],
+    socialProofTitle: 'Sto kazu enterprise klijenti',
+    socialProofItems: [{ name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary je skratio nas ciklus benchmarkinga sa 6 tjedana na 3 dana.' }, { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Koristimo EuroSalary izvjestaje kao white-label za nase konzultantske klijente.' }, { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'API integracija s nasom SAP SuccessFactors instancom bila je besprijekorna.' }],
+    certTitle: 'Uskladenost i certifikati',
+    certItems: ['SOC 2 Type II certificirana infrastruktura', 'GDPR-uskladena obrada s rezidencijom podataka u EU (Frankfurt)', 'Procjene spremnosti za direktivu o transparentnosti placa', 'Sigurnosne prakse uskladene s ISO 27001', 'Ugovori o obradi podataka kao standard'],
+    formTitle: 'Zatrazite svoj enterprise demo',
+    formDesc: 'Ispunite obrazac i nas enterprise tim ce vas kontaktirati unutar 24 sata.',
+    formLabels: { name: 'Puno ime', email: 'Poslovni email', company: 'Naziv tvrtke', companySize: 'Velicina tvrtke', countries: 'Zemlje interesa', message: 'Opisite svoje potrebe', submit: 'Zatrazite enterprise demo' },
+    companySizeOptions: ['50-249 zaposlenika', '250-999 zaposlenika', '1.000-4.999 zaposlenika', '5.000-9.999 zaposlenika', '10.000+ zaposlenika'],
+    successMsg: 'Hvala! Nas enterprise tim ce vas kontaktirati unutar 24 sata.',
+    faq: [{ question: 'Koliko traje enterprise demo?', answer: 'Standardni enterprise demo traje 30 minuta i prilagoden je vasoj industriji i velicini.' }, { question: 'Je li demo besplatan?', answer: 'Demo je potpuno besplatan i bez obveza.' }, { question: 'Sto trebam pripremiti?', answer: 'Nije potrebna priprema.' }, { question: 'Mogu li sudjelovati vise clanova tima?', answer: 'Naravno. Potichemo HR voditelje i analitichare naknada da sudjeluju.' }, { question: 'Koliko brzo mozemo poceti nakon dema?', answer: 'Enterprise onboarding se zavrsava unutar 48 sati od potpisa ugovora.' }],
+  },
+  sl: {
+    h1: 'Zelite videti, kako EuroSalary Enterprise deluje za vaso organizacijo?',
+    metaTitle: 'Zaprosite enterprise demo — Platforma za placilno inteligenco | EuroSalary.eu',
+    metaDesc: 'Zaprosite personalizirano predstavitev EuroSalary Enterprise. Oglejte si white-label porocila, prilagojeni API, SSO integracijo in orodja za skladnost z EU.',
+    home: 'Domov', enterprise: 'Enterprise', breadcrumb: 'Zaprosite demo',
+    introAnswer: 'Rezervirajte personalizirano predstavitev z naso enterprise ekipo, da vidite, kako EuroSalary placilna inteligenca, white-label porocila in orodja za skladnost lahko preobrazijo vaso strategijo nagrajevanja na trgih EU.',
+    tldr: ['30-minutna personalizirana predstavitev prilagojena vasi panogi in stevilu zaposlenih', 'Oglejte si v zivo white-label porocila, API integracijo in nadzorne plosce skladnosti', 'Brezplacno svetovanje o pripravljenosti na EU direktivo o preglednosti plac'],
+    heroSubtitle: 'Pridruzite se 200+ enterprise strankam v 27 drzavah EU, ki zaupajo EuroSalaryju.',
+    trustTitle: 'Zakaj podjetja zaupajo EuroSalaryju',
+    trustCards: [{ label: 'Pokritih drzav', value: '27', icon: 'public' }, { label: 'Podatkovnih tock o placah', value: '12M+', icon: 'database' }, { label: 'Enterprise strank', value: '200+', icon: 'corporate_fare' }, { label: 'Pogostost posodobitev', value: 'Tedensko', icon: 'update' }, { label: 'SLA razpolozljivosti', value: '99,9%', icon: 'verified' }, { label: 'Povprecni onboarding', value: '48ur', icon: 'speed' }],
+    socialProofTitle: 'Kaj pravijo enterprise stranke',
+    socialProofItems: [{ name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary je skrajsal nas cikel primerjave iz 6 tednov na 3 dni.' }, { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Uporabljamo EuroSalary porocila kot white-label za nase svetovalne stranke.' }, { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'API integracija z naso instanco SAP SuccessFactors je bila brezhibna.' }],
+    certTitle: 'Skladnost in certifikati',
+    certItems: ['SOC 2 Type II certificirana infrastruktura', 'GDPR-skladna obdelava z rezidenco podatkov v EU (Frankfurt)', 'Ocene pripravljenosti na direktivo o preglednosti plac', 'Varnostne prakse usklajene z ISO 27001', 'Pogodbe o obdelavi podatkov zagotovljene kot standard'],
+    formTitle: 'Zaprosite svoj enterprise demo',
+    formDesc: 'Izpolnite obrazec in nasa enterprise ekipa vas bo kontaktirala v 24 urah.',
+    formLabels: { name: 'Polno ime', email: 'Sluzbeni email', company: 'Ime podjetja', companySize: 'Velikost podjetja', countries: 'Drzave zanimanja', message: 'Opisite svoje potrebe', submit: 'Zaprosite enterprise demo' },
+    companySizeOptions: ['50-249 zaposlenih', '250-999 zaposlenih', '1.000-4.999 zaposlenih', '5.000-9.999 zaposlenih', '10.000+ zaposlenih'],
+    successMsg: 'Hvala! Nasa enterprise ekipa vas bo kontaktirala v 24 urah.',
+    faq: [{ question: 'Koliko dolgo traja enterprise demo?', answer: 'Standardni enterprise demo traja 30 minut in je prilagojen vasi panogi in velikosti.' }, { question: 'Je demo brezplacen?', answer: 'Demo je popolnoma brezplacen in brez obveznosti.' }, { question: 'Kaj moram pripraviti?', answer: 'Priprava ni potrebna.' }, { question: 'Ali se lahko udeleži vec clanov ekipe?', answer: 'Seveda. Spodbujamo HR voditelje in analitike nagrajevanja k udelezbi.' }, { question: 'Kako hitro lahko zacnemo po demu?', answer: 'Enterprise onboarding se zakluchi v 48 urah po podpisu pogodbe.' }],
+  },
+  lt: {
+    h1: 'Norite pamatyti, kaip EuroSalary Enterprise veikia jusu organizacijoje?',
+    metaTitle: 'Usakykite enterprise demo — Atlyginimw zvalgybo platforma | EuroSalary.eu',
+    metaDesc: 'Usakykite personalizuota EuroSalary Enterprise demonstracija. Pamatykite white-label ataskaitas, pritaikyta API, SSO integracija ir ES atitikties irankius.',
+    home: 'Pradzia', enterprise: 'Enterprise', breadcrumb: 'Usakyti demo',
+    introAnswer: 'Rezervuokite personalizuota demonstracija su musu enterprise komanda, kad pamatytumete, kaip EuroSalary atlyginimw zvalgyba, white-label ataskaitos ir atitikties irankiai gali transformuoti jusu atlygio strategija ES rinkose.',
+    tldr: ['30 minuciu personalizuota demonstracija pritaikyta jusu sektoriui ir darbuotoju skaiciui', 'Pamatykite gyvai white-label ataskaitas, API integracija ir atitikties prietaisu skydus', 'Nemokama konsultacija apie pasiruosima ES darbo uzmokescio skaidrumo direktivai'],
+    heroSubtitle: 'Prisijunkite prie 200+ enterprise klientu 27 ES salyse, kurie pasitiki EuroSalary.',
+    trustTitle: 'Kodel imones pasitiki EuroSalary',
+    trustCards: [{ label: 'Apimtos salys', value: '27', icon: 'public' }, { label: 'Atlyginimo duomenu tasku', value: '12M+', icon: 'database' }, { label: 'Enterprise klientu', value: '200+', icon: 'corporate_fare' }, { label: 'Atnaujinimo daznumas', value: 'Kas savaite', icon: 'update' }, { label: 'Pasiekiamumo SLA', value: '99,9%', icon: 'verified' }, { label: 'Vidutinis onboarding', value: '48val', icon: 'speed' }],
+    socialProofTitle: 'Ka sako enterprise klientai',
+    socialProofItems: [{ name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary sutrumpino musu benchmarking cikla nuo 6 savaiciu iki 3 dienu.' }, { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Naudojame EuroSalary ataskaitas kaip white-label savo konsultavimo klientams.' }, { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'API integracija su musu SAP SuccessFactors buvo sklandzi.' }],
+    certTitle: 'Atitiktis ir sertifikatai',
+    certItems: ['SOC 2 Type II sertifikuota infrastruktura', 'Su GDPR suderintas apdorojimas su duomenu rezidencija ES (Frankfurtas)', 'Pasiruosimo darbo uzmokescio skaidrumo direktyvai vertinimai', 'ISO 27001 suderintos saugumo praktikos', 'Duomenu apdorojimo sutartys pateikiamos standartiskai'],
+    formTitle: 'Usakykite savo enterprise demo',
+    formDesc: 'Uzpildykite forma ir musu enterprise komanda susisieks per 24 valandas.',
+    formLabels: { name: 'Pilnas vardas', email: 'Darbo el. pastas', company: 'Imones pavadinimas', companySize: 'Imones dydis', countries: 'Dominancios salys', message: 'Aprasykite savo poreikius', submit: 'Usakyti enterprise demo' },
+    companySizeOptions: ['50-249 darbuotojai', '250-999 darbuotojai', '1 000-4 999 darbuotojai', '5 000-9 999 darbuotojai', '10 000+ darbuotojai'],
+    successMsg: 'Aciu! Musu enterprise komanda susisieks per 24 valandas.',
+    faq: [{ question: 'Kiek trunka enterprise demo?', answer: 'Standartine enterprise demo trunka 30 minuciu ir yra pritaikyta jusu sektoriui ir dydziui.' }, { question: 'Ar demo nemokama?', answer: 'Demo yra visikai nemokama ir be isipareigojimw.' }, { question: 'Ka turiu pasiruosti?', answer: 'Pasiruosimo nereikia.' }, { question: 'Ar gali dalyvauti daugiau komandos nariu?', answer: 'Zinoma. Skatiname HR lyderius ir atlygio analitikus dalyvauti.' }, { question: 'Kaip greitai galime pradeti po demo?', answer: 'Enterprise onboarding uzbaigiamas per 48 valandas nuo sutarties pasirasymo.' }],
+  },
+  lv: {
+    h1: 'Velaties redzet, ka EuroSalary Enterprise darbojas jusu organizacijai?',
+    metaTitle: 'Pieprasiet enterprise demo — Algu izlukosanas platforma | EuroSalary.eu',
+    metaDesc: 'Pieprasiet personalizetu EuroSalary Enterprise demonstraciju. Apskatiet white-label parskatus, pielgootu API, SSO integraciju un ES atbilstibas rikus.',
+    home: 'Sakums', enterprise: 'Enterprise', breadcrumb: 'Pieprasit demo',
+    introAnswer: 'Rezervejiet personalizetu demonstraciju ar musu enterprise komandu, lai redzetu, ka EuroSalary algu izlukosana, white-label parskati un atbilstibas riki var transformet jusu atalgojuma strategiju ES tirgos.',
+    tldr: ['30 minutu personalizeta demonstracija pielagota jusu nozarei un darbinieku skaitam', 'Apskatiet tiesraide white-label parskatus, API integraciju un atbilstibas informacijas panelus', 'Bezmaksas konsultacija par gatavibau ES darba samaksas paredzamibas direktivai'],
+    heroSubtitle: 'Pievienojieties 200+ enterprise klientiem 27 ES valstis, kas uzticas EuroSalary.',
+    trustTitle: 'Kapec uznemumi uzticas EuroSalary',
+    trustCards: [{ label: 'Segtas valstis', value: '27', icon: 'public' }, { label: 'Algu datu punkti', value: '12M+', icon: 'database' }, { label: 'Enterprise klienti', value: '200+', icon: 'corporate_fare' }, { label: 'Atjauninasanas biezums', value: 'Iknedelas', icon: 'update' }, { label: 'Pieejamibas SLA', value: '99,9%', icon: 'verified' }, { label: 'Videjais onboarding', value: '48st', icon: 'speed' }],
+    socialProofTitle: 'Ko saka enterprise klienti',
+    socialProofItems: [{ name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary samazinja musu benchmarking ciklu no 6 nedelam lidz 3 dienam.' }, { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Mes izmantojam EuroSalary parskatus ka white-label musu konsultaciju klientiem.' }, { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'API integracija ar musu SAP SuccessFactors bija nemanama.' }],
+    certTitle: 'Atbilstiba un sertifikati',
+    certItems: ['SOC 2 Type II sertificeta infrastruktura', 'VDAR saderigs apstrade ar datu rezidenci ES (Frankfurte)', 'Gatavibas vertesjumi darba samaksas paredzamibas direktivai', 'ISO 27001 saskanotibas drosibas prakses', 'Datu apstrades ligumi sniegti ka standarts'],
+    formTitle: 'Pieprasiet savu enterprise demo',
+    formDesc: 'Aizpildiet veidlapu un musu enterprise komanda sazinasies 24 stundu laika.',
+    formLabels: { name: 'Pilns vards', email: 'Darba e-pasts', company: 'Uznemuma nosaukums', companySize: 'Uznemuma lielums', countries: 'Interesejosas valstis', message: 'Aprakstiet savas vajadzibas', submit: 'Pieprasit enterprise demo' },
+    companySizeOptions: ['50-249 darbinieki', '250-999 darbinieki', '1 000-4 999 darbinieki', '5 000-9 999 darbinieki', '10 000+ darbinieki'],
+    successMsg: 'Paldies! Musu enterprise komanda sazinasies 24 stundu laika.',
+    faq: [{ question: 'Cik ilgi ilgst enterprise demo?', answer: 'Standarta enterprise demo ilgst 30 minutes un ir pielagots jusu nozarei un lielumam.' }, { question: 'Vai demo ir bezmaksas?', answer: 'Demo ir pilniba bezmaksas un bez saistibam.' }, { question: 'Kas man jabug sagatavotam?', answer: 'Sagatavosanas nav nepieciesama.' }, { question: 'Vai var piedalities vairaki komandas locekli?', answer: 'Protams. Aicinzm HR vaditzjus un atalgojuma analitikus piedalities.' }, { question: 'Cik atri varam sakt pec demo?', answer: 'Enterprise onboarding tiek pabeigts 48 stundu laika pec liguma parakstisanas.' }],
+  },
+  et: {
+    h1: 'Kas soovite naha, kuidas EuroSalary Enterprise teie organisatsioonis toimib?',
+    metaTitle: 'Taotlege enterprise demot — Palgaluure platvorm | EuroSalary.eu',
+    metaDesc: 'Taotlege personaliseeritud EuroSalary Enterprise demot. Vaadake white-label aruandeid, kohandatud API-t, SSO integratsiooni ja EL-i vastavustooristu.',
+    home: 'Avaleht', enterprise: 'Enterprise', breadcrumb: 'Taotlege demot',
+    introAnswer: 'Broneerige personaliseeritud demo meie enterprise meeskonnaga, et naha, kuidas EuroSalary palgaluure, white-label aruanded ja vastavustooriistad saavad muuta teie tasustamisstrateegiat EL-i turgudel.',
+    tldr: ['30-minutiline personaliseeritud demo kohandatud teie sektori ja tootajate arvuga', 'Vaadake reaalajas white-label aruandeid, API integratsiooni ja vastavuse juhtpaneele', 'Tasuta nouanne EL-i palgaläbipaistvuse direktiivi valmiduse kohta'],
+    heroSubtitle: 'Liituge ule 200 enterprise kliendiga 27 EL-i riigis, kes usaldavad EuroSalaryt.',
+    trustTitle: 'Miks ettevotted usaldavad EuroSalaryt',
+    trustCards: [{ label: 'Kaetud riike', value: '27', icon: 'public' }, { label: 'Palgaandmepunkte', value: '12M+', icon: 'database' }, { label: 'Enterprise kliente', value: '200+', icon: 'corporate_fare' }, { label: 'Varskendamise sagedus', value: 'Iganadalane', icon: 'update' }, { label: 'Kattesaadavuse SLA', value: '99,9%', icon: 'verified' }, { label: 'Keskmine onboarding', value: '48t', icon: 'speed' }],
+    socialProofTitle: 'Mida enterprise kliendid utlevad',
+    socialProofItems: [{ name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary vahendas meie vordlusuuringu tsuklit 6 nadalast 3 paevani.' }, { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Kasutame EuroSalary aruandeid white-labelina oma nouandeklentidele.' }, { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'API integratsioon meie SAP SuccessFactorsi instantsiga oli sujuv.' }],
+    certTitle: 'Vastavus ja sertifikaadid',
+    certItems: ['SOC 2 Type II sertifitseeritud infrastruktuur', 'GDPR-yhilduv tootlus EL-i andmeresidentsiga (Frankfurt)', 'Palgaläbipaistvuse direktiivi valmiduse hindamised', 'ISO 27001 joondatud turbepraktikad', 'Andmetootluslepingud standardina kaasa'],
+    formTitle: 'Taotlege oma enterprise demo',
+    formDesc: 'Taitke vorm ja meie enterprise meeskond vottab teiega uhendust 24 tunni jooksul.',
+    formLabels: { name: 'Taielik nimi', email: 'Too e-post', company: 'Ettevotte nimi', companySize: 'Ettevotte suurus', countries: 'Huvipakkuvad riigid', message: 'Kirjeldage oma vajadusi', submit: 'Taotlege enterprise demo' },
+    companySizeOptions: ['50-249 tootajat', '250-999 tootajat', '1 000-4 999 tootajat', '5 000-9 999 tootajat', '10 000+ tootajat'],
+    successMsg: 'Tanan! Meie enterprise meeskond vottab teiega uhendust 24 tunni jooksul.',
+    faq: [{ question: 'Kui kaua enterprise demo kestab?', answer: 'Standard enterprise demo kestab 30 minutit ja on kohandatud teie sektori ja suurusega.' }, { question: 'Kas demo on tasuta?', answer: 'Demo on taiesti tasuta ja kohustuseta.' }, { question: 'Mida pean ette valmistama?', answer: 'Ettevalmistust pole vaja.' }, { question: 'Kas saab osaleda mitu meeskonnaliiget?', answer: 'Kindlasti. Julgustame HR juhte ja tasustamisanalüütikuid osalema.' }, { question: 'Kui kiiresti saame pärast demo algust teha?', answer: 'Enterprise onboarding viiakse laabi 48 tunni jooksul parast lepingu allkirjastamist.' }],
+  },
+  mt: {
+    h1: 'Trid tara kif EuroSalary Enterprise jahdem ghall-organizzazzjoni tieghek?',
+    metaTitle: 'Itlob demo enterprise — Pjattaforma ta intelligence fuq is-salarji | EuroSalary.eu',
+    metaDesc: 'Itlob demo personalizzata ta EuroSalary Enterprise. Ara rapporti white-label, API personalizzata, integrazzjoni SSO u ghodod ta konformita tal-UE.',
+    home: 'Dar', enterprise: 'Enterprise', breadcrumb: 'Itlob demo',
+    introAnswer: 'Ibbukkja demo personalizzata mat-team enterprise taghna biex tara kif l-intelligence fuq is-salarji ta EuroSalary, rapporti white-label u ghodod ta konformita jistghu jittrasformaw l-istrategija ta kompensazzjoni tieghek fis-swieq tal-UE.',
+    tldr: ['Demo personalizzata ta 30 minuta adattata ghall-industrija u n-numru ta impjegati tieghek', 'Ara b\'mod dirett rapporti white-label, integrazzjoni API u dashboards ta konformita', 'Konsultazzjoni b\'xejn dwar il-prontezza ghad-direttiva tal-UE dwar it-trasparenza fuq is-salarji'],
+    heroSubtitle: 'Inghaqad ma 200+ klijent enterprise fi 27 pajjiz tal-UE li jafdaw f\'EuroSalary.',
+    trustTitle: 'Ghaliex in-negozji jafdaw f\'EuroSalary',
+    trustCards: [{ label: 'Pajjizi koperti', value: '27', icon: 'public' }, { label: 'Punti ta dejta fuq is-salarji', value: '12M+', icon: 'database' }, { label: 'Klijenti enterprise', value: '200+', icon: 'corporate_fare' }, { label: 'Frekwenza ta aggornar', value: 'Kull gimgha', icon: 'update' }, { label: 'SLA ta disponibilta', value: '99.9%', icon: 'verified' }, { label: 'Onboarding medju', value: '48siegha', icon: 'speed' }],
+    socialProofTitle: 'Xi jghidu l-klijenti enterprise',
+    socialProofItems: [{ name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'EuroSalary naqqas ic-ciklu ta benchmarking taghna minn 6 gimghat ghal 3 ijiem.' }, { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Nuzaw rapporti EuroSalary bhala white-label ghall-klijenti ta konsulenza taghna.' }, { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'L-integrazzjoni API mas-SAP SuccessFactors kienet bla xkiel.' }],
+    certTitle: 'Konformita u certifikazzjonijiet',
+    certItems: ['Infrastruttura certifikata SOC 2 Type II', 'Ipprocessar konformi mal-GDPR b\'residenza tad-dejta fl-UE (Frankfurt)', 'Valutazzjonijiet ta prontezza ghad-direttiva ta trasparenza fuq is-salarji', 'Prattiqi ta sigurta allinjati ma ISO 27001', 'Ftehimiet dwar l-ipprocessar tad-dejta pprovduti b\'mod standard'],
+    formTitle: 'Itlob id-demo enterprise tieghek',
+    formDesc: 'Imla l-formola u t-team enterprise taghna se jikkuntattjawk fi 24 siegha.',
+    formLabels: { name: 'Isem shih', email: 'Email tax-xoghol', company: 'Isem tal-kumpanija', companySize: 'Daqs tal-kumpanija', countries: 'Pajjizi ta interess', message: 'Iddeskrivi l-htigijiet tieghek', submit: 'Itlob demo enterprise' },
+    companySizeOptions: ['50-249 impjegat', '250-999 impjegat', '1,000-4,999 impjegat', '5,000-9,999 impjegat', '10,000+ impjegat'],
+    successMsg: 'Grazzi! It-team enterprise taghna se jikkuntattjawk fi 24 siegha.',
+    faq: [{ question: 'Kemm iddum id-demo enterprise?', answer: 'Demo enterprise standard iddum 30 minuta u hija adattata ghall-industrija u d-daqs tieghek.' }, { question: 'Id-demo hija b\'xejn?', answer: 'Id-demo hija kompletament b\'xejn u minghajr obbligi.' }, { question: 'Xi nhejji?', answer: 'M\'hemmx bzonn ta preparazzjoni.' }, { question: 'Jistghu jiehdu sehem aktar membri tat-team?', answer: 'Certament. Ninkoraggwixxu lill-mexxejja tal-HR u l-analisti tal-kompensazzjoni.' }, { question: 'Kemm malajr nistghu nibdew wara d-demo?', answer: 'L-onboarding enterprise jitlesta fi 48 siegha wara l-firma tal-kuntratt.' }],
+  },
+  ga: {
+    h1: 'Ar mhaith leat fheiceail conas a oibrionn EuroSalary Enterprise do d\'eagraiocht?',
+    metaTitle: 'Iarr taispeaintas fiontraighe — Ardan faisnaise tuarastail | EuroSalary.eu',
+    metaDesc: 'Iarr taispeaintas pearsantaithe de EuroSalary Enterprise. Feach ar thuairisci bainleibheil, API saincheaptha, comhthahthu SSO agus uirlisi comhliontha AE.',
+    home: 'Baile', enterprise: 'Fiontar', breadcrumb: 'Iarr taispeaintas',
+    introAnswer: 'Cuir taispeaintas pearsantaithe in airithint lenar bhfoireann fiontraighe chun fheiceail conas is feidir le faisneis tuarastail EuroSalary, tuairisci bainleibheil agus uirlisi comhliontha do straiteis cuitimh a athru ar mhargai an AE.',
+    tldr: ['Taispeaintas pearsantaithe 30 noimeaid oiriuunte do do thionscal agus do lion foirne', 'Feach beo ar thuairisci bainleibheil, comhthathu API agus deaisboird comhliontha', 'Comhairle saor in aisce ar ullmhaiocht do Threoir Tredireach Paa an AE san aireamh'],
+    heroSubtitle: 'Glac pairt le 200+ cliant fiontraighe i 27 tir AE a bhfuil muinin acu as EuroSalary.',
+    trustTitle: 'Ce na fath a bhfuil muinin ag fiontraithe as EuroSalary',
+    trustCards: [{ label: 'Tiorda clududaithe', value: '27', icon: 'public' }, { label: 'Pointi sonrai tuarastail', value: '12M+', icon: 'database' }, { label: 'Cliaint fiontraighe', value: '200+', icon: 'corporate_fare' }, { label: 'Minicicht nuashonru', value: 'Seachtainiuil', icon: 'update' }, { label: 'SLA infhaighteachta', value: '99.9%', icon: 'verified' }, { label: 'Onboarding measartha', value: '48u', icon: 'speed' }],
+    socialProofTitle: 'Cad a deir cliaint fiontraighe',
+    socialProofItems: [{ name: 'Sarah Lindqvist', role: 'VP People, NordTech Group', quote: 'Laghdaigh EuroSalary ar thimthriall tagarmarcaiochta o 6 seachtaine go 3 la.' }, { name: 'Marco Benedetti', role: 'Managing Partner, AlpineHR', quote: 'Usaidimid tuairisci EuroSalary mar bhainleibheal do ar gcliaint chomhairleacha.' }, { name: 'Dr. Katrin Meier', role: 'CHRO, MedEuropa Healthcare', quote: 'Bhi an comhthathu API lenar n-asc SAP SuccessFactors gan uaim.' }],
+    certTitle: 'Comhlionadh agus deimhniuchain',
+    certItems: ['Bonneagar deimhnithe SOC 2 Cineail II', 'Proiseail comhlionach le GDPR le conaitheacht sonrai san AE (Frankfurt)', 'Measunachtai ullmhaiochta do Threoir Tredireach Paa', 'Cleachtais slandala ailinithe le ISO 27001', 'Comhaontuaithe proiseala sonrai curtha ar fail mar chaighdean'],
+    formTitle: 'Iarr do thaispeaintas fiontraighe',
+    formDesc: 'Lion an fhoirm agus rachaidh ar bhfoireann fiontraighe i dteagmhail leat laistigh de 24 uair.',
+    formLabels: { name: 'Ainm iomlain', email: 'Riomhphost oibre', company: 'Ainm na cuideachta', companySize: 'Meid na cuideachta', countries: 'Tiorda spoise', message: 'Innis duinn faoi do riachtanais', submit: 'Iarr taispeaintas fiontraighe' },
+    companySizeOptions: ['50-249 fostaithe', '250-999 fostaithe', '1,000-4,999 fostaithe', '5,000-9,999 fostaithe', '10,000+ fostaithe'],
+    successMsg: 'Go raibh maith agat! Rachaidh ar bhfoireann fiontraighe i dteagmhail leat laistigh de 24 uair.',
+    faq: [{ question: 'Ce fhad a mhaireann an taispeaintas fiontraighe?', answer: 'Maireann taispeaintas fiontraighe caighdeanach 30 noimeoid agus ta se oiriuunte do do thionscal agus do mheid.' }, { question: 'An bhfuil an taispeaintas saor in aisce?', answer: 'Ta an taispeaintas saor in aisce go huile agus gan aon oibleagaid.' }, { question: 'Cad ba cheart dom a ullmhu?', answer: 'Ni ga aon ullmhuchain.' }, { question: 'An feidir le nios mo baill foirne a bheith pairteach?', answer: 'Cinnte. Molaimid do cheannasaithe AD agus anailisithe cuitimh a bheith pairteach.' }, { question: 'Ce chomh tapa is feidir linn tosu tar eis an taispeaintais?', answer: 'Cuirtear onboarding fiontraighe i gcrich laistigh de 48 uair tar eis an conradh a shiniU.' }],
+  },
+};
+
+// --------------- getStaticPaths ---------------
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+// --------------- Page data ---------------
+const { lang } = Astro.params;
+const t = fb(i18n, lang) || i18n.en;
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: t.h1,
+    author: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    datePublished: '2026-04-05',
+    dateModified: '2026-04-05',
+    description: t.metaDesc,
+    mainEntityOfPage: `https://eurosalary.eu/${lang}/enterprise/demo/`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: t.faq.map((item: any) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: { '@type': 'Answer', text: item.answer },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title={t.metaTitle}
+  description={t.metaDesc}
+  datePublished="2026-04-05"
+  dateModified="2026-04-05"
+  schema={pageSchema}
+>
+  <!-- Hero -->
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{t.home}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a href={`/${lang}/enterprise/`}>{t.enterprise}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{t.breadcrumb}</span>
+      </nav>
+      <h1 class="page-hero__title">{t.h1}</h1>
+      <p class="page-hero__desc">{t.introAnswer}</p>
+      <p class="hero-subtitle">{t.heroSubtitle}</p>
+    </div>
+  </section>
+
+  <article class="container page-body">
+    <TLDRBox items={t.tldr} />
+
+    <!-- Trust Signals -->
+    <section class="section">
+      <h2 class="section-title">{t.trustTitle}</h2>
+      <div class="trust-grid">
+        {t.trustCards.map((card) => (
+          <div class="trust-card">
+            <span class="material-symbols-outlined trust-card__icon">{card.icon}</span>
+            <p class="trust-card__value">{card.value}</p>
+            <p class="trust-card__label">{card.label}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="section">
+      <h2 class="section-title">{t.socialProofTitle}</h2>
+      <div class="testimonials-grid">
+        {t.socialProofItems.map((item) => (
+          <div class="testimonial-card">
+            <div class="testimonial-card__quote">
+              <span class="material-symbols-outlined" style="color:#2563EB;font-size:24px;">format_quote</span>
+              <p>{item.quote}</p>
+            </div>
+            <div class="testimonial-card__author">
+              <p class="testimonial-card__name">{item.name}</p>
+              <p class="testimonial-card__role">{item.role}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Certifications -->
+    <section class="section">
+      <h2 class="section-title">{t.certTitle}</h2>
+      <div class="cert-grid">
+        {t.certItems.map((item) => (
+          <div class="cert-item">
+            <span class="material-symbols-outlined cert-item__icon">check_circle</span>
+            <p>{item}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Contact Form -->
+    <section class="section contact-section" id="contact">
+      <h2 class="section-title">{t.formTitle}</h2>
+      <p class="section-desc">{t.formDesc}</p>
+      <form class="contact-form" id="demo-form">
+        <input type="hidden" name="type" value="enterprise" />
+        <input type="hidden" name="source" value="enterprise-demo" />
+        <div class="contact-form__row">
+          <div class="contact-form__field">
+            <label for="demo-name">{t.formLabels.name}</label>
+            <input type="text" id="demo-name" name="name" required />
+          </div>
+          <div class="contact-form__field">
+            <label for="demo-email">{t.formLabels.email}</label>
+            <input type="email" id="demo-email" name="email" required />
+          </div>
+        </div>
+        <div class="contact-form__row">
+          <div class="contact-form__field">
+            <label for="demo-company">{t.formLabels.company}</label>
+            <input type="text" id="demo-company" name="company" required />
+          </div>
+          <div class="contact-form__field">
+            <label for="demo-size">{t.formLabels.companySize}</label>
+            <select id="demo-size" name="company_size" required>
+              <option value="">—</option>
+              {t.companySizeOptions.map((opt) => (
+                <option value={opt}>{opt}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div class="contact-form__field">
+          <label for="demo-countries">{t.formLabels.countries}</label>
+          <input type="text" id="demo-countries" name="countries_of_interest" placeholder="e.g. Germany, France, Spain" />
+        </div>
+        <div class="contact-form__field">
+          <label for="demo-message">{t.formLabels.message}</label>
+          <textarea id="demo-message" name="message" rows="4"></textarea>
+        </div>
+        <button type="submit" class="contact-form__submit">{t.formLabels.submit}</button>
+        <p class="form-success" id="demo-success" style="display:none;">{t.successMsg}</p>
+      </form>
+    </section>
+
+    <FAQSection items={t.faq} />
+  </article>
+</BaseLayout>
+
+<script>
+  const form = document.getElementById('demo-form') as HTMLFormElement;
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form));
+      try {
+        await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        form.style.display = 'none';
+        document.getElementById('demo-success')!.style.display = 'block';
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  }
+</script>
+
+<style>
+  .page-body { padding-top: 2.5rem; padding-bottom: 4rem; }
+  .hero-subtitle { margin-top: 1.5rem; font-size: var(--text-sm); color: rgba(255,255,255,0.7); max-width: 700px; line-height: var(--leading-relaxed); }
+  .section-title { font-family: 'Public Sans', sans-serif; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; color: #0F1F3D; margin-bottom: 0.5rem; }
+  .section-desc { color: #4B5563; margin-bottom: 2rem; max-width: 600px; }
+
+  /* Trust grid */
+  .trust-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
+  .trust-card { background: linear-gradient(135deg, #0F1F3D, #1E3A5F); border-radius: 12px; padding: 2rem; text-align: center; }
+  .trust-card__icon { font-size: 32px; color: #2563EB; display: block; margin-bottom: 0.5rem; }
+  .trust-card__value { font-family: 'Public Sans', sans-serif; font-size: 2.25rem; font-weight: 800; color: #FFFFFF; margin-bottom: 0.25rem; }
+  .trust-card__label { font-size: var(--text-sm); color: rgba(255,255,255,0.7); }
+
+  /* Testimonials */
+  .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
+  .testimonial-card { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; padding: 2rem; display: flex; flex-direction: column; justify-content: space-between; }
+  .testimonial-card__quote p { font-size: var(--text-sm); color: #374151; line-height: var(--leading-relaxed); margin-top: 0.5rem; font-style: italic; }
+  .testimonial-card__author { margin-top: 1.5rem; border-top: 1px solid #E5E7EB; padding-top: 1rem; }
+  .testimonial-card__name { font-weight: 700; color: #0F1F3D; font-size: var(--text-sm); }
+  .testimonial-card__role { font-size: 12px; color: #6B7280; }
+
+  /* Certifications */
+  .cert-grid { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem; }
+  .cert-item { display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.5rem; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; }
+  .cert-item__icon { color: #16A34A; font-size: 20px; flex-shrink: 0; }
+  .cert-item p { font-size: var(--text-sm); color: #374151; }
+
+  /* Contact form */
+  .contact-section { margin-top: 3rem; }
+  .contact-form { max-width: 640px; display: flex; flex-direction: column; gap: 1.25rem; }
+  .contact-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .contact-form__field { display: flex; flex-direction: column; gap: 0.375rem; }
+  .contact-form__field label { font-size: var(--text-sm); font-weight: 600; color: #0F1F3D; }
+  .contact-form__field input,
+  .contact-form__field textarea,
+  .contact-form__field select { padding: 0.75rem 1rem; border: 1px solid #D1D5DB; border-radius: 8px; font-size: var(--text-sm); color: #111827; background: #FFFFFF; transition: border-color 0.2s ease; }
+  .contact-form__field input:focus,
+  .contact-form__field textarea:focus,
+  .contact-form__field select:focus { outline: none; border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+  .contact-form__submit { align-self: flex-start; padding: 0.875rem 2rem; background: #2563EB; color: #FFFFFF; font-weight: 700; font-size: var(--text-sm); border: none; border-radius: 8px; cursor: pointer; transition: background 0.2s ease; }
+  .contact-form__submit:hover { background: #1D4ED8; }
+  .form-success { color: #16A34A; font-weight: 600; margin-top: 1rem; }
+
+  @media (max-width: 768px) {
+    .trust-grid { grid-template-columns: repeat(2, 1fr); }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .contact-form__row { grid-template-columns: 1fr; }
+  }
+</style>

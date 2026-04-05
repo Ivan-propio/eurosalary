@@ -1,0 +1,1397 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+
+// --------------- i18n strings ---------------
+const i18n: Record<string, {
+  h1: string;
+  metaTitle: string;
+  metaDesc: string;
+  home: string;
+  partners: string;
+  breadcrumb: string;
+  introAnswer: string;
+  tldr: string[];
+  heroSubtitle: string;
+  whyTitle: string;
+  useCases: { title: string; desc: string; icon: string }[];
+  archTitle: string;
+  archDesc: string;
+  archSteps: { step: string; desc: string }[];
+  codeTitle: string;
+  codeDesc: string;
+  specsTitle: string;
+  specs: { label: string; value: string }[];
+  revenueTitle: string;
+  revenueDesc: string;
+  revenueItems: string[];
+  sandboxTitle: string;
+  sandboxDesc: string;
+  contactTitle: string;
+  contactDesc: string;
+  formLabels: { company: string; email: string; integrationType: string; currentUsers: string; message: string; submit: string };
+  integrationOptions: string[];
+  faq: { question: string; answer: string }[];
+}> = {
+  en: {
+    h1: 'How Can You Integrate EuroSalary Data Into Your HR Platform?',
+    metaTitle: 'API Partnership: Integrate Salary Data Into Your ATS, HRIS or Payroll | EuroSalary.eu',
+    metaDesc: 'Embed EuroSalary salary intelligence into your ATS, HRIS, or payroll platform. REST API, JSON responses, sandbox environment, and 20% revenue share for partners.',
+    home: 'Home',
+    partners: 'Partners',
+    breadcrumb: 'API Partnership',
+    introAnswer: 'EuroSalary offers a REST API that lets ATS, HRIS, and payroll vendors embed real-time European salary benchmarks directly into their platforms, with a 20% revenue share on referred subscriptions.',
+    tldr: [
+      'REST API with JSON responses covering 15 EU countries, 21 job roles, and 4 seniority levels',
+      'Sandbox environment with test data for risk-free integration development',
+      'Earn 20% recurring revenue share on every subscription referred through your integration',
+    ],
+    heroSubtitle: 'Whether you build an ATS, HRIS, or payroll platform, embedding EuroSalary data gives your users real-time compensation intelligence without leaving your product.',
+    whyTitle: 'Integration Use Cases',
+    useCases: [
+      { title: 'ATS Salary Suggestions', desc: 'Display market-rate salary ranges directly in job posting forms. Help recruiters set competitive offers based on country, job title, and seniority level, reducing time-to-fill and improving candidate acceptance rates.', icon: 'work' },
+      { title: 'Payroll Benchmarking', desc: 'Embed salary benchmarks into payroll dashboards so finance teams can compare current compensation against market rates across all EU operations, identifying overpay and underpay risks before they become retention problems.', icon: 'account_balance' },
+      { title: 'HRIS Compensation Planning', desc: 'Power annual compensation review cycles with real-time market data. Enable HR leaders to model salary adjustments by country, role, and seniority with data that updates monthly from Eurostat and verified job postings.', icon: 'analytics' },
+      { title: 'Job Board Salary Insights', desc: 'Enrich job listings with salary transparency data. Show candidates how a posted salary compares to the national and European median, driving engagement and application rates for your platform.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Integration Architecture',
+    archDesc: 'A simple four-step flow connects your platform to EuroSalary data in production.',
+    archSteps: [
+      { step: 'Authenticate', desc: 'Request an API key from your partner dashboard. All requests are authenticated via Bearer token in the Authorization header.' },
+      { step: 'Query', desc: 'Send GET requests to our endpoints with country, job, and level parameters. Responses are JSON with salary data, confidence scores, and source metadata.' },
+      { step: 'Cache', desc: 'Cache responses for up to 24 hours. Our data updates monthly, so aggressive caching is safe and reduces your latency to near-zero.' },
+      { step: 'Display', desc: 'Render salary benchmarks natively in your UI. Use our response schema to build salary range widgets, comparison charts, or inline suggestions.' },
+    ],
+    codeTitle: 'API Example',
+    codeDesc: 'A single GET request returns structured salary data for any country-job-level combination.',
+    specsTitle: 'Technical Specifications',
+    specs: [
+      { label: 'Protocol', value: 'REST over HTTPS' },
+      { label: 'Response Format', value: 'JSON (UTF-8)' },
+      { label: 'Authentication', value: 'Bearer token (API key)' },
+      { label: 'Rate Limit (Partner)', value: '10,000 requests/day' },
+      { label: 'Rate Limit (Enterprise)', value: 'Unlimited' },
+      { label: 'Sandbox', value: 'Full test environment with mock data' },
+      { label: 'SLA', value: '99.9% uptime for partner tier' },
+      { label: 'Data Coverage', value: '15 EU countries, 21 jobs, 4 levels' },
+      { label: 'Update Frequency', value: 'Monthly (Eurostat + job postings)' },
+      { label: 'Latency', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Revenue Share Model',
+    revenueDesc: 'Earn recurring income by referring your users to EuroSalary Premium.',
+    revenueItems: [
+      '20% recurring commission on every referred subscription',
+      'Attribution via API key tracking — no referral links needed',
+      'Monthly payouts via SEPA bank transfer or PayPal',
+      'Real-time revenue dashboard in your partner portal',
+      'No minimum volume requirement to earn commissions',
+    ],
+    sandboxTitle: 'Sandbox Environment',
+    sandboxDesc: 'Every API partner gets immediate access to a full sandbox environment with realistic test data. Build and test your integration without touching production data or incurring rate limits.',
+    contactTitle: 'Apply for API Partnership',
+    contactDesc: 'Tell us about your platform and integration plans. We review applications within 24 hours and provide sandbox access immediately upon approval.',
+    formLabels: { company: 'Company Name', email: 'Work Email', integrationType: 'Integration Type', currentUsers: 'Current Platform Users', message: 'Describe your integration plans', submit: 'Apply for API Access' },
+    integrationOptions: ['ATS / Recruitment Platform', 'HRIS / People Management', 'Payroll Software', 'Job Board / Marketplace', 'Compensation Consulting Tool', 'Other HR Technology'],
+    faq: [
+      { question: 'What data does the EuroSalary API return?', answer: 'Each response includes gross annual salary (median, P25, P75), net salary estimates, cost of living index, minimum wage, currency, and source metadata with confidence scores. Data covers 15 EU countries, 21 job roles, and 4 seniority levels (junior, mid, senior, lead).' },
+      { question: 'How long does it take to integrate the API?', answer: 'Most partners complete a production integration in 1-2 weeks. The API uses standard REST conventions with JSON responses, so any HTTP client works. Our sandbox environment lets you develop and test without production data.' },
+      { question: 'What are the rate limits for API partners?', answer: 'Partner tier includes 10,000 requests per day with burst capacity of 100 requests per minute. Enterprise partners get unlimited requests with dedicated infrastructure. All tiers include a 99.9% uptime SLA.' },
+      { question: 'How does the 20% revenue share work?', answer: 'When your platform users click through to EuroSalary and subscribe to a Premium plan, the referral is attributed to your API key automatically. You earn 20% of each subscription payment monthly, paid via SEPA or PayPal with no minimum volume.' },
+      { question: 'Is there a sandbox for testing?', answer: 'Yes. Every approved partner receives immediate sandbox access with realistic mock data that mirrors the production schema exactly. Sandbox requests do not count against your rate limits and are free of charge.' },
+      { question: 'Can I get custom endpoints or data fields?', answer: 'Enterprise API partners can request custom endpoints, response schemas, and webhook notifications. We also offer bulk data exports and historical time-series endpoints for partners needing deeper integration.' },
+    ],
+  },
+  fr: {
+    h1: 'Comment integrer les donnees salariales EuroSalary dans votre plateforme RH ?',
+    metaTitle: 'Partenariat API : integrez les donnees salariales dans votre ATS, SIRH ou paie | EuroSalary.eu',
+    metaDesc: 'Integrez les donnees salariales EuroSalary dans votre ATS, SIRH ou logiciel de paie. API REST, reponses JSON, environnement sandbox et 20% de partage de revenus.',
+    home: 'Accueil',
+    partners: 'Partenaires',
+    breadcrumb: 'Partenariat API',
+    introAnswer: 'EuroSalary propose une API REST permettant aux editeurs d\'ATS, SIRH et logiciels de paie d\'integrer des benchmarks salariaux europeens en temps reel, avec un partage de revenus de 20% sur les abonnements referes.',
+    tldr: [
+      'API REST avec reponses JSON couvrant 15 pays UE, 21 metiers et 4 niveaux d\'anciennete',
+      'Environnement sandbox avec donnees de test pour un developpement sans risque',
+      '20% de revenus recurrents sur chaque abonnement refere via votre integration',
+    ],
+    heroSubtitle: 'Que vous developpiez un ATS, un SIRH ou un logiciel de paie, integrer les donnees EuroSalary offre a vos utilisateurs une intelligence salariale en temps reel sans quitter votre produit.',
+    whyTitle: 'Cas d\'utilisation',
+    useCases: [
+      { title: 'Suggestions salariales ATS', desc: 'Affichez les fourchettes salariales du marche directement dans les formulaires de publication d\'offres. Aidez les recruteurs a fixer des offres competitives selon le pays, le poste et le niveau d\'anciennete.', icon: 'work' },
+      { title: 'Benchmarking paie', desc: 'Integrez les benchmarks salariaux dans les tableaux de bord de paie pour que les equipes financieres comparent la remuneration actuelle aux taux du marche dans toutes les operations UE.', icon: 'account_balance' },
+      { title: 'Planification de remuneration SIRH', desc: 'Alimentez les cycles annuels de revision de remuneration avec des donnees de marche en temps reel. Permettez aux dirigeants RH de modeliser les ajustements salariaux par pays, role et anciennete.', icon: 'analytics' },
+      { title: 'Insights salariaux job boards', desc: 'Enrichissez les offres d\'emploi avec des donnees de transparence salariale. Montrez aux candidats comment un salaire publie se compare a la mediane nationale et europeenne.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Architecture d\'integration',
+    archDesc: 'Un flux simple en quatre etapes connecte votre plateforme aux donnees EuroSalary en production.',
+    archSteps: [
+      { step: 'Authentifier', desc: 'Demandez une cle API depuis votre tableau de bord partenaire. Toutes les requetes sont authentifiees via un jeton Bearer dans l\'en-tete Authorization.' },
+      { step: 'Interroger', desc: 'Envoyez des requetes GET a nos endpoints avec les parametres pays, metier et niveau. Les reponses sont en JSON avec donnees salariales et scores de confiance.' },
+      { step: 'Mettre en cache', desc: 'Mettez en cache les reponses jusqu\'a 24 heures. Nos donnees sont mises a jour mensuellement, donc un cache agressif est sur.' },
+      { step: 'Afficher', desc: 'Affichez les benchmarks salariaux nativement dans votre interface. Utilisez notre schema de reponse pour construire des widgets de fourchettes salariales.' },
+    ],
+    codeTitle: 'Exemple d\'API',
+    codeDesc: 'Une seule requete GET retourne des donnees salariales structurees pour toute combinaison pays-metier-niveau.',
+    specsTitle: 'Specifications techniques',
+    specs: [
+      { label: 'Protocole', value: 'REST sur HTTPS' },
+      { label: 'Format de reponse', value: 'JSON (UTF-8)' },
+      { label: 'Authentification', value: 'Jeton Bearer (cle API)' },
+      { label: 'Limite (Partenaire)', value: '10 000 requetes/jour' },
+      { label: 'Limite (Entreprise)', value: 'Illimitee' },
+      { label: 'Sandbox', value: 'Environnement de test complet' },
+      { label: 'SLA', value: '99,9% de disponibilite' },
+      { label: 'Couverture', value: '15 pays UE, 21 metiers, 4 niveaux' },
+      { label: 'Frequence MAJ', value: 'Mensuelle (Eurostat + offres)' },
+      { label: 'Latence', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Modele de partage de revenus',
+    revenueDesc: 'Generez des revenus recurrents en referant vos utilisateurs a EuroSalary Premium.',
+    revenueItems: [
+      '20% de commission recurrente sur chaque abonnement refere',
+      'Attribution via suivi de cle API — pas de liens de parrainage necessaires',
+      'Paiements mensuels par virement SEPA ou PayPal',
+      'Tableau de bord de revenus en temps reel dans votre portail partenaire',
+      'Aucun volume minimum requis pour toucher des commissions',
+    ],
+    sandboxTitle: 'Environnement Sandbox',
+    sandboxDesc: 'Chaque partenaire API recoit un acces immediat a un environnement sandbox complet avec des donnees de test realistes. Developpez et testez votre integration sans toucher aux donnees de production.',
+    contactTitle: 'Postuler au partenariat API',
+    contactDesc: 'Decrivez votre plateforme et vos plans d\'integration. Nous examinons les candidatures sous 24 heures et fournissons l\'acces sandbox immediatement apres approbation.',
+    formLabels: { company: 'Nom de l\'entreprise', email: 'Email professionnel', integrationType: 'Type d\'integration', currentUsers: 'Utilisateurs actuels', message: 'Decrivez vos plans d\'integration', submit: 'Postuler pour l\'acces API' },
+    integrationOptions: ['ATS / Plateforme de recrutement', 'SIRH / Gestion du personnel', 'Logiciel de paie', 'Job board / Marketplace', 'Outil de conseil en remuneration', 'Autre technologie RH'],
+    faq: [
+      { question: 'Quelles donnees l\'API EuroSalary retourne-t-elle ?', answer: 'Chaque reponse inclut le salaire brut annuel (mediane, P25, P75), les estimations de salaire net, l\'indice du cout de la vie, le salaire minimum, la devise et les metadonnees de source. Les donnees couvrent 15 pays UE, 21 metiers et 4 niveaux.' },
+      { question: 'Combien de temps faut-il pour integrer l\'API ?', answer: 'La plupart des partenaires completent une integration en production en 1-2 semaines. L\'API utilise les conventions REST standard avec des reponses JSON. Notre environnement sandbox permet de developper et tester sans donnees de production.' },
+      { question: 'Quelles sont les limites de debit pour les partenaires API ?', answer: 'Le niveau partenaire inclut 10 000 requetes par jour avec une capacite en rafale de 100 requetes par minute. Les partenaires entreprise beneficient de requetes illimitees. Tous les niveaux incluent un SLA de 99,9%.' },
+      { question: 'Comment fonctionne le partage de revenus de 20% ?', answer: 'Lorsque les utilisateurs de votre plateforme cliquent vers EuroSalary et s\'abonnent a un plan Premium, le parrainage est attribue automatiquement a votre cle API. Vous gagnez 20% de chaque paiement d\'abonnement mensuel.' },
+      { question: 'Existe-t-il un sandbox pour les tests ?', answer: 'Oui. Chaque partenaire approuve recoit un acces sandbox immediat avec des donnees de test realistes qui reproduisent exactement le schema de production. Les requetes sandbox ne comptent pas dans vos limites.' },
+      { question: 'Puis-je obtenir des endpoints ou champs personnalises ?', answer: 'Les partenaires API entreprise peuvent demander des endpoints personnalises, des schemas de reponse et des notifications webhook. Nous proposons aussi des exports en masse et des endpoints de series temporelles historiques.' },
+    ],
+  },
+  de: {
+    h1: 'Wie konnen Sie EuroSalary-Daten in Ihre HR-Plattform integrieren?',
+    metaTitle: 'API-Partnerschaft: Gehaltsdaten in Ihr ATS, HRIS oder Payroll integrieren | EuroSalary.eu',
+    metaDesc: 'Betten Sie EuroSalary-Gehaltsdaten in Ihre ATS-, HRIS- oder Payroll-Plattform ein. REST-API, JSON-Antworten, Sandbox-Umgebung und 20% Umsatzbeteiligung.',
+    home: 'Startseite',
+    partners: 'Partner',
+    breadcrumb: 'API-Partnerschaft',
+    introAnswer: 'EuroSalary bietet eine REST-API, mit der ATS-, HRIS- und Payroll-Anbieter europaische Gehaltsbenchmarks in Echtzeit direkt in ihre Plattformen integrieren konnen, mit 20% Umsatzbeteiligung auf vermittelte Abonnements.',
+    tldr: [
+      'REST-API mit JSON-Antworten fur 15 EU-Lander, 21 Berufe und 4 Erfahrungsstufen',
+      'Sandbox-Umgebung mit Testdaten fur risikofreie Integrationsentwicklung',
+      '20% wiederkehrende Umsatzbeteiligung auf jedes vermittelte Abonnement',
+    ],
+    heroSubtitle: 'Ob Sie ein ATS, HRIS oder Payroll-System entwickeln — die Integration von EuroSalary-Daten gibt Ihren Nutzern Echtzeit-Vergutungsintelligenz, ohne Ihr Produkt zu verlassen.',
+    whyTitle: 'Integrationsanwendungsfalle',
+    useCases: [
+      { title: 'ATS-Gehaltsvorschlage', desc: 'Zeigen Sie marktubliche Gehaltsspannen direkt in Stellenausschreibungsformularen an. Helfen Sie Recruitern, wettbewerbsfahige Angebote basierend auf Land, Jobtitel und Erfahrungsstufe festzulegen.', icon: 'work' },
+      { title: 'Payroll-Benchmarking', desc: 'Betten Sie Gehaltsbenchmarks in Payroll-Dashboards ein, damit Finanzteams die aktuelle Vergutung mit Marktpreisen uber alle EU-Operationen vergleichen konnen.', icon: 'account_balance' },
+      { title: 'HRIS-Vergutungsplanung', desc: 'Versorgen Sie jahrliche Vergutungsuberprufungszyklen mit Echtzeit-Marktdaten. Ermoglichen Sie HR-Fuhrungskraften die Modellierung von Gehaltsanpassungen nach Land, Rolle und Erfahrungsstufe.', icon: 'analytics' },
+      { title: 'Jobborse-Gehaltseinblicke', desc: 'Bereichern Sie Stellenangebote mit Gehaltstransparenzdaten. Zeigen Sie Kandidaten, wie ein veroffentlichtes Gehalt im Vergleich zum nationalen und europaischen Median steht.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Integrationsarchitektur',
+    archDesc: 'Ein einfacher vierstufiger Ablauf verbindet Ihre Plattform mit EuroSalary-Daten in der Produktion.',
+    archSteps: [
+      { step: 'Authentifizieren', desc: 'Fordern Sie einen API-Schlussel uber Ihr Partner-Dashboard an. Alle Anfragen werden uber ein Bearer-Token im Authorization-Header authentifiziert.' },
+      { step: 'Abfragen', desc: 'Senden Sie GET-Anfragen an unsere Endpunkte mit Land-, Beruf- und Level-Parametern. Antworten sind JSON mit Gehaltsdaten und Vertrauenswerten.' },
+      { step: 'Cachen', desc: 'Cachen Sie Antworten bis zu 24 Stunden. Unsere Daten werden monatlich aktualisiert, daher ist aggressives Caching sicher und reduziert Ihre Latenz.' },
+      { step: 'Anzeigen', desc: 'Rendern Sie Gehaltsbenchmarks nativ in Ihrer UI. Nutzen Sie unser Antwortschema fur Gehalts-Widgets, Vergleichsdiagramme oder Inline-Vorschlage.' },
+    ],
+    codeTitle: 'API-Beispiel',
+    codeDesc: 'Eine einzelne GET-Anfrage liefert strukturierte Gehaltsdaten fur jede Land-Beruf-Level-Kombination.',
+    specsTitle: 'Technische Spezifikationen',
+    specs: [
+      { label: 'Protokoll', value: 'REST uber HTTPS' },
+      { label: 'Antwortformat', value: 'JSON (UTF-8)' },
+      { label: 'Authentifizierung', value: 'Bearer-Token (API-Schlussel)' },
+      { label: 'Rate-Limit (Partner)', value: '10.000 Anfragen/Tag' },
+      { label: 'Rate-Limit (Enterprise)', value: 'Unbegrenzt' },
+      { label: 'Sandbox', value: 'Vollstandige Testumgebung mit Testdaten' },
+      { label: 'SLA', value: '99,9% Verfugbarkeit' },
+      { label: 'Datenabdeckung', value: '15 EU-Lander, 21 Berufe, 4 Stufen' },
+      { label: 'Update-Frequenz', value: 'Monatlich (Eurostat + Stellenanzeigen)' },
+      { label: 'Latenz', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Umsatzbeteiligungsmodell',
+    revenueDesc: 'Verdienen Sie wiederkehrende Einnahmen, indem Sie Ihre Nutzer an EuroSalary Premium verweisen.',
+    revenueItems: [
+      '20% wiederkehrende Provision auf jedes vermittelte Abonnement',
+      'Zuordnung uber API-Schlussel-Tracking — keine Empfehlungslinks notig',
+      'Monatliche Auszahlungen per SEPA-Uberweisung oder PayPal',
+      'Echtzeit-Umsatz-Dashboard in Ihrem Partnerportal',
+      'Kein Mindestvolumen erforderlich, um Provisionen zu verdienen',
+    ],
+    sandboxTitle: 'Sandbox-Umgebung',
+    sandboxDesc: 'Jeder API-Partner erhalt sofortigen Zugang zu einer vollstandigen Sandbox-Umgebung mit realistischen Testdaten. Entwickeln und testen Sie Ihre Integration ohne Produktionsdaten.',
+    contactTitle: 'Fur API-Partnerschaft bewerben',
+    contactDesc: 'Beschreiben Sie Ihre Plattform und Integrationplane. Wir prufen Bewerbungen innerhalb von 24 Stunden und gewahren sofortigen Sandbox-Zugang nach Genehmigung.',
+    formLabels: { company: 'Firmenname', email: 'Geschaftliche E-Mail', integrationType: 'Integrationstyp', currentUsers: 'Aktuelle Plattformnutzer', message: 'Beschreiben Sie Ihre Integrationplane', submit: 'Fur API-Zugang bewerben' },
+    integrationOptions: ['ATS / Recruiting-Plattform', 'HRIS / Personalmanagement', 'Payroll-Software', 'Jobborse / Marktplatz', 'Vergutungsberatungs-Tool', 'Andere HR-Technologie'],
+    faq: [
+      { question: 'Welche Daten liefert die EuroSalary-API?', answer: 'Jede Antwort enthalt das Bruttojahresgehalt (Median, P25, P75), Nettogehaltsschatzungen, Lebenshaltungskostenindex, Mindestlohn, Wahrung und Quellmetadaten mit Vertrauenswerten. Daten umfassen 15 EU-Lander, 21 Berufe und 4 Stufen.' },
+      { question: 'Wie lange dauert die API-Integration?', answer: 'Die meisten Partner schliessen eine Produktionsintegration in 1-2 Wochen ab. Die API verwendet Standard-REST-Konventionen mit JSON-Antworten. Unsere Sandbox-Umgebung ermoglicht Entwicklung und Tests ohne Produktionsdaten.' },
+      { question: 'Was sind die Rate-Limits fur API-Partner?', answer: 'Die Partner-Stufe umfasst 10.000 Anfragen pro Tag mit Burst-Kapazitat von 100 Anfragen pro Minute. Enterprise-Partner erhalten unbegrenzte Anfragen. Alle Stufen beinhalten ein 99,9% Verfugbarkeits-SLA.' },
+      { question: 'Wie funktioniert die 20% Umsatzbeteiligung?', answer: 'Wenn Ihre Plattformnutzer zu EuroSalary navigieren und ein Premium-Abonnement abschliessen, wird die Empfehlung automatisch Ihrem API-Schlussel zugeordnet. Sie verdienen monatlich 20% jeder Abonnementzahlung.' },
+      { question: 'Gibt es eine Sandbox zum Testen?', answer: 'Ja. Jeder genehmigte Partner erhalt sofortigen Sandbox-Zugang mit realistischen Testdaten, die das Produktionsschema exakt widerspiegeln. Sandbox-Anfragen zahlen nicht zu Ihren Rate-Limits.' },
+      { question: 'Kann ich benutzerdefinierte Endpunkte erhalten?', answer: 'Enterprise-API-Partner konnen benutzerdefinierte Endpunkte, Antwortschemas und Webhook-Benachrichtigungen anfordern. Wir bieten auch Massenexporte und historische Zeitreihen-Endpunkte.' },
+    ],
+  },
+  es: {
+    h1: 'Como puede integrar datos salariales de EuroSalary en su plataforma de RRHH?',
+    metaTitle: 'Asociacion API: integre datos salariales en su ATS, HRIS o nomina | EuroSalary.eu',
+    metaDesc: 'Integre datos salariales de EuroSalary en su ATS, HRIS o software de nomina. API REST, respuestas JSON, entorno sandbox y 20% de participacion en ingresos.',
+    home: 'Inicio',
+    partners: 'Socios',
+    breadcrumb: 'Asociacion API',
+    introAnswer: 'EuroSalary ofrece una API REST que permite a proveedores de ATS, HRIS y nomina integrar benchmarks salariales europeos en tiempo real directamente en sus plataformas, con un 20% de participacion en ingresos por suscripciones referidas.',
+    tldr: [
+      'API REST con respuestas JSON que cubre 15 paises UE, 21 puestos y 4 niveles de antiguedad',
+      'Entorno sandbox con datos de prueba para desarrollo de integracion sin riesgos',
+      '20% de ingresos recurrentes por cada suscripcion referida a traves de su integracion',
+    ],
+    heroSubtitle: 'Ya sea que desarrolle un ATS, HRIS o plataforma de nomina, integrar datos de EuroSalary ofrece a sus usuarios inteligencia salarial en tiempo real sin abandonar su producto.',
+    whyTitle: 'Casos de uso de integracion',
+    useCases: [
+      { title: 'Sugerencias salariales ATS', desc: 'Muestre rangos salariales de mercado directamente en formularios de publicacion de empleo. Ayude a los reclutadores a establecer ofertas competitivas segun pais, puesto y nivel de antiguedad.', icon: 'work' },
+      { title: 'Benchmarking de nomina', desc: 'Integre benchmarks salariales en paneles de nomina para que los equipos financieros comparen la compensacion actual con las tasas del mercado en todas las operaciones de la UE.', icon: 'account_balance' },
+      { title: 'Planificacion de compensacion HRIS', desc: 'Alimente los ciclos anuales de revision de compensacion con datos de mercado en tiempo real. Permita a los lideres de RRHH modelar ajustes salariales por pais, rol y antiguedad.', icon: 'analytics' },
+      { title: 'Insights salariales de job boards', desc: 'Enriquezca las ofertas de empleo con datos de transparencia salarial. Muestre a los candidatos como se compara un salario publicado con la mediana nacional y europea.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Arquitectura de integracion',
+    archDesc: 'Un flujo simple de cuatro pasos conecta su plataforma con los datos de EuroSalary en produccion.',
+    archSteps: [
+      { step: 'Autenticar', desc: 'Solicite una clave API desde su panel de socios. Todas las solicitudes se autentican mediante token Bearer en el encabezado Authorization.' },
+      { step: 'Consultar', desc: 'Envie solicitudes GET a nuestros endpoints con parametros de pais, puesto y nivel. Las respuestas son JSON con datos salariales y puntuaciones de confianza.' },
+      { step: 'Cachear', desc: 'Almacene en cache las respuestas hasta 24 horas. Nuestros datos se actualizan mensualmente, por lo que el cache agresivo es seguro.' },
+      { step: 'Mostrar', desc: 'Renderice benchmarks salariales nativamente en su interfaz. Use nuestro esquema de respuesta para construir widgets de rangos salariales.' },
+    ],
+    codeTitle: 'Ejemplo de API',
+    codeDesc: 'Una sola solicitud GET devuelve datos salariales estructurados para cualquier combinacion pais-puesto-nivel.',
+    specsTitle: 'Especificaciones tecnicas',
+    specs: [
+      { label: 'Protocolo', value: 'REST sobre HTTPS' },
+      { label: 'Formato de respuesta', value: 'JSON (UTF-8)' },
+      { label: 'Autenticacion', value: 'Token Bearer (clave API)' },
+      { label: 'Limite (Socio)', value: '10.000 solicitudes/dia' },
+      { label: 'Limite (Empresa)', value: 'Ilimitado' },
+      { label: 'Sandbox', value: 'Entorno de prueba completo' },
+      { label: 'SLA', value: '99,9% de disponibilidad' },
+      { label: 'Cobertura', value: '15 paises UE, 21 puestos, 4 niveles' },
+      { label: 'Frecuencia de actualizacion', value: 'Mensual (Eurostat + ofertas)' },
+      { label: 'Latencia', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Modelo de participacion en ingresos',
+    revenueDesc: 'Genere ingresos recurrentes refiriendo a sus usuarios a EuroSalary Premium.',
+    revenueItems: [
+      '20% de comision recurrente por cada suscripcion referida',
+      'Atribucion mediante seguimiento de clave API — sin enlaces de referencia necesarios',
+      'Pagos mensuales por transferencia SEPA o PayPal',
+      'Panel de ingresos en tiempo real en su portal de socios',
+      'Sin volumen minimo requerido para ganar comisiones',
+    ],
+    sandboxTitle: 'Entorno Sandbox',
+    sandboxDesc: 'Cada socio API recibe acceso inmediato a un entorno sandbox completo con datos de prueba realistas. Desarrolle y pruebe su integracion sin tocar datos de produccion.',
+    contactTitle: 'Solicitar asociacion API',
+    contactDesc: 'Describanos su plataforma y planes de integracion. Revisamos solicitudes en 24 horas y proporcionamos acceso sandbox inmediatamente tras la aprobacion.',
+    formLabels: { company: 'Nombre de la empresa', email: 'Email profesional', integrationType: 'Tipo de integracion', currentUsers: 'Usuarios actuales', message: 'Describa sus planes de integracion', submit: 'Solicitar acceso API' },
+    integrationOptions: ['ATS / Plataforma de reclutamiento', 'HRIS / Gestion de personal', 'Software de nomina', 'Job board / Marketplace', 'Herramienta de consultoria de compensacion', 'Otra tecnologia de RRHH'],
+    faq: [
+      { question: 'Que datos devuelve la API de EuroSalary?', answer: 'Cada respuesta incluye salario bruto anual (mediana, P25, P75), estimaciones de salario neto, indice de coste de vida, salario minimo, moneda y metadatos de fuente. Los datos cubren 15 paises UE, 21 puestos y 4 niveles.' },
+      { question: 'Cuanto tiempo lleva integrar la API?', answer: 'La mayoria de los socios completan una integracion en produccion en 1-2 semanas. La API usa convenciones REST estandar con respuestas JSON. Nuestro entorno sandbox permite desarrollar y probar sin datos de produccion.' },
+      { question: 'Cuales son los limites de tasa para socios API?', answer: 'El nivel socio incluye 10.000 solicitudes por dia con capacidad de rafaga de 100 solicitudes por minuto. Los socios empresariales obtienen solicitudes ilimitadas. Todos los niveles incluyen un SLA de 99,9%.' },
+      { question: 'Como funciona la participacion de ingresos del 20%?', answer: 'Cuando los usuarios de su plataforma hacen clic hacia EuroSalary y se suscriben a un plan Premium, la referencia se atribuye automaticamente a su clave API. Usted gana el 20% de cada pago de suscripcion mensual.' },
+      { question: 'Hay un sandbox para pruebas?', answer: 'Si. Cada socio aprobado recibe acceso sandbox inmediato con datos de prueba realistas que reflejan exactamente el esquema de produccion. Las solicitudes sandbox no cuentan en sus limites de tasa.' },
+      { question: 'Puedo obtener endpoints o campos personalizados?', answer: 'Los socios API empresariales pueden solicitar endpoints personalizados, esquemas de respuesta y notificaciones webhook. Tambien ofrecemos exportaciones masivas y endpoints de series temporales historicas.' },
+    ],
+  },
+  it: {
+    h1: 'Come integrare i dati salariali EuroSalary nella vostra piattaforma HR?',
+    metaTitle: 'Partnership API: integra i dati salariali nel tuo ATS, HRIS o payroll | EuroSalary.eu',
+    metaDesc: 'Integra i dati salariali EuroSalary nel tuo ATS, HRIS o software paghe. API REST, risposte JSON, ambiente sandbox e 20% di revenue share per i partner.',
+    home: 'Home',
+    partners: 'Partner',
+    breadcrumb: 'Partnership API',
+    introAnswer: 'EuroSalary offre un\'API REST che permette ai fornitori di ATS, HRIS e payroll di integrare benchmark salariali europei in tempo reale nelle loro piattaforme, con il 20% di revenue share sugli abbonamenti referenziati.',
+    tldr: ['API REST con risposte JSON per 15 paesi UE, 21 professioni e 4 livelli di anzianita', 'Ambiente sandbox con dati di test per sviluppo di integrazione senza rischi', '20% di ricavi ricorrenti su ogni abbonamento referenziato tramite la vostra integrazione'],
+    heroSubtitle: 'Che sviluppiate un ATS, HRIS o sistema payroll, integrare i dati EuroSalary offre ai vostri utenti intelligence retributiva in tempo reale senza lasciare il vostro prodotto.',
+    whyTitle: 'Casi d\'uso dell\'integrazione',
+    useCases: [
+      { title: 'Suggerimenti salariali ATS', desc: 'Mostrate fasce salariali di mercato direttamente nei moduli di pubblicazione offerte. Aiutate i recruiter a stabilire offerte competitive per paese, ruolo e livello.', icon: 'work' },
+      { title: 'Benchmarking payroll', desc: 'Integrate benchmark salariali nelle dashboard payroll per confrontare la retribuzione attuale con i tassi di mercato in tutte le operazioni UE.', icon: 'account_balance' },
+      { title: 'Pianificazione retributiva HRIS', desc: 'Alimentate i cicli annuali di revisione retributiva con dati di mercato in tempo reale. Consentite ai leader HR di modellare aggiustamenti salariali per paese, ruolo e anzianita.', icon: 'analytics' },
+      { title: 'Insight salariali job board', desc: 'Arricchite gli annunci di lavoro con dati di trasparenza salariale. Mostrate ai candidati come uno stipendio pubblicato si confronta con la mediana nazionale ed europea.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Architettura di integrazione',
+    archDesc: 'Un semplice flusso in quattro passaggi collega la vostra piattaforma ai dati EuroSalary in produzione.',
+    archSteps: [
+      { step: 'Autenticare', desc: 'Richiedete una chiave API dalla vostra dashboard partner. Tutte le richieste sono autenticate tramite token Bearer nell\'header Authorization.' },
+      { step: 'Interrogare', desc: 'Inviate richieste GET ai nostri endpoint con parametri paese, professione e livello. Le risposte sono JSON con dati salariali e punteggi di affidabilita.' },
+      { step: 'Cache', desc: 'Memorizzate le risposte in cache fino a 24 ore. I nostri dati si aggiornano mensilmente, quindi il caching aggressivo e sicuro.' },
+      { step: 'Visualizzare', desc: 'Renderizzate i benchmark salariali nativamente nella vostra UI. Usate il nostro schema di risposta per widget di fasce salariali e grafici comparativi.' },
+    ],
+    codeTitle: 'Esempio API',
+    codeDesc: 'Una singola richiesta GET restituisce dati salariali strutturati per qualsiasi combinazione paese-professione-livello.',
+    specsTitle: 'Specifiche tecniche',
+    specs: [
+      { label: 'Protocollo', value: 'REST su HTTPS' },
+      { label: 'Formato risposta', value: 'JSON (UTF-8)' },
+      { label: 'Autenticazione', value: 'Token Bearer (chiave API)' },
+      { label: 'Limite (Partner)', value: '10.000 richieste/giorno' },
+      { label: 'Limite (Enterprise)', value: 'Illimitato' },
+      { label: 'Sandbox', value: 'Ambiente di test completo' },
+      { label: 'SLA', value: '99,9% disponibilita' },
+      { label: 'Copertura', value: '15 paesi UE, 21 professioni, 4 livelli' },
+      { label: 'Frequenza aggiornamento', value: 'Mensile (Eurostat + annunci)' },
+      { label: 'Latenza', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Modello di revenue share',
+    revenueDesc: 'Generate ricavi ricorrenti referenziando i vostri utenti a EuroSalary Premium.',
+    revenueItems: ['20% di commissione ricorrente su ogni abbonamento referenziato', 'Attribuzione tramite tracciamento chiave API — nessun link di referral necessario', 'Pagamenti mensili tramite bonifico SEPA o PayPal', 'Dashboard ricavi in tempo reale nel vostro portale partner', 'Nessun volume minimo richiesto per guadagnare commissioni'],
+    sandboxTitle: 'Ambiente Sandbox',
+    sandboxDesc: 'Ogni partner API riceve accesso immediato a un ambiente sandbox completo con dati di test realistici. Sviluppate e testate la vostra integrazione senza toccare dati di produzione.',
+    contactTitle: 'Candidarsi per la partnership API',
+    contactDesc: 'Descriveteci la vostra piattaforma e i piani di integrazione. Esaminiamo le candidature entro 24 ore e forniamo accesso sandbox immediatamente dopo l\'approvazione.',
+    formLabels: { company: 'Nome azienda', email: 'Email aziendale', integrationType: 'Tipo di integrazione', currentUsers: 'Utenti attuali della piattaforma', message: 'Descrivete i vostri piani di integrazione', submit: 'Candidarsi per accesso API' },
+    integrationOptions: ['ATS / Piattaforma di recruiting', 'HRIS / Gestione del personale', 'Software payroll', 'Job board / Marketplace', 'Strumento di consulenza retributiva', 'Altra tecnologia HR'],
+    faq: [
+      { question: 'Quali dati restituisce l\'API EuroSalary?', answer: 'Ogni risposta include stipendio lordo annuale (mediana, P25, P75), stime di stipendio netto, indice del costo della vita, salario minimo, valuta e metadati di fonte. I dati coprono 15 paesi UE, 21 professioni e 4 livelli.' },
+      { question: 'Quanto tempo richiede l\'integrazione dell\'API?', answer: 'La maggior parte dei partner completa un\'integrazione in produzione in 1-2 settimane. L\'API usa convenzioni REST standard con risposte JSON. Il nostro ambiente sandbox permette di sviluppare e testare senza dati di produzione.' },
+      { question: 'Quali sono i limiti di tasso per i partner API?', answer: 'Il livello partner include 10.000 richieste al giorno con capacita burst di 100 richieste al minuto. I partner enterprise ottengono richieste illimitate. Tutti i livelli includono un SLA del 99,9%.' },
+      { question: 'Come funziona il revenue share del 20%?', answer: 'Quando gli utenti della vostra piattaforma cliccano verso EuroSalary e si abbonano a un piano Premium, il referral e attribuito automaticamente alla vostra chiave API. Guadagnate il 20% di ogni pagamento di abbonamento mensile.' },
+      { question: 'Esiste un sandbox per i test?', answer: 'Si. Ogni partner approvato riceve accesso sandbox immediato con dati di test realistici che rispecchiano esattamente lo schema di produzione. Le richieste sandbox non contano nei vostri limiti di tasso.' },
+      { question: 'Posso ottenere endpoint o campi personalizzati?', answer: 'I partner API enterprise possono richiedere endpoint personalizzati, schemi di risposta e notifiche webhook. Offriamo anche esportazioni di massa e endpoint di serie temporali storiche.' },
+    ],
+  },
+  pt: {
+    h1: 'Como integrar dados salariais do EuroSalary na sua plataforma de RH?',
+    metaTitle: 'Parceria API: integre dados salariais no seu ATS, HRIS ou folha de pagamento | EuroSalary.eu',
+    metaDesc: 'Integre dados salariais do EuroSalary no seu ATS, HRIS ou software de folha de pagamento. API REST, respostas JSON, ambiente sandbox e 20% de partilha de receitas.',
+    home: 'Inicio', partners: 'Parceiros', breadcrumb: 'Parceria API',
+    introAnswer: 'O EuroSalary oferece uma API REST que permite a fornecedores de ATS, HRIS e folha de pagamento integrar benchmarks salariais europeus em tempo real nas suas plataformas, com 20% de partilha de receitas em subscricoes referidas.',
+    tldr: ['API REST com respostas JSON para 15 paises UE, 21 profissoes e 4 niveis de antiguidade', 'Ambiente sandbox com dados de teste para desenvolvimento de integracao sem riscos', '20% de receitas recorrentes em cada subscricao referida pela sua integracao'],
+    heroSubtitle: 'Quer desenvolva um ATS, HRIS ou sistema de folha de pagamento, integrar dados EuroSalary oferece aos seus utilizadores inteligencia salarial em tempo real.',
+    whyTitle: 'Casos de uso', useCases: [
+      { title: 'Sugestoes salariais ATS', desc: 'Apresente faixas salariais de mercado diretamente em formularios de publicacao de vagas.', icon: 'work' },
+      { title: 'Benchmarking de folha de pagamento', desc: 'Integre benchmarks salariais em dashboards de folha de pagamento para comparar compensacao com taxas de mercado.', icon: 'account_balance' },
+      { title: 'Planeamento de compensacao HRIS', desc: 'Alimente ciclos anuais de revisao de compensacao com dados de mercado em tempo real.', icon: 'analytics' },
+      { title: 'Insights salariais de job boards', desc: 'Enriqueca anuncios de emprego com dados de transparencia salarial.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Arquitetura de integracao', archDesc: 'Um fluxo simples de quatro passos liga a sua plataforma aos dados EuroSalary.',
+    archSteps: [
+      { step: 'Autenticar', desc: 'Solicite uma chave API no seu painel de parceiros.' },
+      { step: 'Consultar', desc: 'Envie pedidos GET aos nossos endpoints com parametros de pais, profissao e nivel.' },
+      { step: 'Cache', desc: 'Armazene respostas em cache ate 24 horas.' },
+      { step: 'Apresentar', desc: 'Renderize benchmarks salariais nativamente na sua interface.' },
+    ],
+    codeTitle: 'Exemplo de API', codeDesc: 'Um unico pedido GET retorna dados salariais estruturados.',
+    specsTitle: 'Especificacoes tecnicas', specs: [
+      { label: 'Protocolo', value: 'REST sobre HTTPS' }, { label: 'Formato', value: 'JSON (UTF-8)' }, { label: 'Autenticacao', value: 'Token Bearer' },
+      { label: 'Limite (Parceiro)', value: '10.000 pedidos/dia' }, { label: 'Limite (Empresa)', value: 'Ilimitado' }, { label: 'Sandbox', value: 'Ambiente de teste completo' },
+      { label: 'SLA', value: '99,9% disponibilidade' }, { label: 'Cobertura', value: '15 paises UE, 21 profissoes, 4 niveis' }, { label: 'Atualizacao', value: 'Mensal' }, { label: 'Latencia', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Modelo de partilha de receitas', revenueDesc: 'Gere receitas recorrentes referindo utilizadores ao EuroSalary Premium.',
+    revenueItems: ['20% de comissao recorrente', 'Atribuicao via chave API', 'Pagamentos mensais SEPA ou PayPal', 'Dashboard de receitas em tempo real', 'Sem volume minimo'],
+    sandboxTitle: 'Ambiente Sandbox', sandboxDesc: 'Cada parceiro API recebe acesso imediato a um ambiente sandbox completo com dados de teste realistas.',
+    contactTitle: 'Candidatar-se a parceria API', contactDesc: 'Descreva a sua plataforma e planos de integracao. Analisamos candidaturas em 24 horas.',
+    formLabels: { company: 'Nome da empresa', email: 'Email profissional', integrationType: 'Tipo de integracao', currentUsers: 'Utilizadores atuais', message: 'Descreva os seus planos', submit: 'Candidatar-se para acesso API' },
+    integrationOptions: ['ATS / Plataforma de recrutamento', 'HRIS / Gestao de pessoal', 'Software de folha de pagamento', 'Job board / Marketplace', 'Ferramenta de consultoria salarial', 'Outra tecnologia RH'],
+    faq: [
+      { question: 'Que dados a API do EuroSalary retorna?', answer: 'Cada resposta inclui salario bruto anual (mediana, P25, P75), estimativas de salario liquido, indice de custo de vida, salario minimo e metadados. Cobre 15 paises UE, 21 profissoes e 4 niveis.' },
+      { question: 'Quanto tempo demora a integracao?', answer: 'A maioria dos parceiros completa uma integracao em 1-2 semanas. A API usa convencoes REST com respostas JSON.' },
+      { question: 'Quais sao os limites de taxa?', answer: '10.000 pedidos por dia para parceiros, ilimitado para empresas. SLA de 99,9%.' },
+      { question: 'Como funciona a partilha de receitas de 20%?', answer: 'A referencia e atribuida automaticamente a sua chave API. Ganha 20% de cada pagamento mensal.' },
+      { question: 'Existe um sandbox para testes?', answer: 'Sim. Acesso sandbox imediato com dados realistas que espelham o esquema de producao.' },
+      { question: 'Posso obter endpoints personalizados?', answer: 'Parceiros enterprise podem solicitar endpoints personalizados, schemas de resposta e notificacoes webhook.' },
+    ],
+  },
+  nl: {
+    h1: 'Hoe kunt u EuroSalary-gegevens integreren in uw HR-platform?',
+    metaTitle: 'API-partnerschap: salarisgegev. integreren in uw ATS, HRIS of payroll | EuroSalary.eu',
+    metaDesc: 'Integreer EuroSalary-salarisdata in uw ATS, HRIS of payrollplatform. REST API, JSON-responses, sandbox-omgeving en 20% omzetdeling voor partners.',
+    home: 'Home', partners: 'Partners', breadcrumb: 'API-partnerschap',
+    introAnswer: 'EuroSalary biedt een REST API waarmee ATS-, HRIS- en payrollaanbieders Europese salarisbenchmarks in realtime in hun platforms kunnen integreren, met 20% omzetdeling op doorverwezen abonnementen.',
+    tldr: ['REST API met JSON-responses voor 15 EU-landen, 21 functies en 4 ervaringsniveaus', 'Sandbox-omgeving met testdata voor risicovrije integratieontwikkeling', '20% terugkerende omzetdeling op elk doorverwezen abonnement'],
+    heroSubtitle: 'Of u nu een ATS, HRIS of payrollsysteem bouwt, EuroSalary-data integreren geeft uw gebruikers realtime salarisintelligentie.',
+    whyTitle: 'Integratie-toepassingen', useCases: [
+      { title: 'ATS-salarissuggesties', desc: 'Toon marktconforme salarisschalen rechtstreeks in vacatureformulieren.', icon: 'work' },
+      { title: 'Payroll-benchmarking', desc: 'Integreer salarisbenchmarks in payrolldashboards om huidige compensatie te vergelijken met markttarieven.', icon: 'account_balance' },
+      { title: 'HRIS-compensatieplanning', desc: 'Voed jaarlijkse beloningsrevisiecycli met realtime marktdata.', icon: 'analytics' },
+      { title: 'Jobboard-salarisinzichten', desc: 'Verrijk vacatures met salaristransparantiegegevens.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Integratiearchitectuur', archDesc: 'Een eenvoudig vierstappenproces verbindt uw platform met EuroSalary-data.',
+    archSteps: [
+      { step: 'Authenticeren', desc: 'Vraag een API-sleutel aan via uw partnerdashboard.' },
+      { step: 'Bevragen', desc: 'Stuur GET-verzoeken naar onze endpoints met land-, functie- en niveauparameters.' },
+      { step: 'Cachen', desc: 'Cache responses tot 24 uur. Onze data wordt maandelijks bijgewerkt.' },
+      { step: 'Weergeven', desc: 'Render salarisbenchmarks native in uw UI.' },
+    ],
+    codeTitle: 'API-voorbeeld', codeDesc: 'Een enkel GET-verzoek retourneert gestructureerde salarisdata.',
+    specsTitle: 'Technische specificaties', specs: [
+      { label: 'Protocol', value: 'REST over HTTPS' }, { label: 'Formaat', value: 'JSON (UTF-8)' }, { label: 'Authenticatie', value: 'Bearer-token' },
+      { label: 'Limiet (Partner)', value: '10.000 verzoeken/dag' }, { label: 'Limiet (Enterprise)', value: 'Onbeperkt' }, { label: 'Sandbox', value: 'Volledige testomgeving' },
+      { label: 'SLA', value: '99,9% beschikbaarheid' }, { label: 'Dekking', value: '15 EU-landen, 21 functies, 4 niveaus' }, { label: 'Updates', value: 'Maandelijks' }, { label: 'Latentie', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Omzetdelingsmodel', revenueDesc: 'Verdien terugkerende inkomsten door uw gebruikers naar EuroSalary Premium te verwijzen.',
+    revenueItems: ['20% terugkerende commissie', 'Toewijzing via API-sleutel', 'Maandelijkse uitbetalingen via SEPA of PayPal', 'Realtime omzetdashboard', 'Geen minimumvolume vereist'],
+    sandboxTitle: 'Sandbox-omgeving', sandboxDesc: 'Elke API-partner krijgt direct toegang tot een volledige sandbox met realistische testdata.',
+    contactTitle: 'Aanvragen API-partnerschap', contactDesc: 'Beschrijf uw platform en integratieplannen. Wij beoordelen aanvragen binnen 24 uur.',
+    formLabels: { company: 'Bedrijfsnaam', email: 'Zakelijk e-mail', integrationType: 'Integratietype', currentUsers: 'Huidige platformgebruikers', message: 'Beschrijf uw integratieplannen', submit: 'API-toegang aanvragen' },
+    integrationOptions: ['ATS / Recruitmentplatform', 'HRIS / Personeelsbeheer', 'Payrollsoftware', 'Jobboard / Marktplaats', 'Beloningsadvies-tool', 'Andere HR-technologie'],
+    faq: [
+      { question: 'Welke data levert de EuroSalary API?', answer: 'Bruto jaarsalaris (mediaan, P25, P75), nettosalarisschattingen, kosten van levensonderhoud, minimumloon en bronmetadata. 15 EU-landen, 21 functies, 4 niveaus.' },
+      { question: 'Hoe lang duurt de integratie?', answer: 'De meeste partners voltooien een productie-integratie in 1-2 weken met standaard REST/JSON.' },
+      { question: 'Wat zijn de snelheidslimieten?', answer: '10.000 verzoeken per dag voor partners, onbeperkt voor enterprise. 99,9% SLA.' },
+      { question: 'Hoe werkt de 20% omzetdeling?', answer: 'Doorverwijzingen worden automatisch toegewezen aan uw API-sleutel. U verdient 20% van elke maandelijkse betaling.' },
+      { question: 'Is er een sandbox voor tests?', answer: 'Ja. Directe sandbox-toegang met realistische testdata die het productieschema exact weerspiegelen.' },
+      { question: 'Kan ik aangepaste endpoints krijgen?', answer: 'Enterprise-partners kunnen aangepaste endpoints, responsschema\'s en webhooks aanvragen.' },
+    ],
+  },
+  pl: {
+    h1: 'Jak zintegrowac dane placowe EuroSalary ze swoja platforma HR?',
+    metaTitle: 'Partnerstwo API: zintegruj dane placowe z ATS, HRIS lub payroll | EuroSalary.eu',
+    metaDesc: 'Zintegruj dane placowe EuroSalary z ATS, HRIS lub oprogramowaniem placowym. REST API, JSON, sandbox i 20% udzialu w przychodach.',
+    home: 'Strona glowna', partners: 'Partnerzy', breadcrumb: 'Partnerstwo API',
+    introAnswer: 'EuroSalary oferuje REST API umozliwiajace dostawcom ATS, HRIS i payroll integracje europejskich benchmarkow placowych w czasie rzeczywistym, z 20% udzialem w przychodach z poleconych subskrypcji.',
+    tldr: ['REST API z odpowiedziami JSON dla 15 krajow UE, 21 stanowisk i 4 poziomow stazu', 'Srodowisko sandbox z danymi testowymi', '20% powtarzalnych przychodow z kazdej poleconej subskrypcji'],
+    heroSubtitle: 'Niezaleznie czy budujesz ATS, HRIS czy system placowy, integracja danych EuroSalary daje uzytkownikom inteligencje placowa w czasie rzeczywistym.',
+    whyTitle: 'Przypadki uzycia', useCases: [
+      { title: 'Sugestie placowe ATS', desc: 'Wyswietlaj rynkowe przedzialy wynagrodzen w formularzach ofert pracy.', icon: 'work' },
+      { title: 'Benchmarking placowy', desc: 'Integruj benchmarki placowe w dashboardach payroll.', icon: 'account_balance' },
+      { title: 'Planowanie wynagrodzen HRIS', desc: 'Zasilaj roczne cykle przegladu wynagrodzen danymi rynkowymi.', icon: 'analytics' },
+      { title: 'Insighty placowe job boardow', desc: 'Wzbogacaj ogloszenia o prace danymi o transparentnosci wynagrodzen.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Architektura integracji', archDesc: 'Prosty czterokrokowy proces laczy platfome z danymi EuroSalary.',
+    archSteps: [
+      { step: 'Uwierzytelnienie', desc: 'Zamow klucz API z panelu partnera.' },
+      { step: 'Zapytanie', desc: 'Wyslij zapytania GET z parametrami kraju, stanowiska i poziomu.' },
+      { step: 'Cache', desc: 'Cachuj odpowiedzi do 24 godzin.' },
+      { step: 'Wyswietlanie', desc: 'Renderuj benchmarki placowe natywnie w UI.' },
+    ],
+    codeTitle: 'Przyklad API', codeDesc: 'Jedno zapytanie GET zwraca ustrukturyzowane dane placowe.',
+    specsTitle: 'Specyfikacje techniczne', specs: [
+      { label: 'Protokol', value: 'REST przez HTTPS' }, { label: 'Format', value: 'JSON (UTF-8)' }, { label: 'Uwierzytelnianie', value: 'Token Bearer' },
+      { label: 'Limit (Partner)', value: '10 000 zapytan/dzien' }, { label: 'Limit (Enterprise)', value: 'Bez limitu' }, { label: 'Sandbox', value: 'Pelne srodowisko testowe' },
+      { label: 'SLA', value: '99,9% dostepnosci' }, { label: 'Pokrycie', value: '15 krajow UE, 21 stanowisk, 4 poziomy' }, { label: 'Aktualizacje', value: 'Miesieczne' }, { label: 'Opoznienie', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Model udzialu w przychodach', revenueDesc: 'Zarabiaj powtarzalne przychody polecajac uzytkownikow do EuroSalary Premium.',
+    revenueItems: ['20% powtarzalnej prowizji', 'Atrybucja przez klucz API', 'Miesieczne wyplaty SEPA lub PayPal', 'Dashboard przychodow w czasie rzeczywistym', 'Brak wymaganego minimalnego wolumenu'],
+    sandboxTitle: 'Srodowisko Sandbox', sandboxDesc: 'Kazdy partner API otrzymuje natychmiastowy dostep do pelnego srodowiska sandbox.',
+    contactTitle: 'Zloz wniosek o partnerstwo API', contactDesc: 'Opisz swoja platforme i plany integracji. Rozpatrujemy wnioski w ciagu 24 godzin.',
+    formLabels: { company: 'Nazwa firmy', email: 'Email sluzbowy', integrationType: 'Typ integracji', currentUsers: 'Obecni uzytkownicy platformy', message: 'Opisz plany integracji', submit: 'Zloz wniosek o dostep API' },
+    integrationOptions: ['ATS / Platforma rekrutacyjna', 'HRIS / Zarzadzanie personelem', 'Oprogramowanie placowe', 'Job board / Marketplace', 'Narzedzie doradztwa placowego', 'Inna technologia HR'],
+    faq: [
+      { question: 'Jakie dane zwraca API EuroSalary?', answer: 'Wynagrodzenie brutto roczne (mediana, P25, P75), szacunki netto, indeks kosztow zycia, placa minimalna i metadane. 15 krajow UE, 21 stanowisk, 4 poziomy.' },
+      { question: 'Ile trwa integracja API?', answer: 'Wiekszosc partnerow konczy integracje produkcyjna w 1-2 tygodnie.' },
+      { question: 'Jakie sa limity zapytan?', answer: '10 000 zapytan dziennie dla partnerow, bez limitu dla enterprise. SLA 99,9%.' },
+      { question: 'Jak dziala 20% udzial w przychodach?', answer: 'Polecenia sa automatycznie przypisywane do klucza API. Zarabiasz 20% kazdej miesiecznej platnosci.' },
+      { question: 'Czy jest sandbox do testow?', answer: 'Tak. Natychmiastowy dostep do sandbox z realistycznymi danymi testowymi.' },
+      { question: 'Czy moge uzyskac niestandardowe endpointy?', answer: 'Partnerzy enterprise moga zamawiac niestandardowe endpointy, schematy odpowiedzi i webhooki.' },
+    ],
+  },
+  ro: {
+    h1: 'Cum puteti integra datele salariale EuroSalary in platforma dvs. HR?',
+    metaTitle: 'Parteneriat API: integrati date salariale in ATS, HRIS sau salarizare | EuroSalary.eu',
+    metaDesc: 'Integrati datele salariale EuroSalary in ATS, HRIS sau software de salarizare. API REST, raspunsuri JSON, mediu sandbox si 20% partajare venituri.',
+    home: 'Acasa', partners: 'Parteneri', breadcrumb: 'Parteneriat API',
+    introAnswer: 'EuroSalary ofera un API REST care permite furnizorilor de ATS, HRIS si salarizare sa integreze benchmark-uri salariale europene in timp real, cu 20% partajare de venituri.',
+    tldr: ['API REST cu raspunsuri JSON pentru 15 tari UE, 21 posturi si 4 niveluri', 'Mediu sandbox cu date de test', '20% venituri recurente din fiecare abonament recomandat'],
+    heroSubtitle: 'Indiferent daca construiti un ATS, HRIS sau sistem de salarizare, integrarea datelor EuroSalary ofera utilizatorilor inteligenta salariala in timp real.',
+    whyTitle: 'Cazuri de utilizare', useCases: [
+      { title: 'Sugestii salariale ATS', desc: 'Afisati intervalele salariale de piata direct in formularele de publicare a locurilor de munca.', icon: 'work' },
+      { title: 'Benchmarking salarizare', desc: 'Integrati benchmark-uri salariale in dashboard-urile de salarizare.', icon: 'account_balance' },
+      { title: 'Planificare compensatii HRIS', desc: 'Alimentati ciclurile anuale de revizuire a compensatiilor cu date de piata.', icon: 'analytics' },
+      { title: 'Insights salariale job board', desc: 'Imbogatiti anunturile de locuri de munca cu date de transparenta salariala.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Arhitectura de integrare', archDesc: 'Un flux simplu in patru pasi conecteaza platforma dvs. la datele EuroSalary.',
+    archSteps: [
+      { step: 'Autentificare', desc: 'Solicitati o cheie API din panoul de partener.' },
+      { step: 'Interogare', desc: 'Trimiteti cereri GET cu parametri de tara, post si nivel.' },
+      { step: 'Cache', desc: 'Stocati raspunsurile in cache pana la 24 de ore.' },
+      { step: 'Afisare', desc: 'Randati benchmark-urile salariale nativ in interfata dvs.' },
+    ],
+    codeTitle: 'Exemplu API', codeDesc: 'O singura cerere GET returneaza date salariale structurate.',
+    specsTitle: 'Specificatii tehnice', specs: [
+      { label: 'Protocol', value: 'REST peste HTTPS' }, { label: 'Format', value: 'JSON (UTF-8)' }, { label: 'Autentificare', value: 'Token Bearer' },
+      { label: 'Limita (Partener)', value: '10.000 cereri/zi' }, { label: 'Limita (Enterprise)', value: 'Nelimitat' }, { label: 'Sandbox', value: 'Mediu de test complet' },
+      { label: 'SLA', value: '99,9% disponibilitate' }, { label: 'Acoperire', value: '15 tari UE, 21 posturi, 4 niveluri' }, { label: 'Actualizare', value: 'Lunara' }, { label: 'Latenta', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Model de partajare a veniturilor', revenueDesc: 'Generati venituri recurente recomandand utilizatorii la EuroSalary Premium.',
+    revenueItems: ['20% comision recurent', 'Atribuire prin cheie API', 'Plati lunare SEPA sau PayPal', 'Dashboard venituri in timp real', 'Fara volum minim'],
+    sandboxTitle: 'Mediu Sandbox', sandboxDesc: 'Fiecare partener API primeste acces imediat la un mediu sandbox complet cu date de test realiste.',
+    contactTitle: 'Aplicati pentru parteneriat API', contactDesc: 'Descrieti platforma si planurile de integrare. Analizam aplicatiile in 24 de ore.',
+    formLabels: { company: 'Numele companiei', email: 'Email profesional', integrationType: 'Tipul integrarii', currentUsers: 'Utilizatori actuali', message: 'Descrieti planurile de integrare', submit: 'Aplicati pentru acces API' },
+    integrationOptions: ['ATS / Platforma de recrutare', 'HRIS / Management personal', 'Software salarizare', 'Job board / Marketplace', 'Instrument consultanta salariala', 'Alta tehnologie HR'],
+    faq: [
+      { question: 'Ce date returneaza API-ul EuroSalary?', answer: 'Salariu brut anual (mediana, P25, P75), estimari salariu net, indice cost viata, salariu minim si metadate. 15 tari UE, 21 posturi, 4 niveluri.' },
+      { question: 'Cat dureaza integrarea?', answer: 'Majoritatea partenerilor finalizeaza integrarea in 1-2 saptamani.' },
+      { question: 'Care sunt limitele de rata?', answer: '10.000 cereri pe zi pentru parteneri, nelimitat pentru enterprise. SLA 99,9%.' },
+      { question: 'Cum functioneaza partajarea de 20%?', answer: 'Recomandarea e atribuita automat cheii API. Castigati 20% din fiecare plata lunara.' },
+      { question: 'Exista sandbox pentru teste?', answer: 'Da. Acces sandbox imediat cu date realiste.' },
+      { question: 'Pot obtine endpoint-uri personalizate?', answer: 'Partenerii enterprise pot solicita endpoint-uri personalizate, scheme de raspuns si webhook-uri.' },
+    ],
+  },
+  cs: {
+    h1: 'Jak muzete integrovat data EuroSalary do sve HR platformy?',
+    metaTitle: 'API partnerstvi: integrujte platova data do ATS, HRIS nebo payrollu | EuroSalary.eu',
+    metaDesc: 'Integrujte platova data EuroSalary do ATS, HRIS nebo mzdoveho softwaru. REST API, JSON, sandbox a 20% podil na prijmech.',
+    home: 'Domov', partners: 'Partneri', breadcrumb: 'API partnerstvi',
+    introAnswer: 'EuroSalary nabizi REST API umoznujici dodavatelum ATS, HRIS a payrollu integrovat evropske platove benchmarky v realnem case s 20% podilem na prijmech.',
+    tldr: ['REST API s JSON odpovedi pro 15 zemi EU, 21 pozic a 4 urovne', 'Sandbox prostredi s testovacimi daty', '20% opakovanych prijmu z kazdeho doporuceneho predplatneho'],
+    heroSubtitle: 'At stavite ATS, HRIS nebo mzdovy system, integrace dat EuroSalary dava uzivatelum platovou inteligenci v realnem case.',
+    whyTitle: 'Pripady pouziti', useCases: [
+      { title: 'Platove navrhy ATS', desc: 'Zobrazujte trzni platova pasma primo ve formularich pracovnich nabidek.', icon: 'work' },
+      { title: 'Payroll benchmarking', desc: 'Integrujte platove benchmarky do payroll dashboardu.', icon: 'account_balance' },
+      { title: 'HRIS planovani odmen', desc: 'Napajejte rocni cykly revize odmen trznimi daty v realnem case.', icon: 'analytics' },
+      { title: 'Platove insighty job boardu', desc: 'Obohatte pracovni nabidky o data platove transparentnosti.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Architektura integrace', archDesc: 'Jednoduchy ctyrkrokovy proces propoji vasi platformu s daty EuroSalary.',
+    archSteps: [
+      { step: 'Autentizace', desc: 'Pozadejte o API klic z partnerske nastenky.' },
+      { step: 'Dotaz', desc: 'Poslete GET pozadavky s parametry zeme, pozice a urovne.' },
+      { step: 'Cache', desc: 'Cachujte odpovedi az 24 hodin.' },
+      { step: 'Zobrazeni', desc: 'Renderujte platove benchmarky nativne ve vasem UI.' },
+    ],
+    codeTitle: 'Priklad API', codeDesc: 'Jediny GET pozadavek vrati strukturovana platova data.',
+    specsTitle: 'Technicke specifikace', specs: [
+      { label: 'Protokol', value: 'REST pres HTTPS' }, { label: 'Format', value: 'JSON (UTF-8)' }, { label: 'Autentizace', value: 'Bearer token' },
+      { label: 'Limit (Partner)', value: '10 000 pozadavku/den' }, { label: 'Limit (Enterprise)', value: 'Neomezeny' }, { label: 'Sandbox', value: 'Uplne testovaci prostredi' },
+      { label: 'SLA', value: '99,9% dostupnost' }, { label: 'Pokryti', value: '15 zemi EU, 21 pozic, 4 urovne' }, { label: 'Aktualizace', value: 'Mesicni' }, { label: 'Latence', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Model sdileni prijmu', revenueDesc: 'Vydelavejte opakovane prijmy doporucovanim uzivatelu na EuroSalary Premium.',
+    revenueItems: ['20% opakovana provize', 'Atribuce pres API klic', 'Mesicni vyplaty SEPA nebo PayPal', 'Dashboard prijmu v realnem case', 'Zadny minimalni objem'],
+    sandboxTitle: 'Sandbox prostredi', sandboxDesc: 'Kazdy API partner ziska okamzity pristup k uplnemu sandboxu s realistickymi testovacimi daty.',
+    contactTitle: 'Pozadejte o API partnerstvi', contactDesc: 'Popiste svou platformu a plany integrace. Zadosti posuzujeme do 24 hodin.',
+    formLabels: { company: 'Nazev firmy', email: 'Pracovni email', integrationType: 'Typ integrace', currentUsers: 'Soucasni uzivatele', message: 'Popiste sve plany integrace', submit: 'Pozadat o API pristup' },
+    integrationOptions: ['ATS / Naborova platforma', 'HRIS / Sprava personalu', 'Mzdovy software', 'Job board / Trziste', 'Nastroj pro poradenstvi v odmenach', 'Jina HR technologie'],
+    faq: [
+      { question: 'Jaka data API EuroSalary vraci?', answer: 'Hruby rocni plat (median, P25, P75), odhady cisteho platu, index zivota, minimalni mzda a metadata. 15 zemi EU, 21 pozic, 4 urovne.' },
+      { question: 'Jak dlouho trva integrace?', answer: 'Vetsina partneru dokonci produkci integraci za 1-2 tydny.' },
+      { question: 'Jake jsou limity pozadavku?', answer: '10 000 pozadavku denne pro partnery, neomezene pro enterprise. SLA 99,9%.' },
+      { question: 'Jak funguje 20% podil na prijmech?', answer: 'Doporuceni je automaticky prirazeno vasemu API klici. Vydelavate 20% kazde mesicni platby.' },
+      { question: 'Existuje sandbox pro testovani?', answer: 'Ano. Okamzity pristup k sandboxu s realistickymi testovacimi daty.' },
+      { question: 'Mohu ziskat vlastni endpointy?', answer: 'Enterprise partneri mohou pozadovat vlastni endpointy, schemata odpovedi a webhooky.' },
+    ],
+  },
+  sv: {
+    h1: 'Hur kan du integrera EuroSalary-data i din HR-plattform?',
+    metaTitle: 'API-partnerskap: integrera lonedata i ditt ATS, HRIS eller lonelosning | EuroSalary.eu',
+    metaDesc: 'Integrera EuroSalary-lonedata i ditt ATS, HRIS eller loneplattform. REST API, JSON, sandbox och 20% intaktsdelning.',
+    home: 'Hem', partners: 'Partners', breadcrumb: 'API-partnerskap',
+    introAnswer: 'EuroSalary erbjuder ett REST API som later ATS-, HRIS- och loneleverantorer integrera europeiska lonebenchmarks i realtid, med 20% intaktsdelning pa hanvisade prenumerationer.',
+    tldr: ['REST API med JSON-svar for 15 EU-lander, 21 yrken och 4 erfarenhetsniver', 'Sandbox-miljo med testdata for riskfri integrationsutveckling', '20% aterkommande intakter pa varje hanvisad prenumeration'],
+    heroSubtitle: 'Oavsett om du bygger ett ATS, HRIS eller lonesystem ger EuroSalary-data dina anvandare loneintelligens i realtid.',
+    whyTitle: 'Anvandningsfall', useCases: [
+      { title: 'ATS-loneforslag', desc: 'Visa marknadsmassiga lonespann direkt i jobbannonsformular.', icon: 'work' },
+      { title: 'Lonebenchmarking', desc: 'Integrera lonebenchmarks i lonedashboards.', icon: 'account_balance' },
+      { title: 'HRIS-kompensationsplanering', desc: 'Driva arliga kompensationsrevisioner med marknadsdata i realtid.', icon: 'analytics' },
+      { title: 'Jobbsajt-loneinsikter', desc: 'Berika jobbannonser med lonetransparensdata.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Integrationsarkitektur', archDesc: 'Ett enkelt fyrastegsflode kopplar din plattform till EuroSalary-data.',
+    archSteps: [
+      { step: 'Autentisera', desc: 'Begar en API-nyckel fran din partnerpanel.' },
+      { step: 'Forfraga', desc: 'Skicka GET-forfragan med land-, yrkes- och nivaparametrar.' },
+      { step: 'Cacha', desc: 'Cacha svar i upp till 24 timmar.' },
+      { step: 'Visa', desc: 'Rendera lonebenchmarks nativt i ditt UI.' },
+    ],
+    codeTitle: 'API-exempel', codeDesc: 'En enda GET-forfragan returnerar strukturerad lonedata.',
+    specsTitle: 'Tekniska specifikationer', specs: [
+      { label: 'Protokoll', value: 'REST over HTTPS' }, { label: 'Format', value: 'JSON (UTF-8)' }, { label: 'Autentisering', value: 'Bearer-token' },
+      { label: 'Grans (Partner)', value: '10 000 forfragan/dag' }, { label: 'Grans (Enterprise)', value: 'Obegransat' }, { label: 'Sandbox', value: 'Fullstandig testmiljo' },
+      { label: 'SLA', value: '99,9% tillganglighet' }, { label: 'Tackning', value: '15 EU-lander, 21 yrken, 4 nivaer' }, { label: 'Uppdatering', value: 'Manatlig' }, { label: 'Latens', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Intaktsdelningsmodell', revenueDesc: 'Tjena aterkommande intakter genom att hanvisa anvandare till EuroSalary Premium.',
+    revenueItems: ['20% aterkommande provision', 'Tilldelning via API-nyckel', 'Manatliga utbetalningar via SEPA eller PayPal', 'Realtidsdashboard for intakter', 'Inget minimivolym krav'],
+    sandboxTitle: 'Sandbox-miljo', sandboxDesc: 'Varje API-partner far omedelbar tillgang till en fullstandig sandbox med realistisk testdata.',
+    contactTitle: 'Ansok om API-partnerskap', contactDesc: 'Beskriv din plattform och integrationsplaner. Vi granskar ansokan inom 24 timmar.',
+    formLabels: { company: 'Foretag', email: 'Jobbmail', integrationType: 'Integrationstyp', currentUsers: 'Nuvarande anvandare', message: 'Beskriv dina integrationsplaner', submit: 'Ansok om API-atkomst' },
+    integrationOptions: ['ATS / Rekryteringsplattform', 'HRIS / Personalhantering', 'Loneprogramvara', 'Jobbsajt / Marknadsplats', 'Kompensationsradgivningsverktyg', 'Annan HR-teknik'],
+    faq: [
+      { question: 'Vilka data returnerar EuroSalary API?', answer: 'Bruttoloon (median, P25, P75), nettoloneuppskattningar, levnadskostnadsindex, minimilon och metadata. 15 EU-lander, 21 yrken, 4 nivaer.' },
+      { question: 'Hur lang tid tar integrationen?', answer: 'De flesta partners slutfor en produktionsintegration pa 1-2 veckor.' },
+      { question: 'Vilka ar hastighetsgranserna?', answer: '10 000 forfragan per dag for partners, obegransat for enterprise. 99,9% SLA.' },
+      { question: 'Hur fungerar 20% intaktsdelning?', answer: 'Hanvisningar tilldelas automatiskt till din API-nyckel. Du tjanar 20% av varje manatlig betalning.' },
+      { question: 'Finns det en sandbox for testning?', answer: 'Ja. Omedelbar sandbox-atkomst med realistisk testdata.' },
+      { question: 'Kan jag fa anpassade endpoints?', answer: 'Enterprise-partners kan begar anpassade endpoints, responsscheman och webhooks.' },
+    ],
+  },
+  da: {
+    h1: 'Hvordan kan du integrere EuroSalary-data i din HR-platform?',
+    metaTitle: 'API-partnerskab: integrer londata i dit ATS, HRIS eller lonlosning | EuroSalary.eu',
+    metaDesc: 'Integrer EuroSalary-londata i dit ATS, HRIS eller lonplatform. REST API, JSON, sandbox og 20% indtaegtsdeling.',
+    home: 'Hjem', partners: 'Partnere', breadcrumb: 'API-partnerskab',
+    introAnswer: 'EuroSalary tilbyder et REST API der lader ATS-, HRIS- og lonleverandorer integrere europaeiske lonbenchmarks i realtid med 20% indtaegtsdeling.',
+    tldr: ['REST API med JSON-svar for 15 EU-lande, 21 stillinger og 4 niveauer', 'Sandbox-miljo med testdata', '20% tilbagevendende indtaegter pa hver henvist abonnement'],
+    heroSubtitle: 'Uanset om du bygger et ATS, HRIS eller lonsystem giver EuroSalary-data dine brugere lonintelligens i realtid.',
+    whyTitle: 'Anvendelsestilfaelde', useCases: [
+      { title: 'ATS-lonforslag', desc: 'Vis markedskonforme lonintervaller direkte i jobopslags-formularer.', icon: 'work' },
+      { title: 'Lon-benchmarking', desc: 'Integrer lonbenchmarks i lon-dashboards.', icon: 'account_balance' },
+      { title: 'HRIS-kompensationsplanlaegning', desc: 'Driv arlige kompensationsgennemgange med markedsdata i realtid.', icon: 'analytics' },
+      { title: 'Jobsite-lonindsigter', desc: 'Berig jobannoncer med lontransparensdata.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Integrationsarkitektur', archDesc: 'Et simpelt fire-trins flow forbinder din platform med EuroSalary-data.',
+    archSteps: [
+      { step: 'Autentificer', desc: 'Anmod om en API-nogle fra dit partnerpanel.' },
+      { step: 'Foresprg', desc: 'Send GET-anmodninger med land-, stillings- og niveauparametre.' },
+      { step: 'Cache', desc: 'Cache svar i op til 24 timer.' },
+      { step: 'Vis', desc: 'Render lonbenchmarks nativt i dit UI.' },
+    ],
+    codeTitle: 'API-eksempel', codeDesc: 'En enkelt GET-anmodning returnerer struktureret londata.',
+    specsTitle: 'Tekniske specifikationer', specs: [
+      { label: 'Protokol', value: 'REST over HTTPS' }, { label: 'Format', value: 'JSON (UTF-8)' }, { label: 'Autentificering', value: 'Bearer-token' },
+      { label: 'Graense (Partner)', value: '10.000 anmodninger/dag' }, { label: 'Graense (Enterprise)', value: 'Ubegransset' }, { label: 'Sandbox', value: 'Komplet testmiljo' },
+      { label: 'SLA', value: '99,9% tilgaengelighed' }, { label: 'Daekning', value: '15 EU-lande, 21 stillinger, 4 niveauer' }, { label: 'Opdatering', value: 'Manedlig' }, { label: 'Latens', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Indtaegtsdelingsmodel', revenueDesc: 'Tjen tilbagevendende indtaegter ved at henvise brugere til EuroSalary Premium.',
+    revenueItems: ['20% tilbagevendende provision', 'Tildeling via API-nogle', 'Manedlige udbetalinger via SEPA eller PayPal', 'Realtids-indtaegtsdashboard', 'Intet minimumvolumen krevet'],
+    sandboxTitle: 'Sandbox-miljo', sandboxDesc: 'Hver API-partner far ojeblikkelig adgang til en komplet sandbox med realistisk testdata.',
+    contactTitle: 'Ansog om API-partnerskab', contactDesc: 'Beskriv din platform og integrationsplaner. Vi gennemgar anmodninger inden for 24 timer.',
+    formLabels: { company: 'Virksomhedsnavn', email: 'Arbejdsmail', integrationType: 'Integrationstype', currentUsers: 'Nuvaerende brugere', message: 'Beskriv dine integrationsplaner', submit: 'Ansog om API-adgang' },
+    integrationOptions: ['ATS / Rekrutteringsplatform', 'HRIS / Personalestyring', 'Lonprogrammel', 'Jobsite / Markedsplads', 'Kompensationsradgivningsvaerktoj', 'Anden HR-teknologi'],
+    faq: [
+      { question: 'Hvilke data returnerer EuroSalary API?', answer: 'Bruttolon (median, P25, P75), nettolonestimat, leveomkostningsindeks, minimumlon og metadata. 15 EU-lande, 21 stillinger, 4 niveauer.' },
+      { question: 'Hvor lang tid tager integrationen?', answer: 'De fleste partnere gennemforer en produktionsintegration pa 1-2 uger.' },
+      { question: 'Hvad er hastighedsgraenserne?', answer: '10.000 anmodninger pr. dag for partnere, ubegranset for enterprise. 99,9% SLA.' },
+      { question: 'Hvordan fungerer 20% indtaegtsdeling?', answer: 'Henvisninger tildeles automatisk til din API-nogle. Du tjener 20% af hver manedlig betaling.' },
+      { question: 'Er der en sandbox til test?', answer: 'Ja. Ojeblikkelig sandbox-adgang med realistisk testdata.' },
+      { question: 'Kan jeg fa tilpassede endpoints?', answer: 'Enterprise-partnere kan anmode om tilpassede endpoints, svarschemater og webhooks.' },
+    ],
+  },
+  fi: {
+    h1: 'Miten voit integroida EuroSalary-tiedot HR-alustaasi?',
+    metaTitle: 'API-kumppanuus: integroi palkkatiedot ATS-, HRIS- tai palkkajrjestelmaasi | EuroSalary.eu',
+    metaDesc: 'Integroi EuroSalaryn palkkatiedot ATS-, HRIS- tai palkkajrjestelmaasi. REST API, JSON, sandbox ja 20% tulonjako.',
+    home: 'Etusivu', partners: 'Kumppanit', breadcrumb: 'API-kumppanuus',
+    introAnswer: 'EuroSalary tarjoaa REST APIn, joka mahdollistaa ATS-, HRIS- ja palkkatoimittajille eurooppalaisten palkkabenchmarkien reaaliaikaisen integroinnin, 20% tulonjako-osuudella.',
+    tldr: ['REST API JSON-vastauksilla 15 EU-maata, 21 ammattia ja 4 kokemustasoa', 'Sandbox-ymparisto testitiedoilla', '20% toistuvat tulot jokaisesta viitatusta tilauksesta'],
+    heroSubtitle: 'Rakennatpa ATS-, HRIS- tai palkkajrjestelmaa, EuroSalary-tietojen integrointi tarjoaa kayttajillesi reaaliaikaista palkkaintelligenssia.',
+    whyTitle: 'Kayttotapaukset', useCases: [
+      { title: 'ATS-palkkaehdotukset', desc: 'Nayta markkinatason palkkahaarukat suoraan tyopaikkailmoituslomakkeilla.', icon: 'work' },
+      { title: 'Palkka-benchmarking', desc: 'Integroi palkkabenchmarkit palkkanakeistytauluihin.', icon: 'account_balance' },
+      { title: 'HRIS-palkitsemissuunnittelu', desc: 'Tue vuosittaisia palkitsemistarkistuksia reaaliaikaisella markkinatiedolla.', icon: 'analytics' },
+      { title: 'Tyopaikkasivuston palkkanakymat', desc: 'Rikastuta tyopaikkailmoituksia palkka-avoimuustiedoilla.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Integraatioarkkitehtuuri', archDesc: 'Yksinkertainen nelivaiheinen prosessi yhdistaa alustasi EuroSalary-tietoihin.',
+    archSteps: [
+      { step: 'Tunnistaudu', desc: 'Pyuda API-avain kumppanipaneelista.' },
+      { step: 'Kysely', desc: 'Laheta GET-pyyntoja maa-, ammatti- ja tasoparametreilla.' },
+      { step: 'Valimuisti', desc: 'Tallenna vastaukset valimuistiin enintaan 24 tunniksi.' },
+      { step: 'Nayta', desc: 'Renderoi palkkabenchmarkit natiivisti kayttoliittymassasi.' },
+    ],
+    codeTitle: 'API-esimerkki', codeDesc: 'Yksi GET-pyynto palauttaa rakenteelliset palkkatiedot.',
+    specsTitle: 'Tekniset erittelyt', specs: [
+      { label: 'Protokolla', value: 'REST HTTPS:n yli' }, { label: 'Muoto', value: 'JSON (UTF-8)' }, { label: 'Tunnistus', value: 'Bearer-token' },
+      { label: 'Raja (Kumppani)', value: '10 000 pyyntoa/paiva' }, { label: 'Raja (Yritys)', value: 'Rajoittamaton' }, { label: 'Sandbox', value: 'Taysi testiymparisto' },
+      { label: 'SLA', value: '99,9% saatavuus' }, { label: 'Kattavuus', value: '15 EU-maata, 21 ammattia, 4 tasoa' }, { label: 'Paivitys', value: 'Kuukausittain' }, { label: 'Viive', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Tulonjako-malli', revenueDesc: 'Ansaitse toistuvia tuloja ohjaamalla kayttajia EuroSalary Premiumiin.',
+    revenueItems: ['20% toistuva provisio', 'Kohdistus API-avaimen kautta', 'Kuukausittaiset maksut SEPA tai PayPal', 'Reaaliaikainen tulonakeyma', 'Ei minimivoluumia'],
+    sandboxTitle: 'Sandbox-ymparisto', sandboxDesc: 'Jokainen API-kumppani saa valittoman paasyn tayteen sandbox-ymparistoon realistisella testitiedolla.',
+    contactTitle: 'Hae API-kumppanuutta', contactDesc: 'Kuvaile alustasi ja integraatiosuunnitelmasi. Kasittelemme hakemukset 24 tunnissa.',
+    formLabels: { company: 'Yrityksen nimi', email: 'Tyosahkoposti', integrationType: 'Integraatiotyyppi', currentUsers: 'Nykyiset kayttajat', message: 'Kuvaile integraatiosuunnitelmasi', submit: 'Hae API-paasyy' },
+    integrationOptions: ['ATS / Rekrytointialusta', 'HRIS / Henkilostohallinto', 'Palkkaohjelmisto', 'Tyopaikkasivusto / Markkinapaikka', 'Palkitsemiskonsultointityokalu', 'Muu HR-teknologia'],
+    faq: [
+      { question: 'Mita tietoja EuroSalary API palauttaa?', answer: 'Vuosipalkka (mediaani, P25, P75), nettopalkka-arviot, elinkustannusindeksi, minimipalkka ja metatiedot. 15 EU-maata, 21 ammattia, 4 tasoa.' },
+      { question: 'Kuinka kauan integraatio kestaa?', answer: 'Useimmat kumppanit saavat tuotantointegraation valmiiksi 1-2 viikossa.' },
+      { question: 'Mitka ovat nopeusrajat?', answer: '10 000 pyyntoa paivassa kumppaneille, rajoittamaton yrityksille. 99,9% SLA.' },
+      { question: 'Miten 20% tulonjako toimii?', answer: 'Viittaukset kohdistetaan automaattisesti API-avaimellesi. Ansaitset 20% jokaisesta kuukausimaksusta.' },
+      { question: 'Onko testaussandbox saatavilla?', answer: 'Kylla. Valition paasy sandboxiin realistisella testitiedolla.' },
+      { question: 'Voinko saada mukautettuja paatepisteita?', answer: 'Yrityskumppanit voivat pyytaa mukautettuja paatepisteita, vastauskaavioita ja webhookeja.' },
+    ],
+  },
+  el: {
+    h1: 'Pos mporite na entaxete ta dedomena misthon tou EuroSalary stin platforma HR sas?',
+    metaTitle: 'Synergasia API: entaxte dedomena misthon sto ATS, HRIS i misthodosias sas | EuroSalary.eu',
+    metaDesc: 'Entaxte ta dedomena misthon tou EuroSalary sto ATS, HRIS i logismiko misthodosias sas. REST API, JSON, sandbox kai 20% merismatos esodon.',
+    home: 'Archiki', partners: 'Synergates', breadcrumb: 'Synergasia API',
+    introAnswer: 'To EuroSalary prosferi ena REST API pou epitrepei se promitheftes ATS, HRIS kai misthodosias na entaxoun evropaika benchmarks misthon se pragmatiko chrono, me 20% merisma esodon.',
+    tldr: ['REST API me JSON apantiseis gia 15 chores EE, 21 theseis kai 4 epipeda', 'Sandbox perivallon me dokimastika dedomena', '20% epanalamvanomena esoda apo kathe syndromi pou parapepmfthike'],
+    heroSubtitle: 'Eite chtizete ATS, HRIS eite systima misthodosias, i entaxi dedomenon EuroSalary prosferei stous christes sas noimosyni misthon se pragmatiko chrono.',
+    whyTitle: 'Periptoseis chrisis', useCases: [
+      { title: 'Protaseis misthon ATS', desc: 'Emfaniste fasma misthon agoras apeftheias se formes dimosieysis theseon.', icon: 'work' },
+      { title: 'Benchmarking misthodosias', desc: 'Entaxte benchmarks misthon se dashboards misthodosias.', icon: 'account_balance' },
+      { title: 'HRIS schediasmos apodochon', desc: 'Trofodotiste etisious kyklous anatheoriseis apodochon me dedomena agoras.', icon: 'analytics' },
+      { title: 'Insights misthon job board', desc: 'Emplotiste anggelies ergasias me dedomena diafaneias misthon.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Architektoniki entaxis', archDesc: 'Mia apli diadikasia tessaron viamton syndei tin platforma sas me ta dedomena EuroSalary.',
+    archSteps: [
+      { step: 'Pistopoiisi', desc: 'Zitiste ena API klidi apo to panel synergaton sas.' },
+      { step: 'Erotima', desc: 'Steile GET aitimata me parametrous choras, thesis kai epipedou.' },
+      { step: 'Cache', desc: 'Apothikefste tis apantiseis se cache eos 24 ores.' },
+      { step: 'Emfanisi', desc: 'Apodote ta benchmarks misthon native sto UI sas.' },
+    ],
+    codeTitle: 'Paradeigma API', codeDesc: 'Ena mono GET aitima epistrefei domimena dedomena misthon.',
+    specsTitle: 'Technikes prodiagrafes', specs: [
+      { label: 'Protokollo', value: 'REST meso HTTPS' }, { label: 'Morfi', value: 'JSON (UTF-8)' }, { label: 'Pistopoiisi', value: 'Bearer token' },
+      { label: 'Orio (Synergatis)', value: '10.000 aitimata/imera' }, { label: 'Orio (Enterprise)', value: 'Aperioristo' }, { label: 'Sandbox', value: 'Plires perivallon dokimon' },
+      { label: 'SLA', value: '99,9% diathesimotita' }, { label: 'Kalypsi', value: '15 chores EE, 21 theseis, 4 epipeda' }, { label: 'Enimerosi', value: 'Miniaia' }, { label: 'Kathistierisi', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Montelo merismatos esodon', revenueDesc: 'Kerdiste epanalamvanomena esoda parapempontas christes sto EuroSalary Premium.',
+    revenueItems: ['20% epanalamvanomeni promitheia', 'Apodosi meso API klidiou', 'Miniees plihromes SEPA i PayPal', 'Dashboard esodon se pragmatiko chrono', 'Choris elachisto ogko'],
+    sandboxTitle: 'Perivallon Sandbox', sandboxDesc: 'Kathe synergatis API lamvanei amesi prosvasi se plires sandbox me realistika dokimastika dedomena.',
+    contactTitle: 'Aitisi gia synergasia API', contactDesc: 'Perigrapste tin platforma sas kai ta schedia entaxis. Axiologoume aitiseis entos 24 oron.',
+    formLabels: { company: 'Onoma etaireias', email: 'Epaggelmatiko email', integrationType: 'Typos entaxis', currentUsers: 'Trechontes christes', message: 'Perigrapste ta schedia entaxis sas', submit: 'Aitisi gia prosvasi API' },
+    integrationOptions: ['ATS / Platforma proslipseon', 'HRIS / Diacheirisi prosopikou', 'Logismiko misthodosias', 'Job board / Marketplace', 'Ergaleio symvouleftikis apodochon', 'Alli technologia HR'],
+    faq: [
+      { question: 'Ti dedomena epistrefei to API tou EuroSalary?', answer: 'Etisios misthos (diamessos, P25, P75), ektimiseis katharou misthou, deiktis kostous zois, katotatos misthos kai metadata. 15 chores EE, 21 theseis, 4 epipeda.' },
+      { question: 'Poso chrono pernei i entaxi?', answer: 'Oi perissoteroi synergates oloklironoun tin entaxi se 1-2 evdomades.' },
+      { question: 'Poia einai ta oria rithmou?', answer: '10.000 aitimata tin imera gia synergates, aperiorista gia enterprise. SLA 99,9%.' },
+      { question: 'Pos leitourgei to 20% merisma esodon?', answer: 'I parapompi apodidete aftomata sto API klidi sas. Kerdizete 20% kathe minieas pliromes.' },
+      { question: 'Yparchi sandbox gia dokimes?', answer: 'Nai. Amesi prosvasi sandbox me realistika dokimastika dedomena.' },
+      { question: 'Mporo na lavo proarmismena endpoints?', answer: 'Enterprise synergates mporoun na zitisoun proarmismena endpoints, schemata apantiseon kai webhooks.' },
+    ],
+  },
+  hu: {
+    h1: 'Hogyan integralhato az EuroSalary adat a HR platformjaba?',
+    metaTitle: 'API partnerseg: integralja a beradata az ATS, HRIS vagy berszamfejtesbe | EuroSalary.eu',
+    metaDesc: 'Integralja az EuroSalary beradatait ATS, HRIS vagy berszamfejto platformjaba. REST API, JSON, sandbox es 20% bevetelmegozstas.',
+    home: 'Fooldal', partners: 'Partnerek', breadcrumb: 'API partnerseg',
+    introAnswer: 'Az EuroSalary REST API-t kinal ATS, HRIS es berszamfejto szallitoknak europai berenchmarkok valos ideju integralasahoz, 20% bevetelmegosztassal.',
+    tldr: ['REST API JSON valaszokkal 15 EU orszag, 21 munkakor es 4 szint', 'Sandbox kornyezet tesztadatokkal', '20% ismetlodo bevetelek minden ajanlott elofizetesebol'],
+    heroSubtitle: 'Akar ATS-t, HRIS-t vagy berszamfejto rendszert epit, az EuroSalary adatok integralaasa valos ideju berintelligenciat biztosit.',
+    whyTitle: 'Felhasznalasi esetek', useCases: [
+      { title: 'ATS berjavaslatok', desc: 'Jelenitse meg a piaci bersavokat kozvetlenul az allashirdetes urlapokon.', icon: 'work' },
+      { title: 'Berszamfejto benchmarking', desc: 'Integraljon ber-benchmarkokat a berszamfejto iranyitopultokba.', icon: 'account_balance' },
+      { title: 'HRIS javadalmazas tervezes', desc: 'Tamogassa az eves javadalmazasi felulvizsgalatokat valos ideju piaci adatokkal.', icon: 'analytics' },
+      { title: 'Allasborsak berperspektivak', desc: 'Gazdagitsa az allashirdeteseket beratlathatosagi adatokkal.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Integracios architektura', archDesc: 'Egy egyszeru negylepeses folyamat osszekoti platformjat az EuroSalary adatokkal.',
+    archSteps: [
+      { step: 'Hitelesites', desc: 'Kerjen API kulcsot a partneri iranyitopultrol.' },
+      { step: 'Lekerdezes', desc: 'Kuldjeon GET kereseket orszag-, munkakor- es szintparameterekkel.' },
+      { step: 'Gyorsitotarazas', desc: 'Tarolja a valaszokat gyorsitotarban akar 24 oraig.' },
+      { step: 'Megjelenites', desc: 'Renderje a ber-benchmarkokat nativan a feluleteben.' },
+    ],
+    codeTitle: 'API pelda', codeDesc: 'Egyetlen GET keres strukturalt beradatokat ad vissza.',
+    specsTitle: 'Muszaki specifikaciok', specs: [
+      { label: 'Protokoll', value: 'REST HTTPS-en' }, { label: 'Formatum', value: 'JSON (UTF-8)' }, { label: 'Hitelesites', value: 'Bearer token' },
+      { label: 'Korlat (Partner)', value: '10.000 keres/nap' }, { label: 'Korlat (Vallalat)', value: 'Korlatlan' }, { label: 'Sandbox', value: 'Teljes tesztkornyezet' },
+      { label: 'SLA', value: '99,9% elerehetoseg' }, { label: 'Lefedes', value: '15 EU orszag, 21 munkakor, 4 szint' }, { label: 'Frissites', value: 'Havi' }, { label: 'Kesleletes', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Bevetelmegosztasi modell', revenueDesc: 'Szerezzen ismetlodo bevetelt felhasznalok EuroSalary Premiumhoz iranyitasaval.',
+    revenueItems: ['20% ismetlodo jutalek', 'Hozzarendeles API kulcson keresztul', 'Havi kifizetesek SEPA vagy PayPal', 'Valos ideju beveteli iranyitopult', 'Nincs minimum volumen'],
+    sandboxTitle: 'Sandbox kornyezet', sandboxDesc: 'Minden API partner azonnali hozzaferest kap teljes sandbox kornyezethez realisztikus tesztadatokkal.',
+    contactTitle: 'Palyazzon API partnersegre', contactDesc: 'Irja le platformjat es integracios terveit. Palyazatokat 24 oran belul ertekeljuk.',
+    formLabels: { company: 'Cegnev', email: 'Munkahelyi email', integrationType: 'Integracio tipusa', currentUsers: 'Jelenlegi felhasznalok', message: 'Irja le integracios terveit', submit: 'API hozzaferes igenylese' },
+    integrationOptions: ['ATS / Toborzasi platform', 'HRIS / Szemelyzeti menedzsment', 'Berszamfejto szoftver', 'Allasborsza / Piacter', 'Javadalmazasi tanacsado eszkoz', 'Egyeb HR technologia'],
+    faq: [
+      { question: 'Milyen adatokat ad vissza az EuroSalary API?', answer: 'Eves brutto ber (median, P25, P75), netto berbecslesek, megelhetes koltseg index, minimulber es metaadatok. 15 EU orszag, 21 munkakor, 4 szint.' },
+      { question: 'Mennyi ideig tart az integracio?', answer: 'A legtobb partner 1-2 het alatt befejezi a produkcios integraciot.' },
+      { question: 'Mik a sebessegkorlatok?', answer: 'Napi 10.000 keres partnereknek, korlatlan vallalatoknak. 99,9% SLA.' },
+      { question: 'Hogyan mukodik a 20% bevetelmegoosztas?', answer: 'Az ajanlas automatikusan hozzarendelodik az API kulcsahoz. Havonta a kifizetesek 20%-at keresi.' },
+      { question: 'Van sandbox testeleesre?', answer: 'Igen. Azonnali sandbox hozzaferes realisztikus tesztadatokkal.' },
+      { question: 'Kaphatok egyedi endpointok?', answer: 'Vallalati partnerek kerheetnek egyedi endpointokat, valaszschemakat es webhookokat.' },
+    ],
+  },
+  sk: {
+    h1: 'Ako mozete integrovat data EuroSalary do vasej HR platformy?',
+    metaTitle: 'API partnerstv: integrujte platove data do ATS, HRIS alebo payrollu | EuroSalary.eu',
+    metaDesc: 'Integrujte platove data EuroSalary do ATS, HRIS alebo mzdoveho softveru. REST API, JSON, sandbox a 20% podiel na prijmoch.',
+    home: 'Domov', partners: 'Partneri', breadcrumb: 'API partnerstvo',
+    introAnswer: 'EuroSalary ponuka REST API umoznujuce dodavatelom ATS, HRIS a payrollu integrovat europske platove benchmarky v realnom case s 20% podielom na prijmoch.',
+    tldr: ['REST API s JSON odpovedami pre 15 krajin EU, 21 pozicii a 4 urovne', 'Sandbox prostredie s testovacimi datami', '20% opakovanych prijmov z kazdeho doporuceneho predplatneho'],
+    heroSubtitle: 'Ci uz staviate ATS, HRIS alebo mzdovy system, integracia dat EuroSalary dava uzivatelom platovu inteligenciu v realnom case.',
+    whyTitle: 'Pripady pouzitia', useCases: [
+      { title: 'ATS platove navrhy', desc: 'Zobrazujte trzne platove pasma priamo vo formularoch pracovnych ponuk.', icon: 'work' },
+      { title: 'Payroll benchmarking', desc: 'Integrujte platove benchmarky do payroll dashboardov.', icon: 'account_balance' },
+      { title: 'HRIS planovanie odmien', desc: 'Napajajte rocne cykly revizie odmien trznymi datami.', icon: 'analytics' },
+      { title: 'Job board platove insighty', desc: 'Obohatite pracovne ponuky datami o platovej transparentnosti.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Architektura integracie', archDesc: 'Jednoduchy styrkrokovy proces spoji vasu platformu s datami EuroSalary.',
+    archSteps: [
+      { step: 'Autentifikacia', desc: 'Poziadajte o API kluc z partnerske nastenky.' },
+      { step: 'Dopyt', desc: 'Posielajte GET poziadavky s parametrami krajiny, pozicie a urovne.' },
+      { step: 'Cache', desc: 'Cachujte odpovede az 24 hodin.' },
+      { step: 'Zobrazenie', desc: 'Renderujte platove benchmarky nativne vo vasom UI.' },
+    ],
+    codeTitle: 'Priklad API', codeDesc: 'Jediny GET poziadavok vrati strukturovane platove data.',
+    specsTitle: 'Technicke specifikacie', specs: [
+      { label: 'Protokol', value: 'REST cez HTTPS' }, { label: 'Format', value: 'JSON (UTF-8)' }, { label: 'Autentifikacia', value: 'Bearer token' },
+      { label: 'Limit (Partner)', value: '10 000 poziadavkov/den' }, { label: 'Limit (Enterprise)', value: 'Neobmedzeny' }, { label: 'Sandbox', value: 'Uplne testovacie prostredie' },
+      { label: 'SLA', value: '99,9% dostupnost' }, { label: 'Pokrytie', value: '15 krajin EU, 21 pozicii, 4 urovne' }, { label: 'Aktualizacia', value: 'Mesacna' }, { label: 'Latencia', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Model zdielania prijmov', revenueDesc: 'Zarabajte opakovane prijmy doporucovanim uzivatelov na EuroSalary Premium.',
+    revenueItems: ['20% opakovana provizia', 'Atribucia cez API kluc', 'Mesacne vyplaty SEPA alebo PayPal', 'Dashboard prijmov v realnom case', 'Ziadny minimalny objem'],
+    sandboxTitle: 'Sandbox prostredie', sandboxDesc: 'Kazdy API partner ziska okamzity pristup k uplnemu sandboxu s realistickymi testovacimi datami.',
+    contactTitle: 'Poziadajte o API partnerstvo', contactDesc: 'Popiste svoju platformu a plany integracie. Ziadosti posudime do 24 hodin.',
+    formLabels: { company: 'Nazov firmy', email: 'Pracovny email', integrationType: 'Typ integracie', currentUsers: 'Sucasni pouzivatelia', message: 'Popiste svoje plany integracie', submit: 'Poziadat o API pristup' },
+    integrationOptions: ['ATS / Naborova platforma', 'HRIS / Sprava personalu', 'Mzdovy softver', 'Job board / Trhovisko', 'Nastroj pre poradenstvo v odmenach', 'Ina HR technologia'],
+    faq: [
+      { question: 'Ake data API EuroSalary vracia?', answer: 'Hruby rocny plat (median, P25, P75), odhady cisteho platu, index zivota, minimalnu mzdu a metadata. 15 krajin EU, 21 pozicii, 4 urovne.' },
+      { question: 'Ako dlho trva integracia?', answer: 'Vacsina partnerov dokonci produkciu integraciu za 1-2 tyzdne.' },
+      { question: 'Ake su limity poziadavkov?', answer: '10 000 poziadavkov denne pre partnerov, neobmedzene pre enterprise. SLA 99,9%.' },
+      { question: 'Ako funguje 20% podiel na prijmoch?', answer: 'Odporucanie je automaticky priradene vasmu API klucu. Zarabate 20% kazdej mesacnej platby.' },
+      { question: 'Existuje sandbox na testovanie?', answer: 'Ano. Okamzity pristup k sandboxu s realistickymi testovacimi datami.' },
+      { question: 'Mozem ziskat vlastne endpointy?', answer: 'Enterprise partneri mozu poziadovat vlastne endpointy, schemy odpovedi a webhooky.' },
+    ],
+  },
+  bg: {
+    h1: 'Kak mozhete da integrirate danni ot EuroSalary vuv vashata HR platforma?',
+    metaTitle: 'API partnyorstvo: integrirajte danni za zaplati v ATS, HRIS ili payroll | EuroSalary.eu',
+    metaDesc: 'Integrirajte danni za zaplati ot EuroSalary v ATS, HRIS ili payroll platforma. REST API, JSON, sandbox i 20% spodelyane na prihodi.',
+    home: 'Nachalo', partners: 'Partnyori', breadcrumb: 'API partnyorstvo',
+    introAnswer: 'EuroSalary predlaga REST API, koeto pozvolyava na dostavchici na ATS, HRIS i payroll da integriraat evropejski benchmarkove za zaplati v realno vreme, s 20% spodelyane na prihodi.',
+    tldr: ['REST API s JSON otgovori za 15 strani ot ES, 21 pozicii i 4 niva', 'Sandbox sreda s testovi danni', '20% povtaryashti se prihodi ot vsyako preporachano predplatno'],
+    heroSubtitle: 'Nezavisimo dali stroite ATS, HRIS ili sistema za zaplati, integriraneto na danni ot EuroSalary dava na potrebitelite vi inteligentnost za zaplatite v realno vreme.',
+    whyTitle: 'Sluchai na upotreba', useCases: [
+      { title: 'ATS predlozheniya za zaplati', desc: 'Pokazhete pazarni obhvati na zaplatite direktno vuv formi za obyavi za rabota.', icon: 'work' },
+      { title: 'Payroll benchmarking', desc: 'Integrirajte benchmarkove za zaplati v payroll dashboardove.', icon: 'account_balance' },
+      { title: 'HRIS planirane na vuznagrazhdeniya', desc: 'Poddarzhajte godishni cikli na pregled na vuznagrazhdeniya s pazarni danni.', icon: 'analytics' },
+      { title: 'Job board insajti za zaplati', desc: 'Obogatete obyavite za rabota s danni za prozrachnost na zaplatite.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Arhitektura na integratsiya', archDesc: 'Prost proces ot chetiri stapki svurzva platformata vi s dannite na EuroSalary.',
+    archSteps: [
+      { step: 'Avtentifikatsiya', desc: 'Poiskajte API klyuch ot panela za partnyori.' },
+      { step: 'Zapitka', desc: 'Izpratete GET zayavki s parametri za strana, pozitsiya i nivo.' },
+      { step: 'Keshirane', desc: 'Keshirajte otgovorite do 24 chasa.' },
+      { step: 'Pokazvane', desc: 'Renderirajte benchmarkove za zaplati nativno vuv vashiya UI.' },
+    ],
+    codeTitle: 'Primer za API', codeDesc: 'Edna GET zayavka vrashta strukturirani danni za zaplati.',
+    specsTitle: 'Tehnicheski spetsifikatsii', specs: [
+      { label: 'Protokol', value: 'REST prez HTTPS' }, { label: 'Format', value: 'JSON (UTF-8)' }, { label: 'Avtentifikatsiya', value: 'Bearer token' },
+      { label: 'Limit (Partnyori)', value: '10 000 zayavki/den' }, { label: 'Limit (Enterprise)', value: 'Neogranichen' }, { label: 'Sandbox', value: 'Pulna testova sreda' },
+      { label: 'SLA', value: '99,9% nalichnost' }, { label: 'Pokriti', value: '15 strani ot ES, 21 pozitsii, 4 niva' }, { label: 'Aktualizatsiya', value: 'Mesechna' }, { label: 'Latentsiya', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Model za spodelyane na prihodi', revenueDesc: 'Pechelete povtaryashti se prihodi kato nasochvate potrebiteli kum EuroSalary Premium.',
+    revenueItems: ['20% povtaryashta se komisiona', 'Pripisane prez API klyuch', 'Mesechni plashcaniya SEPA ili PayPal', 'Dashboard za prihodi v realno vreme', 'Bez minimalen obem'],
+    sandboxTitle: 'Sandbox sreda', sandboxDesc: 'Vseki API partnyori poluchava nezabaven dostup do pulna sandbox sreda s realistichni testovi danni.',
+    contactTitle: 'Kandidatstvajte za API partnyorstvo', contactDesc: 'Opishete platformata si i planovete za integratsiya. Razglezhdame kandidaturi v ramkite na 24 chasa.',
+    formLabels: { company: 'Ime na firmata', email: 'Sluzheben email', integrationType: 'Tip integratsiya', currentUsers: 'Tekushti potrebiteli', message: 'Opishete planovete si za integratsiya', submit: 'Kandidatstvajte za API dostup' },
+    integrationOptions: ['ATS / Platforma za nabirane', 'HRIS / Upravlenie na personala', 'Payroll softuer', 'Job board / Pazarno myasto', 'Instrument za konsultirane po vuznagrazhdeniya', 'Druga HR tehnologiya'],
+    faq: [
+      { question: 'Kakvi danni vrashta API na EuroSalary?', answer: 'Godishna bruto zaplata (mediana, P25, P75), otsenki na neto zaplata, indeks na zhivot, minimalna zaplata i metadanni. 15 strani ot ES, 21 pozitsii, 4 niva.' },
+      { question: 'Kolko vreme otiva integratsiyata?', answer: 'Povechieto partnyori zavurshvat produkcionna integratsiya za 1-2 sedmitsi.' },
+      { question: 'Kakvi sa limitite na skorost?', answer: '10 000 zayavki na den za partnyori, neogranicheni za enterprise. SLA 99,9%.' },
+      { question: 'Kak raboti 20% spodelyaneto na prihodi?', answer: 'Prepratkata se pripisva avtomatichno na vashiya API klyuch. Pechelite 20% ot vsyako mesechno plashtane.' },
+      { question: 'Ima li sandbox za testove?', answer: 'Da. Nezabaven dostup do sandbox s realistichni testovi danni.' },
+      { question: 'Moga li da polucha personalizirani endpointi?', answer: 'Enterprise partnyori mogat da iskat personalizirani endpointi, shemi na otgovori i webhookove.' },
+    ],
+  },
+  hr: {
+    h1: 'Kako mozete integrirati EuroSalary podatke u svoju HR platformu?',
+    metaTitle: 'API partnerstvo: integrirajte podatke o placama u ATS, HRIS ili obracun placa | EuroSalary.eu',
+    metaDesc: 'Integrirajte EuroSalary podatke o placama u ATS, HRIS ili software za obracun placa. REST API, JSON, sandbox i 20% dijeljenja prihoda.',
+    home: 'Pocetna', partners: 'Partneri', breadcrumb: 'API partnerstvo',
+    introAnswer: 'EuroSalary nudi REST API koji omogucuje dobavljacima ATS, HRIS i obracuna placa integraciju europskih referentnih placa u stvarnom vremenu uz 20% dijeljenja prihoda.',
+    tldr: ['REST API s JSON odgovorima za 15 EU zemalja, 21 radno mjesto i 4 razine', 'Sandbox okruzenje s testnim podacima', '20% ponavljajucih prihoda od svake preporucene pretplate'],
+    heroSubtitle: 'Bez obzira gradite li ATS, HRIS ili sustav za obracun placa, integracija EuroSalary podataka pruza korisnicima inteligenciju o placama u stvarnom vremenu.',
+    whyTitle: 'Slucajevi koristenja', useCases: [
+      { title: 'ATS prijedlozi placa', desc: 'Prikazite trzisne raspone placa izravno u obrascima za objavu poslova.', icon: 'work' },
+      { title: 'Benchmarking placa', desc: 'Integrirajte referentne place u nadzorne ploce za obracun placa.', icon: 'account_balance' },
+      { title: 'HRIS planiranje naknada', desc: 'Podrzite godisnje cikluse pregleda naknada trzisnim podacima.', icon: 'analytics' },
+      { title: 'Job board uvidi u place', desc: 'Obogatite oglase za posao podacima o transparentnosti placa.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Arhitektura integracije', archDesc: 'Jednostavan proces u cetiri koraka povezuje vasu platformu s EuroSalary podacima.',
+    archSteps: [
+      { step: 'Autentifikacija', desc: 'Zatrazite API kljuc s partnerske ploce.' },
+      { step: 'Upit', desc: 'Posaljite GET zahtjeve s parametrima zemlje, radnog mjesta i razine.' },
+      { step: 'Kesiranje', desc: 'Kesirajte odgovore do 24 sata.' },
+      { step: 'Prikaz', desc: 'Renderirajte referentne place nativno u svom sucelju.' },
+    ],
+    codeTitle: 'API primjer', codeDesc: 'Jedan GET zahtjev vraca strukturirane podatke o placama.',
+    specsTitle: 'Tehnicke specifikacije', specs: [
+      { label: 'Protokol', value: 'REST preko HTTPS' }, { label: 'Format', value: 'JSON (UTF-8)' }, { label: 'Autentifikacija', value: 'Bearer token' },
+      { label: 'Ogranicenje (Partner)', value: '10.000 zahtjeva/dan' }, { label: 'Ogranicenje (Enterprise)', value: 'Neograniceno' }, { label: 'Sandbox', value: 'Potpuno testno okruzenje' },
+      { label: 'SLA', value: '99,9% dostupnost' }, { label: 'Pokrivenost', value: '15 EU zemalja, 21 radno mjesto, 4 razine' }, { label: 'Azuriranje', value: 'Mjesecno' }, { label: 'Latencija', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Model dijeljenja prihoda', revenueDesc: 'Zaradujte ponavljajuce prihode preporucujuci korisnike na EuroSalary Premium.',
+    revenueItems: ['20% ponavljajuca provizija', 'Pripisivanje putem API kljuca', 'Mjesecne isplate SEPA ili PayPal', 'Nadzorna ploca prihoda u stvarnom vremenu', 'Bez minimalnog volumena'],
+    sandboxTitle: 'Sandbox okruzenje', sandboxDesc: 'Svaki API partner dobiva trenutni pristup potpunom sandboxu s realisticnim testnim podacima.',
+    contactTitle: 'Prijavite se za API partnerstvo', contactDesc: 'Opisite svoju platformu i planove integracije. Prijave pregledavamo unutar 24 sata.',
+    formLabels: { company: 'Naziv tvrtke', email: 'Poslovni email', integrationType: 'Vrsta integracije', currentUsers: 'Trenutni korisnici', message: 'Opisite svoje planove integracije', submit: 'Prijavite se za API pristup' },
+    integrationOptions: ['ATS / Platforma za zaposlljavanje', 'HRIS / Upravljanje osobljem', 'Software za obracun placa', 'Job board / Trziste', 'Alat za savjetovanje o naknadama', 'Druga HR tehnologija'],
+    faq: [
+      { question: 'Koje podatke vraca EuroSalary API?', answer: 'Godisnja bruto placa (medijan, P25, P75), procjene neto place, indeks troskova zivota, minimalna placa i metapodaci. 15 EU zemalja, 21 radno mjesto, 4 razine.' },
+      { question: 'Koliko dugo traje integracija?', answer: 'Vecina partnera zavrsi produkcijsku integraciju u 1-2 tjedna.' },
+      { question: 'Koja su ogranicenja brzine?', answer: '10.000 zahtjeva dnevno za partnere, neograniceno za enterprise. SLA 99,9%.' },
+      { question: 'Kako funkcionira 20% dijeljenje prihoda?', answer: 'Preporuka se automatski pripisuje vasem API kljucu. Zaradujete 20% svake mjesecne uplate.' },
+      { question: 'Postoji li sandbox za testiranje?', answer: 'Da. Trenutni pristup sandboxu s realisticnim testnim podacima.' },
+      { question: 'Mogu li dobiti prilagodene endpointe?', answer: 'Enterprise partneri mogu zatraziti prilagodene endpointe, sheme odgovora i webhookove.' },
+    ],
+  },
+  sl: {
+    h1: 'Kako lahko integrirate podatke EuroSalary v svojo HR platformo?',
+    metaTitle: 'API partnerstvo: integrirajte podatke o placah v ATS, HRIS ali obracun plac | EuroSalary.eu',
+    metaDesc: 'Integrirajte podatke o placah EuroSalary v ATS, HRIS ali programsko opremo za obracun plac. REST API, JSON, sandbox in 20% delitev prihodkov.',
+    home: 'Domov', partners: 'Partnerji', breadcrumb: 'API partnerstvo',
+    introAnswer: 'EuroSalary ponuja REST API, ki dobaviteljem ATS, HRIS in obracuna plac omogoca integracijo evropskih referencnih plac v realnem casu z 20% delitvijo prihodkov.',
+    tldr: ['REST API z JSON odgovori za 15 drzav EU, 21 delovnih mest in 4 ravni', 'Sandbox okolje s testnimi podatki', '20% ponavljajocih prihodkov iz vsake priporocene narocnine'],
+    heroSubtitle: 'Ne glede na to ali gradite ATS, HRIS ali sistem za obracun plac, integracija podatkov EuroSalary zagotavlja uporabnikom inteligenco o placah v realnem casu.',
+    whyTitle: 'Primeri uporabe', useCases: [
+      { title: 'ATS predlogi plac', desc: 'Prikazite trzne razpone plac neposredno v obrazcih za objavo delovnih mest.', icon: 'work' },
+      { title: 'Benchmarking plac', desc: 'Integrirajte referncne place v nadzorne plosce za obracun plac.', icon: 'account_balance' },
+      { title: 'HRIS nacrtovanje nagrajevanja', desc: 'Podprite letne cikle pregleda nagrajevanja s trznimi podatki.', icon: 'analytics' },
+      { title: 'Job board vpogledi v place', desc: 'Obogatite oglase za delo s podatki o preglednosti plac.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Arhitektura integracije', archDesc: 'Preprost stiristopenjski postopek poveze vaso platformo s podatki EuroSalary.',
+    archSteps: [
+      { step: 'Avtentikacija', desc: 'Zahtevajte API kljuc s partnerske nadzorne plosce.' },
+      { step: 'Poizvedba', desc: 'Posljite GET zahteve s parametri drzave, delovnega mesta in ravni.' },
+      { step: 'Predpomnenje', desc: 'Predpomnite odgovore do 24 ur.' },
+      { step: 'Prikaz', desc: 'Upodobite referncne place nativno v svojem vmesniku.' },
+    ],
+    codeTitle: 'API primer', codeDesc: 'En sam GET zahtev vrne strukturirane podatke o placah.',
+    specsTitle: 'Tehnicne specifikacije', specs: [
+      { label: 'Protokol', value: 'REST prek HTTPS' }, { label: 'Format', value: 'JSON (UTF-8)' }, { label: 'Avtentikacija', value: 'Bearer token' },
+      { label: 'Omejitev (Partner)', value: '10.000 zahtev/dan' }, { label: 'Omejitev (Enterprise)', value: 'Neomejeno' }, { label: 'Sandbox', value: 'Polno testno okolje' },
+      { label: 'SLA', value: '99,9% razpolozljivost' }, { label: 'Pokritost', value: '15 drzav EU, 21 delovnih mest, 4 ravni' }, { label: 'Posodobitev', value: 'Mesecna' }, { label: 'Zakasnitev', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Model delitve prihodkov', revenueDesc: 'Zasluzite ponavljajoce prihodke z usmerjanjem uporabnikov na EuroSalary Premium.',
+    revenueItems: ['20% ponavljajoca provizija', 'Dodelitev prek API kljuca', 'Mesecna izplacila SEPA ali PayPal', 'Nadzorna plosca prihodkov v realnem casu', 'Brez minimalnega obsega'],
+    sandboxTitle: 'Sandbox okolje', sandboxDesc: 'Vsak API partner dobi takojsen dostop do polnega sandboxa z realisticnimi testnimi podatki.',
+    contactTitle: 'Prijavite se za API partnerstvo', contactDesc: 'Opisite svojo platformo in nacrte integracije. Prijave pregledamo v 24 urah.',
+    formLabels: { company: 'Ime podjetja', email: 'Sluzbeni email', integrationType: 'Vrsta integracije', currentUsers: 'Trenutni uporabniki', message: 'Opisite nacrte integracije', submit: 'Prijavite se za API dostop' },
+    integrationOptions: ['ATS / Platforma za zaposlovanje', 'HRIS / Upravljanje osebja', 'Programska oprema za obracun plac', 'Job board / Trznica', 'Orodje za svetovanje o nagrajevanju', 'Druga HR tehnologija'],
+    faq: [
+      { question: 'Katere podatke vraca EuroSalary API?', answer: 'Letna bruto placa (mediana, P25, P75), ocene neto place, indeks stroskov zivljenja, minimalna placa in metapodatki. 15 drzav EU, 21 delovnih mest, 4 ravni.' },
+      { question: 'Koliko casa traja integracija?', answer: 'Vecina partnerjev zaklujci produkcijsko integracijo v 1-2 tednih.' },
+      { question: 'Kakasne so omejitve hitrosti?', answer: '10.000 zahtev na dan za partnerje, neomejeno za enterprise. SLA 99,9%.' },
+      { question: 'Kako deluje 20% delitev prihodkov?', answer: 'Priporocilo se samodejno dodeli vasemu API kljucu. Zasluzite 20% vsakega mesecnega placila.' },
+      { question: 'Ali obstaja sandbox za testiranje?', answer: 'Da. Takojsen dostop do sandboxa z realisticnimi testnimi podatki.' },
+      { question: 'Ali lahko dobim prilagojene koncne tocke?', answer: 'Enterprise partnerji lahko zahtevajo prilagojene koncne tocke, sheme odgovorov in webhooke.' },
+    ],
+  },
+  lt: {
+    h1: 'Kaip galite integruoti EuroSalary duomenis i savo HR platforma?',
+    metaTitle: 'API partneryste: integruokite atlyginimo duomenis i ATS, HRIS ar darbo uzmokescio sistema | EuroSalary.eu',
+    metaDesc: 'Integruokite EuroSalary atlyginimo duomenis i ATS, HRIS ar darbo uzmokescio platforma. REST API, JSON, sandbox ir 20% pajamu dalijimas.',
+    home: 'Pradzia', partners: 'Partneriai', breadcrumb: 'API partneryste',
+    introAnswer: 'EuroSalary siulo REST API, leidzianti ATS, HRIS ir darbo uzmokescio tiekeejams integruoti europinius atlyginimo etalonus realiuoju laiku su 20% pajamu dalijimu.',
+    tldr: ['REST API su JSON atsakymais 15 ES saliu, 21 pareigybe ir 4 lygiams', 'Sandbox aplinka su testiniais duomenimis', '20% pasikartojancio pajamu is kiekvienos rekomenduotos prenumeratos'],
+    heroSubtitle: 'Nepriklausomai ar kuriate ATS, HRIS ar darbo uzmokescio sistema, EuroSalary duomenu integracija suteikia vartotojams atlyginimo zvalgybos informacija realiuoju laiku.',
+    whyTitle: 'Naudojimo atvejai', useCases: [
+      { title: 'ATS atlyginimo pasiulymai', desc: 'Rodykite rinkos atlyginimo diapazonus tiesiogiai darbo skelbimo formose.', icon: 'work' },
+      { title: 'Darbo uzmokescio lyginamoji analize', desc: 'Integruokite atlyginimo etalonus i darbo uzmokescio prietaisu skydelius.', icon: 'account_balance' },
+      { title: 'HRIS atlygio planavimas', desc: 'Paremkite metinius atlygio perziuros ciklus rinkos duomenimis realiuoju laiku.', icon: 'analytics' },
+      { title: 'Darbo skelbimu atlyginimo izvalgyos', desc: 'Praturtinkite darbo skelbimus atlyginimo skaidrumo duomenimis.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Integracijos architektura', archDesc: 'Paprastas keturiu zingsniu procesas sujungia jusu platforma su EuroSalary duomenimis.',
+    archSteps: [
+      { step: 'Autentifikacija', desc: 'Uzsakykite API rakta is partneriu skydelio.' },
+      { step: 'Uzklausimas', desc: 'Siuskite GET uzklausas su salies, pareigybese ir lygio parametrais.' },
+      { step: 'Kaupimas', desc: 'Kaupkite atsakymus iki 24 valandu.' },
+      { step: 'Rodymas', desc: 'Atvaizduokite atlyginimo etalonus tiesiogiai savo sasajoje.' },
+    ],
+    codeTitle: 'API pavyzdys', codeDesc: 'Viena GET uzklasa grazina strukturuotus atlyginimo duomenis.',
+    specsTitle: 'Technines specifikacijos', specs: [
+      { label: 'Protokolas', value: 'REST per HTTPS' }, { label: 'Formatas', value: 'JSON (UTF-8)' }, { label: 'Autentifikacija', value: 'Bearer token' },
+      { label: 'Limitas (Partneris)', value: '10 000 uzklausu/diena' }, { label: 'Limitas (Enterprise)', value: 'Neribota' }, { label: 'Sandbox', value: 'Pilna testine aplinka' },
+      { label: 'SLA', value: '99,9% pasiekiamumas' }, { label: 'Apimtis', value: '15 ES saliu, 21 pareigybe, 4 lygiai' }, { label: 'Atnaujinimas', value: 'Menesinis' }, { label: 'Velinimas', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Pajamu dalijimo modelis', revenueDesc: 'Uzsidirbkite pasikartojancio pajamu nukreipdami vartotojus i EuroSalary Premium.',
+    revenueItems: ['20% pasikartojanti komisija', 'Priskyrimas per API rakta', 'Menesiniai mokejimiai SEPA arba PayPal', 'Realaus laiko pajamu skydelis', 'Be minimalaus turo'],
+    sandboxTitle: 'Sandbox aplinka', sandboxDesc: 'Kiekvienas API partneris gauna neatideliotina prieiga prie pilnos sandbox aplinkos su realistiaskais testiniais duomenimis.',
+    contactTitle: 'Kreipkites del API partnerstes', contactDesc: 'Aprasykte savo platforma ir integracijos planus. Paraskas perziurime per 24 valandas.',
+    formLabels: { company: 'Imones pavadinimas', email: 'Darbo el. pastas', integrationType: 'Integracijos tipas', currentUsers: 'Dabartiniai vartotojai', message: 'Aprasykte savo integracijos planus', submit: 'Kreiptis del API prieigos' },
+    integrationOptions: ['ATS / Idarbinimo platforma', 'HRIS / Personalo valdymas', 'Darbo uzmokescio programine iranga', 'Darbo skelbimo svetaine / Prekyviene', 'Atlygio konsultavimo irankis', 'Kita HR technologija'],
+    faq: [
+      { question: 'Kokius duomenis grazina EuroSalary API?', answer: 'Metinis bruto atlyginimas (mediana, P25, P75), neto atlyginimo iverciiai, gyvenimo kainu indeksas, minimali alga ir metaduomenys. 15 ES saliu, 21 pareigybe, 4 lygiai.' },
+      { question: 'Kiek laiko uzima integracija?', answer: 'Dauguma partneriu uzbaigia produkciine integracija per 1-2 savaites.' },
+      { question: 'Kokie yra spartos limitai?', answer: '10 000 uzklausu per diena partneriams, neribota enterprise. SLA 99,9%.' },
+      { question: 'Kaip veikia 20% pajamu dalijimas?', answer: 'Rekomendacija automatiskai priskiriama jusu API raktui. Uzsidirbate 20% kiekvieno menesinio mokejimo.' },
+      { question: 'Ar yra sandbox testavimui?', answer: 'Taip. Neatideliotina sandbox prieiga su realistiaskais testiniais duomenimis.' },
+      { question: 'Ar galiu gauti pasirinktinius endpointus?', answer: 'Enterprise partneriai gali prasyti pasirinktiniu endpointu, atsakymu schemu ir webhook.' },
+    ],
+  },
+  lv: {
+    h1: 'Ka jus varat integreet EuroSalary datus sava HR platforma?',
+    metaTitle: 'API partneriba: integrejiet algu datus sava ATS, HRIS vai algu sistema | EuroSalary.eu',
+    metaDesc: 'Integrejiet EuroSalary algu datus sava ATS, HRIS vai algu platforma. REST API, JSON, sandbox un 20% ienakumu dalisana.',
+    home: 'Sakums', partners: 'Partneri', breadcrumb: 'API partneriba',
+    introAnswer: 'EuroSalary piedava REST API, kas lauj ATS, HRIS un algu piegadatajiem integreet Eiropas algu etalonus realaja laika ar 20% ienakumu dalisanu.',
+    tldr: ['REST API ar JSON atbildem 15 ES valsitm, 21 amatam un 4 limeniem', 'Sandbox vide ar testa datiem', '20% atkartojosi ienakumi no katras ieteiktas abonesanas'],
+    heroSubtitle: 'Neatkarigi no ta vai veidojat ATS, HRIS vai algu sistemu, EuroSalary datu integracija sniedz lietotajiem algu intelektu realaja laika.',
+    whyTitle: 'Lietosanas gadijumi', useCases: [
+      { title: 'ATS algu ieteikumi', desc: 'Paradiet tirgus algu diapazonus tieai darba sludinajumu veidlapas.', icon: 'work' },
+      { title: 'Algu etalonsalidzinasana', desc: 'Integrejiet algu etalonus algu informacijas panelos.', icon: 'account_balance' },
+      { title: 'HRIS atlidzibas planosana', desc: 'Atbalstiet ikgadejus atlidzibas parskatisanas ciklus ar tirgus datiem.', icon: 'analytics' },
+      { title: 'Darba portala algu ieskati', desc: 'Bagatiiniet darba sludinajumus ar algu caurspidiibas datiem.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Integracijas arhitektura', archDesc: 'Vienkars cetru solu process savieno jusu platformu ar EuroSalary datiem.',
+    archSteps: [
+      { step: 'Autentifikacija', desc: 'Pieprasiet API atslegu no partneru panela.' },
+      { step: 'Vaicajums', desc: 'Nosutiet GET pieprasijumus ar valsts, amata un limena parametriem.' },
+      { step: 'Kesosana', desc: 'Kesojiet atbildes lidz 24 stundam.' },
+      { step: 'Atteelosana', desc: 'Attelojiet algu etalonus nativi sava saskarnet.' },
+    ],
+    codeTitle: 'API piemers', codeDesc: 'Viens GET pieprasijums atgriez strukturetus algu datus.',
+    specsTitle: 'Tehniskas specifikacijas', specs: [
+      { label: 'Protokols', value: 'REST pa HTTPS' }, { label: 'Formats', value: 'JSON (UTF-8)' }, { label: 'Autentifikacija', value: 'Bearer token' },
+      { label: 'Limits (Partneris)', value: '10 000 pieprasijumu/diena' }, { label: 'Limits (Uznemums)', value: 'Neierobezots' }, { label: 'Sandbox', value: 'Pilna testa vide' },
+      { label: 'SLA', value: '99,9% pieejamiba' }, { label: 'Parklajums', value: '15 ES valstis, 21 amats, 4 limeni' }, { label: 'Atjauninajums', value: 'Menesigais' }, { label: 'Aizkave', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Ienakumu dalisanas modelis', revenueDesc: 'Pelnet atkartojosus ienakumus novirzot lietotajus uz EuroSalary Premium.',
+    revenueItems: ['20% atkartojosa komisija', 'Piedeeveesana caur API atslegu', 'Ikkmenesa maksajumi SEPA vai PayPal', 'Reallaika ienakumu panelis', 'Nav minimala apjoma'],
+    sandboxTitle: 'Sandbox vide', sandboxDesc: 'Katrs API partneris sanem tuliteju pieeju pilnai sandbox videi ar realistiskiem testa datiem.',
+    contactTitle: 'Piesakieties API partneribai', contactDesc: 'Aprakstiet savu platformu un integracijas planus. Pieteikumus izskatam 24 stundu laika.',
+    formLabels: { company: 'Uznemuma nosaukums', email: 'Darba e-pasts', integrationType: 'Integracijas tips', currentUsers: 'Pasreizeije lietotaji', message: 'Aprakstiet savus integracijas planus', submit: 'Piesakities API pieejai' },
+    integrationOptions: ['ATS / Personala atlases platforma', 'HRIS / Personala vadiba', 'Algu programmat.', 'Darba portals / Tirgus vieta', 'Atlidzibas konsultaciju riks', 'Cita HR tehnologija'],
+    faq: [
+      { question: 'Kadus datus atgriez EuroSalary API?', answer: 'Gada bruto alga (mediana, P25, P75), neto algas apleses, dzives izmaksu indekss, minimala alga un metadati. 15 ES valstis, 21 amats, 4 limeni.' },
+      { question: 'Cik ilgi aiznem integracija?', answer: 'Lielaka dala partneru pabeidz produkcijas integraciju 1-2 nedelu laika.' },
+      { question: 'Kadi ir atruma ierobezojumi?', answer: '10 000 pieprasijumu diena partneriem, neierobezoti uznemumiem. SLA 99,9%.' },
+      { question: 'Ka darbojas 20% ienakumu dalisana?', answer: 'Ieteikums tiek automatiski piedeeveeets jusu API atslegai. Jus pelnat 20% no katra menesa maksajuma.' },
+      { question: 'Vai ir sandbox testesanai?', answer: 'Ja. Tuliteja sandbox pieeja ar realistiskiem testa datiem.' },
+      { question: 'Vai varu iegut piellagotus endpointus?', answer: 'Uznemumu partneri var pieprasit pielagotus endpointus, atbilzu shemas un webhookus.' },
+    ],
+  },
+  et: {
+    h1: 'Kuidas saate EuroSalary andmeid oma HR-platvormiga integreerida?',
+    metaTitle: 'API partnerlus: integreerige palgaandmeid oma ATS-i, HRIS-i voi palgasysteemi | EuroSalary.eu',
+    metaDesc: 'Integreerige EuroSalary palgaandmeid oma ATS-i, HRIS-i voi palgaplatvormiga. REST API, JSON, liivakast ja 20% tulude jagamine.',
+    home: 'Avaleht', partners: 'Partnerid', breadcrumb: 'API partnerlus',
+    introAnswer: 'EuroSalary pakub REST API-t, mis voimaldab ATS-i, HRIS-i ja palgateenuse pakkujatel integreerida Euroopa palgavordlusaluseid reaalajas koos 20% tulude jagamisega.',
+    tldr: ['REST API JSON-vastustega 15 EL-i riigi, 21 ametikoha ja 4 taseme kohta', 'Liivakastikeskkond testandmetega', '20% korduvaid tulusid igast soovitatud tellimusest'],
+    heroSubtitle: 'Olenemata sellest kas ehitate ATS-i, HRIS-i voi palgasusteemi, annab EuroSalary andmete integreerimine kasutajatele reaalajas palgateabe.',
+    whyTitle: 'Kasutusjuhud', useCases: [
+      { title: 'ATS palgasoovitused', desc: 'Kuvage turuhinnaga palgavahemikke otse tookuulutuste vormidel.', icon: 'work' },
+      { title: 'Palga vordlusanaluus', desc: 'Integreerige palgavordlusalused palga armatuurlaudadesse.', icon: 'account_balance' },
+      { title: 'HRIS tasu planeerimine', desc: 'Toetage aastaseid tasu ulevaatamise tsukkleid reaalajas turuandmetega.', icon: 'analytics' },
+      { title: 'Tooportaali palgauelevaated', desc: 'Rikastage tookuulutusi palga labipaistuvuse andmetega.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Integratsiooni arhitektuur', archDesc: 'Lihtne neljasam muline protsess uhendab teie platvormi EuroSalary andmetega.',
+    archSteps: [
+      { step: 'Autentimine', desc: 'Taotlege API-vooti partneri armatuurlaualt.' },
+      { step: 'Paring', desc: 'Saatke GET-paringuid riigi, ametikoha ja taseme parameetritega.' },
+      { step: 'Vahemalu', desc: 'Salvestage vastused vahemalllu kuni 24 tunniks.' },
+      { step: 'Kuvamine', desc: 'Renderdage palgavordlusalused oma kasutajaliideses.' },
+    ],
+    codeTitle: 'API naide', codeDesc: 'Uks GET-paring tagastab struktureeritud palgaandmed.',
+    specsTitle: 'Tehnilised kirjeldused', specs: [
+      { label: 'Protokoll', value: 'REST ule HTTPS' }, { label: 'Vorming', value: 'JSON (UTF-8)' }, { label: 'Autentimine', value: 'Bearer-token' },
+      { label: 'Limiit (Partner)', value: '10 000 paringut/paev' }, { label: 'Limiit (Ettevote)', value: 'Piiramatu' }, { label: 'Liivakast', value: 'Taielik testkeskkond' },
+      { label: 'SLA', value: '99,9% kaettelaadavus' }, { label: 'Katvus', value: '15 EL riiki, 21 ametikohta, 4 taset' }, { label: 'Varskendus', value: 'Igakuine' }, { label: 'Latentsus', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Tulude jagamise mudel', revenueDesc: 'Teenige korduvaid tulusid suunates kasutajaid EuroSalary Premiumile.',
+    revenueItems: ['20% korduv komisjonitasu', 'Omistamine API-vooti kaudu', 'Igakuised maksed SEPA voi PayPal', 'Reaalajas tulude armatuurlaud', 'Minimaalne maht puudub'],
+    sandboxTitle: 'Liivakastikeskkond', sandboxDesc: 'Iga API-partner saab kohese juurdepaasu taeielikule liivakastile realistlike testandmetega.',
+    contactTitle: 'Taotlege API-partnerlust', contactDesc: 'Kirjeldage oma platvormi ja integratsiooniplaane. Vaatame taotlused labi 24 tunni jooksul.',
+    formLabels: { company: 'Ettevotte nimi', email: 'Too e-post', integrationType: 'Integratsiooni tuup', currentUsers: 'Praegused kasutajad', message: 'Kirjeldage oma integratsiooniplaane', submit: 'Taotlege API juurdepaaasu' },
+    integrationOptions: ['ATS / Varbasmisplatvorm', 'HRIS / Personalijuhtimine', 'Palgaturkvara', 'Tooportsaal / Turg', 'Tasustamise noustamistooriist', 'Muu HR-tehnoloogia'],
+    faq: [
+      { question: 'Milliseid andmeid EuroSalary API tagastab?', answer: 'Aastane brutopalk (mediaan, P25, P75), netopalk, elukalliduse indeks, miinimumpalk ja metaandmed. 15 EL riiki, 21 ametikohta, 4 taset.' },
+      { question: 'Kui kaua integratsioon aega voatab?', answer: 'Enamik partnereid laheb tootmisintegratsiooniga valmis 1-2 nadalaga.' },
+      { question: 'Millised on kiiruspiirangud?', answer: '10 000 paringut paevas partneritele, piiramatu ettevotetele. SLA 99,9%.' },
+      { question: 'Kuidas 20% tulude jagamine toimib?', answer: 'Soovitus omistatakse automaatselt teie API-vootmele. Teenite 20% igast igakuisest maksest.' },
+      { question: 'Kas testimiseks on liivakast?', answer: 'Jah. Kohene liivakasti juurdepaaas realistlike testandmetega.' },
+      { question: 'Kas saan kohandatud lopp-punkte?', answer: 'Ettevotte partnerid saavad taotleda kohandatud lopp-punkte, vastuseskeeme ja veebikonkse.' },
+    ],
+  },
+  mt: {
+    h1: 'Kif tista tintegra d-data ta\' EuroSalary fil-pjattaforma HR tieghek?',
+    metaTitle: 'Shubija API: integra data ta\' salarji fl-ATS, HRIS jew payroll tieghek | EuroSalary.eu',
+    metaDesc: 'Integra d-data ta\' salarji ta\' EuroSalary fl-ATS, HRIS jew software tal-paga tieghek. REST API, JSON, sandbox u 20% qsim tad-dhul.',
+    home: 'Pagna Ewlenija', partners: 'Shab', breadcrumb: 'Shubija API',
+    introAnswer: 'EuroSalary joffri REST API li tippermetti lill-fornituri ta\' ATS, HRIS u payroll jintegraw benchmarks Ewropej ta\' salarji fi zmien reali b\'20% qsim tad-dhul.',
+    tldr: ['REST API b\'risposti JSON ghal 15-il pajjiz UE, 21 impjieg u 4 livelli', 'Ambjent sandbox b\'data tat-test', '20% dhul rikorrenti minn kull abbonament raccomandat'],
+    heroSubtitle: 'Kemm jekk qed tibni ATS, HRIS jew sistema ta\' payroll, l-integrazzjoni tad-data EuroSalary taghti lill-utenti tieghek intelligeneza dwar is-salarji fi zmien reali.',
+    whyTitle: 'Kazijiet ta\' uzu', useCases: [
+      { title: 'Suggerimenti ta\' salarji ATS', desc: 'Uri firxiet ta\' salarji tas-suq direttament fil-formoli ta\' reklamar ghall-impjiegi.', icon: 'work' },
+      { title: 'Benchmarking tal-paga', desc: 'Integra benchmarks ta\' salarji fid-dashboards tal-paga.', icon: 'account_balance' },
+      { title: 'Ippjanar tal-kumpens HRIS', desc: 'Aghmenti cicli annwali ta\' revizjoni tal-kumpens b\'data tas-suq.', icon: 'analytics' },
+      { title: 'Insajts ta\' salarji ta\' job board', desc: 'Arrikkixxi r-reklami ghall-impjiegi b\'data ta\' trasparenza ta\' salarji.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Arkitettura ta\' integrazzjoni', archDesc: 'Process sempilci ta\' erba\' passi jikkonnettja l-pjattaforma tieghek mad-data EuroSalary.',
+    archSteps: [
+      { step: 'Awtentikazzjoni', desc: 'Itlob API key mill-pannell tal-imsiehed.' },
+      { step: 'Mistoqsija', desc: 'Ibghat talbiet GET b\'parametri ta\' pajjiz, impjieg u livell.' },
+      { step: 'Cache', desc: 'Ahzen ir-risposti fil-cache sa 24 siegha.' },
+      { step: 'Wirja', desc: 'Irrendja l-benchmarks ta\' salarji b\'mod nattiv fl-UI tieghek.' },
+    ],
+    codeTitle: 'Ezempju API', codeDesc: 'Talba GET wahda tirritorna data strutturata ta\' salarji.',
+    specsTitle: 'Specifiki teknici', specs: [
+      { label: 'Protokoll', value: 'REST fuq HTTPS' }, { label: 'Format', value: 'JSON (UTF-8)' }, { label: 'Awtentikazzjoni', value: 'Bearer token' },
+      { label: 'Limitu (Imsiehed)', value: '10,000 talba/jum' }, { label: 'Limitu (Enterprise)', value: 'Illimitat' }, { label: 'Sandbox', value: 'Ambjent ta\' test shih' },
+      { label: 'SLA', value: '99.9% disponibbilta' }, { label: 'Kopertura', value: '15-il pajjiz UE, 21 impjieg, 4 livelli' }, { label: 'Aggornament', value: 'Ta\' kull xahar' }, { label: 'Latenza', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Mudell ta\' qsim tad-dhul', revenueDesc: 'Aqla\' dhul rikorrenti billi tiddiregi l-utenti lejn EuroSalary Premium.',
+    revenueItems: ['20% kummissjoni rikorrenti', 'Attribuzzjoni permezz ta\' API key', 'Hlasijiet ta\' kull xahar SEPA jew PayPal', 'Dashboard tad-dhul fi zmien reali', 'L-ebda volum minimu'],
+    sandboxTitle: 'Ambjent Sandbox', sandboxDesc: 'Kull imsiehed API jircievi access immedjat ghal sandbox shih b\'data tat-test realistiku.',
+    contactTitle: 'Applika ghall-shubija API', contactDesc: 'Iddeskrivi l-pjattaforma tieghek u l-pjanijiet ta\' integrazzjoni. Nirrevedu l-applikazzjonijiet fi 24 siegha.',
+    formLabels: { company: 'Isem il-kumpanija', email: 'Email tax-xoghol', integrationType: 'Tip ta\' integrazzjoni', currentUsers: 'Utenti attwali', message: 'Iddeskrivi l-pjanijiet ta\' integrazzjoni tieghek', submit: 'Applika ghall-access API' },
+    integrationOptions: ['ATS / Pjattaforma ta\' reklutadd', 'HRIS / Gestjoni tal-persunal', 'Software tal-paga', 'Job board / Suq', 'Ghoda ta\' konsulenza tal-kumpens', 'Teknologija HR ohra'],
+    faq: [
+      { question: 'X\'data jirritorna l-API ta\' EuroSalary?', answer: 'Salarju gross annwali (medjana, P25, P75), stimi ta\' salarju nett, indici tal-gholi tal-hajja, paga minima u metadata. 15-il pajjiz UE, 21 impjieg, 4 livelli.' },
+      { question: 'Kemm iddum l-integrazzjoni?', answer: 'Il-bicca l-kbira tal-imsiehed jitlestaw integrazzjoni ta\' produzzjoni f\'1-2 gimghat.' },
+      { question: 'X\'inhuma l-limiti ta\' rata?', answer: '10,000 talba kuljum ghall-imsiehed, illimitat ghall-enterprise. SLA 99.9%.' },
+      { question: 'Kif jahdem il-qsim ta\' 20% tad-dhul?', answer: 'Ir-referenza hija attribwita awtomatikament lill-API key tieghek. Taqla\' 20% ta\' kull hlas ta\' kull xahar.' },
+      { question: 'Hemm sandbox ghat-testjar?', answer: 'Iva. Access immedjat ghas-sandbox b\'data tat-test realistiku.' },
+      { question: 'Nista nikseb endpoints personalizzati?', answer: 'Imsiehed enterprise jistghu jitolbu endpoints personalizzati, skemi ta\' risposta u webhooks.' },
+    ],
+  },
+  ga: {
+    h1: 'Conas is feidir leat sonrai EuroSalary a chomhthathu le d\'ardan AD?',
+    metaTitle: 'Comhphairtiocht API: comhthathaigh sonrai tuarastail i d\'ATS, HRIS no parolla | EuroSalary.eu',
+    metaDesc: 'Comhthathaigh sonrai tuarastail EuroSalary le d\'ATS, HRIS no ardan parolla. REST API, JSON, timpeallacht sandbox agus 20% roinnt ioncaim.',
+    home: 'Baile', partners: 'Comhphairtigh', breadcrumb: 'Comhphairtiocht API',
+    introAnswer: 'Cuireann EuroSalary REST API ar fail a ligeann do sholathroiri ATS, HRIS agus parolla tagarmharcanna tuarastail Eorpacha a chomhthathu i bhfior-am le 20% roinnt ioncaim.',
+    tldr: ['REST API le freagraai JSON do 15 tir AE, 21 post agus 4 leibheal', 'Timpeallacht sandbox le sonrai tastala', '20% ioncam athfhillteach o gach sintiuis molta'],
+    heroSubtitle: 'Biodh tu ag togail ATS, HRIS no coreas parolla, tugann comhthathu sonrai EuroSalary intleacht tuarastail fior-ama do d\'usaideoiri.',
+    whyTitle: 'Casanna usaide', useCases: [
+      { title: 'Moltai tuarastail ATS', desc: 'Taispeain raoin tuarastail margaidh go direach i bhfoirmeacha fograiochta poist.', icon: 'work' },
+      { title: 'Tagarmharcail parolla', desc: 'Comhthathaigh tagarmharcanna tuarastail i bpaineil parolla.', icon: 'account_balance' },
+      { title: 'Plaonail cuiteamh HRIS', desc: 'Tacaigh le timthriallta bliantuila athbhreithnithe cuiteamh le sonrai margaidh.', icon: 'analytics' },
+      { title: 'Leargais tuarastail bord post', desc: 'Saibhrigh fograiochta poist le sonrai trédhearcachta tuarastail.', icon: 'travel_explore' },
+    ],
+    archTitle: 'Ailtireacht comhthathu', archDesc: 'Nascann proiseas simpli ceithre cheim d\'ardan le sonrai EuroSalary.',
+    archSteps: [
+      { step: 'Fior-dheimhniu', desc: 'Iarr eochair API o do phaineal comhphairtigh.' },
+      { step: 'Ceist', desc: 'Seol iarratais GET le parameidair tire, poist agus leibheil.' },
+      { step: 'Taisceadan', desc: 'Taisceadaigh freagraai ar feadh 24 uair.' },
+      { step: 'Taispeain', desc: 'Rindealigh tagarmharcanna tuarastail go duchais i d\'UI.' },
+    ],
+    codeTitle: 'Sampla API', codeDesc: 'Filleann iarratas GET amhain sonrai tuarastail struchturdha.',
+    specsTitle: 'Sonraiochtai teicniula', specs: [
+      { label: 'Protacal', value: 'REST thar HTTPS' }, { label: 'Formaaid', value: 'JSON (UTF-8)' }, { label: 'Fior-dheimhniu', value: 'Comhartha Bearer' },
+      { label: 'Teorainn (Comhphairtigh)', value: '10,000 iarratas/la' }, { label: 'Teorainn (Fiontar)', value: 'Neamhtheoranta' }, { label: 'Sandbox', value: 'Timpeallacht tastala iomlan' },
+      { label: 'SLA', value: '99.9% infhaighteacht' }, { label: 'Cumhdach', value: '15 tir AE, 21 post, 4 leibheal' }, { label: 'Nuashonru', value: 'Miosuil' }, { label: 'Aga', value: '< 200ms p95' },
+    ],
+    revenueTitle: 'Samhail roinnt ioncaim', revenueDesc: 'Saothraigh ioncam athfhillteach trid usaideoiri a dthreoru chuig EuroSalary Premium.',
+    revenueItems: ['20% coimisiun athfhillteach', 'Sanntu tri eochair API', 'Iocaiochtai miosula SEPA no PayPal', 'Paineal ioncaim fior-ama', 'Gan toirt iosta'],
+    sandboxTitle: 'Timpeallacht Sandbox', sandboxDesc: 'Faigheann gach comhphairtigh API rochtain laitheach ar sandbox iomlan le sonrai tastala realaiocha.',
+    contactTitle: 'Cuir iarratas isteach ar chomhphairtiocht API', contactDesc: 'Cur sios ar d\'ardan agus do phleananna comhthathu. Deanaimid athbhreithniu ar iarratais laistigh de 24 uair.',
+    formLabels: { company: 'Ainm na cuideachta', email: 'Rphost oibre', integrationType: 'Cineal comhthathu', currentUsers: 'Usaideoiri reatha', message: 'Cur sios ar do phleananna comhthathu', submit: 'Cuir iarratas isteach ar rochtain API' },
+    integrationOptions: ['ATS / Ardan earcaiochta', 'HRIS / Bainistiocht pearsanra', 'Bogearrai parolla', 'Bord post / Margadh', 'Uirlis chomhairleachta cuiteamh', 'Teicneolaiocht AD eile'],
+    faq: [
+      { question: 'Cen sonrai a fhilleann API EuroSalary?', answer: 'Tuarastal comhlan bliantuil (mean, P25, P75), meastachan glan-tuarastail, inneacs costas maireachtala, iosphá agus meiteashonrai. 15 tir AE, 21 post, 4 leibheal.' },
+      { question: 'Ce fhad a thogann an comhthathu?', answer: 'Criochnaionn an chuid is mo comhphairtigh comhthathu tairgeachta i 1-2 seachtain.' },
+      { question: 'Cad iad na teorainneacha luais?', answer: '10,000 iarratas in aghaidh an lae do chomhphairtigh, neamhtheoranta d\'fhiontair. SLA 99.9%.' },
+      { question: 'Conas a oibrionn an roinnt ioncaim 20%?', answer: 'Sannadh an tarchur go huathoibrioch do d\'eochair API. Saothraionn tu 20% de gach iocaiocht mhiosuil.' },
+      { question: 'An bhfuil sandbox ann le haghaidh tastala?', answer: 'Ta. Rochtain laitheach ar sandbox le sonrai tastala realaiocha.' },
+      { question: 'An feidir liom pointi deiridh saincheaptha a fhail?', answer: 'Is feidir le comhphairtigh fiontair pointi deiridh saincheaptha, scemeanna freagartha agus webhooks a iarraidh.' },
+    ],
+  },
+};
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+const t = fb(i18n, lang);
+---
+<BaseLayout title={t.metaTitle} description={t.metaDesc} lang={lang}>
+
+  <!-- Breadcrumbs -->
+  <nav class="max-w-5xl mx-auto px-4 pt-6 text-sm text-slate-400" aria-label="Breadcrumb">
+    <ol class="flex items-center gap-2">
+      <li><a href={`/${lang}/`} class="hover:text-blue-400 transition-colors">{t.home}</a></li>
+      <li class="text-slate-600">/</li>
+      <li><a href={`/${lang}/partners/`} class="hover:text-blue-400 transition-colors">{t.partners}</a></li>
+      <li class="text-slate-600">/</li>
+      <li class="text-slate-300">{t.breadcrumb}</li>
+    </ol>
+  </nav>
+
+  <!-- Hero -->
+  <section class="max-w-5xl mx-auto px-4 py-12 text-center">
+    <h1 class="text-3xl md:text-4xl font-bold text-white mb-4 font-['Public_Sans']">{t.h1}</h1>
+    <p class="text-lg text-slate-300 max-w-3xl mx-auto mb-6">{t.introAnswer}</p>
+    <p class="text-slate-400 max-w-2xl mx-auto">{t.heroSubtitle}</p>
+  </section>
+
+  <!-- TL;DR -->
+  <TLDRBox items={t.tldr} />
+
+  <!-- Use Cases -->
+  <section class="max-w-5xl mx-auto px-4 py-12">
+    <h2 class="text-2xl font-bold text-white text-center mb-8 font-['Public_Sans']">{t.whyTitle}</h2>
+    <div class="grid md:grid-cols-2 gap-8">
+      {t.useCases.map((uc) => (
+        <div class="bg-[#162A4A] border border-slate-700/50 rounded-xl p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="material-symbols-outlined text-blue-400 text-3xl">{uc.icon}</span>
+            <h3 class="text-xl font-bold text-white font-['Public_Sans']">{uc.title}</h3>
+          </div>
+          <p class="text-slate-300 text-sm leading-relaxed">{uc.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Integration Architecture -->
+  <section class="max-w-5xl mx-auto px-4 py-12">
+    <h2 class="text-2xl font-bold text-white text-center mb-2 font-['Public_Sans']">{t.archTitle}</h2>
+    <p class="text-slate-400 text-center mb-10 max-w-2xl mx-auto">{t.archDesc}</p>
+    <div class="grid md:grid-cols-4 gap-6">
+      {t.archSteps.map((s, i) => (
+        <div class="text-center">
+          <div class="w-14 h-14 rounded-full bg-blue-600 text-white text-xl font-bold flex items-center justify-center mx-auto mb-4">{i + 1}</div>
+          <h3 class="text-lg font-bold text-white mb-2">{s.step}</h3>
+          <p class="text-slate-400 text-sm">{s.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Code Example -->
+  <section class="max-w-5xl mx-auto px-4 py-12">
+    <h2 class="text-2xl font-bold text-white text-center mb-2 font-['Public_Sans']">{t.codeTitle}</h2>
+    <p class="text-slate-400 text-center mb-8">{t.codeDesc}</p>
+    <div class="bg-[#0a1628] border border-slate-700/50 rounded-xl p-6 overflow-x-auto">
+      <pre class="text-sm text-slate-300 font-mono leading-relaxed"><code><span class="text-blue-400">GET</span> https://eurosalary.eu/api/v1/salary?country=<span class="text-green-400">DE</span>&job=<span class="text-green-400">software-engineer</span>&level=<span class="text-green-400">mid</span>
+<span class="text-slate-500">Authorization: Bearer YOUR_API_KEY</span>
+
+<span class="text-slate-500">// Response (200 OK)</span>
+&#123;
+  "<span class="text-blue-300">country</span>": "<span class="text-green-400">DE</span>",
+  "<span class="text-blue-300">job</span>": "<span class="text-green-400">software-engineer</span>",
+  "<span class="text-blue-300">level</span>": "<span class="text-green-400">mid</span>",
+  "<span class="text-blue-300">gross_annual</span>": &#123;
+    "<span class="text-blue-300">median</span>": <span class="text-amber-400">62400</span>,
+    "<span class="text-blue-300">p25</span>": <span class="text-amber-400">54200</span>,
+    "<span class="text-blue-300">p75</span>": <span class="text-amber-400">73800</span>
+  &#125;,
+  "<span class="text-blue-300">net_annual_estimate</span>": <span class="text-amber-400">41500</span>,
+  "<span class="text-blue-300">currency</span>": "<span class="text-green-400">EUR</span>",
+  "<span class="text-blue-300">cost_of_living_index</span>": <span class="text-amber-400">82.3</span>,
+  "<span class="text-blue-300">minimum_wage_annual</span>": <span class="text-amber-400">24924</span>,
+  "<span class="text-blue-300">confidence</span>": <span class="text-amber-400">0.92</span>,
+  "<span class="text-blue-300">sources</span>": ["<span class="text-green-400">eurostat</span>", "<span class="text-green-400">job_postings</span>"],
+  "<span class="text-blue-300">last_updated</span>": "<span class="text-green-400">2026-04-01</span>"
+&#125;</code></pre>
+    </div>
+  </section>
+
+  <!-- Technical Specs -->
+  <section class="max-w-5xl mx-auto px-4 py-12">
+    <h2 class="text-2xl font-bold text-white text-center mb-8 font-['Public_Sans']">{t.specsTitle}</h2>
+    <div class="max-w-3xl mx-auto bg-[#162A4A] border border-slate-700/50 rounded-xl overflow-hidden">
+      <table class="w-full">
+        <tbody>
+          {t.specs.map((s, i) => (
+            <tr class={i % 2 === 0 ? 'bg-[#162A4A]' : 'bg-[#1a3055]'}>
+              <td class="px-6 py-3 text-sm text-slate-400 font-medium">{s.label}</td>
+              <td class="px-6 py-3 text-sm text-white font-semibold text-right">{s.value}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Revenue Share -->
+  <section class="max-w-5xl mx-auto px-4 py-12">
+    <h2 class="text-2xl font-bold text-white text-center mb-2 font-['Public_Sans']">{t.revenueTitle}</h2>
+    <p class="text-slate-400 text-center mb-8 max-w-2xl mx-auto">{t.revenueDesc}</p>
+    <div class="max-w-3xl mx-auto bg-[#162A4A] border border-slate-700/50 rounded-xl p-8">
+      <ul class="space-y-4">
+        {t.revenueItems.map((item) => (
+          <li class="flex items-start gap-3 text-slate-300">
+            <span class="material-symbols-outlined text-green-400 text-base mt-0.5">check_circle</span>
+            <span class="text-sm">{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Sandbox -->
+  <section class="max-w-5xl mx-auto px-4 py-12 text-center">
+    <div class="bg-gradient-to-r from-blue-600/20 to-blue-400/10 border border-blue-500/30 rounded-xl p-8 max-w-3xl mx-auto">
+      <span class="material-symbols-outlined text-blue-400 text-4xl mb-4">science</span>
+      <h2 class="text-2xl font-bold text-white mb-4 font-['Public_Sans']">{t.sandboxTitle}</h2>
+      <p class="text-slate-300 text-sm">{t.sandboxDesc}</p>
+    </div>
+  </section>
+
+  <!-- Contact Form -->
+  <section class="max-w-3xl mx-auto px-4 py-12" id="apply">
+    <h2 class="text-2xl font-bold text-white text-center mb-2 font-['Public_Sans']">{t.contactTitle}</h2>
+    <p class="text-slate-400 text-center mb-8">{t.contactDesc}</p>
+    <form id="api-partner-form" class="bg-[#162A4A] border border-slate-700/50 rounded-xl p-8 space-y-6">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">{t.formLabels.company}</label>
+          <input type="text" name="company" required class="w-full bg-[#0F1F3D] border border-slate-600 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
+        </div>
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">{t.formLabels.email}</label>
+          <input type="email" name="email" required class="w-full bg-[#0F1F3D] border border-slate-600 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
+        </div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">{t.formLabels.integrationType}</label>
+          <select name="integration_type" required class="w-full bg-[#0F1F3D] border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-blue-500 focus:outline-none">
+            <option value="" disabled selected>--</option>
+            {t.integrationOptions.map((opt) => (
+              <option value={opt}>{opt}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">{t.formLabels.currentUsers}</label>
+          <input type="text" name="current_users" class="w-full bg-[#0F1F3D] border border-slate-600 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-400 mb-1">{t.formLabels.message}</label>
+        <textarea name="message" rows="4" class="w-full bg-[#0F1F3D] border border-slate-600 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none resize-none"></textarea>
+      </div>
+      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors">
+        {t.formLabels.submit}
+      </button>
+      <div id="form-status" class="text-center text-sm hidden"></div>
+    </form>
+  </section>
+
+  <!-- FAQ -->
+  <FAQSection items={t.faq} />
+
+  <!-- Schema Markup -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": t.h1,
+    "description": t.metaDesc,
+    "dateModified": "2026-04-05",
+    "publisher": { "@type": "Organization", "name": "EuroSalary.eu" },
+  })} />
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": t.faq.map((f) => ({
+      "@type": "Question",
+      "name": f.question,
+      "acceptedAnswer": { "@type": "Answer", "text": f.answer },
+    })),
+  })} />
+
+  <!-- hreflang -->
+  {Object.keys(languages).map((l) => (
+    <link slot="head" rel="alternate" hreflang={l} href={`https://eurosalary.eu/${l}/partners/api/`} />
+  ))}
+
+  <!-- Form Script -->
+  <script>
+    const form = document.getElementById('api-partner-form') as HTMLFormElement;
+    const status = document.getElementById('form-status') as HTMLElement;
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form));
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...data, type: 'partner', source: 'api-partnership' }),
+        });
+        if (res.ok) {
+          status.textContent = 'Application submitted! We will be in touch within 24 hours.';
+          status.className = 'text-center text-sm text-green-400';
+          form.reset();
+        } else {
+          status.textContent = 'Something went wrong. Please try again.';
+          status.className = 'text-center text-sm text-red-400';
+        }
+      } catch {
+        status.textContent = 'Network error. Please try again.';
+        status.className = 'text-center text-sm text-red-400';
+      }
+    });
+  </script>
+
+</BaseLayout>
