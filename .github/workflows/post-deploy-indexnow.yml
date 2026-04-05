@@ -1,0 +1,70 @@
+name: IndexNow — Notify Search Engines
+
+on:
+  # Runs after every push to main (i.e. after deploy)
+  push:
+    branches: [main]
+  workflow_dispatch: # Manual trigger
+
+jobs:
+  indexnow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Submit top URLs to Bing via IndexNow
+        run: |
+          KEY="eurosalary2026indexnow"
+          HOST="eurosalary.eu"
+
+          # Priority URLs to index on every deploy
+          URLS=(
+            "https://eurosalary.eu/"
+            "https://eurosalary.eu/en/"
+            "https://eurosalary.eu/es/"
+            "https://eurosalary.eu/fr/"
+            "https://eurosalary.eu/de/"
+            "https://eurosalary.eu/it/"
+            "https://eurosalary.eu/pt/"
+            "https://eurosalary.eu/nl/"
+            "https://eurosalary.eu/pl/"
+            "https://eurosalary.eu/en/countries/"
+            "https://eurosalary.eu/es/countries/"
+            "https://eurosalary.eu/fr/countries/"
+            "https://eurosalary.eu/de/countries/"
+            "https://eurosalary.eu/en/country/germany/"
+            "https://eurosalary.eu/en/country/france/"
+            "https://eurosalary.eu/en/country/spain/"
+            "https://eurosalary.eu/en/country/netherlands/"
+            "https://eurosalary.eu/en/country/poland/"
+            "https://eurosalary.eu/en/country/switzerland/"
+            "https://eurosalary.eu/en/country/ireland/"
+            "https://eurosalary.eu/en/salary/germany/software-engineer/"
+            "https://eurosalary.eu/en/salary/france/software-engineer/"
+            "https://eurosalary.eu/en/salary/spain/software-engineer/"
+            "https://eurosalary.eu/en/salary/netherlands/software-engineer/"
+            "https://eurosalary.eu/en/salary/switzerland/software-engineer/"
+            "https://eurosalary.eu/en/salary/germany/nurse/"
+            "https://eurosalary.eu/en/salary/germany/data-scientist/"
+            "https://eurosalary.eu/en/salary/germany/doctor/"
+            "https://eurosalary.eu/en/compare/software-engineer/"
+            "https://eurosalary.eu/en/compare/nurse/"
+            "https://eurosalary.eu/en/compare/data-scientist/"
+            "https://eurosalary.eu/en/pricing/"
+            "https://eurosalary.eu/en/salary-api/"
+            "https://eurosalary.eu/en/for-employers/"
+            "https://eurosalary.eu/en/enterprise/"
+            "https://eurosalary.eu/en/methodology/"
+            "https://eurosalary.eu/en/about/"
+          )
+
+          OK=0
+          FAIL=0
+          for URL in "${URLS[@]}"; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://www.bing.com/indexnow?url=${URL}&key=${KEY}")
+            if [ "$STATUS" = "200" ] || [ "$STATUS" = "202" ]; then
+              OK=$((OK + 1))
+            else
+              FAIL=$((FAIL + 1))
+            fi
+          done
+
+          echo "IndexNow: ${OK} accepted, ${FAIL} failed (of ${#URLS[@]} URLs)"

@@ -221,6 +221,57 @@ Public Sans headlines, Inter body
 - Google Search Console: verified
 - Cloudflare Web Analytics: active
 
+## Supabase connection
+- Project ref: hmmpmbqbfgcxhbcfjqir
+- URL: https://hmmpmbqbfgcxhbcfjqir.supabase.co
+- Region: EU West (Frankfurt)
+- Keys stored in: memory/reference_api_keys.md
+- .env has: PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY
+
+## CRM Layer (Revenue Engine)
+### Database tables (11 CRM tables)
+- crm_accounts — companies/organizations
+- crm_leads — individual contacts with scoring
+- crm_deals — sales pipeline with stages
+- crm_activities — event log (emails, page views, etc.)
+- crm_email_sequences — automated nurture sequences
+- crm_sequence_steps — individual emails in a sequence
+- crm_sequence_enrollments — lead enrolled in a sequence
+- crm_partners — affiliate/data/platform partners
+- crm_partner_referrals — referral tracking
+- crm_api_keys — paid API access management
+- crm_analytics_daily — daily metrics snapshots
+- Migration file: supabase/apply-crm.sql (idempotent, safe to re-run)
+
+### API endpoints (Cloudflare Pages Functions)
+- POST /api/lead-capture — smart lead upsert with scoring
+- POST /api/track-activity — engagement tracking
+- POST /api/partner-apply — partner applications
+
+### Automation scripts (scripts/)
+- process-email-sequences.mjs — hourly email processor
+- daily-analytics.mjs — daily CRM metrics
+- score-leads.mjs — weekly lead scoring
+- seed-email-sequences.mjs — seeds 10 nurture sequences
+
+### GitHub Actions workflows
+- hourly-email-sequences.yml
+- daily-crm-analytics.yml
+- weekly-lead-scoring.yml
+
+### B2B pages (all in 24 languages)
+- /enterprise/ + /enterprise/demo/, /request-report/, /benchmark-audit/, /transparency-audit/
+- /partners/ + /partners/api/, /data-licensing/, /referral/
+- /pricing/ + /pricing/api/, /employer/, /enterprise/
+- /for-employers/, /for-recruiters/, /salary-api/
+
+## Blog architecture
+- blog-posts.ts — empty array, ready for new posts
+- New posts MUST be created with all 24 languages from day one
+- Never add posts with only 4 languages
+- Interface: BlogPost { id, title, slug, excerpt, content, image, imageAlt, date, tags }
+- All Record<string, string> fields need all 24 language keys
+
 ## Accounts and services
 - Domain: Namecheap (eurosalary.eu)
 - DNS + Hosting: Cloudflare
@@ -237,6 +288,7 @@ Before doing ANYTHING in a new session:
 4. Then start working
 
 ## Current status
-All 5 prompts executed. Full 24-language i18n system complete.
-Build: 9,602 pages, 0 errors. Deployed to production (Cloudflare Pages).
-Last deploy: 2026-04-05, commit 717b13d.
+Revenue engine built (CRM, API endpoints, automation, B2B pages).
+Blog cleared — new posts will be created in all 24 languages from scratch.
+Build: 9,722 pages, 0 errors. Deployed to production.
+Last deploy: 2026-04-06.

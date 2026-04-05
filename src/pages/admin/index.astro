@@ -1,0 +1,447 @@
+---
+// Admin Dashboard — SSG page with client-side Supabase connection
+// No getStaticPaths needed — this is a single static page
+// Auth: simple password stored in localStorage
+---
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>EuroSalary Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">Euro<span>Salary</span></div>
+    <p class="login-subtitle">Admin Dashboard</p>
+    <input type="password" id="pwd-input" placeholder="Password" autofocus />
+    <button id="login-btn">Login</button>
+    <p id="login-error" class="login-error"></p>
+  </div>
+</div>
+
+<!-- Dashboard (hidden until auth) -->
+<div id="dashboard" style="display:none">
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1 class="topbar-title">Euro<span>Salary</span></h1>
+      <span class="topbar-badge">Admin</span>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-refresh" id="refresh-btn" title="Refresh data">
+        <span class="material-symbols-outlined">refresh</span>
+      </button>
+      <span id="last-refresh" class="topbar-meta"></span>
+      <a href="https://eurosalary.eu" target="_blank" class="topbar-link">View Site →</a>
+      <button class="btn-logout" id="logout-btn">Logout</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- KPI Row -->
+    <section class="kpi-grid" id="kpi-grid">
+      <div class="kpi"><div class="kpi-icon blue"><span class="material-symbols-outlined">group</span></div><div class="kpi-body"><div class="kpi-value" id="kpi-leads">—</div><div class="kpi-label">Leads</div></div></div>
+      <div class="kpi"><div class="kpi-icon purple"><span class="material-symbols-outlined">apartment</span></div><div class="kpi-body"><div class="kpi-value" id="kpi-accounts">—</div><div class="kpi-label">Accounts</div></div></div>
+      <div class="kpi"><div class="kpi-icon amber"><span class="material-symbols-outlined">handshake</span></div><div class="kpi-body"><div class="kpi-value" id="kpi-deals">—</div><div class="kpi-label">Active Deals</div></div></div>
+      <div class="kpi"><div class="kpi-icon dark"><span class="material-symbols-outlined">payments</span></div><div class="kpi-body"><div class="kpi-value" id="kpi-pipeline">—</div><div class="kpi-label">Pipeline Value</div></div></div>
+      <div class="kpi"><div class="kpi-icon green"><span class="material-symbols-outlined">emoji_events</span></div><div class="kpi-body"><div class="kpi-value" id="kpi-won">—</div><div class="kpi-label">Won Revenue</div></div></div>
+      <div class="kpi"><div class="kpi-icon rose"><span class="material-symbols-outlined">diversity_3</span></div><div class="kpi-body"><div class="kpi-value" id="kpi-partners">—</div><div class="kpi-label">Partners</div></div></div>
+    </section>
+
+    <!-- Pipeline -->
+    <section class="section">
+      <h2 class="section-title"><span class="material-symbols-outlined">conversion_path</span> Sales Pipeline</h2>
+      <div class="pipeline" id="pipeline"></div>
+    </section>
+
+    <!-- Tabs -->
+    <nav class="tabs" id="nav-tabs">
+      <button class="tab active" data-tab="leads">Leads</button>
+      <button class="tab" data-tab="deals">Deals</button>
+      <button class="tab" data-tab="accounts">Accounts</button>
+      <button class="tab" data-tab="activities">Activity Feed</button>
+      <button class="tab" data-tab="partners">Partners</button>
+      <button class="tab" data-tab="apikeys">API Keys</button>
+    </nav>
+
+    <!-- Tab Content -->
+    <div class="tab-panel active" id="panel-leads"></div>
+    <div class="tab-panel" id="panel-deals"></div>
+    <div class="tab-panel" id="panel-accounts"></div>
+    <div class="tab-panel" id="panel-activities"></div>
+    <div class="tab-panel" id="panel-partners"></div>
+    <div class="tab-panel" id="panel-apikeys"></div>
+  </div>
+</div>
+
+<style>
+  :root {
+    --bg-body: #060a13;
+    --bg-card: #0d1321;
+    --bg-surface: #111827;
+    --bg-hover: rgba(59,130,246,0.06);
+    --border: #1e293b;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #475569;
+    --blue: #3b82f6;
+    --purple: #8b5cf6;
+    --amber: #f59e0b;
+    --green: #10b981;
+    --rose: #f43f5e;
+    --red: #ef4444;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg-body); color: var(--text-primary); min-height: 100vh; }
+
+  /* Login */
+  #login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--bg-body); }
+  .login-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 3rem; width: 380px; text-align: center; }
+  .login-logo { font-size: 1.75rem; font-weight: 800; margin-bottom: 0.25rem; }
+  .login-logo span { color: var(--blue); }
+  .login-subtitle { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 2rem; }
+  .login-box input { width: 100%; padding: 14px 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-body); color: white; font-size: 1rem; margin-bottom: 1rem; outline: none; transition: border 0.2s; }
+  .login-box input:focus { border-color: var(--blue); }
+  .login-box button { width: 100%; padding: 14px; background: var(--blue); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+  .login-box button:hover { background: #2563eb; }
+  .login-error { color: var(--red); font-size: 0.8rem; margin-top: 0.75rem; min-height: 1.2em; }
+
+  /* Topbar */
+  .topbar { background: var(--bg-card); border-bottom: 1px solid var(--border); padding: 0.75rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+  .topbar-left { display: flex; align-items: center; gap: 0.75rem; }
+  .topbar-title { font-size: 1.15rem; font-weight: 800; }
+  .topbar-title span { color: var(--blue); }
+  .topbar-badge { background: var(--blue); color: white; font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .topbar-right { display: flex; align-items: center; gap: 1rem; }
+  .topbar-meta { font-size: 0.75rem; color: var(--text-muted); }
+  .topbar-link { color: var(--text-secondary); font-size: 0.8rem; text-decoration: none; }
+  .topbar-link:hover { color: white; }
+  .btn-refresh, .btn-logout { background: none; border: 1px solid var(--border); color: var(--text-secondary); padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 4px; }
+  .btn-refresh:hover, .btn-logout:hover { border-color: var(--text-secondary); color: white; }
+  .btn-refresh .material-symbols-outlined { font-size: 18px; }
+
+  .container { max-width: 1440px; margin: 0 auto; padding: 1.5rem 2rem; }
+
+  /* KPIs */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .kpi { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; display: flex; align-items: center; gap: 1rem; }
+  .kpi-icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .kpi-icon .material-symbols-outlined { font-size: 24px; color: white; }
+  .kpi-icon.blue { background: rgba(59,130,246,0.15); }
+  .kpi-icon.blue .material-symbols-outlined { color: var(--blue); }
+  .kpi-icon.purple { background: rgba(139,92,246,0.15); }
+  .kpi-icon.purple .material-symbols-outlined { color: var(--purple); }
+  .kpi-icon.amber { background: rgba(245,158,11,0.15); }
+  .kpi-icon.amber .material-symbols-outlined { color: var(--amber); }
+  .kpi-icon.green { background: rgba(16,185,129,0.15); }
+  .kpi-icon.green .material-symbols-outlined { color: var(--green); }
+  .kpi-icon.rose { background: rgba(244,63,94,0.15); }
+  .kpi-icon.rose .material-symbols-outlined { color: var(--rose); }
+  .kpi-icon.dark { background: rgba(255,255,255,0.06); }
+  .kpi-icon.dark .material-symbols-outlined { color: var(--text-secondary); }
+  .kpi-value { font-size: 1.5rem; font-weight: 800; line-height: 1.2; }
+  .kpi-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 500; }
+
+  /* Pipeline */
+  .section { margin-bottom: 2rem; }
+  .section-title { font-size: 1rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); }
+  .section-title .material-symbols-outlined { font-size: 20px; }
+  .pipeline { display: flex; gap: 6px; }
+  .pipeline-stage { flex: 1; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem 0.75rem; text-align: center; transition: border-color 0.2s; }
+  .pipeline-stage:hover { border-color: var(--blue); }
+  .pipeline-count { font-size: 1.75rem; font-weight: 800; }
+  .pipeline-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-top: 4px; font-weight: 600; }
+  .pipeline-value { font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 2px; background: var(--bg-card); border-radius: 10px; padding: 4px; margin-bottom: 1.5rem; border: 1px solid var(--border); overflow-x: auto; }
+  .tab { padding: 0.65rem 1.5rem; border-radius: 8px; border: none; background: none; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+  .tab:hover { color: var(--text-secondary); }
+  .tab.active { background: var(--bg-body); color: white; }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Tables */
+  .table-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .table-scroll { max-height: 500px; overflow-y: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; padding: 0.85rem 1rem; background: var(--bg-surface); color: var(--text-muted); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1; }
+  td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+  tr:hover { background: var(--bg-hover); }
+  td:first-child { font-weight: 500; }
+
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+  .badge-blue { background: rgba(59,130,246,0.15); color: var(--blue); }
+  .badge-purple { background: rgba(139,92,246,0.15); color: var(--purple); }
+  .badge-amber { background: rgba(245,158,11,0.15); color: var(--amber); }
+  .badge-green { background: rgba(16,185,129,0.15); color: var(--green); }
+  .badge-red { background: rgba(239,68,68,0.15); color: var(--red); }
+  .badge-gray { background: rgba(100,116,139,0.15); color: var(--text-secondary); }
+
+  .empty-state { padding: 4rem 2rem; text-align: center; color: var(--text-muted); }
+  .empty-state .material-symbols-outlined { font-size: 48px; display: block; margin-bottom: 1rem; opacity: 0.3; }
+  .empty-state p { font-size: 0.9rem; }
+
+  code { background: var(--bg-body); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; color: var(--text-secondary); }
+
+  @media (max-width: 768px) {
+    .container { padding: 1rem; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .pipeline { flex-wrap: wrap; }
+    .pipeline-stage { min-width: calc(33% - 6px); }
+    .topbar { padding: 0.75rem 1rem; }
+    .topbar-right { gap: 0.5rem; }
+    .topbar-link, .topbar-meta { display: none; }
+  }
+</style>
+
+<script is:inline define:vars={{ supabaseUrl: import.meta.env.PUBLIC_SUPABASE_URL, supabaseAnon: import.meta.env.PUBLIC_SUPABASE_ANON_KEY }}>
+  // Supabase config — uses service_role key stored after login
+  const SUPA_URL = supabaseUrl;
+  const ADMIN_PWD = 'eurosalary2026'; // Change this
+
+  // Service role key — entered by user, stored in sessionStorage
+  let SERVICE_KEY = sessionStorage.getItem('admin_key') || '';
+
+  // ---- Auth ----
+  const loginScreen = document.getElementById('login-screen');
+  const dashboard = document.getElementById('dashboard');
+  const pwdInput = document.getElementById('pwd-input');
+  const loginBtn = document.getElementById('login-btn');
+  const loginError = document.getElementById('login-error');
+  const logoutBtn = document.getElementById('logout-btn');
+  const refreshBtn = document.getElementById('refresh-btn');
+
+  function checkAuth() {
+    if (SERVICE_KEY) {
+      loginScreen.style.display = 'none';
+      dashboard.style.display = 'block';
+      loadDashboard();
+    }
+  }
+
+  loginBtn.addEventListener('click', () => tryLogin());
+  pwdInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryLogin(); });
+
+  function tryLogin() {
+    const pwd = pwdInput.value.trim();
+    if (!pwd) return;
+    // Use the service_role JWT directly as password
+    SERVICE_KEY = pwd;
+    sessionStorage.setItem('admin_key', pwd);
+    loginScreen.style.display = 'none';
+    dashboard.style.display = 'block';
+    loadDashboard();
+  }
+
+  logoutBtn.addEventListener('click', () => {
+    sessionStorage.removeItem('admin_key');
+    SERVICE_KEY = '';
+    dashboard.style.display = 'none';
+    loginScreen.style.display = 'flex';
+    pwdInput.value = '';
+  });
+
+  refreshBtn.addEventListener('click', loadDashboard);
+
+  // ---- Supabase helpers ----
+  async function supa(table, select = '*', options = {}) {
+    const params = new URLSearchParams({ select, ...options });
+    const res = await fetch(`${SUPA_URL}/rest/v1/${table}?${params}`, {
+      headers: {
+        apikey: SERVICE_KEY,
+        Authorization: `Bearer ${SERVICE_KEY}`,
+        Prefer: 'count=exact',
+      },
+    });
+    if (!res.ok) {
+      if (res.status === 401 || res.status === 403) {
+        loginError.textContent = 'Invalid key. Use the service_role JWT.';
+        sessionStorage.removeItem('admin_key');
+        dashboard.style.display = 'none';
+        loginScreen.style.display = 'flex';
+        return { data: [], count: 0 };
+      }
+      return { data: [], count: 0 };
+    }
+    const count = parseInt(res.headers.get('content-range')?.split('/')[1] || '0');
+    const data = await res.json();
+    return { data, count };
+  }
+
+  // ---- Formatting ----
+  const fmt = (n) => new Intl.NumberFormat('de-DE').format(n);
+  const fmtEur = (n) => `€${fmt(n)}`;
+  const fmtDate = (s) => s ? new Date(s).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+
+  function badge(text, variant = 'gray') {
+    const map = {
+      new: 'blue', contacted: 'purple', qualified: 'amber', nurturing: 'purple',
+      converted: 'green', lost: 'red',
+      discovery: 'blue', demo_scheduled: 'purple', demo_done: 'purple',
+      proposal_sent: 'amber', negotiation: 'amber', closed_won: 'green', closed_lost: 'red',
+      employer: 'blue', recruiter: 'purple', enterprise: 'amber', partner: 'green',
+      api_user: 'blue', general: 'gray',
+      applied: 'blue', approved: 'amber', active: 'green', suspended: 'red',
+      affiliate: 'green', data: 'blue', platform: 'purple', content: 'amber', reseller: 'blue',
+      free: 'gray', developer: 'blue', business: 'amber',
+      email_sent: 'blue', email_opened: 'green', email_clicked: 'green',
+      form_submit: 'amber', page_view: 'gray', api_call: 'purple',
+      report_download: 'amber', demo_request: 'green', note: 'gray',
+    };
+    const v = map[text] || variant;
+    return `<span class="badge badge-${v}">${(text || '').replace(/_/g, ' ')}</span>`;
+  }
+
+  // ---- Load Dashboard ----
+  async function loadDashboard() {
+    document.getElementById('last-refresh').textContent = 'Loading...';
+
+    const [leads, deals, accounts, activities, partners, apiKeys] = await Promise.all([
+      supa('crm_leads', '*', { order: 'created_at.desc', limit: '100' }),
+      supa('crm_deals', '*', { order: 'created_at.desc', limit: '100' }),
+      supa('crm_accounts', '*', { order: 'created_at.desc', limit: '100' }),
+      supa('crm_activities', '*', { order: 'created_at.desc', limit: '50' }),
+      supa('crm_partners', '*', { order: 'created_at.desc', limit: '50' }),
+      supa('crm_api_keys', '*', { order: 'created_at.desc', limit: '50' }),
+    ]);
+
+    // KPIs
+    const activeDeals = deals.data.filter(d => !['closed_won', 'closed_lost'].includes(d.stage));
+    const pipelineValue = activeDeals.reduce((s, d) => s + (d.amount_eur || 0), 0);
+    const wonValue = deals.data.filter(d => d.stage === 'closed_won').reduce((s, d) => s + (d.amount_eur || 0), 0);
+
+    document.getElementById('kpi-leads').textContent = fmt(leads.count);
+    document.getElementById('kpi-accounts').textContent = fmt(accounts.count);
+    document.getElementById('kpi-deals').textContent = fmt(activeDeals.length);
+    document.getElementById('kpi-pipeline').textContent = fmtEur(pipelineValue);
+    document.getElementById('kpi-won').textContent = fmtEur(wonValue);
+    document.getElementById('kpi-partners').textContent = fmt(partners.count);
+
+    // Pipeline
+    const stages = [
+      { key: 'discovery', label: 'Discovery', color: 'var(--blue)' },
+      { key: 'demo_scheduled', label: 'Demo Scheduled', color: 'var(--purple)' },
+      { key: 'demo_done', label: 'Demo Done', color: 'var(--purple)' },
+      { key: 'proposal_sent', label: 'Proposal', color: 'var(--amber)' },
+      { key: 'negotiation', label: 'Negotiation', color: 'var(--amber)' },
+      { key: 'closed_won', label: 'Won', color: 'var(--green)' },
+      { key: 'closed_lost', label: 'Lost', color: 'var(--red)' },
+    ];
+    document.getElementById('pipeline').innerHTML = stages.map(s => {
+      const items = deals.data.filter(d => d.stage === s.key);
+      const value = items.reduce((sum, d) => sum + (d.amount_eur || 0), 0);
+      return `<div class="pipeline-stage">
+        <div class="pipeline-count" style="color:${s.color}">${items.length}</div>
+        <div class="pipeline-label">${s.label}</div>
+        ${value > 0 ? `<div class="pipeline-value">${fmtEur(value)}</div>` : ''}
+      </div>`;
+    }).join('');
+
+    // Tabs
+    renderLeads(leads.data, leads.count);
+    renderDeals(deals.data, deals.count);
+    renderAccounts(accounts.data, accounts.count);
+    renderActivities(activities.data);
+    renderPartners(partners.data, partners.count);
+    renderApiKeys(apiKeys.data);
+
+    document.getElementById('last-refresh').textContent = `Updated ${new Date().toLocaleTimeString()}`;
+  }
+
+  // ---- Render functions ----
+  function emptyState(icon, text) {
+    return `<div class="empty-state"><span class="material-symbols-outlined">${icon}</span><p>${text}</p></div>`;
+  }
+
+  function renderLeads(data, count) {
+    if (!data.length) { document.getElementById('panel-leads').innerHTML = `<div class="table-wrap">${emptyState('group', 'No leads yet. They appear when users submit forms.')}</div>`; return; }
+    document.getElementById('panel-leads').innerHTML = `<div class="table-wrap"><div class="table-scroll"><table>
+      <thead><tr><th>Email</th><th>Name</th><th>Company</th><th>Type</th><th>Status</th><th>Score</th><th>Source</th><th>Country</th><th>Created</th></tr></thead>
+      <tbody>${data.map(l => `<tr>
+        <td>${l.email}</td><td>${l.name || '—'}</td><td>${l.company || '—'}</td>
+        <td>${badge(l.lead_type)}</td><td>${badge(l.status)}</td>
+        <td><strong>${l.enterprise_score || 0}</strong></td>
+        <td>${l.source || '—'}</td><td>${l.country_code || '—'}</td><td>${fmtDate(l.created_at)}</td>
+      </tr>`).join('')}</tbody></table></div></div>`;
+  }
+
+  function renderDeals(data, count) {
+    if (!data.length) { document.getElementById('panel-deals').innerHTML = `<div class="table-wrap">${emptyState('handshake', 'No deals yet.')}</div>`; return; }
+    document.getElementById('panel-deals').innerHTML = `<div class="table-wrap"><div class="table-scroll"><table>
+      <thead><tr><th>Title</th><th>Stage</th><th>Product</th><th>Value</th><th>Probability</th><th>Close Date</th><th>Created</th></tr></thead>
+      <tbody>${data.map(d => `<tr>
+        <td>${d.title}</td><td>${badge(d.stage)}</td><td>${d.product || '—'}</td>
+        <td><strong>${fmtEur(d.amount_eur || 0)}</strong>${d.recurring ? '<span style="color:var(--text-muted);font-size:0.7rem">/mo</span>' : ''}</td>
+        <td>${d.close_probability}%</td><td>${fmtDate(d.expected_close_date)}</td><td>${fmtDate(d.created_at)}</td>
+      </tr>`).join('')}</tbody></table></div></div>`;
+  }
+
+  function renderAccounts(data, count) {
+    if (!data.length) { document.getElementById('panel-accounts').innerHTML = `<div class="table-wrap">${emptyState('apartment', 'No accounts yet.')}</div>`; return; }
+    document.getElementById('panel-accounts').innerHTML = `<div class="table-wrap"><div class="table-scroll"><table>
+      <thead><tr><th>Name</th><th>Domain</th><th>Type</th><th>Industry</th><th>Size</th><th>Country</th><th>Score</th></tr></thead>
+      <tbody>${data.map(a => `<tr>
+        <td>${a.name}</td><td>${a.domain || '—'}</td><td>${badge(a.account_type)}</td>
+        <td>${a.industry || '—'}</td><td>${a.company_size || '—'}</td>
+        <td>${a.country_code || '—'}</td><td><strong>${a.enterprise_score || 0}</strong></td>
+      </tr>`).join('')}</tbody></table></div></div>`;
+  }
+
+  function renderActivities(data) {
+    if (!data.length) { document.getElementById('panel-activities').innerHTML = `<div class="table-wrap">${emptyState('timeline', 'No activity yet.')}</div>`; return; }
+    document.getElementById('panel-activities').innerHTML = `<div class="table-wrap"><div class="table-scroll"><table>
+      <thead><tr><th>Type</th><th>Subject</th><th>Details</th><th>Date</th></tr></thead>
+      <tbody>${data.map(a => `<tr>
+        <td>${badge(a.activity_type)}</td><td>${a.subject || '—'}</td>
+        <td><code style="font-size:0.65rem">${a.lead_id ? a.lead_id.substring(0,8) + '...' : '—'}</code></td>
+        <td>${fmtDate(a.created_at)}</td>
+      </tr>`).join('')}</tbody></table></div></div>`;
+  }
+
+  function renderPartners(data, count) {
+    if (!data.length) { document.getElementById('panel-partners').innerHTML = `<div class="table-wrap">${emptyState('diversity_3', 'No partners yet.')}</div>`; return; }
+    document.getElementById('panel-partners').innerHTML = `<div class="table-wrap"><div class="table-scroll"><table>
+      <thead><tr><th>Name</th><th>Email</th><th>Type</th><th>Status</th><th>Code</th><th>Commission</th><th>Referrals</th><th>Revenue</th></tr></thead>
+      <tbody>${data.map(p => `<tr>
+        <td>${p.name}</td><td>${p.email}</td><td>${badge(p.partner_type)}</td><td>${badge(p.status)}</td>
+        <td><code>${p.referral_code || '—'}</code></td><td>${p.commission_rate}%</td>
+        <td>${p.total_referrals}</td><td><strong>${fmtEur(p.total_revenue_eur || 0)}</strong></td>
+      </tr>`).join('')}</tbody></table></div></div>`;
+  }
+
+  function renderApiKeys(data) {
+    if (!data.length) { document.getElementById('panel-apikeys').innerHTML = `<div class="table-wrap">${emptyState('key', 'No API keys issued yet.')}</div>`; return; }
+    document.getElementById('panel-apikeys').innerHTML = `<div class="table-wrap"><div class="table-scroll"><table>
+      <thead><tr><th>Key</th><th>Plan</th><th>Today</th><th>Month</th><th>Limits</th><th>Active</th><th>Last Used</th></tr></thead>
+      <tbody>${data.map(k => `<tr>
+        <td><code>${(k.api_key || '').substring(0,16)}...</code></td><td>${badge(k.plan)}</td>
+        <td>${k.requests_today}</td><td>${k.requests_month}</td>
+        <td>${k.daily_limit}/${k.monthly_limit}</td>
+        <td>${k.is_active ? '<span style="color:var(--green)">✓</span>' : '<span style="color:var(--red)">✗</span>'}</td>
+        <td>${fmtDate(k.last_used_at)}</td>
+      </tr>`).join('')}</tbody></table></div></div>`;
+  }
+
+  // ---- Tab switching ----
+  document.getElementById('nav-tabs').addEventListener('click', (e) => {
+    if (!e.target.classList.contains('tab')) return;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    e.target.classList.add('active');
+    document.getElementById('panel-' + e.target.dataset.tab).classList.add('active');
+  });
+
+  // ---- Init ----
+  checkAuth();
+</script>
+
+</body>
+</html>
