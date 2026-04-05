@@ -39,8 +39,10 @@ export function getStaticPaths() {
 
   for (const lang of Object.keys(languages)) {
     for (const post of blogPosts) {
+      // Use exact lang slug if available, otherwise English (never inherit from another lang's slug)
+      const slug = post.slug[lang] || post.slug.en;
       paths.push({
-        params: { lang, slug: fb(post.slug, lang) },
+        params: { lang, slug },
         props: { post },
       });
     }
@@ -76,7 +78,7 @@ const pageSchema = [
     image: `https://eurosalary.eu${post.image}`,
     datePublished: post.date,
     dateModified: post.date,
-    url: `https://eurosalary.eu/${lang}/blog/${fb(post.slug, lang)}/`,
+    url: `https://eurosalary.eu/${lang}/blog/${post.slug[lang] || post.slug.en}/`,
     author: {
       '@type': 'Organization',
       name: 'EuroSalary',
@@ -151,7 +153,7 @@ const pageSchema = [
     <h2>{fb(relatedLabel, lang)}</h2>
     <div class="related__grid">
       {relatedPosts.map((rp) => (
-        <a href={`/${lang}/blog/${fb(rp.slug, lang)}/`} class="related__card card">
+        <a href={`/${lang}/blog/${rp.slug[lang] || rp.slug.en}/`} class="related__card card">
           <div class="related__image-wrap">
             <img
               src={rp.image}

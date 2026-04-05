@@ -68,7 +68,7 @@ const pageSchema = [
     hasPart: sortedPosts.map((post) => ({
       '@type': 'Article',
       headline: fb(post.title, lang),
-      url: `https://eurosalary.eu/${lang}/blog/${fb(post.slug, lang)}/`,
+      url: `https://eurosalary.eu/${lang}/blog/${post.slug[lang] || post.slug.en}/`,
       datePublished: post.date,
       image: `https://eurosalary.eu${post.image}`,
     })),
@@ -98,7 +98,7 @@ const pageSchema = [
     <section class="section">
       <div class="blog-grid">
         {sortedPosts.map((post) => (
-          <a href={`/${lang}/blog/${fb(post.slug, lang)}/`} class="blog-card card">
+          <a href={`/${lang}/blog/${post.slug[lang] || post.slug.en}/`} class="blog-card card">
             <div class="blog-card__image-wrap">
               <img
                 src={post.image}
