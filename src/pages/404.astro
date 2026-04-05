@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { jobSlugsByLang, countrySlugsByLang, countryFlags } from '../data/slugs';
+
+const lang = 'en';
+const popularPages = [
+  { label: 'Software Engineer in Germany', href: '/en/salary/germany/software-engineer/' },
+  { label: 'Financial Analyst in Luxembourg', href: '/en/salary/luxembourg/financial-analyst/' },
+  { label: 'Doctor in Switzerland', href: '/en/salary/switzerland/doctor/' },
+  { label: 'Nurse in France', href: '/en/salary/france/nurse/' },
+  { label: 'Data Scientist in Netherlands', href: '/en/salary/netherlands/data-scientist/' },
+  { label: 'Countries Overview', href: '/en/countries/' },
+  { label: 'Compare Salaries', href: '/en/compare/' },
+  { label: 'Salary Calculator', href: '/en/calculator/' },
+];
+---
+
+<BaseLayout
+  title="Page Not Found — EuroSalary.eu"
+  description="The page you're looking for doesn't exist. Browse our salary data or try searching."
+>
+  <section class="section">
+    <div class="container" style="text-align: center; max-width: 640px;">
+      <div class="error-code">404</div>
+      <h1 style="margin-bottom: var(--space-4);">Page Not Found</h1>
+      <p style="color: var(--color-gray-500); margin-bottom: var(--space-8);">
+        The page you're looking for doesn't exist or has been moved. Try one of the popular pages below, or search for a specific salary.
+      </p>
+
+      <div class="search-404">
+        <form class="hero__search" action="/en/compare/" style="max-width: 480px; margin: 0 auto var(--space-8);">
+          <input
+            type="text"
+            name="q"
+            placeholder="Search a job title..."
+            autocomplete="off"
+            style="flex: 1; padding: var(--space-3) var(--space-5); border: none; font-size: var(--text-base); font-family: var(--font-sans); outline: none; border-radius: var(--radius-lg) 0 0 var(--radius-lg);"
+          />
+          <button type="submit" style="padding: var(--space-3) var(--space-6); background: var(--color-blue-600); color: white; border: none; font-weight: 600; cursor: pointer; border-radius: 0 var(--radius-lg) var(--radius-lg) 0;">
+            Search
+          </button>
+        </form>
+      </div>
+
+      <h2 style="font-size: var(--text-xl); margin-bottom: var(--space-4);">Popular Pages</h2>
+      <div class="popular-grid">
+        {popularPages.map((page) => (
+          <a href={page.href} class="card popular-card">
+            {page.label}
+          </a>
+        ))}
+      </div>
+
+      <div style="margin-top: var(--space-8);">
+        <a href="/en/" class="btn btn--primary">Back to Homepage</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .error-code {
+    font-size: 8rem;
+    font-weight: 800;
+    color: var(--color-gray-200);
+    line-height: 1;
+    margin-bottom: var(--space-2);
+  }
+
+  .popular-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  .popular-card {
+    text-decoration: none;
+    color: var(--color-navy-800);
+    font-weight: var(--weight-medium);
+    font-size: var(--text-sm);
+    text-align: left;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .popular-card:hover {
+    border-color: var(--color-blue-500);
+    box-shadow: var(--shadow-md);
+    color: var(--color-blue-600);
+  }
+
+  @media (max-width: 640px) {
+    .popular-grid {
+      grid-template-columns: 1fr;
+    }
+    .error-code {
+      font-size: 5rem;
+    }
+  }
+</style>

@@ -1,0 +1,393 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NewsletterForm from '../../components/NewsletterForm.astro';
+import EuropeMap from '../../components/EuropeMap.astro';
+import BrowseSection from '../../components/BrowseSection.astro';
+import SearchBar from '../../components/SearchBar.astro';
+import { useTranslations } from '../../i18n/utils';
+import { languages, type Lang } from '../../i18n/ui';
+import { getFeaturedSalaries, getHomepageMeta } from '../../data/homepage';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+const featuredSalaries = getFeaturedSalaries(lang);
+const meta = getHomepageMeta(lang);
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'EuroSalary.eu',
+    url: 'https://eurosalary.eu',
+    description: meta.description,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: `https://eurosalary.eu/${lang}/salary/{search_term_string}`,
+      'query-input': 'required name=search_term_string',
+    },
+  },
+];
+---
+
+<BaseLayout title={meta.title} description={meta.description} schema={schema}>
+  <!-- Hero: Split layout with search panel -->
+  <section class="hero hero--split">
+    <div class="hero__bg"></div>
+    <div class="container hero__grid">
+      <div class="hero__content">
+        <div class="inst-label">
+          <span class="inst-label__dot"></span>
+          {t('home.heroLabel')}
+        </div>
+        <h1>{t('home.heroTitle1')} <br/><span class="highlight">{t('home.heroTitle2')}</span></h1>
+        <p class="hero__desc">{t('home.heroDesc')}</p>
+        <div class="hero__meta">
+          <div class="hero__meta-item">
+            <span class="material-symbols-outlined">database</span>
+            88-EU-STAT-02
+          </div>
+          <div class="hero__meta-item">
+            <span class="material-symbols-outlined">history</span>
+            Synced 14:02 UTC
+          </div>
+        </div>
+      </div>
+      <div class="hero__panel">
+        <div class="hero__panel-inner">
+          <h3 class="hero__panel-title">{t('home.panelTitle')}</h3>
+          <SearchBar lang={lang} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats: Rich 3-column cards -->
+  <section class="stats-rich">
+    <div class="container">
+      <div class="stats-rich__grid">
+        <div class="stats-rich__card">
+          <div class="stats-rich__head">
+            <span class="stats-rich__label">{t('home.statDataSources')}</span>
+            <span class="material-symbols-outlined stats-rich__icon">dataset</span>
+          </div>
+          <div class="stats-rich__row">
+            <span class="stats-rich__value">12.4k+</span>
+            <span class="stats-rich__badge">{t('home.badgeVerified')}</span>
+          </div>
+          <p class="stats-rich__desc">{t('home.statDataSourcesDesc')}</p>
+        </div>
+        <div class="stats-rich__card">
+          <div class="stats-rich__head">
+            <span class="stats-rich__label">{t('home.statCompliance')}</span>
+            <span class="material-symbols-outlined stats-rich__icon">gavel</span>
+          </div>
+          <div class="stats-rich__row">
+            <span class="stats-rich__value">100%</span>
+            <span class="stats-rich__badge">GDPR</span>
+          </div>
+          <p class="stats-rich__desc">{t('home.statComplianceDesc')}</p>
+        </div>
+        <div class="stats-rich__card">
+          <div class="stats-rich__head">
+            <span class="stats-rich__label">{t('home.statUpdateCycle')}</span>
+            <span class="material-symbols-outlined stats-rich__icon">refresh</span>
+          </div>
+          <div class="stats-rich__row">
+            <span class="stats-rich__value">24h</span>
+            <span class="stats-rich__badge stats-rich__badge--accent">{t('home.badgeSync')}</span>
+          </div>
+          <p class="stats-rich__desc">{t('home.statUpdateCycleDesc')}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust Badges -->
+  <section class="trust-badges">
+    <div class="container">
+      <div class="trust-badges__row">
+        <div class="trust-badges__item">
+          <div class="trust-badges__icon-wrap"><span class="material-symbols-outlined">verified_user</span></div>
+          <div><p class="trust-badges__title">{t('home.trustGDPR')}</p><p class="trust-badges__sub">{t('home.trustGDPRSub')}</p></div>
+        </div>
+        <div class="trust-badges__item">
+          <div class="trust-badges__icon-wrap"><span class="material-symbols-outlined">account_balance</span></div>
+          <div><p class="trust-badges__title">{t('home.trustSource')}</p><p class="trust-badges__sub">{t('home.trustSourceSub')}</p></div>
+        </div>
+        <div class="trust-badges__item">
+          <div class="trust-badges__icon-wrap"><span class="material-symbols-outlined">security</span></div>
+          <div><p class="trust-badges__title">{t('home.trustEncrypt')}</p><p class="trust-badges__sub">{t('home.trustEncryptSub')}</p></div>
+        </div>
+        <div class="trust-badges__item">
+          <div class="trust-badges__icon-wrap"><span class="material-symbols-outlined">monitoring</span></div>
+          <div><p class="trust-badges__title">{t('home.trustPPP')}</p><p class="trust-badges__sub">{t('home.trustPPPSub')}</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Salaries -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <h2>{t('home.featuredTitle')}</h2>
+          <p class="section-header__sub">{t('home.benchmarkSub')}</p>
+        </div>
+        <div class="section-header__actions">
+          <div class="toggle-bar">
+            <button class="toggle-bar__btn toggle-bar__btn--active">{t('salary.gross')}</button>
+            <button class="toggle-bar__btn">{t('salary.net')}</button>
+          </div>
+          <a href={`/${lang}/compare/`} class="btn btn--outline btn--sm">
+            <span class="material-symbols-outlined" style="font-size: 14px;">compare_arrows</span>
+            {t('home.fullAccess')}
+          </a>
+        </div>
+      </div>
+      <div class="benchmark-list">
+        {featuredSalaries.map((item) => (
+          <a href={item.link} class="benchmark-card">
+            <div class="benchmark-card__left">
+              <div class="benchmark-card__icon"><span class="material-symbols-outlined">{item.icon}</span></div>
+              <div>
+                <h3 class="benchmark-card__job">{item.job}</h3>
+                <div class="benchmark-card__meta">
+                  <span class="benchmark-card__tag"><span class="benchmark-card__tag-dot"></span>{item.tag}</span>
+                  <span class="benchmark-card__countries">{item.countries}</span>
+                </div>
+              </div>
+            </div>
+            <div class="benchmark-card__right">
+              <div class="benchmark-card__range">{item.range}<span class="benchmark-card__period"> {t('home.perYear')}</span></div>
+              <div class="benchmark-card__actions">
+                <span class="btn btn--outline btn--xs">{t('home.viewBreakdown')}</span>
+                <span class="btn btn--secondary btn--xs">
+                  <span class="material-symbols-outlined" style="font-size: 14px;">compare_arrows</span>
+                  {t('home.compare')}
+                </span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <EuropeMap lang={lang} />
+  <BrowseSection lang={lang} />
+
+  <!-- Methodology -->
+  <section class="section" style="border-top: 1px solid var(--color-surface-high);">
+    <div class="container">
+      <div class="methodology-header">
+        <span class="inst-label" style="margin-bottom: var(--space-4);">
+          <span class="inst-label__dot"></span>
+          {t('home.methodologyLabel')}
+        </span>
+        <h2>{t('home.methodology')}</h2>
+      </div>
+      <div class="methodology-grid">
+        <div class="methodology-step">
+          <div class="methodology-step__head">
+            <span class="step-number">01</span>
+            <h3>{t('home.step1Title')}</h3>
+          </div>
+          <p>{t('home.step1Desc')}</p>
+          <div class="methodology-step__tags">
+            <span class="methodology-tag">{t('home.methodSource1')}</span>
+            <span class="methodology-tag">{t('home.methodSource2')}</span>
+          </div>
+        </div>
+        <div class="methodology-step methodology-step--dark">
+          <div class="methodology-step__head">
+            <span class="step-number" style="background: var(--color-white); color: var(--color-primary-container);">02</span>
+            <h3 style="color: var(--color-white);">{t('home.step2Title')}</h3>
+          </div>
+          <p style="color: var(--color-on-primary-container);">{t('home.step2Desc')}</p>
+          <ul class="methodology-step__checks">
+            <li><span class="material-symbols-outlined">check_circle</span> {t('home.methodCheck1')}</li>
+            <li><span class="material-symbols-outlined">analytics</span> {t('home.methodCheck2')}</li>
+          </ul>
+        </div>
+        <div class="methodology-step">
+          <div class="methodology-step__head">
+            <span class="step-number">03</span>
+            <h3>{t('home.step3Title')}</h3>
+          </div>
+          <p>{t('home.step3Desc')}</p>
+          <div class="methodology-step__update">
+            <span class="methodology-update-label">{t('home.updateCadence')}</span>
+            <span class="methodology-update-value">{t('home.updateValue')}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dark CTA Section -->
+  <section class="cta-dark">
+    <div class="container cta-dark__inner">
+      <div class="cta-dark__content">
+        <h2>{t('home.ctaTitle')}</h2>
+        <p>{t('home.ctaDesc')}</p>
+        <div class="cta-dark__actions">
+          <a href={`/${lang}/countries/`} class="btn btn--primary btn--lg">
+            <span class="material-symbols-outlined" style="font-size: 18px;">layers</span>
+            {t('home.ctaExplore')}
+          </a>
+          <a href={`/${lang}/methodology/`} class="btn btn--outline-light btn--lg">{t('home.ctaWhitepaper')}</a>
+        </div>
+      </div>
+      <div class="cta-dark__decoration">
+        <span class="material-symbols-outlined">equalizer</span>
+      </div>
+    </div>
+  </section>
+
+  <NewsletterForm />
+</BaseLayout>
+
+<style>
+  /* ========== HERO SPLIT LAYOUT ========== */
+  .hero--split { position: relative; padding: 0; text-align: left; }
+  .hero--split .hero__bg {
+    position: absolute; inset: 0; opacity: 0.08; pointer-events: none;
+    background-image: radial-gradient(var(--color-white) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .hero__grid {
+    display: grid; grid-template-columns: 7fr 5fr; gap: var(--space-16);
+    align-items: start; position: relative; z-index: 1;
+    padding-top: var(--space-24); padding-bottom: var(--space-16);
+  }
+  .hero__content .inst-label { margin-bottom: var(--space-8); }
+  .hero--split h1 { text-align: left; margin: 0 0 var(--space-8); max-width: none; font-size: var(--text-7xl); line-height: 0.9; }
+  .hero__desc {
+    text-align: left; margin: 0 0 var(--space-12) !important; max-width: 560px !important;
+    border-left: 2px solid var(--color-secondary); padding-left: var(--space-8);
+  }
+  .hero__meta { display: flex; align-items: center; gap: var(--space-8); }
+  .hero__meta-item {
+    display: flex; align-items: center; gap: var(--space-2);
+    font-size: 10px; font-family: var(--font-mono, monospace);
+    color: var(--color-on-primary-container); text-transform: uppercase; letter-spacing: 0.15em;
+  }
+  .hero__meta-item .material-symbols-outlined { font-size: 14px; }
+  .hero__panel { background: var(--color-white); padding: 4px; box-shadow: var(--shadow-xl); }
+  .hero__panel-inner { border: 1px solid var(--color-surface-high); padding: var(--space-8); }
+  .hero__panel-title {
+    font-size: var(--text-xs); font-weight: var(--weight-bold); text-transform: uppercase;
+    letter-spacing: 0.2em; color: var(--color-primary-container);
+    border-bottom: 1px solid var(--color-surface-low); padding-bottom: var(--space-4); margin-bottom: var(--space-6);
+  }
+  .hero__panel :global(.search-widget) { max-width: none; }
+  .hero__panel :global(.hero__search) { flex-direction: column; box-shadow: none; border-radius: 0; }
+  .hero__panel :global(.search-input-wrap input) { border-radius: 0; background: var(--color-surface-low); border: 1px solid var(--color-outline-variant); }
+  .hero__panel :global(#country-select) { border-left: none; border-top: none; background: var(--color-surface-low); border: 1px solid var(--color-outline-variant); margin-top: var(--space-3); }
+  .hero__panel :global(#search-btn) { border-radius: 0; margin-top: var(--space-4); padding: var(--space-4); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.2em; font-weight: var(--weight-bold); }
+  .hero__panel :global(.popular-searches) { display: none; }
+
+  /* ========== STATS RICH ========== */
+  .stats-rich { border-bottom: 1px solid var(--color-surface-high); }
+  .stats-rich__grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .stats-rich__card { padding: var(--space-10); border-right: 1px solid var(--color-surface-high); }
+  .stats-rich__card:last-child { border-right: none; }
+  .stats-rich__head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-2); }
+  .stats-rich__label { font-size: 10px; font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-on-surface-variant); }
+  .stats-rich__icon { color: var(--color-secondary); font-size: 18px; }
+  .stats-rich__row { display: flex; align-items: baseline; gap: var(--space-2); margin-bottom: var(--space-2); }
+  .stats-rich__value { font-family: var(--font-headline); font-size: var(--text-4xl); font-weight: var(--weight-extrabold); color: var(--color-primary-container); letter-spacing: -0.02em; }
+  .stats-rich__badge { font-size: 10px; font-weight: var(--weight-bold); text-transform: uppercase; color: var(--color-on-surface-variant); }
+  .stats-rich__badge--accent { color: var(--color-secondary); }
+  .stats-rich__desc { font-size: var(--text-xs); color: var(--color-on-surface-variant); font-weight: var(--weight-medium); line-height: var(--leading-relaxed); }
+
+  /* ========== TRUST BADGES ========== */
+  .trust-badges { padding: var(--space-10) 0; border-bottom: 1px solid var(--color-surface-high); }
+  .trust-badges__row { display: flex; flex-wrap: wrap; gap: var(--space-10); justify-content: center; }
+  .trust-badges__item { display: flex; align-items: center; gap: var(--space-3); }
+  .trust-badges__icon-wrap { width: 48px; height: 48px; background: var(--color-surface-high); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .trust-badges__icon-wrap .material-symbols-outlined { color: var(--color-secondary); font-size: 22px; }
+  .trust-badges__title { font-family: var(--font-headline); font-weight: var(--weight-bold); color: var(--color-primary-container); font-size: var(--text-sm); line-height: 1; margin-bottom: 4px; }
+  .trust-badges__sub { font-size: var(--text-xs); color: var(--color-on-surface-variant); }
+
+  /* ========== SECTION HEADER ========== */
+  .section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: var(--space-10); padding-bottom: var(--space-8); border-bottom: 1px solid var(--color-surface-high); }
+  .section-header__sub { font-size: var(--text-sm); font-weight: var(--weight-medium); text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-on-surface-variant); margin-top: var(--space-2); }
+  .section-header__actions { display: flex; gap: var(--space-6); align-items: center; }
+  .toggle-bar { display: flex; padding: 2px; background: var(--color-surface-high); border-radius: var(--radius-md); }
+  .toggle-bar__btn { padding: 6px 16px; font-size: 10px; font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.05em; border: none; background: none; cursor: pointer; color: var(--color-on-surface-variant); transition: all var(--transition-fast); }
+  .toggle-bar__btn--active { background: var(--color-white); color: var(--color-primary-container); box-shadow: var(--shadow-sm); }
+
+  /* ========== BENCHMARK LIST ========== */
+  .benchmark-list { border: 1px solid var(--color-surface-high); }
+  .benchmark-card { display: flex; align-items: center; justify-content: space-between; padding: var(--space-8); background: var(--color-white); border-bottom: 1px solid var(--color-surface-high); transition: background var(--transition-fast); text-decoration: none; color: inherit; }
+  .benchmark-card:last-child { border-bottom: none; }
+  .benchmark-card:hover { background: var(--color-surface-low); }
+  .benchmark-card__left { display: flex; align-items: center; gap: var(--space-6); }
+  .benchmark-card__icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: rgba(15,31,61,0.04); border: 1px solid rgba(197,198,206,0.3); border-radius: var(--radius-lg); flex-shrink: 0; }
+  .benchmark-card__icon .material-symbols-outlined { font-size: 24px; color: var(--color-primary-container); }
+  .benchmark-card__job { font-family: var(--font-headline); font-size: var(--text-xl); font-weight: var(--weight-bold); color: var(--color-primary-container); margin-bottom: var(--space-1); }
+  .benchmark-card__meta { display: flex; align-items: center; gap: var(--space-3); }
+  .benchmark-card__tag { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-on-surface-variant); background: var(--color-surface-high); padding: 2px 8px; }
+  .benchmark-card__tag-dot { width: 4px; height: 12px; background: var(--color-secondary); border-radius: 2px; }
+  .benchmark-card__countries { font-size: var(--text-xs); color: var(--color-on-surface-variant); font-weight: var(--weight-medium); }
+  .benchmark-card__right { display: flex; flex-direction: column; align-items: flex-end; }
+  .benchmark-card__range { font-family: var(--font-headline); font-size: var(--text-2xl); font-weight: var(--weight-extrabold); color: var(--color-primary-container); margin-bottom: var(--space-3); }
+  .benchmark-card__period { font-size: var(--text-xs); font-weight: var(--weight-medium); color: var(--color-on-surface-variant); }
+  .benchmark-card__actions { display: flex; gap: var(--space-3); }
+  .btn--xs { padding: 6px 14px; font-size: 10px; }
+  .btn--sm { padding: 8px 16px; font-size: 11px; }
+
+  /* ========== METHODOLOGY ========== */
+  .methodology-header { margin-bottom: var(--space-12); }
+  .methodology-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
+  .methodology-step { background: var(--color-white); padding: var(--space-10); border-top: 4px solid var(--color-secondary); box-shadow: var(--shadow-sm); }
+  .methodology-step--dark { background: var(--color-primary-container); border-top: none; }
+  .methodology-step__head { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-8); }
+  .methodology-step p { font-size: var(--text-sm); line-height: var(--leading-relaxed); color: var(--color-on-surface-variant); font-weight: var(--weight-medium); }
+  .methodology-step__checks { list-style: none; margin-top: var(--space-8); display: flex; flex-direction: column; gap: var(--space-4); }
+  .methodology-step__checks li { display: flex; align-items: center; gap: var(--space-3); font-size: 11px; font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-white); }
+  .methodology-step__checks .material-symbols-outlined { color: var(--color-secondary); font-size: 18px; }
+  .methodology-step__tags { display: flex; gap: var(--space-2); margin-top: var(--space-8); }
+  .methodology-tag { font-size: 9px; font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-on-surface-variant); background: var(--color-surface-low); padding: 4px 8px; border: 1px solid rgba(197,198,206,0.3); }
+  .methodology-step__update { margin-top: var(--space-8); padding: var(--space-4); background: var(--color-surface-low); }
+  .methodology-update-label { display: block; font-size: 10px; font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-secondary); margin-bottom: var(--space-1); }
+  .methodology-update-value { font-family: var(--font-headline); font-size: var(--text-sm); font-weight: var(--weight-bold); color: var(--color-primary-container); }
+
+  /* ========== DARK CTA ========== */
+  .cta-dark { background: var(--color-surface-high); padding: var(--space-20) 0; position: relative; overflow: hidden; }
+  .cta-dark__inner { display: flex; align-items: center; justify-content: space-between; }
+  .cta-dark__content { position: relative; z-index: 1; max-width: 640px; }
+  .cta-dark__content h2 { font-size: var(--text-4xl); margin-bottom: var(--space-6); }
+  .cta-dark__content p { font-size: var(--text-lg); color: var(--color-on-surface-variant); line-height: var(--leading-relaxed); margin-bottom: var(--space-8); }
+  .cta-dark__actions { display: flex; gap: var(--space-4); }
+  .cta-dark__decoration { position: absolute; right: 0; bottom: 0; opacity: 0.06; pointer-events: none; }
+  .cta-dark__decoration .material-symbols-outlined { font-size: 320px; color: var(--color-primary-container); }
+  .btn--outline-light { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-4) var(--space-8); font-family: var(--font-sans); font-size: var(--text-sm); font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.1em; border: 2px solid var(--color-primary-container); background: transparent; color: var(--color-primary-container); cursor: pointer; transition: all var(--transition-fast); text-decoration: none; }
+  .btn--outline-light:hover { background: var(--color-primary-container); color: var(--color-white); }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 1024px) {
+    .hero__grid { grid-template-columns: 1fr; gap: var(--space-8); padding-top: var(--space-16); }
+    .hero--split h1 { font-size: var(--text-5xl); }
+  }
+  @media (max-width: 768px) {
+    .hero--split h1 { font-size: var(--text-4xl); }
+    .section-header { flex-direction: column; align-items: flex-start; gap: var(--space-4); }
+    .section-header__actions { flex-wrap: wrap; }
+    .benchmark-card { flex-direction: column; align-items: flex-start; gap: var(--space-4); }
+    .benchmark-card__right { align-items: flex-start; }
+    .methodology-grid { grid-template-columns: 1fr; }
+    .stats-rich__grid { grid-template-columns: 1fr; }
+    .stats-rich__card { border-right: none; border-bottom: 1px solid var(--color-surface-high); }
+    .stats-rich__card:last-child { border-bottom: none; }
+    .trust-badges__row { gap: var(--space-6); }
+    .cta-dark__actions { flex-direction: column; }
+    .hero__meta { flex-wrap: wrap; gap: var(--space-4); }
+  }
+</style>

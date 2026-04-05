@@ -1,0 +1,292 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TLDRBox from '../../components/TLDRBox.astro';
+import FAQSection from '../../components/FAQSection.astro';
+import { languages } from '../../i18n/ui';
+import { fb, useTranslations } from '../../i18n/utils';
+
+// --------------- i18n strings ---------------
+const i18n: Record<string, {
+  h1: string;
+  metaTitle: string;
+  metaDesc: string;
+  home: string;
+  breadcrumb: string;
+  tldr: string[];
+  intro: string;
+  dataSourcesTitle: string;
+  dataSourcesBody: string;
+  validationTitle: string;
+  validationBody: string;
+  updateTitle: string;
+  updateBody: string;
+  limitationsTitle: string;
+  limitationsBody: string;
+  citeTitle: string;
+  citeBody: string;
+  faq: Array<{ question: string; answer: string }>;
+}> = {
+  en: {
+    h1: 'How EuroSalary Collects and Verifies Salary Data',
+    metaTitle: 'Methodology: How We Collect & Verify Salary Data | EuroSalary.eu',
+    metaDesc: 'Learn how EuroSalary gathers salary data from Eurostat, OECD, 50+ job boards, and anonymous submissions. Our validation process ensures accuracy through cross-referencing, outlier detection, and human review.',
+    home: 'Home',
+    breadcrumb: 'Methodology',
+    tldr: [
+      'Data from Eurostat, OECD, 50+ job boards, and anonymous submissions',
+      'Every data point cross-referenced across 3+ independent sources',
+      'Outlier detection using IQR method with minimum 30 samples per entry',
+      'Full recalculation every month; job postings refreshed weekly',
+    ],
+    intro: 'Transparency is at the heart of EuroSalary. We believe that salary data is only useful if you understand exactly where it comes from, how it is processed, and what its limitations are. This page explains every step of our data pipeline, from raw collection to the figures you see on our country and job pages.',
+    dataSourcesTitle: 'Data Sources',
+    dataSourcesBody: 'Our salary figures are built from four complementary data streams. First, we ingest official statistics from the Eurostat Labour Force Survey, which covers all EU and EEA member states with standardised methodology. Second, we pull wage indicators from OECD.Stat, giving us a macroeconomic cross-check that includes non-EU countries like Switzerland and Norway. Third, we continuously scrape and normalise salary information published on more than 50 European job boards, including country-specific platforms and pan-European aggregators. Finally, we accept anonymous salary submissions from users who voluntarily share their compensation details through our encrypted form. Each source is tagged with a confidence weight that feeds into our aggregation model.',
+    validationTitle: 'Validation Process',
+    validationBody: 'Raw data goes through a four-stage validation pipeline before it reaches the site. In stage one, we apply interquartile range (IQR) outlier detection to flag values that fall more than 1.5 times outside the IQR for a given country-job pair. In stage two, every data point must be corroborated by at least three independent sources; figures supported by fewer sources are marked as estimates. Stage three enforces a minimum sample size of 30 observations per data point; entries that do not meet this threshold are either merged with adjacent categories or excluded entirely. In stage four, our research team performs a human review of any flagged anomalies, checking them against national statistical office publications and industry salary surveys.',
+    updateTitle: 'Update Frequency',
+    updateBody: 'Different sources update on different cadences. Eurostat data is refreshed quarterly, usually with a one-quarter lag. Job-board salary data is scraped and integrated weekly every Monday. Anonymous user submissions are processed in real time and appear in our dataset within 24 hours, subject to validation. We run a full recalculation of all aggregated figures on the first day of each month, which reconciles new data with historical baselines and adjusts confidence scores.',
+    limitationsTitle: 'Limitations and Known Biases',
+    limitationsBody: 'No salary dataset is perfect, and we want to be upfront about our limitations. Self-reported data can skew higher because higher earners are more likely to share their salary. Our figures reflect national averages and may not capture significant regional variation; for example, salaries in capital cities are often 20-40% above the national mean. Purchasing power parity is not always reflected in the headline numbers, so a lower nominal salary in one country may still afford a better standard of living. Finally, freelance and contractor compensation is excluded because the lack of standardised reporting makes reliable aggregation impossible at this time.',
+    citeTitle: 'How to Cite EuroSalary Data',
+    citeBody: 'If you use our data in research, journalism, or business reports, please cite us as follows:',
+    faq: [
+      { question: 'How often is EuroSalary data updated?', answer: 'Our data is updated on a rolling basis. Job-board data refreshes weekly, Eurostat figures update quarterly, anonymous submissions process in real time, and we run a full recalculation on the first of every month.' },
+      { question: 'Can I trust self-reported salary data?', answer: 'Self-reported data is one of four sources we use and is never presented in isolation. Every figure is cross-referenced with at least two other independent sources. We also apply IQR outlier detection to remove extreme values before aggregation.' },
+      { question: 'Why are freelance and contractor salaries excluded?', answer: 'Freelance and contractor compensation varies enormously based on hours worked, project scope, and invoicing practices. Without standardised reporting, we cannot guarantee the accuracy that our methodology requires, so we currently limit our data to employed positions.' },
+    ],
+  },
+  fr: {
+    h1: 'Comment EuroSalary collecte et v\u00e9rifie les donn\u00e9es salariales',
+    metaTitle: 'M\u00e9thodologie : comment nous collectons et v\u00e9rifions les donn\u00e9es salariales | EuroSalary.eu',
+    metaDesc: 'D\u00e9couvrez comment EuroSalary collecte les donn\u00e9es salariales aupr\u00e8s d\u2019Eurostat, de l\u2019OCDE, de plus de 50 sites d\u2019emploi et de soumissions anonymes. Notre processus de validation garantit la pr\u00e9cision par recoupement, d\u00e9tection d\u2019anomalies et examen humain.',
+    home: 'Accueil',
+    breadcrumb: 'M\u00e9thodologie',
+    tldr: [
+      'Donn\u00e9es issues d\u2019Eurostat, de l\u2019OCDE, de 50+ sites d\u2019emploi et de soumissions anonymes',
+      'Chaque donn\u00e9e est recoup\u00e9e avec au moins 3 sources ind\u00e9pendantes',
+      'D\u00e9tection des valeurs aberrantes par m\u00e9thode IQR avec minimum 30 observations',
+      'Recalcul complet chaque mois ; offres d\u2019emploi actualis\u00e9es chaque semaine',
+    ],
+    intro: 'La transparence est au c\u0153ur d\u2019EuroSalary. Nous estimons que les donn\u00e9es salariales ne sont utiles que si vous comprenez exactement d\u2019o\u00f9 elles proviennent, comment elles sont trait\u00e9es et quelles sont leurs limites. Cette page explique chaque \u00e9tape de notre pipeline de donn\u00e9es, de la collecte brute aux chiffres affich\u00e9s sur nos pages pays et m\u00e9tiers.',
+    dataSourcesTitle: 'Sources des donn\u00e9es',
+    dataSourcesBody: 'Nos chiffres salariaux reposent sur quatre flux de donn\u00e9es compl\u00e9mentaires. Premi\u00e8rement, nous int\u00e9grons les statistiques officielles de l\u2019enqu\u00eate Eurostat sur les forces de travail, couvrant tous les \u00c9tats membres de l\u2019UE et de l\u2019EEE avec une m\u00e9thodologie harmonis\u00e9e. Deuxi\u00e8mement, nous extrayons les indicateurs salariaux d\u2019OECD.Stat, offrant une v\u00e9rification macro\u00e9conomique incluant des pays hors UE comme la Suisse et la Norv\u00e8ge. Troisi\u00e8mement, nous collectons et normalisons en continu les informations salariales publi\u00e9es sur plus de 50 sites d\u2019emploi europ\u00e9ens, tant nationaux que paneurop\u00e9ens. Enfin, nous acceptons les soumissions salariales anonymes d\u2019utilisateurs partageant volontairement leur r\u00e9mun\u00e9ration via notre formulaire chiffr\u00e9. Chaque source re\u00e7oit un poids de confiance qui alimente notre mod\u00e8le d\u2019agr\u00e9gation.',
+    validationTitle: 'Processus de validation',
+    validationBody: 'Les donn\u00e9es brutes passent par un pipeline de validation en quatre \u00e9tapes avant d\u2019appara\u00eetre sur le site. \u00c0 la premi\u00e8re \u00e9tape, nous appliquons la d\u00e9tection d\u2019anomalies par \u00e9cart interquartile (IQR) pour signaler les valeurs s\u2019\u00e9cartant de plus de 1,5 fois l\u2019IQR pour une paire pays-m\u00e9tier donn\u00e9e. \u00c0 la deuxi\u00e8me \u00e9tape, chaque donn\u00e9e doit \u00eatre confirm\u00e9e par au moins trois sources ind\u00e9pendantes ; les chiffres appuy\u00e9s par moins de sources sont signal\u00e9s comme estimations. La troisi\u00e8me \u00e9tape impose un \u00e9chantillon minimum de 30 observations par donn\u00e9e ; les entr\u00e9es n\u2019atteignant pas ce seuil sont fusionn\u00e9es avec des cat\u00e9gories adjacentes ou exclues. \u00c0 la quatri\u00e8me \u00e9tape, notre \u00e9quipe de recherche proc\u00e8de \u00e0 un examen humain des anomalies signal\u00e9es, en les v\u00e9rifiant aupr\u00e8s des offices nationaux de statistiques et des enqu\u00eates salariales sectorielles.',
+    updateTitle: 'Fr\u00e9quence de mise \u00e0 jour',
+    updateBody: 'Les diff\u00e9rentes sources sont mises \u00e0 jour \u00e0 des rythmes diff\u00e9rents. Les donn\u00e9es Eurostat sont actualis\u00e9es trimestriellement, g\u00e9n\u00e9ralement avec un d\u00e9calage d\u2019un trimestre. Les donn\u00e9es salariales des sites d\u2019emploi sont collect\u00e9es et int\u00e9gr\u00e9es chaque lundi. Les soumissions anonymes sont trait\u00e9es en temps r\u00e9el et apparaissent dans nos donn\u00e9es sous 24 heures, apr\u00e8s validation. Nous effectuons un recalcul complet de tous les chiffres agr\u00e9g\u00e9s le premier jour de chaque mois, conciliant les nouvelles donn\u00e9es avec les bases historiques et ajustant les scores de confiance.',
+    limitationsTitle: 'Limites et biais connus',
+    limitationsBody: 'Aucun jeu de donn\u00e9es salariales n\u2019est parfait, et nous souhaitons \u00eatre transparents sur nos limites. Les donn\u00e9es auto-d\u00e9clar\u00e9es peuvent \u00eatre biais\u00e9es vers le haut, car les personnes mieux r\u00e9mun\u00e9r\u00e9es sont plus susceptibles de partager leur salaire. Nos chiffres refl\u00e8tent des moyennes nationales et ne capturent pas toujours les variations r\u00e9gionales significatives ; par exemple, les salaires dans les capitales sont souvent 20 \u00e0 40 % sup\u00e9rieurs \u00e0 la moyenne nationale. La parit\u00e9 de pouvoir d\u2019achat n\u2019est pas toujours refl\u00e9t\u00e9e dans les chiffres principaux, de sorte qu\u2019un salaire nominal inf\u00e9rieur dans un pays peut n\u00e9anmoins offrir un meilleur niveau de vie. Enfin, les r\u00e9mun\u00e9rations des freelances et ind\u00e9pendants sont exclues car l\u2019absence de rapports standardis\u00e9s rend une agr\u00e9gation fiable impossible \u00e0 ce stade.',
+    citeTitle: 'Comment citer les donn\u00e9es EuroSalary',
+    citeBody: 'Si vous utilisez nos donn\u00e9es dans vos recherches, articles journalistiques ou rapports commerciaux, veuillez nous citer comme suit\u00a0:',
+    faq: [
+      { question: '\u00c0 quelle fr\u00e9quence les donn\u00e9es EuroSalary sont-elles mises \u00e0 jour\u00a0?', answer: 'Nos donn\u00e9es sont mises \u00e0 jour en continu. Les donn\u00e9es des sites d\u2019emploi sont actualis\u00e9es chaque semaine, les chiffres Eurostat trimestriellement, les soumissions anonymes en temps r\u00e9el, et un recalcul complet a lieu le premier de chaque mois.' },
+      { question: 'Peut-on faire confiance aux donn\u00e9es salariales auto-d\u00e9clar\u00e9es\u00a0?', answer: 'Les donn\u00e9es auto-d\u00e9clar\u00e9es constituent l\u2019une de nos quatre sources et ne sont jamais pr\u00e9sent\u00e9es isol\u00e9ment. Chaque chiffre est recoup\u00e9 avec au moins deux autres sources ind\u00e9pendantes. Nous appliquons \u00e9galement la d\u00e9tection d\u2019anomalies IQR pour \u00e9liminer les valeurs extr\u00eames avant agr\u00e9gation.' },
+      { question: 'Pourquoi les salaires des freelances et ind\u00e9pendants sont-ils exclus\u00a0?', answer: 'La r\u00e9mun\u00e9ration des freelances et ind\u00e9pendants varie \u00e9norm\u00e9ment selon les heures travaill\u00e9es, la port\u00e9e des projets et les pratiques de facturation. Sans rapports standardis\u00e9s, nous ne pouvons garantir la pr\u00e9cision que notre m\u00e9thodologie exige, c\u2019est pourquoi nous limitons actuellement nos donn\u00e9es aux postes salari\u00e9s.' },
+    ],
+  },
+  de: {
+    h1: 'Wie EuroSalary Gehaltsdaten erhebt und pr\u00fcft',
+    metaTitle: 'Methodik: Wie wir Gehaltsdaten erheben und pr\u00fcfen | EuroSalary.eu',
+    metaDesc: 'Erfahren Sie, wie EuroSalary Gehaltsdaten von Eurostat, OECD, \u00fcber 50 Jobb\u00f6rsen und anonymen Einreichungen sammelt. Unser Validierungsprozess gew\u00e4hrleistet Genauigkeit durch Gegenpr\u00fcfung, Ausrei\u00dfererkennung und manuelle Kontrolle.',
+    home: 'Startseite',
+    breadcrumb: 'Methodik',
+    tldr: [
+      'Daten aus Eurostat, OECD, 50+ Jobb\u00f6rsen und anonymen Einreichungen',
+      'Jeder Datenpunkt wird mit mindestens 3 unabh\u00e4ngigen Quellen abgeglichen',
+      'Ausrei\u00dfererkennung mittels IQR-Methode bei mindestens 30 Beobachtungen',
+      'Vollst\u00e4ndige Neuberechnung monatlich; Stellenanzeigen w\u00f6chentlich aktualisiert',
+    ],
+    intro: 'Transparenz steht im Mittelpunkt von EuroSalary. Wir sind \u00fcberzeugt, dass Gehaltsdaten nur dann n\u00fctzlich sind, wenn Sie genau verstehen, woher sie stammen, wie sie verarbeitet werden und welche Grenzen sie haben. Diese Seite erl\u00e4utert jeden Schritt unserer Datenpipeline, von der Roherhebung bis zu den Zahlen, die Sie auf unseren L\u00e4nder- und Berufsseiten sehen.',
+    dataSourcesTitle: 'Datenquellen',
+    dataSourcesBody: 'Unsere Gehaltszahlen basieren auf vier erg\u00e4nzenden Datenstr\u00f6men. Erstens integrieren wir offizielle Statistiken aus der Eurostat-Arbeitskr\u00e4fteerhebung, die alle EU- und EWR-Mitgliedstaaten mit standardisierter Methodik abdeckt. Zweitens beziehen wir Lohnindikatoren von OECD.Stat, die eine makro\u00f6konomische Gegenpr\u00fcfung einschlie\u00dflich Nicht-EU-L\u00e4ndern wie der Schweiz und Norwegen erm\u00f6glichen. Drittens erfassen und normalisieren wir kontinuierlich Gehaltsinformationen von mehr als 50 europ\u00e4ischen Jobb\u00f6rsen, darunter l\u00e4nderspezifische Plattformen und paneurop\u00e4ische Aggregatoren. Schlie\u00dflich nehmen wir anonyme Gehaltseinreichungen von Nutzern entgegen, die ihre Verg\u00fctungsdetails freiwillig \u00fcber unser verschl\u00fcsseltes Formular teilen. Jede Quelle erh\u00e4lt ein Vertrauensgewicht, das in unser Aggregationsmodell einflie\u00dft.',
+    validationTitle: 'Validierungsprozess',
+    validationBody: 'Rohdaten durchlaufen eine vierstufige Validierungspipeline, bevor sie auf der Website erscheinen. In Stufe eins wenden wir die Interquartilsabstand-Methode (IQR) zur Ausrei\u00dfererkennung an, um Werte zu kennzeichnen, die mehr als das 1,5-fache au\u00dferhalb des IQR f\u00fcr ein bestimmtes Land-Beruf-Paar liegen. In Stufe zwei muss jeder Datenpunkt von mindestens drei unabh\u00e4ngigen Quellen best\u00e4tigt werden; Zahlen mit weniger Quellen werden als Sch\u00e4tzungen markiert. Stufe drei erzwingt eine Mindeststichprobengr\u00f6\u00dfe von 30 Beobachtungen pro Datenpunkt; Eintr\u00e4ge, die diesen Schwellenwert nicht erreichen, werden entweder mit benachbarten Kategorien zusammengef\u00fchrt oder vollst\u00e4ndig ausgeschlossen. In Stufe vier f\u00fchrt unser Forschungsteam eine manuelle Pr\u00fcfung der gekennzeichneten Anomalien durch und vergleicht sie mit Ver\u00f6ffentlichungen nationaler Statistik\u00e4mter und Branchengehaltsumfragen.',
+    updateTitle: 'Aktualisierungsfrequenz',
+    updateBody: 'Verschiedene Quellen werden in unterschiedlichen Rhythmen aktualisiert. Eurostat-Daten werden viertelj\u00e4hrlich aktualisiert, in der Regel mit einer Verz\u00f6gerung von einem Quartal. Gehaltsdaten aus Jobb\u00f6rsen werden jeden Montag erfasst und integriert. Anonyme Nutzereinreichungen werden in Echtzeit verarbeitet und erscheinen innerhalb von 24 Stunden in unserem Datensatz, vorbehaltlich der Validierung. Am ersten Tag jedes Monats f\u00fchren wir eine vollst\u00e4ndige Neuberechnung aller aggregierten Zahlen durch, bei der neue Daten mit historischen Basiswerten abgeglichen und Vertrauenswerte angepasst werden.',
+    limitationsTitle: 'Einschr\u00e4nkungen und bekannte Verzerrungen',
+    limitationsBody: 'Kein Gehaltsdatensatz ist perfekt, und wir m\u00f6chten offen \u00fcber unsere Einschr\u00e4nkungen sein. Selbstberichtete Daten k\u00f6nnen nach oben verzerrt sein, da Besserverdienende eher bereit sind, ihr Gehalt zu teilen. Unsere Zahlen spiegeln nationale Durchschnitte wider und erfassen m\u00f6glicherweise nicht signifikante regionale Unterschiede; beispielsweise liegen die Geh\u00e4lter in Hauptst\u00e4dten oft 20\u201340 % \u00fcber dem Landesdurchschnitt. Die Kaufkraftparit\u00e4t wird in den Hauptzahlen nicht immer ber\u00fccksichtigt, sodass ein niedrigeres Nominalgehalt in einem Land dennoch einen besseren Lebensstandard erm\u00f6glichen kann. Schlie\u00dflich sind Verg\u00fctungen von Freiberuflern und Auftragnehmern ausgeschlossen, da fehlende standardisierte Berichterstattung eine zuverl\u00e4ssige Aggregation derzeit unm\u00f6glich macht.',
+    citeTitle: 'So zitieren Sie EuroSalary-Daten',
+    citeBody: 'Wenn Sie unsere Daten in Forschung, Journalismus oder Gesch\u00e4ftsberichten verwenden, zitieren Sie uns bitte wie folgt:',
+    faq: [
+      { question: 'Wie oft werden die EuroSalary-Daten aktualisiert?', answer: 'Unsere Daten werden fortlaufend aktualisiert. Jobb\u00f6rsendaten werden w\u00f6chentlich aktualisiert, Eurostat-Zahlen viertelj\u00e4hrlich, anonyme Einreichungen in Echtzeit, und eine vollst\u00e4ndige Neuberechnung erfolgt am Ersten jedes Monats.' },
+      { question: 'Kann man selbstberichteten Gehaltsdaten vertrauen?', answer: 'Selbstberichtete Daten sind eine von vier Quellen und werden nie isoliert dargestellt. Jede Zahl wird mit mindestens zwei weiteren unabh\u00e4ngigen Quellen abgeglichen. Zudem wenden wir die IQR-Ausrei\u00dfererkennung an, um extreme Werte vor der Aggregation zu entfernen.' },
+      { question: 'Warum sind Geh\u00e4lter von Freiberuflern und Auftragnehmern ausgeschlossen?', answer: 'Die Verg\u00fctung von Freiberuflern und Auftragnehmern variiert enorm je nach Arbeitsstunden, Projektumfang und Abrechnungspraxis. Ohne standardisierte Berichterstattung k\u00f6nnen wir die Genauigkeit, die unsere Methodik erfordert, nicht gew\u00e4hrleisten, weshalb wir uns derzeit auf Festanstellungen beschr\u00e4nken.' },
+    ],
+  },
+  es: {
+    h1: 'C\u00f3mo EuroSalary recopila y verifica los datos salariales',
+    metaTitle: 'Metodolog\u00eda: c\u00f3mo recopilamos y verificamos datos salariales | EuroSalary.eu',
+    metaDesc: 'Descubra c\u00f3mo EuroSalary recopila datos salariales de Eurostat, la OCDE, m\u00e1s de 50 portales de empleo y env\u00edos an\u00f3nimos. Nuestro proceso de validaci\u00f3n garantiza la precisi\u00f3n mediante referencias cruzadas, detecci\u00f3n de valores at\u00edpicos y revisi\u00f3n humana.',
+    home: 'Inicio',
+    breadcrumb: 'Metodolog\u00eda',
+    tldr: [
+      'Datos de Eurostat, OCDE, 50+ portales de empleo y env\u00edos an\u00f3nimos',
+      'Cada dato se cruza con al menos 3 fuentes independientes',
+      'Detecci\u00f3n de valores at\u00edpicos mediante m\u00e9todo IQR con m\u00ednimo 30 muestras',
+      'Rec\u00e1lculo completo mensual; ofertas de empleo actualizadas semanalmente',
+    ],
+    intro: 'La transparencia est\u00e1 en el coraz\u00f3n de EuroSalary. Creemos que los datos salariales solo son \u00fatiles si se comprende exactamente de d\u00f3nde provienen, c\u00f3mo se procesan y cu\u00e1les son sus limitaciones. Esta p\u00e1gina explica cada paso de nuestro flujo de datos, desde la recolecci\u00f3n en bruto hasta las cifras que aparecen en nuestras p\u00e1ginas de pa\u00edses y profesiones.',
+    dataSourcesTitle: 'Fuentes de datos',
+    dataSourcesBody: 'Nuestras cifras salariales se construyen a partir de cuatro flujos de datos complementarios. Primero, incorporamos estad\u00edsticas oficiales de la Encuesta de Fuerza Laboral de Eurostat, que cubre todos los estados miembros de la UE y el EEE con metodolog\u00eda estandarizada. Segundo, extraemos indicadores salariales de OECD.Stat, proporcionando una verificaci\u00f3n macroecon\u00f3mica que incluye pa\u00edses no comunitarios como Suiza y Noruega. Tercero, recopilamos y normalizamos continuamente la informaci\u00f3n salarial publicada en m\u00e1s de 50 portales de empleo europeos, incluyendo plataformas nacionales y agregadores paneuropeos. Por \u00faltimo, aceptamos env\u00edos salariales an\u00f3nimos de usuarios que comparten voluntariamente sus datos de compensaci\u00f3n a trav\u00e9s de nuestro formulario cifrado. Cada fuente recibe un peso de confianza que alimenta nuestro modelo de agregaci\u00f3n.',
+    validationTitle: 'Proceso de validaci\u00f3n',
+    validationBody: 'Los datos brutos pasan por un proceso de validaci\u00f3n en cuatro etapas antes de aparecer en el sitio. En la primera etapa, aplicamos la detecci\u00f3n de valores at\u00edpicos mediante rango intercuart\u00edlico (IQR) para se\u00f1alar valores que caen m\u00e1s de 1,5 veces fuera del IQR para un par pa\u00eds-profesi\u00f3n determinado. En la segunda etapa, cada dato debe estar corroborado por al menos tres fuentes independientes; las cifras respaldadas por menos fuentes se marcan como estimaciones. La tercera etapa exige un tama\u00f1o m\u00ednimo de muestra de 30 observaciones por dato; las entradas que no alcanzan este umbral se fusionan con categor\u00edas adyacentes o se excluyen por completo. En la cuarta etapa, nuestro equipo de investigaci\u00f3n realiza una revisi\u00f3n humana de las anomal\u00edas se\u00f1aladas, verific\u00e1ndolas con publicaciones de oficinas nacionales de estad\u00edstica y encuestas salariales sectoriales.',
+    updateTitle: 'Frecuencia de actualizaci\u00f3n',
+    updateBody: 'Las diferentes fuentes se actualizan a distintos ritmos. Los datos de Eurostat se actualizan trimestralmente, generalmente con un desfase de un trimestre. Los datos salariales de portales de empleo se recopilan e integran cada lunes. Los env\u00edos an\u00f3nimos se procesan en tiempo real y aparecen en nuestro conjunto de datos en 24 horas, sujetos a validaci\u00f3n. Realizamos un rec\u00e1lculo completo de todas las cifras agregadas el primer d\u00eda de cada mes, conciliando nuevos datos con las bases hist\u00f3ricas y ajustando las puntuaciones de confianza.',
+    limitationsTitle: 'Limitaciones y sesgos conocidos',
+    limitationsBody: 'Ning\u00fan conjunto de datos salariales es perfecto, y queremos ser transparentes sobre nuestras limitaciones. Los datos autoinformados pueden sesgar al alza porque las personas con mayores ingresos tienen m\u00e1s probabilidades de compartir su salario. Nuestras cifras reflejan promedios nacionales y pueden no capturar variaciones regionales significativas; por ejemplo, los salarios en las capitales suelen ser un 20-40 % superiores a la media nacional. La paridad de poder adquisitivo no siempre se refleja en las cifras principales, por lo que un salario nominal inferior en un pa\u00eds puede ofrecer un mejor nivel de vida. Por \u00faltimo, la compensaci\u00f3n de freelancers y contratistas est\u00e1 excluida porque la falta de informes estandarizados hace imposible una agregaci\u00f3n fiable en este momento.',
+    citeTitle: 'C\u00f3mo citar los datos de EuroSalary',
+    citeBody: 'Si utiliza nuestros datos en investigaciones, periodismo o informes empresariales, por favor c\u00edtenos de la siguiente manera:',
+    faq: [
+      { question: '\u00bfCon qu\u00e9 frecuencia se actualizan los datos de EuroSalary?', answer: 'Nuestros datos se actualizan de forma continua. Los datos de portales de empleo se actualizan semanalmente, las cifras de Eurostat trimestralmente, los env\u00edos an\u00f3nimos en tiempo real, y realizamos un rec\u00e1lculo completo el primero de cada mes.' },
+      { question: '\u00bfSe puede confiar en los datos salariales autoinformados?', answer: 'Los datos autoinformados son una de las cuatro fuentes que utilizamos y nunca se presentan de forma aislada. Cada cifra se cruza con al menos otras dos fuentes independientes. Adem\u00e1s, aplicamos la detecci\u00f3n de valores at\u00edpicos IQR para eliminar valores extremos antes de la agregaci\u00f3n.' },
+      { question: '\u00bfPor qu\u00e9 se excluyen los salarios de freelancers y contratistas?', answer: 'La compensaci\u00f3n de freelancers y contratistas var\u00eda enormemente seg\u00fan las horas trabajadas, el alcance del proyecto y las pr\u00e1cticas de facturaci\u00f3n. Sin informes estandarizados, no podemos garantizar la precisi\u00f3n que nuestra metodolog\u00eda exige, por lo que actualmente limitamos nuestros datos a puestos asalariados.' },
+    ],
+  },
+};
+
+// --------------- getStaticPaths ---------------
+const langs = Object.keys(languages);
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+  }));
+}
+
+// --------------- Page data ---------------
+const { lang } = Astro.params;
+const t = fb(i18n, lang) || i18n.en;
+const ui = useTranslations(lang as any);
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: t.h1,
+    author: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    datePublished: '2026-01-15',
+    dateModified: '2026-04-01',
+    description: t.metaDesc,
+    mainEntityOfPage: `https://eurosalary.eu/${lang}/methodology/`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'EuroSalary',
+    url: 'https://eurosalary.eu',
+    logo: 'https://eurosalary.eu/logo.svg',
+    description: 'The definitive European salary comparison platform.',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: t.faq.map((item: any) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title={t.metaTitle}
+  description={t.metaDesc}
+  datePublished="2026-01-15"
+  dateModified="2026-04-01"
+  schema={pageSchema}
+>
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{t.home}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{t.breadcrumb}</span>
+      </nav>
+      <div class="page-hero__grid">
+        <div class="page-hero__content">
+          <h1 class="page-hero__title">{ui('hero.methodology.title1')}<br/><span class="page-hero__accent">{ui('hero.methodology.title2')}</span></h1>
+          <p class="page-hero__desc">{t.intro}</p>
+        </div>
+        <div class="page-hero__side">
+          <div class="page-hero__card">
+            <span class="page-hero__card-label">{ui('hero.methodology.audit')}</span>
+            <p class="page-hero__card-item">v4.2.1</p>
+            <p class="page-hero__card-item">{ui('hero.methodology.revision')}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <article class="container page-body">
+    <TLDRBox items={t.tldr} />
+
+    <!-- Data Sources -->
+    <section class="section">
+      <h2>{t.dataSourcesTitle}</h2>
+      <p>{t.dataSourcesBody}</p>
+    </section>
+
+    <!-- Validation Process -->
+    <section class="section">
+      <h2>{t.validationTitle}</h2>
+      <p>{t.validationBody}</p>
+    </section>
+
+    <!-- Update Frequency -->
+    <section class="section">
+      <h2>{t.updateTitle}</h2>
+      <p>{t.updateBody}</p>
+    </section>
+
+    <!-- Limitations -->
+    <section class="section">
+      <h2>{t.limitationsTitle}</h2>
+      <p>{t.limitationsBody}</p>
+    </section>
+
+    <!-- How to Cite -->
+    <section class="section">
+      <h2>{t.citeTitle}</h2>
+      <p>{t.citeBody}</p>
+      <blockquote class="cite-example">
+        <code>EuroSalary.eu (2026). [Country] Salary Data. Retrieved from https://eurosalary.eu/</code>
+      </blockquote>
+    </section>
+
+    <FAQSection items={t.faq} />
+  </article>
+</BaseLayout>
+
+<style>
+  .page-body {
+    padding-top: 2.5rem;
+    padding-bottom: 4rem;
+  }
+  .page-body h2 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em;
+    color: #0F1F3D; margin-top: 3rem; margin-bottom: 1rem;
+  }
+
+  .cite-example {
+    margin-top: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-surface-alt, #f4f5f7);
+    border-left: 4px solid var(--color-primary, #2563eb);
+    border-radius: var(--radius-md, 8px);
+    font-size: var(--text-sm);
+    overflow-x: auto;
+  }
+
+  .cite-example code {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+</style>

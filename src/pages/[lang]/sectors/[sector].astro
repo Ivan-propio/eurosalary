@@ -1,0 +1,342 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import { countrySlugsByLang, countryFlags } from '../../../data/slugs';
+import { countryNames, jobNames, uiLabels } from '../../../i18n/translations';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+
+// --------------- Sectors data ---------------
+const sectors = [
+  { id: 'technology', jobs: ['software-engineer', 'data-scientist', 'devops-engineer', 'ux-designer', 'data-analyst'], avgRange: [45000, 85000] },
+  { id: 'finance', jobs: ['financial-analyst', 'accountant'], avgRange: [40000, 75000] },
+  { id: 'healthcare', jobs: ['doctor', 'nurse', 'pharmacist'], avgRange: [30000, 90000] },
+  { id: 'legal', jobs: ['lawyer'], avgRange: [45000, 80000] },
+  { id: 'education', jobs: ['teacher', 'university-professor'], avgRange: [28000, 60000] },
+  { id: 'engineering', jobs: ['mechanical-engineer', 'civil-engineer'], avgRange: [35000, 65000] },
+  { id: 'management', jobs: ['product-manager', 'project-manager', 'operations-manager'], avgRange: [40000, 75000] },
+  { id: 'marketing', jobs: ['marketing-manager'], avgRange: [35000, 65000] },
+  { id: 'sales', jobs: ['sales-manager'], avgRange: [35000, 70000] },
+  { id: 'hr', jobs: ['hr-manager'], avgRange: [35000, 60000] },
+];
+
+// --------------- Sector names ---------------
+const sectorNames: Record<string, Record<string, string>> = {
+  technology: {
+    en: 'Technology', fr: 'Technologie', de: 'Technologie', es: 'Tecnología',
+    it: 'Tecnologia', pt: 'Tecnologia', nl: 'Technologie', pl: 'Technologia',
+    ro: 'Tehnologie', cs: 'Technologie', sv: 'Teknik', da: 'Teknologi',
+    fi: 'Teknologia', el: 'Τεχνολογία', hu: 'Technológia', sk: 'Technológia',
+    bg: 'Технологии', hr: 'Tehnologija', sl: 'Tehnologija', lt: 'Technologijos',
+    lv: 'Tehnoloģija', et: 'Tehnoloogia', mt: 'Teknoloġija', ga: 'Teicneolaíocht',
+  },
+  finance: {
+    en: 'Finance', fr: 'Finance', de: 'Finanzen', es: 'Finanzas',
+    it: 'Finanza', pt: 'Finanças', nl: 'Financiën', pl: 'Finanse',
+    ro: 'Finanțe', cs: 'Finance', sv: 'Finans', da: 'Finans',
+    fi: 'Rahoitus', el: 'Χρηματοοικονομικά', hu: 'Pénzügy', sk: 'Financie',
+    bg: 'Финанси', hr: 'Financije', sl: 'Finance', lt: 'Finansai',
+    lv: 'Finanses', et: 'Rahandus', mt: 'Finanzi', ga: 'Airgeadas',
+  },
+  healthcare: {
+    en: 'Healthcare', fr: 'Santé', de: 'Gesundheit', es: 'Salud',
+    it: 'Sanità', pt: 'Saúde', nl: 'Gezondheidszorg', pl: 'Opieka zdrowotna',
+    ro: 'Sănătate', cs: 'Zdravotnictví', sv: 'Sjukvård', da: 'Sundhed',
+    fi: 'Terveydenhuolto', el: 'Υγεία', hu: 'Egészségügy', sk: 'Zdravotníctvo',
+    bg: 'Здравеопазване', hr: 'Zdravstvo', sl: 'Zdravstvo', lt: 'Sveikatos priežiūra',
+    lv: 'Veselības aprūpe', et: 'Tervishoid', mt: 'Saħħa', ga: 'Cúram Sláinte',
+  },
+  legal: {
+    en: 'Legal', fr: 'Juridique', de: 'Recht', es: 'Legal',
+    it: 'Legale', pt: 'Jurídico', nl: 'Juridisch', pl: 'Prawo',
+    ro: 'Juridic', cs: 'Právo', sv: 'Juridik', da: 'Jura',
+    fi: 'Oikeustiede', el: 'Νομικά', hu: 'Jog', sk: 'Právo',
+    bg: 'Право', hr: 'Pravo', sl: 'Pravo', lt: 'Teisė',
+    lv: 'Tiesības', et: 'Õigus', mt: 'Legali', ga: 'Dlí',
+  },
+  education: {
+    en: 'Education', fr: 'Éducation', de: 'Bildung', es: 'Educación',
+    it: 'Istruzione', pt: 'Educação', nl: 'Onderwijs', pl: 'Edukacja',
+    ro: 'Educație', cs: 'Vzdělávání', sv: 'Utbildning', da: 'Uddannelse',
+    fi: 'Koulutus', el: 'Εκπαίδευση', hu: 'Oktatás', sk: 'Vzdelávanie',
+    bg: 'Образование', hr: 'Obrazovanje', sl: 'Izobraževanje', lt: 'Švietimas',
+    lv: 'Izglītība', et: 'Haridus', mt: 'Edukazzjoni', ga: 'Oideachas',
+  },
+  engineering: {
+    en: 'Engineering', fr: 'Ingénierie', de: 'Ingenieurwesen', es: 'Ingeniería',
+    it: 'Ingegneria', pt: 'Engenharia', nl: 'Engineering', pl: 'Inżynieria',
+    ro: 'Inginerie', cs: 'Inženýrství', sv: 'Ingenjörsvetenskap', da: 'Ingeniørvidenskab',
+    fi: 'Insinööritieteet', el: 'Μηχανική', hu: 'Mérnöki tudományok', sk: 'Inžinierstvo',
+    bg: 'Инженерство', hr: 'Inženjerstvo', sl: 'Inženirstvo', lt: 'Inžinerija',
+    lv: 'Inženierija', et: 'Inseneeria', mt: 'Inġinerija', ga: 'Innealtóireacht',
+  },
+  management: {
+    en: 'Management', fr: 'Management', de: 'Management', es: 'Gestión',
+    it: 'Management', pt: 'Gestão', nl: 'Management', pl: 'Zarządzanie',
+    ro: 'Management', cs: 'Management', sv: 'Ledning', da: 'Ledelse',
+    fi: 'Johtaminen', el: 'Διοίκηση', hu: 'Menedzsment', sk: 'Manažment',
+    bg: 'Мениджмънт', hr: 'Menadžment', sl: 'Menedžment', lt: 'Vadyba',
+    lv: 'Vadība', et: 'Juhtimine', mt: 'Maniġment', ga: 'Bainistíocht',
+  },
+  marketing: {
+    en: 'Marketing', fr: 'Marketing', de: 'Marketing', es: 'Marketing',
+    it: 'Marketing', pt: 'Marketing', nl: 'Marketing', pl: 'Marketing',
+    ro: 'Marketing', cs: 'Marketing', sv: 'Marknadsföring', da: 'Markedsføring',
+    fi: 'Markkinointi', el: 'Μάρκετινγκ', hu: 'Marketing', sk: 'Marketing',
+    bg: 'Маркетинг', hr: 'Marketing', sl: 'Trženje', lt: 'Rinkodara',
+    lv: 'Mārketings', et: 'Turundus', mt: 'Kummerċ', ga: 'Margaíocht',
+  },
+  sales: {
+    en: 'Sales', fr: 'Ventes', de: 'Vertrieb', es: 'Ventas',
+    it: 'Vendite', pt: 'Vendas', nl: 'Verkoop', pl: 'Sprzedaż',
+    ro: 'Vânzări', cs: 'Prodej', sv: 'Försäljning', da: 'Salg',
+    fi: 'Myynti', el: 'Πωλήσεις', hu: 'Értékesítés', sk: 'Predaj',
+    bg: 'Продажби', hr: 'Prodaja', sl: 'Prodaja', lt: 'Pardavimai',
+    lv: 'Pārdošana', et: 'Müük', mt: 'Bejgħ', ga: 'Díolacháin',
+  },
+  hr: {
+    en: 'Human Resources', fr: 'Ressources humaines', de: 'Personalwesen', es: 'Recursos humanos',
+    it: 'Risorse umane', pt: 'Recursos humanos', nl: 'Personeelszaken', pl: 'Zasoby ludzkie',
+    ro: 'Resurse umane', cs: 'Lidské zdroje', sv: 'Personalavdelning', da: 'Personaleafdelingen',
+    fi: 'Henkilöstöhallinto', el: 'Ανθρώπινο δυναμικό', hu: 'Emberi erőforrások', sk: 'Ľudské zdroje',
+    bg: 'Човешки ресурси', hr: 'Ljudski resursi', sl: 'Človeški viri', lt: 'Žmogiškieji ištekliai',
+    lv: 'Cilvēkresursi', et: 'Personalijuhtimine', mt: 'Riżorsi Umani', ga: 'Acmhainní Daonna',
+  },
+};
+
+// --------------- Country averages & job multipliers ---------------
+const countryAvg: Record<string, number> = {
+  CH: 100000, LU: 72000, DK: 60000, IE: 58000, DE: 58000, NL: 56000, AT: 55000, SE: 54000,
+  BE: 50000, FR: 50000, FI: 48000, IT: 40000, ES: 36000, PT: 30000, PL: 28000,
+};
+
+const jobMultipliers: Record<string, number> = {
+  'software-engineer': 1.2, 'data-scientist': 1.15, 'devops-engineer': 1.15, 'ux-designer': 1.0,
+  'data-analyst': 0.95, 'financial-analyst': 1.1, 'accountant': 0.85, 'doctor': 1.8, 'nurse': 0.7,
+  'pharmacist': 1.0, 'lawyer': 1.5, 'teacher': 0.65, 'university-professor': 1.1,
+  'mechanical-engineer': 1.0, 'civil-engineer': 0.95, 'product-manager': 1.1, 'project-manager': 1.05,
+  'operations-manager': 1.0, 'marketing-manager': 1.05, 'sales-manager': 1.1, 'hr-manager': 0.95,
+};
+
+
+// --------------- Translated UI strings ---------------
+const h1Templates: Record<string, string> = {
+  en: '{sector} Salaries in Europe',
+  fr: 'Salaires du secteur {sector} en Europe',
+  de: 'Gehälter im Bereich {sector} in Europa',
+  es: 'Salarios del sector {sector} en Europa',
+};
+
+const descTemplates: Record<string, string> = {
+  en: 'Compare {sector} salaries across 15 European countries. Salary ranges from €{low}K to €{high}K depending on role and location.',
+  fr: 'Comparez les salaires du secteur {sector} dans 15 pays européens. Fourchettes de {low}K€ à {high}K€ selon le poste et le pays.',
+  de: 'Vergleichen Sie {sector}-Gehälter in 15 europäischen Ländern. Gehaltsspannen von €{low}K bis €{high}K je nach Position und Land.',
+  es: 'Compare salarios del sector {sector} en 15 países europeos. Rangos salariales de €{low}K a €{high}K según puesto y país.',
+};
+
+const salaryRangeLabel: Record<string, string> = { en: 'Salary range', fr: 'Fourchette salariale', de: 'Gehaltsspanne', es: 'Rango salarial' };
+const jobCountLabel: Record<string, string> = { en: 'jobs covered', fr: 'métiers couverts', de: 'erfasste Berufe', es: 'empleos cubiertos' };
+const countriesLabel: Record<string, string> = { en: 'countries', fr: 'pays', de: 'Länder', es: 'países' };
+
+const tableJobHeader: Record<string, string> = { en: 'Job Title', fr: 'Métier', de: 'Beruf', es: 'Profesión' };
+const exploreByCountryTitle: Record<string, string> = { en: 'Explore by Country', fr: 'Explorer par pays', de: 'Nach Land erkunden', es: 'Explorar por país' };
+const homeLabelByLang: Record<string, string> = { en: 'Home', fr: 'Accueil', de: 'Startseite', es: 'Inicio' };
+const sectorsLabelByLang: Record<string, string> = { en: 'Sectors', fr: 'Secteurs', de: 'Branchen', es: 'Sectores' };
+
+const countryCodes = ['CH', 'LU', 'DK', 'IE', 'DE', 'NL', 'AT', 'SE', 'BE', 'FR', 'FI', 'IT', 'ES', 'PT', 'PL'];
+
+// --------------- getStaticPaths ---------------
+export function getStaticPaths() {
+  const allSectors = ['technology', 'finance', 'healthcare', 'legal', 'education', 'engineering', 'management', 'marketing', 'sales', 'hr'];
+  const paths: Array<{ params: { lang: string; sector: string }; props: { lang: string; sectorId: string } }> = [];
+  for (const lang of Object.keys(languages)) {
+    for (const sectorId of allSectors) {
+      paths.push({
+        params: { lang, sector: sectorId },
+        props: { lang, sectorId },
+      });
+    }
+  }
+  return paths;
+}
+
+// --------------- Page props ---------------
+const { lang, sectorId } = Astro.props;
+const t = useTranslations(lang as any);
+const sector = sectors.find((s) => s.id === sectorId)!;
+const sectorName = fb(sectorNames[sectorId], lang);
+const jobNameMap: Record<string, string> = {};
+for (const [k, v] of Object.entries(jobNames)) jobNameMap[k] = fb(v, lang);
+const countryNameMap: Record<string, string> = {};
+for (const [k, v] of Object.entries(countryNames)) countryNameMap[k] = fb(v, lang);
+
+const h1 = fb(h1Templates, lang).replace('{sector}', sectorName);
+const description = fb(descTemplates, lang)
+  .replace('{sector}', sectorName)
+  .replace('{low}', String(Math.round(sector.avgRange[0] / 1000)))
+  .replace('{high}', String(Math.round(sector.avgRange[1] / 1000)));
+
+function formatSalary(amount: number): string {
+  return new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(amount);
+}
+
+function formatK(amount: number): string {
+  return `€${Math.round(amount / 1000)}K`;
+}
+
+// Build salary table: rows = jobs, columns = countries
+const salaryTable = sector.jobs.map((jobId) => {
+  const multiplier = jobMultipliers[jobId] || 1.0;
+  const byCCountry = countryCodes.map((code) => ({
+    code,
+    salary: Math.round(countryAvg[code] * multiplier),
+  }));
+  return { jobId, salaries: byCCountry };
+});
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: h1,
+    author: { '@type': 'Organization', name: 'EuroSalary.eu' },
+    datePublished: '2026-01-15',
+    dateModified: '2026-04-01',
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+  },
+];
+---
+
+<BaseLayout
+  title={h1}
+  description={description}
+  datePublished="2026-01-15"
+  dateModified="2026-04-01"
+  schema={pageSchema}
+>
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{fb(homeLabelByLang, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a href={`/${lang}/sectors/`}>{fb(sectorsLabelByLang, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{sectorName}</span>
+      </nav>
+      <h1 class="page-hero__title">{sectorName}<br/><span class="page-hero__accent">{t('hero.sectorDetail.title2')}</span></h1>
+      <p class="page-hero__desc">{description}</p>
+    </div>
+  </section>
+
+  <div class="container page-body">
+    <TLDRBox items={[
+      `${fb(salaryRangeLabel, lang)}: ${formatK(sector.avgRange[0])} - ${formatK(sector.avgRange[1])}`,
+      `${sector.jobs.length} ${fb(jobCountLabel, lang)}`,
+      `15 ${fb(countriesLabel, lang)}`,
+    ]} />
+
+    <!-- Salary table -->
+    <section class="section">
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>{fb(tableJobHeader, lang)}</th>
+              {countryCodes.map((code) => (
+                <th>{countryFlags[code]} {code}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {salaryTable.map((row) => (
+              <tr>
+                <td><strong>{jobNameMap[row.jobId] || row.jobId}</strong></td>
+                {row.salaries.map((s) => (
+                  <td>{formatSalary(s.salary)}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Explore by Country -->
+    <section class="section">
+      <h2>{fb(exploreByCountryTitle, lang)}</h2>
+      <div class="countries-grid">
+        {countryCodes.map((code) => {
+          const slug = fb(countrySlugsByLang, lang)[code];
+          const name = countryNameMap[code];
+          const flag = countryFlags[code];
+          return (
+            <a href={`/${lang}/country/${slug}/`} class="country-link card">
+              <span class="country-link__flag">{flag}</span>
+              <span class="country-link__name">{name}</span>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-body { padding: 2.5rem 0 4rem; }
+  .page-body h2 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em;
+    color: #0F1F3D; margin-top: 2.5rem; margin-bottom: 1rem;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: var(--space-4);
+  }
+
+  .data-table th,
+  .data-table td {
+    white-space: nowrap;
+    font-size: var(--text-sm);
+  }
+
+  .data-table th:first-child,
+  .data-table td:first-child {
+    position: sticky;
+    left: 0;
+    background: var(--color-white);
+    z-index: 1;
+  }
+
+  .countries-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+  }
+
+  .country-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    text-decoration: none;
+    color: inherit;
+    padding: var(--space-3);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .country-link:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .country-link__flag {
+    font-size: var(--text-xl);
+  }
+
+  .country-link__name {
+    font-weight: var(--weight-medium);
+  }
+</style>

@@ -1,0 +1,139 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<section class="section section--dark" id="newsletter">
+  <div class="container" style="text-align: center;">
+    <h2>{t('newsletter.title')}</h2>
+    <p style="color: var(--color-gray-300); margin: var(--space-4) auto var(--space-6); max-width: 500px;">
+      {t('newsletter.subtitle')}
+    </p>
+    <form class="newsletter-form" id="newsletter-form">
+      <input
+        type="email"
+        name="email"
+        placeholder={t('newsletter.emailPlaceholder')}
+        required
+        class="form-input"
+      />
+      <select name="language" class="newsletter-lang" aria-label="Email language">
+        <option value="en" selected={lang === 'en'}>EN</option>
+        <option value="fr" selected={lang === 'fr'}>FR</option>
+        <option value="de" selected={lang === 'de'}>DE</option>
+        <option value="es" selected={lang === 'es'}>ES</option>
+      </select>
+      <button type="submit" class="btn btn--primary btn--lg">{t('newsletter.subscribe')}</button>
+    </form>
+    <p id="newsletter-msg" style="font-size: var(--text-sm); margin-top: var(--space-3); display: none;"></p>
+    <p style="font-size: var(--text-xs); color: var(--color-gray-400); margin-top: var(--space-3);">
+      {t('newsletter.privacy')}
+    </p>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById('newsletter-form') as HTMLFormElement;
+  const msg = document.getElementById('newsletter-msg') as HTMLElement;
+
+  const successMsgs: Record<string, string> = {
+    en: 'You\'re subscribed! Check your inbox for a welcome email.',
+    fr: 'Vous \u00eates abonn\u00e9 ! V\u00e9rifiez votre bo\u00eete de r\u00e9ception.',
+    de: 'Sie sind angemeldet! Pr\u00fcfen Sie Ihren Posteingang.',
+    es: '\u00a1Te has suscrito! Revisa tu bandeja de entrada.',
+  };
+
+  const alreadyMsgs: Record<string, string> = {
+    en: 'You\'re already subscribed!',
+    fr: 'Vous \u00eates d\u00e9j\u00e0 abonn\u00e9 !',
+    de: 'Sie sind bereits angemeldet!',
+    es: '\u00a1Ya est\u00e1s suscrito!',
+  };
+
+  const errorMsgs: Record<string, string> = {
+    en: 'Something went wrong. Please try again.',
+    fr: 'Une erreur est survenue. Veuillez r\u00e9essayer.',
+    de: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.',
+    es: 'Algo sali\u00f3 mal. Int\u00e9ntalo de nuevo.',
+  };
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const email = data.get('email') as string;
+    const language = data.get('language') as string || 'en';
+    const btn = form.querySelector('button') as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = '...';
+
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, language }),
+      });
+
+      if (res.ok) {
+        msg.textContent = successMsgs[language] || successMsgs.en;
+        msg.style.color = '#4ade80';
+        msg.style.display = 'block';
+        form.style.display = 'none';
+        if (typeof window.plausible === 'function') {
+          window.plausible('Newsletter Signup', { props: { language } });
+        }
+      } else if (res.status === 409) {
+        msg.textContent = alreadyMsgs[language] || alreadyMsgs.en;
+        msg.style.color = '#fbbf24';
+        msg.style.display = 'block';
+      } else {
+        throw new Error();
+      }
+    } catch {
+      msg.textContent = errorMsgs[language] || errorMsgs.en;
+      msg.style.color = '#f87171';
+      msg.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = language === 'fr' ? 'S\'abonner' : language === 'de' ? 'Abonnieren' : language === 'es' ? 'Suscribirse' : 'Subscribe';
+    }
+  });
+</script>
+
+<style>
+  .newsletter-form {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: center;
+    max-width: 540px;
+    margin: 0 auto;
+    align-items: center;
+  }
+  .newsletter-form .form-input {
+    flex: 1;
+  }
+  .newsletter-lang {
+    appearance: none;
+    background: var(--color-navy-700, #1a2d4d);
+    color: var(--color-white);
+    border: 1px solid var(--color-navy-500, #2a4a7f);
+    border-radius: var(--radius-md, 6px);
+    padding: 10px 12px;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    cursor: pointer;
+    min-width: 60px;
+    text-align: center;
+  }
+  .newsletter-lang:focus {
+    outline: 2px solid var(--color-blue-400);
+    outline-offset: 2px;
+  }
+  @media (max-width: 768px) {
+    .newsletter-form {
+      flex-direction: column;
+    }
+    .newsletter-lang {
+      width: 100%;
+    }
+  }
+</style>

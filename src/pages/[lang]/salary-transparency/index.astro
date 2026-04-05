@@ -1,0 +1,558 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+import { countrySlugsByLang, countryFlags } from '../../../data/slugs';
+import { countryNames, uiLabels } from '../../../i18n/translations';
+
+// --------------- Transparency data per country ---------------
+const transparencyData: Record<string, { status: 'implemented' | 'in-progress' | 'pending'; deadline: string; keyRules: string[]; penalties: string; genderGap: number; reportingThreshold: string }> = {
+  DE: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Companies 250+ must report gender pay gaps', 'Employees can request pay info for comparable roles', 'Works councils involved in compliance'], penalties: 'Up to \u20AC500K', genderGap: 18.0, reportingThreshold: '250+ employees' },
+  FR: { status: 'implemented', deadline: 'Already active', keyRules: ['Index \u00e9galit\u00e9 professionnelle since 2019', 'Companies 50+ publish gender equality score', 'Mandatory corrective action if score < 75/100'], penalties: 'Up to 1% of payroll', genderGap: 15.8, reportingThreshold: '50+ employees' },
+  ES: { status: 'implemented', deadline: 'Already active', keyRules: ['Salary audit required for companies 50+', 'Equal pay register mandatory', 'Gender equality plan required'], penalties: 'Up to \u20AC225K', genderGap: 12.2, reportingThreshold: '50+ employees' },
+  NL: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Bill pending in parliament', 'Focus on pay gap reporting', 'Certification system planned'], penalties: 'TBD', genderGap: 13.5, reportingThreshold: '250+ employees' },
+  BE: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Existing gender pay analysis every 2 years', 'New directive extends requirements', 'Social partners involved'], penalties: 'TBD', genderGap: 5.3, reportingThreshold: '50+ employees' },
+  IT: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Law 162/2021 requires equal pay certification', 'Companies 50+ report gender statistics', 'Tax incentives for certified companies'], penalties: 'Loss of public contracts', genderGap: 5.0, reportingThreshold: '50+ employees' },
+  PT: { status: 'implemented', deadline: 'Already active', keyRules: ['Law 60/2018 requires salary transparency', 'Barometer of pay differences published annually', 'Companies must justify pay differences > 5%'], penalties: 'Up to \u20AC13K', genderGap: 11.9, reportingThreshold: '250+ employees' },
+  PL: { status: 'pending', deadline: 'Jun 2026', keyRules: ['Transposition not yet started', 'Expected to align with EU directive', 'Consultation phase in 2025'], penalties: 'TBD', genderGap: 4.5, reportingThreshold: 'TBD' },
+  SE: { status: 'implemented', deadline: 'Already active', keyRules: ['Annual pay survey required since 2009', 'All employers must map and analyze pay differences', 'Action plans required for unjustified gaps'], penalties: 'Discrimination damages', genderGap: 11.2, reportingThreshold: '10+ employees' },
+  AT: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Income report required for 150+ employees since 2011', 'New directive lowers threshold', 'Works council involvement required'], penalties: 'TBD', genderGap: 18.8, reportingThreshold: '150+ employees (dropping)' },
+  CH: { status: 'in-progress', deadline: 'N/A (non-EU)', keyRules: ['Federal Act on Gender Equality', 'Companies 100+ must conduct pay equity analysis', 'Not bound by EU directive but aligned'], penalties: 'Limited enforcement', genderGap: 17.7, reportingThreshold: '100+ employees' },
+  LU: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Positive Actions program exists', 'New legislation in preparation', 'Focus on private sector reporting'], penalties: 'TBD', genderGap: 0.7, reportingThreshold: 'TBD' },
+  IE: { status: 'implemented', deadline: 'Already active', keyRules: ['Gender Pay Gap Information Act 2021', 'Companies 150+ report since 2024', 'Threshold drops to 50+ by 2025'], penalties: 'Enforcement by WRC', genderGap: 9.6, reportingThreshold: '50+ employees' },
+  DK: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Gender-specific pay statistics since 2006', 'Companies 35+ report', 'New directive strengthens requirements'], penalties: 'TBD', genderGap: 13.9, reportingThreshold: '35+ employees' },
+  FI: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Equality Act requires pay surveys', 'Companies 30+ must have equality plan', 'New directive adds reporting requirements'], penalties: 'Discrimination compensation', genderGap: 16.5, reportingThreshold: '30+ employees' },
+};
+
+// --------------- Status display config ---------------
+const statusConfig: Record<string, { color: string; label: Record<string, string> }> = {
+  'implemented': {
+    color: '#22c55e',
+    label: { en: 'Implemented', fr: 'Mis en oeuvre', de: 'Umgesetzt', es: 'Implementado' },
+  },
+  'in-progress': {
+    color: '#eab308',
+    label: { en: 'In Progress', fr: 'En cours', de: 'In Bearbeitung', es: 'En progreso' },
+  },
+  'pending': {
+    color: '#ef4444',
+    label: { en: 'Pending', fr: 'En attente', de: 'Ausstehend', es: 'Pendiente' },
+  },
+};
+
+// --------------- i18n strings ---------------
+const i18n: Record<string, {
+  h1: string;
+  metaTitle: string;
+  metaDesc: string;
+  home: string;
+  breadcrumb: string;
+  tldr: string[];
+  intro: string;
+  whatIsTitle: string;
+  whatIsBody: string;
+  timelineTitle: string;
+  timelineBody: string;
+  keyRightsTitle: string;
+  keyRightsBody: string;
+  employerTitle: string;
+  employerBody: string;
+  countryListTitle: string;
+  countryListIntro: string;
+  genderGapLabel: string;
+  deadlineLabel: string;
+  penaltiesLabel: string;
+  thresholdLabel: string;
+  viewDetails: string;
+  faq: Array<{ question: string; answer: string }>;
+}> = {
+  en: {
+    h1: 'EU Salary Transparency Directive: Which Countries Are Ready?',
+    metaTitle: 'EU Salary Transparency Directive 2026: Country-by-Country Status | EuroSalary.eu',
+    metaDesc: 'EU Directive 2023/970 requires salary disclosure by June 2026. See which of 15 European countries have implemented pay transparency and what it means for employers.',
+    home: 'Home',
+    breadcrumb: 'Salary Transparency',
+    tldr: [
+      'EU Directive 2023/970 requires all member states to implement salary transparency laws by June 7, 2026 \u2014 employers must disclose pay ranges in job postings',
+      '5 countries (France, Spain, Portugal, Sweden, Ireland) already have active transparency laws; 9 are working on transposition; Poland has not yet started',
+      'Workers gain the right to request gender-disaggregated pay data, and companies with unjustified gaps above 5% must conduct joint pay assessments',
+    ],
+    intro: 'The EU Pay Transparency Directive (2023/970), adopted in May 2023, is the most significant overhaul of European employment law in a decade. Every EU member state must transpose it into national law by June 7, 2026. Below is a country-by-country overview of where each nation stands, from fully implemented to not yet started.',
+    whatIsTitle: 'What Does the Directive Require?',
+    whatIsBody: 'The directive establishes three pillars. First, pre-employment transparency: employers must include a salary range in every job posting or communicate it before the first interview, and cannot ask about salary history. Second, in-employment transparency: workers can request average pay data for their role broken down by gender. Companies with 100+ employees must publish regular pay gap reports. Third, enforcement: member states must create enforcement bodies, and workers who suffer pay discrimination are entitled to full compensation including back pay and bonuses.',
+    timelineTitle: 'Key Deadlines',
+    timelineBody: 'The directive was adopted May 10, 2023 and published May 17, 2023 in the Official Journal. Member states have until June 7, 2026 to transpose it. Pay gap reporting starts in 2027 for companies with 250+ employees, 2028 for 150+, and 2031 for 100+. Countries like France, Sweden, and Ireland already had strong frameworks before the directive.',
+    keyRightsTitle: 'Your Rights Under Pay Transparency',
+    keyRightsBody: 'As a job seeker, you have the right to know the salary range for any position before or during the first interview. You cannot be asked about your salary history. As an employee, you can request written information about your individual pay level and the average pay for workers doing the same or equivalent work, broken down by gender. If a pay gap above 5% exists for the same role and cannot be justified by objective criteria, the employer must conduct a joint pay assessment with worker representatives.',
+    employerTitle: 'What Employers Must Do',
+    employerBody: 'Employers face new obligations at every stage: salary ranges in job postings, no salary history questions, pay information on request, and gender-neutral pay structures. Companies with 250+ employees report pay gaps annually from 2027; 150+ from 2028; 100+ from 2031. The burden of proof in pay discrimination cases shifts to the employer.',
+    countryListTitle: 'Implementation Status by Country',
+    countryListIntro: 'Click any country to see detailed transparency rules, gender pay gap data, employer obligations, penalties, and timelines.',
+    genderGapLabel: 'Gender pay gap',
+    deadlineLabel: 'Deadline',
+    penaltiesLabel: 'Penalties',
+    thresholdLabel: 'Reporting threshold',
+    viewDetails: 'View details',
+    faq: [
+      { question: 'When does the EU Pay Transparency Directive take effect?', answer: 'The directive was adopted in May 2023. All EU member states must transpose it into national law by June 7, 2026. Some countries like France, Spain, Sweden, Portugal, and Ireland already have active transparency laws that meet or exceed many of the directive\'s requirements.' },
+      { question: 'Do employers have to put salary ranges in job postings?', answer: 'Yes. Under the directive, employers must provide the initial pay level or salary range in the job posting or communicate it before the first interview. They also cannot ask candidates about their current or previous salary. This applies across all EU member states once transposed.' },
+      { question: 'What happens if my employer does not comply?', answer: 'Member states must establish effective penalties. These vary by country \u2014 for example, Germany plans fines up to \u20AC500,000, France can impose up to 1% of payroll, and Spain up to \u20AC225,000. Workers who suffer pay discrimination are entitled to full compensation including back pay.' },
+      { question: 'Which countries already have salary transparency laws?', answer: 'Five countries covered by EuroSalary already have active transparency frameworks: France (Index \u00e9galit\u00e9 since 2019), Spain (salary audits for 50+ companies), Portugal (Law 60/2018), Sweden (annual pay surveys since 2009), and Ireland (Gender Pay Gap Act 2021). Others like Belgium, Italy, and the Nordic states have partial measures in place.' },
+      { question: 'Does the directive apply to Switzerland?', answer: 'No. Switzerland is not an EU member and is not bound by the directive. However, under its Federal Act on Gender Equality, companies with 100+ employees must conduct pay equity analyses. Switzerland\'s framework is aligned with EU principles but operates independently.' },
+    ],
+  },
+  fr: {
+    h1: "Directive sur la transparence salariale de l'UE : quels pays sont pr\u00eats ?",
+    metaTitle: "Directive transparence salariale UE 2026 : statut par pays | EuroSalary.eu",
+    metaDesc: "La directive UE 2023/970 impose la transparence salariale d'ici juin 2026. D\u00e9couvrez quels pays europ\u00e9ens ont d\u00e9j\u00e0 mis en oeuvre la transparence des r\u00e9mun\u00e9rations.",
+    home: 'Accueil',
+    breadcrumb: 'Transparence salariale',
+    tldr: [
+      "La directive UE 2023/970 oblige tous les \u00c9tats membres \u00e0 mettre en oeuvre la transparence salariale d'ici le 7 juin 2026 \u2014 les employeurs doivent divulguer les fourchettes de salaire",
+      "5 pays (France, Espagne, Portugal, Su\u00e8de, Irlande) ont d\u00e9j\u00e0 des lois actives ; 9 travaillent \u00e0 la transposition ; la Pologne n'a pas encore commenc\u00e9",
+      "Les travailleurs obtiennent le droit de demander des donn\u00e9es salariales ventil\u00e9es par genre, et les entreprises avec des \u00e9carts injustifi\u00e9s de plus de 5% doivent mener des \u00e9valuations conjointes",
+    ],
+    intro: "La directive europ\u00e9enne sur la transparence salariale (2023/970), adopt\u00e9e en mai 2023, est la r\u00e9forme la plus importante du droit du travail europ\u00e9en en une d\u00e9cennie. Chaque \u00c9tat membre doit la transposer en droit national d'ici le 7 juin 2026. Voici un aper\u00e7u pays par pays de l'\u00e9tat d'avancement.",
+    whatIsTitle: 'Que requiert la directive ?',
+    whatIsBody: "La directive \u00e9tablit trois piliers. Premi\u00e8rement, la transparence pr\u00e9-emploi : les employeurs doivent indiquer une fourchette salariale dans chaque offre d'emploi et ne peuvent pas demander l'historique salarial. Deuxi\u00e8mement, la transparence en emploi : les travailleurs peuvent demander des donn\u00e9es salariales moyennes ventil\u00e9es par genre. Les entreprises de 100+ salari\u00e9s doivent publier des rapports r\u00e9guliers. Troisi\u00e8mement, l'application : les \u00c9tats membres doivent cr\u00e9er des organismes d'application.",
+    timelineTitle: 'Dates cl\u00e9s',
+    timelineBody: "La directive a \u00e9t\u00e9 adopt\u00e9e le 10 mai 2023. Les \u00c9tats membres ont jusqu'au 7 juin 2026 pour la transposer. Le reporting des \u00e9carts salariaux commence en 2027 pour les entreprises de 250+ salari\u00e9s, 2028 pour 150+, et 2031 pour 100+.",
+    keyRightsTitle: 'Vos droits',
+    keyRightsBody: "En tant que demandeur d'emploi, vous avez le droit de conna\u00eetre la fourchette salariale avant le premier entretien. On ne peut pas vous demander votre historique salarial. En tant que salari\u00e9, vous pouvez demander des informations \u00e9crites sur votre r\u00e9mun\u00e9ration et la moyenne pour un travail \u00e9quivalent, ventil\u00e9e par genre.",
+    employerTitle: 'Obligations des employeurs',
+    employerBody: "Les employeurs doivent indiquer les fourchettes salariales, ne pas demander l'historique salarial, fournir des informations sur demande, et assurer des structures de r\u00e9mun\u00e9ration non discriminatoires. Les entreprises de 250+ salari\u00e9s d\u00e9clarent annuellement d\u00e8s 2027.",
+    countryListTitle: '\u00c9tat de mise en oeuvre par pays',
+    countryListIntro: "Cliquez sur un pays pour voir les r\u00e8gles d\u00e9taill\u00e9es, l'\u00e9cart salarial entre genres, les obligations et les sanctions.",
+    genderGapLabel: '\u00c9cart salarial',
+    deadlineLabel: '\u00c9ch\u00e9ance',
+    penaltiesLabel: 'Sanctions',
+    thresholdLabel: 'Seuil de d\u00e9claration',
+    viewDetails: 'Voir les d\u00e9tails',
+    faq: [
+      { question: "Quand la directive sur la transparence salariale entre-t-elle en vigueur ?", answer: "La directive a \u00e9t\u00e9 adopt\u00e9e en mai 2023. Tous les \u00c9tats membres doivent la transposer d'ici le 7 juin 2026. La France, l'Espagne, le Portugal, la Su\u00e8de et l'Irlande ont d\u00e9j\u00e0 des lois actives." },
+      { question: "Les employeurs doivent-ils indiquer les salaires dans les offres d'emploi ?", answer: "Oui. Les employeurs doivent fournir la fourchette salariale dans l'offre ou avant le premier entretien. Ils ne peuvent pas demander l'historique salarial des candidats." },
+      { question: "Que se passe-t-il en cas de non-conformit\u00e9 ?", answer: "Chaque \u00c9tat membre doit \u00e9tablir des sanctions. En France, jusqu'\u00e0 1% de la masse salariale. En Allemagne, jusqu'\u00e0 500 000 \u20ac. En Espagne, jusqu'\u00e0 225 000 \u20ac." },
+      { question: "Quels pays ont d\u00e9j\u00e0 des lois de transparence salariale ?", answer: "Cinq pays couverts par EuroSalary ont des cadres actifs : la France (Index \u00e9galit\u00e9 depuis 2019), l'Espagne (audits salariaux), le Portugal (Loi 60/2018), la Su\u00e8de (enqu\u00eates annuelles depuis 2009) et l'Irlande (Gender Pay Gap Act 2021)." },
+      { question: "La directive s'applique-t-elle \u00e0 la Suisse ?", answer: "Non. La Suisse n'est pas membre de l'UE. Cependant, les entreprises de 100+ salari\u00e9s doivent effectuer des analyses d'\u00e9galit\u00e9 salariale en vertu de la loi f\u00e9d\u00e9rale sur l'\u00e9galit\u00e9." },
+    ],
+  },
+  de: {
+    h1: 'EU-Gehaltstransparenzrichtlinie: Welche L\u00e4nder sind bereit?',
+    metaTitle: 'EU-Gehaltstransparenzrichtlinie 2026: Status nach Land | EuroSalary.eu',
+    metaDesc: 'Die EU-Richtlinie 2023/970 verlangt Gehaltstransparenz bis Juni 2026. Sehen Sie, welche der 15 L\u00e4nder die Lohntransparenz umgesetzt haben.',
+    home: 'Startseite',
+    breadcrumb: 'Gehaltstransparenz',
+    tldr: [
+      'EU-Richtlinie 2023/970 verpflichtet alle Mitgliedstaaten zur Umsetzung der Gehaltstransparenz bis 7. Juni 2026 \u2014 Arbeitgeber m\u00fcssen Gehaltsspannen in Stellenanzeigen angeben',
+      '5 L\u00e4nder (Frankreich, Spanien, Portugal, Schweden, Irland) haben bereits aktive Transparenzgesetze; 9 arbeiten an der Umsetzung; Polen hat noch nicht begonnen',
+      'Arbeitnehmer erhalten das Recht auf geschlechtsspezifische Gehaltsdaten; Unternehmen mit unerkl\u00e4rlichen L\u00fccken \u00fcber 5% m\u00fcssen gemeinsame Bewertungen durchf\u00fchren',
+    ],
+    intro: 'Die EU-Gehaltstransparenzrichtlinie (2023/970), im Mai 2023 verabschiedet, ist die bedeutendste Reform des europ\u00e4ischen Arbeitsrechts seit einem Jahrzehnt. Jeder EU-Mitgliedstaat muss sie bis zum 7. Juni 2026 in nationales Recht umsetzen. Hier ist ein \u00dcberblick nach L\u00e4ndern.',
+    whatIsTitle: 'Was verlangt die Richtlinie?',
+    whatIsBody: 'Die Richtlinie etabliert drei S\u00e4ulen. Erstens, Transparenz vor der Einstellung: Arbeitgeber m\u00fcssen Gehaltsspannen angeben und d\u00fcrfen nicht nach der Gehaltshistorie fragen. Zweitens, Transparenz w\u00e4hrend des Arbeitsverh\u00e4ltnisses: Arbeitnehmer k\u00f6nnen geschlechtsspezifische Durchschnittsgeh\u00e4lter anfordern. Unternehmen ab 100 Mitarbeitern m\u00fcssen regelm\u00e4\u00dfig berichten. Drittens, Durchsetzung: Mitgliedstaaten m\u00fcssen Durchsetzungsbeh\u00f6rden schaffen.',
+    timelineTitle: 'Wichtige Fristen',
+    timelineBody: 'Die Richtlinie wurde am 10. Mai 2023 angenommen. Mitgliedstaaten haben bis 7. Juni 2026 Zeit. Pay-Gap-Berichte ab 2027 f\u00fcr 250+ Mitarbeiter, 2028 f\u00fcr 150+, 2031 f\u00fcr 100+.',
+    keyRightsTitle: 'Ihre Rechte',
+    keyRightsBody: 'Als Arbeitssuchender haben Sie das Recht, die Gehaltsspanne vor dem ersten Gespr\u00e4ch zu erfahren. Man darf Sie nicht nach Ihrer Gehaltshistorie fragen. Als Arbeitnehmer k\u00f6nnen Sie schriftliche Informationen \u00fcber Ihr Gehalt und den geschlechtsspezifischen Durchschnitt anfordern.',
+    employerTitle: 'Pflichten der Arbeitgeber',
+    employerBody: 'Arbeitgeber m\u00fcssen Gehaltsspannen angeben, keine Gehaltshistorie erfragen, Informationen auf Anfrage bereitstellen und geschlechtsneutrale Gehaltsstrukturen sicherstellen. Unternehmen ab 250 Mitarbeitern berichten ab 2027 j\u00e4hrlich.',
+    countryListTitle: 'Umsetzungsstatus nach Land',
+    countryListIntro: 'Klicken Sie auf ein Land f\u00fcr detaillierte Transparenzregeln, Gender-Pay-Gap-Daten, Pflichten und Fristen.',
+    genderGapLabel: 'Gender Pay Gap',
+    deadlineLabel: 'Frist',
+    penaltiesLabel: 'Strafen',
+    thresholdLabel: 'Meldeschwelle',
+    viewDetails: 'Details ansehen',
+    faq: [
+      { question: 'Wann tritt die EU-Gehaltstransparenzrichtlinie in Kraft?', answer: 'Die Richtlinie wurde im Mai 2023 verabschiedet. Alle Mitgliedstaaten m\u00fcssen sie bis 7. Juni 2026 umsetzen. Frankreich, Spanien, Portugal, Schweden und Irland haben bereits aktive Gesetze.' },
+      { question: 'M\u00fcssen Arbeitgeber Gehaltsspannen in Stellenanzeigen angeben?', answer: 'Ja. Arbeitgeber m\u00fcssen die Gehaltsspanne in der Anzeige oder vor dem ersten Gespr\u00e4ch angeben. Sie d\u00fcrfen nicht nach der Gehaltshistorie fragen.' },
+      { question: 'Was passiert bei Nichtkonformit\u00e4t?', answer: 'Jeder Mitgliedstaat muss wirksame Sanktionen festlegen. In Deutschland bis zu 500.000 \u20ac, in Frankreich bis 1% der Lohnsumme, in Spanien bis 225.000 \u20ac.' },
+      { question: 'Welche L\u00e4nder haben bereits Transparenzgesetze?', answer: 'F\u00fcnf L\u00e4nder haben aktive Rahmenwerke: Frankreich (Index \u00e9galit\u00e9 seit 2019), Spanien (Gehaltsaudits), Portugal (Gesetz 60/2018), Schweden (j\u00e4hrliche Erhebungen seit 2009) und Irland (Gender Pay Gap Act 2021).' },
+      { question: 'Gilt die Richtlinie f\u00fcr die Schweiz?', answer: 'Nein. Die Schweiz ist kein EU-Mitglied. Unternehmen mit 100+ Mitarbeitern m\u00fcssen jedoch Lohngleichheitsanalysen gem\u00e4\u00df dem Gleichstellungsgesetz durchf\u00fchren.' },
+    ],
+  },
+  es: {
+    h1: '\u00bfDirectiva de transparencia salarial de la UE: qu\u00e9 pa\u00edses est\u00e1n preparados?',
+    metaTitle: 'Directiva transparencia salarial UE 2026: estado por pa\u00eds | EuroSalary.eu',
+    metaDesc: 'La directiva UE 2023/970 exige transparencia salarial para junio 2026. Vea qu\u00e9 pa\u00edses europeos han implementado la transparencia de remuneraciones.',
+    home: 'Inicio',
+    breadcrumb: 'Transparencia salarial',
+    tldr: [
+      'La Directiva UE 2023/970 obliga a todos los Estados miembros a implementar la transparencia salarial antes del 7 de junio de 2026 \u2014 los empleadores deben divulgar rangos salariales',
+      '5 pa\u00edses (Francia, Espa\u00f1a, Portugal, Suecia, Irlanda) ya tienen leyes activas; 9 trabajan en la transposici\u00f3n; Polonia a\u00fan no ha comenzado',
+      'Los trabajadores obtienen el derecho a solicitar datos salariales por g\u00e9nero, y las empresas con brechas injustificadas superiores al 5% deben realizar evaluaciones conjuntas',
+    ],
+    intro: 'La directiva de transparencia salarial de la UE (2023/970), adoptada en mayo de 2023, es la reforma m\u00e1s significativa del derecho laboral europeo en una d\u00e9cada. Cada Estado miembro debe transponerla a la legislaci\u00f3n nacional antes del 7 de junio de 2026. A continuaci\u00f3n, un resumen pa\u00eds por pa\u00eds.',
+    whatIsTitle: '\u00bfQu\u00e9 exige la directiva?',
+    whatIsBody: 'La directiva establece tres pilares. Primero, transparencia previa al empleo: los empleadores deben indicar rangos salariales y no pueden preguntar sobre historial salarial. Segundo, transparencia durante el empleo: los trabajadores pueden solicitar datos salariales promedio por g\u00e9nero. Empresas de 100+ empleados deben publicar informes regulares. Tercero, aplicaci\u00f3n: los Estados deben crear organismos de control.',
+    timelineTitle: 'Fechas clave',
+    timelineBody: 'La directiva fue adoptada el 10 de mayo de 2023. Los Estados miembros tienen hasta el 7 de junio de 2026. Informes de brecha salarial desde 2027 para empresas de 250+, 2028 para 150+ y 2031 para 100+.',
+    keyRightsTitle: 'Sus derechos',
+    keyRightsBody: 'Como solicitante de empleo, tiene derecho a conocer el rango salarial antes de la primera entrevista. No le pueden preguntar su historial salarial. Como empleado, puede solicitar informaci\u00f3n escrita sobre su salario y el promedio por g\u00e9nero para trabajo equivalente.',
+    employerTitle: 'Obligaciones de los empleadores',
+    employerBody: 'Los empleadores deben indicar rangos salariales, no preguntar historial salarial, proporcionar informaci\u00f3n a solicitud y asegurar estructuras salariales no discriminatorias. Empresas de 250+ empleados informan anualmente desde 2027.',
+    countryListTitle: 'Estado de implementaci\u00f3n por pa\u00eds',
+    countryListIntro: 'Haga clic en un pa\u00eds para ver reglas detalladas, brecha salarial de g\u00e9nero, obligaciones y plazos.',
+    genderGapLabel: 'Brecha salarial',
+    deadlineLabel: 'Plazo',
+    penaltiesLabel: 'Sanciones',
+    thresholdLabel: 'Umbral de reporte',
+    viewDetails: 'Ver detalles',
+    faq: [
+      { question: '\u00bfCu\u00e1ndo entra en vigor la directiva de transparencia salarial?', answer: 'La directiva fue adoptada en mayo de 2023. Todos los Estados miembros deben transponerla antes del 7 de junio de 2026. Francia, Espa\u00f1a, Portugal, Suecia e Irlanda ya tienen leyes activas.' },
+      { question: '\u00bfDeben los empleadores indicar salarios en las ofertas de empleo?', answer: 'S\u00ed. Los empleadores deben proporcionar el rango salarial en la oferta o antes de la primera entrevista. No pueden preguntar sobre el historial salarial.' },
+      { question: '\u00bfQu\u00e9 sucede por incumplimiento?', answer: 'Cada Estado miembro debe establecer sanciones. En Alemania hasta 500.000 \u20ac, en Francia hasta 1% de la masa salarial, en Espa\u00f1a hasta 225.000 \u20ac.' },
+      { question: '\u00bfQu\u00e9 pa\u00edses ya tienen leyes de transparencia?', answer: 'Cinco pa\u00edses tienen marcos activos: Francia (Index \u00e9galit\u00e9 desde 2019), Espa\u00f1a (auditor\u00edas salariales), Portugal (Ley 60/2018), Suecia (encuestas anuales desde 2009) e Irlanda (Gender Pay Gap Act 2021).' },
+      { question: '\u00bfSe aplica la directiva a Suiza?', answer: 'No. Suiza no es miembro de la UE. Sin embargo, las empresas de 100+ empleados deben realizar an\u00e1lisis de igualdad salarial seg\u00fan la ley federal de igualdad.' },
+    ],
+  },
+};
+
+// --------------- getStaticPaths ---------------
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+// --------------- Page data ---------------
+const { lang } = Astro.props;
+const t = fb(i18n, lang);
+const ui = useTranslations(lang as any);
+const names: Record<string, string> = Object.fromEntries(
+  Object.keys(countryNames).map((code) => [code, fb(countryNames[code], lang)])
+);
+const slugs = countrySlugsByLang[lang] || countrySlugsByLang.en;
+const countryCodes = Object.keys(transparencyData);
+
+// Group countries by status
+const implemented = countryCodes.filter((c) => transparencyData[c].status === 'implemented');
+const inProgress = countryCodes.filter((c) => transparencyData[c].status === 'in-progress');
+const pending = countryCodes.filter((c) => transparencyData[c].status === 'pending');
+
+// EU average gender gap
+const euAvgGap = 12.7;
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: t.h1,
+    author: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    datePublished: '2026-03-15',
+    dateModified: '2026-04-04',
+    description: t.metaDesc,
+    mainEntityOfPage: `https://eurosalary.eu/${lang}/salary-transparency/`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: t.faq.map((item: any) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: { '@type': 'Answer', text: item.answer },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title={t.metaTitle}
+  description={t.metaDesc}
+  datePublished="2026-03-15"
+  dateModified="2026-04-04"
+  schema={pageSchema}
+>
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{t.home}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{t.breadcrumb}</span>
+      </nav>
+      <div class="page-hero__grid">
+        <div class="page-hero__content">
+          <h1 class="page-hero__title">{t.h1}</h1>
+          <p class="page-hero__desc">{t.intro}</p>
+        </div>
+        <div class="page-hero__side">
+          <div class="page-hero__card">
+            <span class="page-hero__card-label">EU Directive 2023/970</span>
+            <p class="page-hero__card-item"><strong>{t.deadlineLabel}:</strong> June 7, 2026</p>
+            <p class="page-hero__card-item"><strong>{implemented.length}</strong> {fb({ en: 'countries implemented', fr: 'pays l\'ont mis en oeuvre', de: 'L\u00e4nder umgesetzt', es: 'pa\u00edses implementados' }, lang)}</p>
+            <p class="page-hero__card-item"><strong>{inProgress.length}</strong> {fb({ en: 'in progress', fr: 'en cours', de: 'in Bearbeitung', es: 'en progreso' }, lang)}</p>
+            <p class="page-hero__card-item"><strong>{pending.length}</strong> {fb({ en: 'pending', fr: 'en attente', de: 'ausstehend', es: 'pendiente' }, lang)}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <article class="container page-body">
+    <TLDRBox items={t.tldr} />
+
+    <!-- What Does the Directive Require -->
+    <section class="section">
+      <h2>{t.whatIsTitle}</h2>
+      <p>{t.whatIsBody}</p>
+    </section>
+
+    <!-- Timeline -->
+    <section class="section">
+      <h2>{t.timelineTitle}</h2>
+      <p>{t.timelineBody}</p>
+    </section>
+
+    <!-- Your Rights -->
+    <section class="section">
+      <h2>{t.keyRightsTitle}</h2>
+      <p>{t.keyRightsBody}</p>
+    </section>
+
+    <!-- Employer Obligations -->
+    <section class="section">
+      <h2>{t.employerTitle}</h2>
+      <p>{t.employerBody}</p>
+    </section>
+
+    <!-- Country Status Grid -->
+    <section class="section">
+      <h2>{t.countryListTitle}</h2>
+      <p>{t.countryListIntro}</p>
+
+      <!-- Status legend -->
+      <div class="status-legend">
+        <span class="status-legend__item">
+          <span class="status-dot" style="background: #22c55e"></span>
+          {fb(statusConfig['implemented'].label, lang)}
+        </span>
+        <span class="status-legend__item">
+          <span class="status-dot" style="background: #eab308"></span>
+          {fb(statusConfig['in-progress'].label, lang)}
+        </span>
+        <span class="status-legend__item">
+          <span class="status-dot" style="background: #ef4444"></span>
+          {fb(statusConfig['pending'].label, lang)}
+        </span>
+      </div>
+
+      <div class="country-grid">
+        {countryCodes.map((code) => {
+          const slug = slugs[code] || countrySlugsByLang.en[code];
+          const name = names[code] || countryNames[code]?.en;
+          const flag = countryFlags[code];
+          const data = transparencyData[code];
+          const sc = statusConfig[data.status];
+          const statusLabel = fb(sc.label, lang);
+          return (
+            <a href={`/${lang}/salary-transparency/${slug}/`} class="country-card">
+              <div class="country-card__top">
+                <div class="country-card__header">
+                  <span class="country-card__flag">{flag}</span>
+                  <span class="country-card__name">{name}</span>
+                </div>
+                <span class="country-card__status" style={`background: ${sc.color}15; color: ${sc.color}; border: 1px solid ${sc.color}40`}>
+                  {statusLabel}
+                </span>
+              </div>
+              <div class="country-card__meta">
+                <div class="country-card__meta-item">
+                  <span class="country-card__meta-label">{t.genderGapLabel}</span>
+                  <span class="country-card__meta-value">{data.genderGap}%</span>
+                </div>
+                <div class="country-card__meta-item">
+                  <span class="country-card__meta-label">{t.deadlineLabel}</span>
+                  <span class="country-card__meta-value">{data.deadline}</span>
+                </div>
+              </div>
+              <div class="country-card__gap-bar">
+                <div class="country-card__gap-fill" style={`width: ${Math.min((data.genderGap / 25) * 100, 100)}%`}></div>
+              </div>
+              <span class="country-card__link">{t.viewDetails} &rarr;</span>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+
+    <!-- Internal Links -->
+    <section class="section">
+      <div class="internal-links">
+        <a href={`/${lang}/methodology/`} class="internal-link">
+          <span class="material-symbols-outlined">science</span>
+          {fb({ en: 'Our Methodology', fr: 'Notre m\u00e9thodologie', de: 'Unsere Methodik', es: 'Nuestra metodolog\u00eda' }, lang)}
+        </a>
+        <a href={`/${lang}/premium/`} class="internal-link internal-link--cta">
+          <span class="material-symbols-outlined">workspace_premium</span>
+          {fb({ en: 'Get Detailed Reports', fr: 'Obtenir des rapports d\u00e9taill\u00e9s', de: 'Detaillierte Berichte erhalten', es: 'Obtener informes detallados' }, lang)}
+        </a>
+      </div>
+    </section>
+
+    <FAQSection items={t.faq} />
+  </article>
+</BaseLayout>
+
+<style>
+  .page-body {
+    padding-top: 2.5rem;
+    padding-bottom: 4rem;
+  }
+  .page-body h2 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em;
+    color: #0F1F3D; margin-top: 3rem; margin-bottom: 1rem;
+  }
+  .page-body p {
+    font-size: 1rem; line-height: 1.75; color: #334155;
+    margin-bottom: 1rem;
+  }
+
+  /* Status legend */
+  .status-legend {
+    display: flex;
+    gap: 1.5rem;
+    margin: 1.5rem 0 0.5rem;
+    flex-wrap: wrap;
+  }
+  .status-legend__item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+  }
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* Country grid */
+  .country-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .country-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #0F1F3D;
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  .country-card:hover {
+    border-color: #2563eb;
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.12);
+  }
+  .country-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .country-card__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .country-card__flag {
+    font-size: 1.5rem;
+  }
+  .country-card__name {
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  .country-card__status {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 99px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .country-card__meta {
+    display: flex;
+    gap: 1.5rem;
+  }
+  .country-card__meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .country-card__meta-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+  }
+  .country-card__meta-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #0F1F3D;
+  }
+  .country-card__gap-bar {
+    width: 100%;
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .country-card__gap-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #22c55e, #eab308, #ef4444);
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+  .country-card__link {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #2563eb;
+  }
+
+  /* Internal links */
+  .internal-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .internal-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    background: #f1f5f9;
+    color: #0F1F3D;
+    transition: background 0.2s;
+  }
+  .internal-link:hover {
+    background: #e2e8f0;
+  }
+  .internal-link--cta {
+    background: #2563eb;
+    color: #fff;
+  }
+  .internal-link--cta:hover {
+    background: #1d4ed8;
+  }
+</style>

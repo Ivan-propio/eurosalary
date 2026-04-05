@@ -2,6 +2,12 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
+// All 24 official EU languages
+const euLocales = [
+  'en','fr','de','es','it','pt','nl','pl','ro','cs',
+  'sv','da','fi','el','hu','sk','bg','hr','sl','lt','lv','et','mt','ga',
+];
+
 // SSG build — Cloudflare Pages serves static files natively.
 // No adapter needed for static output.
 export default defineConfig({
@@ -10,7 +16,7 @@ export default defineConfig({
 
   i18n: {
     defaultLocale: 'en',
-    locales: ['en', 'fr', 'de', 'es'],
+    locales: euLocales,
     routing: {
       prefixDefaultLocale: true,
       redirectToDefaultLocale: false,
@@ -21,12 +27,7 @@ export default defineConfig({
     sitemap({
       i18n: {
         defaultLocale: 'en',
-        locales: {
-          en: 'en',
-          fr: 'fr',
-          de: 'de',
-          es: 'es',
-        },
+        locales: Object.fromEntries(euLocales.map((l) => [l, l])),
       },
     }),
   ],

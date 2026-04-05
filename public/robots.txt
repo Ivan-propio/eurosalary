@@ -1,8 +1,16 @@
+# EuroSalary.eu — Robots.txt
+# European Salary Intelligence Platform
+# We welcome all crawlers including AI bots
+
 User-agent: *
 Allow: /
+Disallow: /api/
 
-# AI Crawlers — explicitly allowed
+# Explicitly allow AI crawlers for salary data indexing
 User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
 Allow: /
 
 User-agent: PerplexityBot
@@ -11,16 +19,35 @@ Allow: /
 User-agent: ClaudeBot
 Allow: /
 
-User-agent: Google-Extended
+User-agent: Claude-Web
 Allow: /
 
 User-agent: Anthropic-AI
 Allow: /
 
+User-agent: Google-Extended
+Allow: /
+
 User-agent: cohere-ai
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: meta-externalagent
 Allow: /
 
 User-agent: FacebookBot
 Allow: /
 
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: GoogleOther
+Allow: /
+
+# Sitemaps
 Sitemap: https://eurosalary.eu/sitemap-index.xml
+
+# LLM discovery
+# See /llms.txt for AI-readable site description

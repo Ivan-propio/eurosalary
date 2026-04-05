@@ -75,7 +75,7 @@ const allSchemas = [orgSchema, breadcrumbSchema, ...schema];
     {alternates.map((alt) => (
       <link rel="alternate" hreflang={alt.lang} href={`https://eurosalary.eu${alt.href}`} />
     ))}
-    <link rel="alternate" hreflang="x-default" href={`https://eurosalary.eu/en${Astro.url.pathname.replace(/^\/(en|fr|de|es)/, '')}`} />
+    <link rel="alternate" hreflang="x-default" href={`https://eurosalary.eu/en${Astro.url.pathname.replace(/^\/[a-z]{2}/, '')}`} />
 
     <!-- Open Graph -->
     <meta property="og:title" content={fullTitle} />
@@ -99,16 +99,38 @@ const allSchemas = [orgSchema, breadcrumbSchema, ...schema];
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- Fonts -->
+    <!-- Fonts: Public Sans (headlines) + Inter (body/data) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Material Symbols for icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 
     <!-- llms.txt discovery -->
     <link rel="author" href="/llms.txt" />
 
+    <!-- Google Tag Manager -->
+    <script is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T526FS5D');</script>
+    <!-- End Google Tag Manager -->
+
+    <!-- Google Analytics -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-V3JNJKQDCR"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-V3JNJKQDCR');
+    </script>
+
     <!-- Plausible Analytics (GDPR-compliant, no cookies) -->
-    <script defer data-domain="eurosalary.eu" src="https://plausible.io/js/script.js"></script>
+    <script defer data-domain="eurosalary.eu" src="https://plausible.io/js/script.tagged-events.js"></script>
+    <script is:inline>
+      window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) };
+    </script>
 
     <!-- Structured Data -->
     {allSchemas.map((s) => (
@@ -118,26 +140,80 @@ const allSchemas = [orgSchema, breadcrumbSchema, ...schema];
     <meta name="generator" content={Astro.generator} />
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T526FS5D"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <Header />
     <main>
       <slot />
     </main>
     <Footer />
 
+    <!-- Back to top button -->
+    <button class="back-to-top" id="back-to-top" aria-label="Back to top" title="Back to top">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 4L4 10H8V16H12V10H16L10 4Z" fill="currentColor"/>
+      </svg>
+    </button>
+
+    <script>
+      const btt = document.getElementById('back-to-top');
+      if (btt) {
+        window.addEventListener('scroll', () => {
+          btt.classList.toggle('visible', window.scrollY > 400);
+        });
+        btt.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+    </script>
+
+    <style is:global>
+      .back-to-top {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--color-blue-600);
+        color: white;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s, transform 0.3s;
+        z-index: 50;
+        pointer-events: none;
+      }
+      .back-to-top.visible {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+      .back-to-top:hover {
+        background: var(--color-blue-500);
+      }
+    </style>
+
     <!-- Language auto-detect on first visit -->
     <script>
       (function () {
-        const stored = localStorage.getItem('eurosalary-lang');
-        if (stored) return; // Already has a preference
+        var supported = ['en','fr','de','es','it','pt','nl','pl','ro','cs','sv','da','fi','el','hu','sk','bg','hr','sl','lt','lv','et','mt','ga'];
+        var stored = localStorage.getItem('eurosalary-lang');
+        if (stored && supported.indexOf(stored) !== -1) return;
 
-        const path = window.location.pathname;
-        const currentLang = path.split('/')[1];
-        const supported = ['en', 'fr', 'de', 'es'];
+        var path = window.location.pathname;
+        var currentLang = path.split('/')[1];
+        if (supported.indexOf(currentLang) !== -1) return;
 
-        if (supported.includes(currentLang)) return; // Already on a lang page
-
-        const browserLang = navigator.language.split('-')[0];
-        const targetLang = supported.includes(browserLang) ? browserLang : 'en';
+        var browserLang = (navigator.language || '').split('-')[0].toLowerCase();
+        var targetLang = supported.indexOf(browserLang) !== -1 ? browserLang : 'en';
         localStorage.setItem('eurosalary-lang', targetLang);
         window.location.href = '/' + targetLang + '/';
       })();

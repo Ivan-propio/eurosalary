@@ -1,0 +1,384 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TLDRBox from '../../components/TLDRBox.astro';
+import FAQSection from '../../components/FAQSection.astro';
+import { languages } from '../../i18n/ui';
+import { getLangFromUrl, useTranslations, fb } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  const langs = Object.keys(languages);
+  return langs.map((lang) => ({ params: { lang } }));
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+// --------------- Translated content ---------------
+
+const h1: Record<string, string> = {
+  en: 'About EuroSalary.eu',
+  fr: 'À propos de EuroSalary.eu',
+  de: 'Über EuroSalary.eu',
+  es: 'Sobre EuroSalary.eu',
+};
+
+const metaDescription: Record<string, string> = {
+  en: 'Learn about EuroSalary.eu — our mission to make European salary data transparent and accessible. Data from Eurostat, job postings, and anonymous reports across 15 countries.',
+  fr: 'Découvrez EuroSalary.eu — notre mission de rendre les données salariales européennes transparentes et accessibles. Données Eurostat, offres d\'emploi et rapports anonymes dans 15 pays.',
+  de: 'Erfahren Sie mehr über EuroSalary.eu — unsere Mission, europäische Gehaltsdaten transparent und zugänglich zu machen. Daten von Eurostat, Stellenanzeigen und anonymen Meldungen aus 15 Ländern.',
+  es: 'Conozca EuroSalary.eu — nuestra misión de hacer transparentes y accesibles los datos salariales europeos. Datos de Eurostat, ofertas de empleo e informes anónimos de 15 países.',
+};
+
+const tldrItems: Record<string, string[]> = {
+  en: [
+    'Free, independent European salary data platform',
+    '15 countries, 21 job categories, 4 languages',
+    '3 data sources: Eurostat, job postings, anonymous reports',
+    'Built in Luxembourg by a team passionate about pay transparency',
+  ],
+  fr: [
+    'Plateforme gratuite et indépendante de données salariales européennes',
+    '15 pays, 21 catégories de métiers, 4 langues',
+    '3 sources de données : Eurostat, offres d\'emploi, rapports anonymes',
+    'Conçue au Luxembourg par une équipe passionnée par la transparence salariale',
+  ],
+  de: [
+    'Kostenlose, unabhängige europäische Gehaltsdatenplattform',
+    '15 Länder, 21 Berufskategorien, 4 Sprachen',
+    '3 Datenquellen: Eurostat, Stellenanzeigen, anonyme Meldungen',
+    'Entwickelt in Luxemburg von einem Team mit Leidenschaft für Gehaltstransparenz',
+  ],
+  es: [
+    'Plataforma gratuita e independiente de datos salariales europeos',
+    '15 países, 21 categorías de empleo, 4 idiomas',
+    '3 fuentes de datos: Eurostat, ofertas de empleo, informes anónimos',
+    'Creada en Luxemburgo por un equipo apasionado por la transparencia salarial',
+  ],
+};
+
+const missionTitle: Record<string, string> = {
+  en: 'Our Mission',
+  fr: 'Notre mission',
+  de: 'Unsere Mission',
+  es: 'Nuestra misión',
+};
+
+const missionText: Record<string, string> = {
+  en: 'EuroSalary.eu exists to make European salary data transparent and accessible to everyone. Whether you\'re negotiating a raise, considering a move abroad, or benchmarking your compensation — you deserve clear, reliable salary information without paywalls or hidden agendas.',
+  fr: 'EuroSalary.eu a pour vocation de rendre les données salariales européennes transparentes et accessibles à tous. Que vous négociiez une augmentation, envisagiez de déménager à l\'étranger ou compariez votre rémunération — vous méritez des informations salariales claires et fiables, sans barrière payante ni agenda caché.',
+  de: 'EuroSalary.eu macht europäische Gehaltsdaten transparent und für alle zugänglich. Ob Sie eine Gehaltserhöhung verhandeln, einen Umzug ins Ausland erwägen oder Ihre Vergütung vergleichen — Sie verdienen klare, zuverlässige Gehaltsinformationen ohne Bezahlschranken oder versteckte Absichten.',
+  es: 'EuroSalary.eu existe para hacer que los datos salariales europeos sean transparentes y accesibles para todos. Ya sea que esté negociando un aumento, considerando mudarse al extranjero o comparando su compensación — usted merece información salarial clara y confiable sin muros de pago ni agendas ocultas.',
+};
+
+const whyTitle: Record<string, string> = {
+  en: 'Why We Built EuroSalary',
+  fr: 'Pourquoi nous avons créé EuroSalary',
+  de: 'Warum wir EuroSalary entwickelt haben',
+  es: 'Por qué creamos EuroSalary',
+};
+
+const whyText: Record<string, string> = {
+  en: 'Salary opacity hurts workers. In Europe, most employees have no idea how their pay compares to others in the same role, city, or country. This information asymmetry benefits employers and leaves workers — especially women and minorities — at a structural disadvantage during negotiations. The EU Pay Transparency Directive, taking effect in June 2026, will require companies to publish salary ranges. This is a historic step forward. We built EuroSalary to accelerate this shift by making salary data available now, across borders and languages.',
+  fr: 'L\'opacité salariale nuit aux travailleurs. En Europe, la plupart des employés n\'ont aucune idée de la façon dont leur salaire se compare à celui d\'autres personnes occupant le même poste, dans la même ville ou le même pays. Cette asymétrie d\'information profite aux employeurs et désavantage structurellement les travailleurs — en particulier les femmes et les minorités — lors des négociations. La directive européenne sur la transparence salariale, qui entre en vigueur en juin 2026, obligera les entreprises à publier des fourchettes de salaires. C\'est un pas historique en avant. Nous avons créé EuroSalary pour accélérer cette transition en rendant les données salariales accessibles dès maintenant, au-delà des frontières et des langues.',
+  de: 'Gehaltsintransparenz schadet Arbeitnehmern. In Europa haben die meisten Beschäftigten keine Ahnung, wie ihr Gehalt im Vergleich zu anderen in derselben Rolle, Stadt oder demselben Land abschneidet. Diese Informationsasymmetrie begünstigt Arbeitgeber und benachteiligt Arbeitnehmer — insbesondere Frauen und Minderheiten — strukturell bei Verhandlungen. Die EU-Richtlinie zur Gehaltstransparenz, die im Juni 2026 in Kraft tritt, wird Unternehmen verpflichten, Gehaltsspannen zu veröffentlichen. Das ist ein historischer Fortschritt. Wir haben EuroSalary entwickelt, um diesen Wandel zu beschleunigen, indem wir Gehaltsdaten jetzt verfügbar machen — grenzüberschreitend und mehrsprachig.',
+  es: 'La opacidad salarial perjudica a los trabajadores. En Europa, la mayoría de los empleados no tiene idea de cómo se compara su salario con el de otros en el mismo puesto, ciudad o país. Esta asimetría de información beneficia a los empleadores y deja a los trabajadores — especialmente mujeres y minorías — en desventaja estructural durante las negociaciones. La Directiva Europea de Transparencia Salarial, que entra en vigor en junio de 2026, obligará a las empresas a publicar rangos salariales. Este es un paso histórico adelante. Creamos EuroSalary para acelerar este cambio haciendo que los datos salariales estén disponibles ahora, más allá de fronteras e idiomas.',
+};
+
+const howTitle: Record<string, string> = {
+  en: 'How It Works',
+  fr: 'Comment ça marche',
+  de: 'So funktioniert es',
+  es: 'Cómo funciona',
+};
+
+const howIntro: Record<string, string> = {
+  en: 'We combine three complementary data sources to provide the most accurate picture of European salaries:',
+  fr: 'Nous combinons trois sources de données complémentaires pour fournir l\'image la plus précise des salaires européens :',
+  de: 'Wir kombinieren drei komplementäre Datenquellen, um das genaueste Bild europäischer Gehälter zu liefern:',
+  es: 'Combinamos tres fuentes de datos complementarias para proporcionar la imagen más precisa de los salarios europeos:',
+};
+
+const source1Title: Record<string, string> = {
+  en: 'Eurostat — Official EU Statistics',
+  fr: 'Eurostat — Statistiques officielles de l\'UE',
+  de: 'Eurostat — Offizielle EU-Statistiken',
+  es: 'Eurostat — Estadísticas oficiales de la UE',
+};
+
+const source1Text: Record<string, string> = {
+  en: 'The EU Labour Force Survey and Structure of Earnings Survey provide the statistical backbone. Updated quarterly, covering all EU27 member states.',
+  fr: 'L\'Enquête sur les forces de travail et l\'Enquête sur la structure des salaires de l\'UE fournissent la base statistique. Mises à jour trimestriellement, couvrant les 27 États membres.',
+  de: 'Die EU-Arbeitskräfteerhebung und die Verdienststrukturerhebung bilden das statistische Rückgrat. Quartalsweise aktualisiert, für alle 27 EU-Mitgliedstaaten.',
+  es: 'La Encuesta de Fuerza Laboral de la UE y la Encuesta de Estructura Salarial proporcionan la base estadística. Actualizadas trimestralmente, cubren los 27 estados miembros.',
+};
+
+const source2Title: Record<string, string> = {
+  en: 'Job Postings — Real Market Data',
+  fr: 'Offres d\'emploi — Données réelles du marché',
+  de: 'Stellenanzeigen — Echte Marktdaten',
+  es: 'Ofertas de empleo — Datos reales del mercado',
+};
+
+const source2Text: Record<string, string> = {
+  en: 'We process data from 50+ European job boards. Weekly updates with 100,000+ listings processed monthly to track real-time salary trends.',
+  fr: 'Nous traitons les données de plus de 50 sites d\'emploi européens. Mises à jour hebdomadaires avec plus de 100 000 annonces traitées chaque mois pour suivre les tendances salariales en temps réel.',
+  de: 'Wir verarbeiten Daten von über 50 europäischen Jobbörsen. Wöchentliche Aktualisierungen mit über 100.000 monatlich verarbeiteten Anzeigen zur Verfolgung aktueller Gehaltstrends.',
+  es: 'Procesamos datos de más de 50 portales de empleo europeos. Actualizaciones semanales con más de 100.000 ofertas procesadas mensualmente para seguir las tendencias salariales en tiempo real.',
+};
+
+const source3Title: Record<string, string> = {
+  en: 'Anonymous Reports — Community Verified',
+  fr: 'Rapports anonymes — Vérifiés par la communauté',
+  de: 'Anonyme Meldungen — Community-verifiziert',
+  es: 'Informes anónimos — Verificados por la comunidad',
+};
+
+const source3Text: Record<string, string> = {
+  en: 'User-submitted salary reports validated against our statistical models. We require a minimum of 30 data points per role before publishing.',
+  fr: 'Rapports salariaux soumis par les utilisateurs et validés par nos modèles statistiques. Nous exigeons un minimum de 30 points de données par poste avant publication.',
+  de: 'Von Nutzern eingereichte Gehaltsberichte, validiert durch unsere statistischen Modelle. Wir benötigen mindestens 30 Datenpunkte pro Position vor der Veröffentlichung.',
+  es: 'Informes salariales enviados por usuarios, validados con nuestros modelos estadísticos. Requerimos un mínimo de 30 puntos de datos por puesto antes de publicar.',
+};
+
+const coverageTitle: Record<string, string> = {
+  en: 'Data Coverage',
+  fr: 'Couverture des données',
+  de: 'Datenabdeckung',
+  es: 'Cobertura de datos',
+};
+
+const coverageItems: Record<string, string[]> = {
+  en: [
+    '15 European countries covered in detail',
+    '21 job categories across all major sectors',
+    '4 languages: English, French, German, Spanish',
+    '600+ dedicated salary pages',
+    'Updated quarterly with the latest available data',
+  ],
+  fr: [
+    '15 pays européens couverts en détail',
+    '21 catégories de métiers dans tous les grands secteurs',
+    '4 langues : anglais, français, allemand, espagnol',
+    'Plus de 600 pages de salaires dédiées',
+    'Mise à jour trimestrielle avec les dernières données disponibles',
+  ],
+  de: [
+    '15 europäische Länder detailliert abgedeckt',
+    '21 Berufskategorien in allen wichtigen Branchen',
+    '4 Sprachen: Englisch, Französisch, Deutsch, Spanisch',
+    'Über 600 dedizierte Gehaltsseiten',
+    'Quartalsweise aktualisiert mit den neuesten verfügbaren Daten',
+  ],
+  es: [
+    '15 países europeos cubiertos en detalle',
+    '21 categorías de empleo en los principales sectores',
+    '4 idiomas: inglés, francés, alemán, español',
+    'Más de 600 páginas salariales dedicadas',
+    'Actualización trimestral con los datos más recientes disponibles',
+  ],
+};
+
+const teamTitle: Record<string, string> = {
+  en: 'The Team',
+  fr: 'L\'équipe',
+  de: 'Das Team',
+  es: 'El equipo',
+};
+
+const teamText: Record<string, string> = {
+  en: 'Built by a small team in Luxembourg, passionate about salary transparency. We believe that access to salary information is a fundamental right for every worker in Europe. Our team combines expertise in data engineering, labor economics, and web development to deliver accurate, accessible salary data.',
+  fr: 'Conçu par une petite équipe au Luxembourg, passionnée par la transparence salariale. Nous croyons que l\'accès aux informations salariales est un droit fondamental pour chaque travailleur en Europe. Notre équipe combine des compétences en ingénierie des données, en économie du travail et en développement web pour fournir des données salariales précises et accessibles.',
+  de: 'Entwickelt von einem kleinen Team in Luxemburg mit Leidenschaft für Gehaltstransparenz. Wir glauben, dass der Zugang zu Gehaltsinformationen ein Grundrecht für jeden Arbeitnehmer in Europa ist. Unser Team vereint Expertise in Datentechnik, Arbeitsökonomie und Webentwicklung, um genaue, zugängliche Gehaltsdaten bereitzustellen.',
+  es: 'Creado por un pequeño equipo en Luxemburgo, apasionado por la transparencia salarial. Creemos que el acceso a la información salarial es un derecho fundamental para cada trabajador en Europa. Nuestro equipo combina experiencia en ingeniería de datos, economía laboral y desarrollo web para ofrecer datos salariales precisos y accesibles.',
+};
+
+const contactTitle: Record<string, string> = {
+  en: 'Contact Us',
+  fr: 'Contactez-nous',
+  de: 'Kontakt',
+  es: 'Contáctenos',
+};
+
+const contactText: Record<string, string> = {
+  en: 'Have questions, feedback, or partnership inquiries? We\'d love to hear from you.',
+  fr: 'Des questions, des commentaires ou des demandes de partenariat ? N\'hésitez pas à nous contacter.',
+  de: 'Haben Sie Fragen, Feedback oder Partnerschaftsanfragen? Wir freuen uns von Ihnen zu hören.',
+  es: '¿Tiene preguntas, comentarios o consultas sobre asociaciones? Nos encantaría saber de usted.',
+};
+
+const emailLabel: Record<string, string> = {
+  en: 'Email us at',
+  fr: 'Écrivez-nous à',
+  de: 'Schreiben Sie uns an',
+  es: 'Escríbanos a',
+};
+
+const homeBreadcrumb: Record<string, string> = { en: 'Home', fr: 'Accueil', de: 'Startseite', es: 'Inicio' };
+const aboutBreadcrumb: Record<string, string> = { en: 'About', fr: 'À propos', de: 'Über uns', es: 'Sobre nosotros' };
+
+const faqItems: Record<string, Array<{question: string, answer: string}>> = {
+  en: [
+    { question: 'What is EuroSalary.eu?', answer: 'EuroSalary.eu is a free European salary comparison platform covering 15 countries, 21 job categories, and 4 languages. It helps workers benchmark their pay, negotiate raises, and understand salary differences across Europe.' },
+    { question: 'Where does EuroSalary get its data?', answer: 'We combine three data sources: official Eurostat statistics from the EU Labour Force Survey, salary information extracted from 50+ European job boards, and anonymous salary reports submitted and validated by our community.' },
+    { question: 'How often is EuroSalary data updated?', answer: 'Eurostat data is refreshed monthly as new releases become available. Job posting salary data is updated weekly, with over 100,000 listings processed each month. Anonymous reports are validated and integrated on a rolling basis.' },
+    { question: 'Who is behind EuroSalary?', answer: 'EuroSalary is built by a small, independent team based in Luxembourg. We are passionate about pay transparency and believe every worker in Europe deserves access to clear, reliable salary information.' },
+    { question: 'How can I contact EuroSalary?', answer: 'You can reach us by email at hello@eurosalary.eu. We welcome questions, feedback, data correction requests, and partnership inquiries.' },
+  ],
+  fr: [
+    { question: 'Qu\'est-ce que EuroSalary.eu ?', answer: 'EuroSalary.eu est une plateforme gratuite de comparaison des salaires européens couvrant 15 pays, 21 catégories de métiers et 4 langues. Elle aide les travailleurs à évaluer leur rémunération, négocier des augmentations et comprendre les différences salariales en Europe.' },
+    { question: 'D\'où proviennent les données d\'EuroSalary ?', answer: 'Nous combinons trois sources de données : les statistiques officielles d\'Eurostat issues de l\'Enquête sur les forces de travail de l\'UE, les informations salariales extraites de plus de 50 sites d\'emploi européens, et les rapports salariaux anonymes soumis et validés par notre communauté.' },
+    { question: 'À quelle fréquence les données sont-elles mises à jour ?', answer: 'Les données Eurostat sont actualisées mensuellement dès la publication de nouvelles données. Les salaires issus des offres d\'emploi sont mis à jour chaque semaine, avec plus de 100 000 annonces traitées par mois. Les rapports anonymes sont validés et intégrés en continu.' },
+    { question: 'Qui est derrière EuroSalary ?', answer: 'EuroSalary est conçu par une petite équipe indépendante basée au Luxembourg. Nous sommes passionnés par la transparence salariale et convaincus que chaque travailleur en Europe mérite un accès à des informations salariales claires et fiables.' },
+    { question: 'Comment contacter EuroSalary ?', answer: 'Vous pouvez nous joindre par e-mail à hello@eurosalary.eu. Nous accueillons vos questions, commentaires, demandes de correction de données et propositions de partenariat.' },
+  ],
+  de: [
+    { question: 'Was ist EuroSalary.eu?', answer: 'EuroSalary.eu ist eine kostenlose europäische Gehaltsvergleichsplattform, die 15 Länder, 21 Berufskategorien und 4 Sprachen abdeckt. Sie hilft Arbeitnehmern, ihr Gehalt zu vergleichen, Gehaltserhöhungen zu verhandeln und Gehaltsunterschiede in Europa zu verstehen.' },
+    { question: 'Woher stammen die Daten von EuroSalary?', answer: 'Wir kombinieren drei Datenquellen: offizielle Eurostat-Statistiken aus der EU-Arbeitskräfteerhebung, Gehaltsinformationen aus über 50 europäischen Jobbörsen sowie anonyme Gehaltsberichte, die von unserer Community eingereicht und validiert werden.' },
+    { question: 'Wie oft werden die Daten aktualisiert?', answer: 'Eurostat-Daten werden monatlich aktualisiert, sobald neue Veröffentlichungen verfügbar sind. Gehaltsdaten aus Stellenanzeigen werden wöchentlich aktualisiert, wobei monatlich über 100.000 Anzeigen verarbeitet werden. Anonyme Berichte werden laufend validiert und integriert.' },
+    { question: 'Wer steckt hinter EuroSalary?', answer: 'EuroSalary wird von einem kleinen, unabhängigen Team mit Sitz in Luxemburg entwickelt. Wir setzen uns leidenschaftlich für Gehaltstransparenz ein und sind überzeugt, dass jeder Arbeitnehmer in Europa Zugang zu klaren, zuverlässigen Gehaltsinformationen verdient.' },
+    { question: 'Wie kann ich EuroSalary kontaktieren?', answer: 'Sie können uns per E-Mail unter hello@eurosalary.eu erreichen. Wir freuen uns über Fragen, Feedback, Korrekturen und Partnerschaftsanfragen.' },
+  ],
+  es: [
+    { question: '¿Qué es EuroSalary.eu?', answer: 'EuroSalary.eu es una plataforma gratuita de comparación salarial europea que cubre 15 países, 21 categorías de empleo y 4 idiomas. Ayuda a los trabajadores a evaluar su remuneración, negociar aumentos y comprender las diferencias salariales en Europa.' },
+    { question: '¿De dónde obtiene EuroSalary sus datos?', answer: 'Combinamos tres fuentes de datos: estadísticas oficiales de Eurostat de la Encuesta de Fuerza Laboral de la UE, información salarial extraída de más de 50 portales de empleo europeos e informes salariales anónimos enviados y validados por nuestra comunidad.' },
+    { question: '¿Con qué frecuencia se actualizan los datos?', answer: 'Los datos de Eurostat se actualizan mensualmente a medida que se publican nuevos datos. Los salarios de ofertas de empleo se actualizan semanalmente, procesando más de 100.000 ofertas al mes. Los informes anónimos se validan e integran de forma continua.' },
+    { question: '¿Quién está detrás de EuroSalary?', answer: 'EuroSalary está creado por un pequeño equipo independiente con sede en Luxemburgo. Nos apasiona la transparencia salarial y creemos que cada trabajador en Europa merece acceso a información salarial clara y confiable.' },
+    { question: '¿Cómo puedo contactar a EuroSalary?', answer: 'Puede escribirnos a hello@eurosalary.eu. Recibimos con gusto sus preguntas, comentarios, solicitudes de corrección de datos y consultas sobre asociaciones.' },
+  ],
+};
+
+// --------------- Schema ---------------
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: fb(h1, lang),
+    description: fb(metaDescription, lang),
+    url: `https://eurosalary.eu/${lang}/about/`,
+    inLanguage: lang,
+    datePublished: '2026-01-15',
+    dateModified: '2026-04-02',
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'EuroSalary',
+    url: 'https://eurosalary.eu',
+    logo: 'https://eurosalary.eu/logo.svg',
+    description: 'The definitive European salary comparison platform.',
+    email: 'hello@eurosalary.eu',
+    foundingLocation: { '@type': 'Place', name: 'Luxembourg' },
+    sameAs: [],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: fb(faqItems, lang).map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: { '@type': 'Answer', text: item.answer },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title={fb(h1, lang)}
+  description={fb(metaDescription, lang)}
+  datePublished="2026-01-15"
+  dateModified="2026-04-02"
+  schema={pageSchema}
+>
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{fb(homeBreadcrumb, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{fb(aboutBreadcrumb, lang)}</span>
+      </nav>
+      <div class="page-hero__grid">
+        <div class="page-hero__content">
+          <h1 class="page-hero__title">{t('hero.about.title1')}<br/><span class="page-hero__accent">EuroSalary.eu</span></h1>
+          <p class="page-hero__desc">{fb(metaDescription, lang)}</p>
+        </div>
+        <div class="page-hero__side">
+          <div class="page-hero__card">
+            <span class="page-hero__card-label">{t('hero.about.status')}</span>
+            <p class="page-hero__card-item">{t('hero.about.revision')}</p>
+            <p class="page-hero__card-item">{t('hero.about.location')}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <article class="container page-body">
+    <TLDRBox items={fb(tldrItems, lang)} />
+
+    <!-- Mission -->
+    <section class="section">
+      <h2>{fb(missionTitle, lang)}</h2>
+      <p>{fb(missionText, lang)}</p>
+    </section>
+
+    <!-- Why we built it -->
+    <section class="section">
+      <h2>{fb(whyTitle, lang)}</h2>
+      <p>{fb(whyText, lang)}</p>
+    </section>
+
+    <!-- How it works -->
+    <section class="section">
+      <h2>{fb(howTitle, lang)}</h2>
+      <p>{fb(howIntro, lang)}</p>
+
+      <h3>{fb(source1Title, lang)}</h3>
+      <p>{fb(source1Text, lang)}</p>
+
+      <h3>{fb(source2Title, lang)}</h3>
+      <p>{fb(source2Text, lang)}</p>
+
+      <h3>{fb(source3Title, lang)}</h3>
+      <p>{fb(source3Text, lang)}</p>
+    </section>
+
+    <!-- Data coverage -->
+    <section class="section">
+      <h2>{fb(coverageTitle, lang)}</h2>
+      <ul>
+        {fb(coverageItems, lang).map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- The team -->
+    <section class="section">
+      <h2>{fb(teamTitle, lang)}</h2>
+      <p>{fb(teamText, lang)}</p>
+    </section>
+
+    <!-- Contact -->
+    <section class="section">
+      <h2>{fb(contactTitle, lang)}</h2>
+      <p>{fb(contactText, lang)}</p>
+      <p>{fb(emailLabel, lang)} <a href="mailto:hello@eurosalary.eu">hello@eurosalary.eu</a></p>
+    </section>
+
+    <FAQSection items={fb(faqItems, lang)} />
+  </article>
+</BaseLayout>
+
+<style>
+  .page-body {
+    padding-top: 2.5rem;
+    padding-bottom: 4rem;
+  }
+  .page-body h2 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em;
+    color: #0F1F3D; margin-top: 3rem; margin-bottom: 1rem;
+  }
+</style>

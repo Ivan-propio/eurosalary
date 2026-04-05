@@ -1,0 +1,289 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TLDRBox from '../../components/TLDRBox.astro';
+import FAQSection from '../../components/FAQSection.astro';
+import { languages } from '../../i18n/ui';
+import { getLangFromUrl, useTranslations, fb } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  const langs = Object.keys(languages);
+  return langs.map((lang) => ({ params: { lang } }));
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+// --------------- Translated content ---------------
+
+const h1: Record<string, string> = {
+  en: 'Our Data Sources',
+  fr: 'Nos sources de données',
+  de: 'Unsere Datenquellen',
+  es: 'Nuestras fuentes de datos',
+};
+
+const metaDescription: Record<string, string> = {
+  en: 'How EuroSalary.eu collects salary data: Eurostat official statistics, OECD.Stat wage data, 50+ job boards, and community-verified anonymous reports. Updated weekly.',
+  fr: 'Comment EuroSalary.eu collecte les données salariales : statistiques officielles Eurostat, données OCDE, plus de 50 sites d\'emploi et rapports anonymes vérifiés. Mise à jour hebdomadaire.',
+  de: 'Wie EuroSalary.eu Gehaltsdaten sammelt: Offizielle Eurostat-Statistiken, OECD-Daten, über 50 Jobbörsen und community-verifizierte anonyme Meldungen. Wöchentlich aktualisiert.',
+  es: 'Cómo EuroSalary.eu recopila datos salariales: estadísticas oficiales de Eurostat, datos OCDE, más de 50 portales de empleo e informes anónimos verificados. Actualización semanal.',
+};
+
+const tldrItems: Record<string, string[]> = {
+  en: [
+    'Eurostat: EU Labour Force Survey + Structure of Earnings Survey (quarterly)',
+    'OECD.Stat: Annual wage statistics + tax-benefit models',
+    'Job postings: 50+ European job boards, 100K+ listings/month',
+    'Anonymous reports: User submissions, min 30 data points per role',
+    'EU Pay Transparency Directive: Company-reported salary ranges from June 2026',
+  ],
+  fr: [
+    'Eurostat : Enquête sur les forces de travail + Enquête sur la structure des salaires (trimestriel)',
+    'OCDE.Stat : Statistiques salariales annuelles + modèles fiscaux',
+    'Offres d\'emploi : 50+ sites d\'emploi européens, 100K+ annonces/mois',
+    'Rapports anonymes : Soumissions utilisateurs, min 30 points de données par poste',
+    'Directive de transparence salariale UE : Fourchettes salariales dès juin 2026',
+  ],
+  de: [
+    'Eurostat: EU-Arbeitskräfteerhebung + Verdienststrukturerhebung (quartalsweise)',
+    'OECD.Stat: Jährliche Lohnstatistiken + Steuer-Sozialleistungs-Modelle',
+    'Stellenanzeigen: 50+ europäische Jobbörsen, 100K+ Anzeigen/Monat',
+    'Anonyme Meldungen: Nutzerberichte, min. 30 Datenpunkte pro Position',
+    'EU-Gehaltstransparenz-Richtlinie: Unternehmensgehaltsspannen ab Juni 2026',
+  ],
+  es: [
+    'Eurostat: Encuesta de Fuerza Laboral + Encuesta de Estructura Salarial (trimestral)',
+    'OCDE.Stat: Estadísticas salariales anuales + modelos fiscales',
+    'Ofertas de empleo: 50+ portales de empleo europeos, 100K+ ofertas/mes',
+    'Informes anónimos: Envíos de usuarios, mín. 30 puntos de datos por puesto',
+    'Directiva de Transparencia Salarial UE: Rangos salariales desde junio 2026',
+  ],
+};
+
+const eurostatTitle: Record<string, string> = {
+  en: 'Eurostat — Official EU Statistics',
+  fr: 'Eurostat — Statistiques officielles de l\'UE',
+  de: 'Eurostat — Offizielle EU-Statistiken',
+  es: 'Eurostat — Estadísticas oficiales de la UE',
+};
+
+const eurostatText: Record<string, string> = {
+  en: 'Eurostat is the statistical office of the European Union. We use two key datasets: the EU Labour Force Survey (EU-LFS), which provides employment and earnings data across all member states, and the Structure of Earnings Survey (SES), which offers detailed breakdowns by occupation, sector, age, and education. These datasets are updated quarterly and cover all EU27 countries, providing the most authoritative baseline for salary comparisons.',
+  fr: 'Eurostat est l\'office statistique de l\'Union européenne. Nous utilisons deux jeux de données clés : l\'Enquête sur les forces de travail de l\'UE (EFT-UE), qui fournit des données sur l\'emploi et les revenus dans tous les États membres, et l\'Enquête sur la structure des salaires (ESS), qui offre des ventilations détaillées par profession, secteur, âge et éducation. Ces données sont mises à jour trimestriellement et couvrent les 27 pays de l\'UE, fournissant la base la plus fiable pour les comparaisons salariales.',
+  de: 'Eurostat ist das statistische Amt der Europäischen Union. Wir nutzen zwei zentrale Datensätze: die EU-Arbeitskräfteerhebung (AKE), die Beschäftigungs- und Einkommensdaten für alle Mitgliedstaaten liefert, und die Verdienststrukturerhebung (VSE), die detaillierte Aufschlüsselungen nach Beruf, Branche, Alter und Bildung bietet. Diese Datensätze werden quartalsweise aktualisiert und decken alle 27 EU-Länder ab — die zuverlässigste Grundlage für Gehaltsvergleiche.',
+  es: 'Eurostat es la oficina estadística de la Unión Europea. Utilizamos dos conjuntos de datos clave: la Encuesta de Fuerza Laboral de la UE (EFT-UE), que proporciona datos de empleo e ingresos en todos los estados miembros, y la Encuesta de Estructura Salarial (EES), que ofrece desgloses detallados por ocupación, sector, edad y educación. Estos datos se actualizan trimestralmente y cubren los 27 países de la UE, proporcionando la base más fiable para comparaciones salariales.',
+};
+
+const oecdTitle: Record<string, string> = {
+  en: 'OECD.Stat — International Wage Data',
+  fr: 'OCDE.Stat — Données salariales internationales',
+  de: 'OECD.Stat — Internationale Lohndaten',
+  es: 'OCDE.Stat — Datos salariales internacionales',
+};
+
+const oecdText: Record<string, string> = {
+  en: 'The Organisation for Economic Co-operation and Development provides annual wage statistics and tax-benefit models that let us compare net take-home pay across countries. OECD data covers all OECD countries, including European non-EU members like Switzerland and Norway, giving us a broader picture of the European labor market.',
+  fr: 'L\'Organisation de coopération et de développement économiques fournit des statistiques salariales annuelles et des modèles fiscaux qui nous permettent de comparer le salaire net entre les pays. Les données de l\'OCDE couvrent tous les pays membres, y compris les pays européens non membres de l\'UE comme la Suisse et la Norvège, nous donnant une image plus large du marché du travail européen.',
+  de: 'Die Organisation für wirtschaftliche Zusammenarbeit und Entwicklung liefert jährliche Lohnstatistiken und Steuer-Sozialleistungs-Modelle, mit denen wir das Nettogehalt länderübergreifend vergleichen können. OECD-Daten decken alle Mitgliedsländer ab, einschließlich europäischer Nicht-EU-Mitglieder wie die Schweiz und Norwegen — für ein breiteres Bild des europäischen Arbeitsmarktes.',
+  es: 'La Organización para la Cooperación y el Desarrollo Económicos proporciona estadísticas salariales anuales y modelos fiscales que nos permiten comparar el salario neto entre países. Los datos de la OCDE cubren todos los países miembros, incluidos los europeos no pertenecientes a la UE como Suiza y Noruega, dándonos una imagen más amplia del mercado laboral europeo.',
+};
+
+const jobPostingsTitle: Record<string, string> = {
+  en: 'Job Postings — Real-Time Market Data',
+  fr: 'Offres d\'emploi — Données du marché en temps réel',
+  de: 'Stellenanzeigen — Echtzeit-Marktdaten',
+  es: 'Ofertas de empleo — Datos del mercado en tiempo real',
+};
+
+const jobPostingsText: Record<string, string> = {
+  en: 'We scrape and process salary data from over 50 European job boards on a weekly basis. This gives us a real-time pulse on what employers are actually offering. Over 100,000 job listings are processed each month, with salary data extracted, normalized to annual gross figures, and cross-referenced against our other sources. This is especially valuable for tracking emerging roles and fast-moving sectors like tech and fintech.',
+  fr: 'Nous collectons et traitons les données salariales de plus de 50 sites d\'emploi européens chaque semaine. Cela nous donne un aperçu en temps réel de ce que les employeurs offrent réellement. Plus de 100 000 annonces sont traitées chaque mois, avec des données salariales extraites, normalisées en salaire brut annuel et croisées avec nos autres sources. C\'est particulièrement précieux pour suivre les métiers émergents et les secteurs en évolution rapide comme la tech et la fintech.',
+  de: 'Wir erfassen und verarbeiten wöchentlich Gehaltsdaten von über 50 europäischen Jobbörsen. Das gibt uns einen Echtzeit-Einblick in das, was Arbeitgeber tatsächlich anbieten. Über 100.000 Stellenanzeigen werden monatlich verarbeitet — Gehaltsdaten werden extrahiert, auf Jahresbruttowerte normalisiert und mit unseren anderen Quellen abgeglichen. Besonders wertvoll für die Verfolgung neuer Berufsbilder und schnelllebiger Sektoren wie Tech und Fintech.',
+  es: 'Recopilamos y procesamos datos salariales de más de 50 portales de empleo europeos semanalmente. Esto nos da un pulso en tiempo real de lo que los empleadores realmente ofrecen. Más de 100.000 ofertas se procesan cada mes, con datos salariales extraídos, normalizados a cifras brutas anuales y cruzados con nuestras otras fuentes. Esto es especialmente valioso para seguir roles emergentes y sectores dinámicos como tech y fintech.',
+};
+
+const anonymousTitle: Record<string, string> = {
+  en: 'Anonymous Reports — Community Verified',
+  fr: 'Rapports anonymes — Vérifiés par la communauté',
+  de: 'Anonyme Meldungen — Community-verifiziert',
+  es: 'Informes anónimos — Verificados por la comunidad',
+};
+
+const anonymousText: Record<string, string> = {
+  en: 'Users can submit their salary data anonymously through our platform. Every submission is validated against our statistical models to detect outliers and ensure data quality. We require a minimum of 30 verified data points per role and country combination before including it in our published figures. This community-driven approach helps us fill gaps that official statistics miss — especially for newer job titles and niche specializations.',
+  fr: 'Les utilisateurs peuvent soumettre leurs données salariales de manière anonyme via notre plateforme. Chaque soumission est validée par nos modèles statistiques pour détecter les valeurs aberrantes et assurer la qualité des données. Nous exigeons un minimum de 30 points de données vérifiés par combinaison poste/pays avant de les inclure dans nos chiffres publiés. Cette approche communautaire nous aide à combler les lacunes des statistiques officielles — en particulier pour les nouveaux métiers et les spécialisations de niche.',
+  de: 'Nutzer können ihre Gehaltsdaten anonym über unsere Plattform einreichen. Jede Eingabe wird durch unsere statistischen Modelle validiert, um Ausreißer zu erkennen und die Datenqualität sicherzustellen. Wir benötigen mindestens 30 verifizierte Datenpunkte pro Kombination aus Position und Land, bevor wir sie in unsere veröffentlichten Zahlen aufnehmen. Dieser Community-Ansatz hilft uns, Lücken zu füllen, die offizielle Statistiken übersehen — besonders bei neueren Berufsbezeichnungen und Nischenspezialisierungen.',
+  es: 'Los usuarios pueden enviar sus datos salariales de forma anónima a través de nuestra plataforma. Cada envío se valida con nuestros modelos estadísticos para detectar valores atípicos y garantizar la calidad de los datos. Requerimos un mínimo de 30 puntos de datos verificados por combinación de puesto y país antes de incluirlos en nuestras cifras publicadas. Este enfoque comunitario nos ayuda a llenar vacíos que las estadísticas oficiales no cubren — especialmente para nuevos títulos de trabajo y especializaciones de nicho.',
+};
+
+const directiveTitle: Record<string, string> = {
+  en: 'EU Pay Transparency Directive — A Game Changer',
+  fr: 'Directive de transparence salariale UE — Un changement majeur',
+  de: 'EU-Gehaltstransparenz-Richtlinie — Ein Wendepunkt',
+  es: 'Directiva de Transparencia Salarial UE — Un cambio radical',
+};
+
+const directiveText: Record<string, string> = {
+  en: 'Starting June 2026, the EU Pay Transparency Directive will require companies with 100+ employees to publish salary ranges for all job postings and report on gender pay gaps. This is a game changer for data quality. As companies begin to comply, we will integrate their published salary ranges into our dataset, providing unprecedented accuracy and granularity in European salary data.',
+  fr: 'À partir de juin 2026, la directive de transparence salariale de l\'UE obligera les entreprises de plus de 100 employés à publier les fourchettes salariales de toutes les offres d\'emploi et à rendre compte des écarts de rémunération entre les genres. C\'est un changement majeur pour la qualité des données. À mesure que les entreprises se conformeront, nous intégrerons leurs fourchettes salariales publiées dans notre jeu de données, offrant une précision et une granularité sans précédent.',
+  de: 'Ab Juni 2026 verpflichtet die EU-Richtlinie zur Gehaltstransparenz Unternehmen mit über 100 Mitarbeitern, Gehaltsspannen für alle Stellenausschreibungen zu veröffentlichen und über geschlechtsspezifische Lohnunterschiede zu berichten. Das ist ein Wendepunkt für die Datenqualität. Sobald Unternehmen die Vorgaben umsetzen, werden wir ihre veröffentlichten Gehaltsspannen in unseren Datensatz integrieren — für eine beispiellose Genauigkeit und Detailtiefe europäischer Gehaltsdaten.',
+  es: 'A partir de junio de 2026, la Directiva de Transparencia Salarial de la UE obligará a las empresas con más de 100 empleados a publicar rangos salariales para todas las ofertas de empleo e informar sobre brechas salariales de género. Esto es un cambio radical para la calidad de los datos. A medida que las empresas cumplan, integraremos sus rangos salariales publicados en nuestro conjunto de datos, proporcionando una precisión y granularidad sin precedentes en los datos salariales europeos.',
+};
+
+const linksTitle: Record<string, string> = {
+  en: 'Official Source Links',
+  fr: 'Liens vers les sources officielles',
+  de: 'Links zu offiziellen Quellen',
+  es: 'Enlaces a fuentes oficiales',
+};
+
+const linkItems: Record<string, Array<{ label: string; url: string }>> = {
+  en: [
+    { label: 'Eurostat — Structure of Earnings Survey', url: '#' },
+    { label: 'Eurostat — EU Labour Force Survey', url: '#' },
+    { label: 'OECD.Stat — Annual Wage Statistics', url: '#' },
+    { label: 'OECD — Tax-Benefit Models', url: '#' },
+    { label: 'EU Pay Transparency Directive (2023/970)', url: '#' },
+  ],
+  fr: [
+    { label: 'Eurostat — Enquête sur la structure des salaires', url: '#' },
+    { label: 'Eurostat — Enquête sur les forces de travail', url: '#' },
+    { label: 'OCDE.Stat — Statistiques salariales annuelles', url: '#' },
+    { label: 'OCDE — Modèles impôts-prestations', url: '#' },
+    { label: 'Directive de transparence salariale UE (2023/970)', url: '#' },
+  ],
+  de: [
+    { label: 'Eurostat — Verdienststrukturerhebung', url: '#' },
+    { label: 'Eurostat — EU-Arbeitskräfteerhebung', url: '#' },
+    { label: 'OECD.Stat — Jährliche Lohnstatistiken', url: '#' },
+    { label: 'OECD — Steuer-Sozialleistungs-Modelle', url: '#' },
+    { label: 'EU-Gehaltstransparenz-Richtlinie (2023/970)', url: '#' },
+  ],
+  es: [
+    { label: 'Eurostat — Encuesta de Estructura Salarial', url: '#' },
+    { label: 'Eurostat — Encuesta de Fuerza Laboral de la UE', url: '#' },
+    { label: 'OCDE.Stat — Estadísticas salariales anuales', url: '#' },
+    { label: 'OCDE — Modelos fiscales', url: '#' },
+    { label: 'Directiva de Transparencia Salarial UE (2023/970)', url: '#' },
+  ],
+};
+
+const faqItems: Record<string, Array<{ question: string; answer: string }>> = {
+  en: [
+    { question: 'How often is the salary data updated?', answer: 'Our Eurostat and OECD data is updated quarterly. Job posting data is refreshed weekly. Anonymous user reports are validated and integrated on a rolling basis as they reach the 30-submission threshold.' },
+    { question: 'How accurate are the salary figures on EuroSalary?', answer: 'We cross-reference three independent data sources to ensure accuracy. Our figures represent median gross annual salaries. Individual salaries may vary based on experience, company size, exact location, and negotiation. We display confidence intervals where sample sizes allow.' },
+    { question: 'Can I submit my own salary data?', answer: 'Yes. We accept anonymous salary submissions through our platform. Your data is validated against statistical models and aggregated with other reports. We never publish individual submissions — only aggregated data with a minimum of 30 data points per role and country.' },
+  ],
+  fr: [
+    { question: 'À quelle fréquence les données salariales sont-elles mises à jour ?', answer: 'Nos données Eurostat et OCDE sont mises à jour trimestriellement. Les données d\'offres d\'emploi sont actualisées chaque semaine. Les rapports anonymes des utilisateurs sont validés et intégrés de manière continue dès qu\'ils atteignent le seuil de 30 soumissions.' },
+    { question: 'Quelle est la précision des chiffres salariaux sur EuroSalary ?', answer: 'Nous croisons trois sources de données indépendantes pour garantir la précision. Nos chiffres représentent les salaires bruts annuels médians. Les salaires individuels peuvent varier selon l\'expérience, la taille de l\'entreprise, la localisation exacte et la négociation. Nous affichons les intervalles de confiance lorsque la taille de l\'échantillon le permet.' },
+    { question: 'Puis-je soumettre mes propres données salariales ?', answer: 'Oui. Nous acceptons les soumissions salariales anonymes via notre plateforme. Vos données sont validées par des modèles statistiques et agrégées avec d\'autres rapports. Nous ne publions jamais de soumissions individuelles — uniquement des données agrégées avec un minimum de 30 points de données par poste et pays.' },
+  ],
+  de: [
+    { question: 'Wie oft werden die Gehaltsdaten aktualisiert?', answer: 'Unsere Eurostat- und OECD-Daten werden quartalsweise aktualisiert. Stellenanzeigen-Daten werden wöchentlich aufgefrischt. Anonyme Nutzermeldungen werden laufend validiert und integriert, sobald sie die Schwelle von 30 Einreichungen erreichen.' },
+    { question: 'Wie genau sind die Gehaltszahlen auf EuroSalary?', answer: 'Wir gleichen drei unabhängige Datenquellen ab, um Genauigkeit sicherzustellen. Unsere Zahlen repräsentieren mediane Jahresbruttogehälter. Individuelle Gehälter können je nach Erfahrung, Unternehmensgröße, genauem Standort und Verhandlung variieren. Wir zeigen Konfidenzintervalle an, wo die Stichprobengröße es erlaubt.' },
+    { question: 'Kann ich meine eigenen Gehaltsdaten einreichen?', answer: 'Ja. Wir akzeptieren anonyme Gehaltseinreichungen über unsere Plattform. Ihre Daten werden durch statistische Modelle validiert und mit anderen Berichten aggregiert. Wir veröffentlichen nie einzelne Einreichungen — nur aggregierte Daten mit mindestens 30 Datenpunkten pro Position und Land.' },
+  ],
+  es: [
+    { question: '¿Con qué frecuencia se actualizan los datos salariales?', answer: 'Nuestros datos de Eurostat y OCDE se actualizan trimestralmente. Los datos de ofertas de empleo se actualizan semanalmente. Los informes anónimos de usuarios se validan e integran de forma continua una vez que alcanzan el umbral de 30 envíos.' },
+    { question: '¿Qué tan precisas son las cifras salariales en EuroSalary?', answer: 'Cruzamos tres fuentes de datos independientes para garantizar la precisión. Nuestras cifras representan salarios brutos anuales medianos. Los salarios individuales pueden variar según la experiencia, el tamaño de la empresa, la ubicación exacta y la negociación. Mostramos intervalos de confianza cuando el tamaño de la muestra lo permite.' },
+    { question: '¿Puedo enviar mis propios datos salariales?', answer: 'Sí. Aceptamos envíos salariales anónimos a través de nuestra plataforma. Sus datos se validan con modelos estadísticos y se agregan con otros informes. Nunca publicamos envíos individuales — solo datos agregados con un mínimo de 30 puntos de datos por puesto y país.' },
+  ],
+};
+
+const homeBreadcrumb: Record<string, string> = { en: 'Home', fr: 'Accueil', de: 'Startseite', es: 'Inicio' };
+const dataBreadcrumb: Record<string, string> = { en: 'Data Sources', fr: 'Sources de données', de: 'Datenquellen', es: 'Fuentes de datos' };
+
+// --------------- Schema ---------------
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: fb(h1, lang),
+    description: fb(metaDescription, lang),
+    author: { '@type': 'Organization', name: 'EuroSalary.eu' },
+    datePublished: '2026-01-15',
+    dateModified: '2026-04-02',
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    inLanguage: lang,
+    mainEntityOfPage: `https://eurosalary.eu/${lang}/data-sources/`,
+  },
+];
+---
+
+<BaseLayout
+  title={fb(h1, lang)}
+  description={fb(metaDescription, lang)}
+  datePublished="2026-01-15"
+  dateModified="2026-04-02"
+  schema={pageSchema}
+>
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{fb(homeBreadcrumb, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{fb(dataBreadcrumb, lang)}</span>
+      </nav>
+      <h1 class="page-hero__title">{t('hero.dataSources.title1')}<br/><span class="page-hero__accent">{t('hero.dataSources.title2')}</span></h1>
+      <p class="page-hero__desc">{fb(metaDescription, lang)}</p>
+    </div>
+  </section>
+
+  <div class="container page-body">
+    <TLDRBox items={fb(tldrItems, lang)} />
+
+    <!-- Eurostat -->
+    <section class="section">
+      <h2>{fb(eurostatTitle, lang)}</h2>
+      <p>{fb(eurostatText, lang)}</p>
+    </section>
+
+    <!-- OECD -->
+    <section class="section">
+      <h2>{fb(oecdTitle, lang)}</h2>
+      <p>{fb(oecdText, lang)}</p>
+    </section>
+
+    <!-- Job postings -->
+    <section class="section">
+      <h2>{fb(jobPostingsTitle, lang)}</h2>
+      <p>{fb(jobPostingsText, lang)}</p>
+    </section>
+
+    <!-- Anonymous reports -->
+    <section class="section">
+      <h2>{fb(anonymousTitle, lang)}</h2>
+      <p>{fb(anonymousText, lang)}</p>
+    </section>
+
+    <!-- EU Pay Transparency Directive -->
+    <section class="section">
+      <h2>{fb(directiveTitle, lang)}</h2>
+      <p>{fb(directiveText, lang)}</p>
+    </section>
+
+    <!-- Official links -->
+    <section class="section">
+      <h2>{fb(linksTitle, lang)}</h2>
+      <ul>
+        {fb(linkItems, lang).map((link) => (
+          <li><a href={link.url} target="_blank" rel="noopener noreferrer">{link.label}</a></li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- FAQ -->
+    <FAQSection items={fb(faqItems, lang)} />
+  </div>
+</BaseLayout>
+
+<style>
+  .page-body { padding: 2.5rem 0 4rem; }
+  .page-body h2 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em;
+    color: #0F1F3D; margin-top: 2.5rem; margin-bottom: 1rem;
+  }
+</style>

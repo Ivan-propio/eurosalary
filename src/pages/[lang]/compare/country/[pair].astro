@@ -1,0 +1,956 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../../components/TLDRBox.astro';
+import FAQSection from '../../../../components/FAQSection.astro';
+import { countrySlugsByLang, countryFlags } from '../../../../data/slugs';
+import { languages } from '../../../../i18n/ui';
+import { fb, useTranslations } from '../../../../i18n/utils';
+import { countryNames, uiLabels } from '../../../../i18n/translations';
+
+// --------------- Country data (hardcoded) ---------------
+const countryData: Record<string, { avgSalary: number; minWage: string; taxRate: string; costOfLiving: number }> = {
+  DE: { avgSalary: 52000, minWage: '€12.82/hr', taxRate: '14-45%', costOfLiving: 65.3 },
+  FR: { avgSalary: 45000, minWage: '€11.65/hr', taxRate: '11-45%', costOfLiving: 62.8 },
+  ES: { avgSalary: 32000, minWage: '€8.45/hr', taxRate: '19-47%', costOfLiving: 52.4 },
+  NL: { avgSalary: 52000, minWage: '€13.27/hr', taxRate: '9.32-49.5%', costOfLiving: 68.5 },
+  BE: { avgSalary: 48000, minWage: '€12.10/hr', taxRate: '25-50%', costOfLiving: 63.1 },
+  IT: { avgSalary: 36000, minWage: 'None', taxRate: '23-43%', costOfLiving: 56.2 },
+  PT: { avgSalary: 26000, minWage: '€5.27/hr', taxRate: '14.5-48%', costOfLiving: 45.3 },
+  PL: { avgSalary: 24000, minWage: '€5.10/hr', taxRate: '12-32%', costOfLiving: 38.7 },
+  SE: { avgSalary: 50000, minWage: 'None', taxRate: '20-52%', costOfLiving: 69.8 },
+  AT: { avgSalary: 50000, minWage: '€10.90/hr', taxRate: '20-55%', costOfLiving: 64.0 },
+  CH: { avgSalary: 95000, minWage: 'Varies', taxRate: '0-11.5%', costOfLiving: 122.4 },
+  LU: { avgSalary: 68000, minWage: '€14.86/hr', taxRate: '0-42%', costOfLiving: 82.1 },
+  IE: { avgSalary: 55000, minWage: '€12.70/hr', taxRate: '20-40%', costOfLiving: 73.2 },
+  DK: { avgSalary: 58000, minWage: 'None', taxRate: '37-52%', costOfLiving: 83.5 },
+  FI: { avgSalary: 44000, minWage: 'None', taxRate: '12.64-44%', costOfLiving: 67.5 },
+};
+
+const SEED_COUNTRIES = ['DE', 'FR', 'ES', 'NL', 'BE', 'IT', 'PT', 'PL', 'SE', 'AT', 'CH', 'LU', 'IE', 'DK', 'FI'];
+
+// --------------- getStaticPaths ---------------
+export function getStaticPaths() {
+  const paths: any[] = [];
+  for (const lang of Object.keys(languages)) {
+    const slugs = countrySlugsByLang[lang];
+    if (!slugs) continue;
+    const codes = Object.keys(slugs);
+    for (let i = 0; i < codes.length; i++) {
+      for (let j = i + 1; j < codes.length; j++) {
+        const codeA = codes[i], codeB = codes[j];
+        const slugA = slugs[codeA], slugB = slugs[codeB];
+        if (!slugA || !slugB) continue;
+        paths.push({
+          params: { lang, pair: `${slugA}-vs-${slugB}` },
+          props: { lang, codeA, codeB },
+        });
+      }
+    }
+  }
+  return paths;
+}
+
+// --------------- Page setup ---------------
+const { lang, codeA, codeB } = Astro.props;
+const t = useTranslations(lang as any);
+
+const nameA = fb(countryNames[codeA], lang);
+const nameB = fb(countryNames[codeB], lang);
+const flagA = countryFlags[codeA] || '';
+const flagB = countryFlags[codeB] || '';
+const slugA = countrySlugsByLang[lang]?.[codeA] || codeA.toLowerCase();
+const slugB = countrySlugsByLang[lang]?.[codeB] || codeB.toLowerCase();
+
+const dataA = countryData[codeA];
+const dataB = countryData[codeB];
+
+const salaryA = dataA.avgSalary;
+const salaryB = dataB.avgSalary;
+const salaryDiff = Math.abs(salaryA - salaryB);
+const pctDiff = Math.round((salaryDiff / Math.min(salaryA, salaryB)) * 100);
+const higherSalaryCode = salaryA >= salaryB ? codeA : codeB;
+const higherSalaryName = salaryA >= salaryB ? nameA : nameB;
+const lowerSalaryName = salaryA >= salaryB ? nameB : nameA;
+const higherSalary = Math.max(salaryA, salaryB);
+const lowerSalary = Math.min(salaryA, salaryB);
+
+const barPctA = Math.round((salaryA / Math.max(salaryA, salaryB)) * 100);
+const barPctB = Math.round((salaryB / Math.max(salaryA, salaryB)) * 100);
+
+const costDiff = Math.abs(dataA.costOfLiving - dataB.costOfLiving);
+const lowerCostCode = dataA.costOfLiving <= dataB.costOfLiving ? codeA : codeB;
+const lowerCostName = dataA.costOfLiving <= dataB.costOfLiving ? nameA : nameB;
+
+// Parse min tax rate from strings like "14-45%"
+function parseMinTax(rate: string): number {
+  const match = rate.match(/[\d.]+/);
+  return match ? parseFloat(match[0]) : 50;
+}
+const minTaxA = parseMinTax(dataA.taxRate);
+const minTaxB = parseMinTax(dataB.taxRate);
+const lowerTaxCode = minTaxA <= minTaxB ? codeA : codeB;
+const lowerTaxName = minTaxA <= minTaxB ? nameA : nameB;
+
+const fmt = (n: number) => new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
+
+const year = '2026';
+
+// --------------- H1 as question ---------------
+const titles: Record<string, string> = {
+  en: `How Do Salaries in ${nameA} Compare to ${nameB}?`,
+  fr: `Comment les salaires en ${nameA} se comparent-ils à ${nameB} ?`,
+  de: `Wie vergleichen sich die Gehälter in ${nameA} mit ${nameB}?`,
+  es: `¿Cómo se comparan los salarios en ${nameA} con ${nameB}?`,
+};
+
+const descriptions: Record<string, string> = {
+  en: `Side-by-side salary comparison between ${nameA} and ${nameB} in ${year}. Average salary, minimum wage, tax rates, and cost of living compared. ${higherSalaryName} pays ${pctDiff}% more on average.`,
+  fr: `Comparaison salariale entre ${nameA} et ${nameB} en ${year}. Salaire moyen, salaire minimum, taux d'imposition et coût de la vie comparés. ${higherSalaryName} paie ${pctDiff}% de plus en moyenne.`,
+  de: `Gehaltsvergleich zwischen ${nameA} und ${nameB} im Jahr ${year}. Durchschnittsgehalt, Mindestlohn, Steuersätze und Lebenshaltungskosten im Vergleich. ${higherSalaryName} zahlt ${pctDiff}% mehr.`,
+  es: `Comparación salarial entre ${nameA} y ${nameB} en ${year}. Salario medio, salario mínimo, tasas impositivas y coste de vida. ${higherSalaryName} paga ${pctDiff}% más en promedio.`,
+};
+
+// --------------- Intro answer < 60 words ---------------
+const answerTexts: Record<string, string> = {
+  en: `${higherSalaryName} pays <strong>${pctDiff}% more</strong> than ${lowerSalaryName} on average. The mean gross salary in ${nameA} is ${fmt(salaryA)}/yr versus ${fmt(salaryB)}/yr in ${nameB}. ${lowerCostName} has a lower cost of living index (${Math.min(dataA.costOfLiving, dataB.costOfLiving)} vs ${Math.max(dataA.costOfLiving, dataB.costOfLiving)}).`,
+  fr: `${higherSalaryName} paie en moyenne <strong>${pctDiff}% de plus</strong> que ${lowerSalaryName}. Le salaire brut moyen en ${nameA} est de ${fmt(salaryA)}/an contre ${fmt(salaryB)}/an en ${nameB}. ${lowerCostName} a un indice de coût de la vie plus bas.`,
+  de: `${higherSalaryName} zahlt im Durchschnitt <strong>${pctDiff}% mehr</strong> als ${lowerSalaryName}. Das Bruttodurchschnittsgehalt in ${nameA} liegt bei ${fmt(salaryA)}/Jahr gegenüber ${fmt(salaryB)}/Jahr in ${nameB}. ${lowerCostName} hat niedrigere Lebenshaltungskosten.`,
+  es: `${higherSalaryName} paga un <strong>${pctDiff}% más</strong> que ${lowerSalaryName} en promedio. El salario bruto medio en ${nameA} es de ${fmt(salaryA)}/año frente a ${fmt(salaryB)}/año en ${nameB}. ${lowerCostName} tiene un coste de vida más bajo.`,
+};
+
+// --------------- TLDR items ---------------
+const tldrLabels: Record<string, string[]> = {
+  en: [
+    `${higherSalaryName} pays ${pctDiff}% more than ${lowerSalaryName} (${fmt(higherSalary)} vs ${fmt(lowerSalary)}/yr)`,
+    `${lowerCostName} has a lower cost of living index (${Math.min(dataA.costOfLiving, dataB.costOfLiving)} vs ${Math.max(dataA.costOfLiving, dataB.costOfLiving)})`,
+    `${lowerTaxName} has lower minimum tax rates (${nameA}: ${dataA.taxRate}, ${nameB}: ${dataB.taxRate})`,
+  ],
+  fr: [
+    `${higherSalaryName} paie ${pctDiff}% de plus que ${lowerSalaryName} (${fmt(higherSalary)} vs ${fmt(lowerSalary)}/an)`,
+    `${lowerCostName} a un coût de la vie plus bas (${Math.min(dataA.costOfLiving, dataB.costOfLiving)} vs ${Math.max(dataA.costOfLiving, dataB.costOfLiving)})`,
+    `${lowerTaxName} a des taux d'imposition minimaux plus bas (${nameA} : ${dataA.taxRate}, ${nameB} : ${dataB.taxRate})`,
+  ],
+  de: [
+    `${higherSalaryName} zahlt ${pctDiff}% mehr als ${lowerSalaryName} (${fmt(higherSalary)} vs ${fmt(lowerSalary)}/Jahr)`,
+    `${lowerCostName} hat niedrigere Lebenshaltungskosten (${Math.min(dataA.costOfLiving, dataB.costOfLiving)} vs ${Math.max(dataA.costOfLiving, dataB.costOfLiving)})`,
+    `${lowerTaxName} hat niedrigere Mindeststeuersätze (${nameA}: ${dataA.taxRate}, ${nameB}: ${dataB.taxRate})`,
+  ],
+  es: [
+    `${higherSalaryName} paga ${pctDiff}% más que ${lowerSalaryName} (${fmt(higherSalary)} vs ${fmt(lowerSalary)}/año)`,
+    `${lowerCostName} tiene un coste de vida más bajo (${Math.min(dataA.costOfLiving, dataB.costOfLiving)} vs ${Math.max(dataA.costOfLiving, dataB.costOfLiving)})`,
+    `${lowerTaxName} tiene tasas impositivas mínimas más bajas (${nameA}: ${dataA.taxRate}, ${nameB}: ${dataB.taxRate})`,
+  ],
+};
+
+// --------------- Section labels ---------------
+const sectionLabels: Record<string, Record<string, string>> = {
+  en: {
+    overview: 'Side-by-Side Comparison',
+    avgSalary: 'Average Salary',
+    minWage: 'Minimum Wage',
+    taxRate: 'Income Tax Rate',
+    costOfLiving: 'Cost of Living Index',
+    diffLabel: 'Difference',
+    salaryGap: 'Salary Difference',
+    betterFor: 'Which Country Is Better?',
+    higherSalary: 'Higher Average Salary',
+    lowerTaxes: 'Lower Tax Rates',
+    lowerCost: 'Lower Cost of Living',
+    relatedComparisons: 'Related Country Comparisons',
+    sources: 'Data Sources & Methodology',
+    sourceIntro: 'This salary comparison is compiled from multiple verified sources:',
+    lastUpdated: `Last updated: April ${year}`,
+    perYear: '/yr',
+    viewFullProfile: 'View full salary profile',
+  },
+  fr: {
+    overview: 'Comparaison côte à côte',
+    avgSalary: 'Salaire moyen',
+    minWage: 'Salaire minimum',
+    taxRate: "Taux d'imposition",
+    costOfLiving: 'Indice du coût de la vie',
+    diffLabel: 'Différence',
+    salaryGap: 'Écart salarial',
+    betterFor: 'Quel pays est le meilleur ?',
+    higherSalary: 'Salaire moyen plus élevé',
+    lowerTaxes: "Taux d'imposition plus bas",
+    lowerCost: 'Coût de la vie plus bas',
+    relatedComparisons: 'Comparaisons de pays similaires',
+    sources: 'Sources et méthodologie',
+    sourceIntro: 'Cette comparaison salariale provient de sources vérifiées :',
+    lastUpdated: `Dernière mise à jour : avril ${year}`,
+    perYear: '/an',
+    viewFullProfile: 'Voir le profil salarial complet',
+  },
+  de: {
+    overview: 'Vergleich nebeneinander',
+    avgSalary: 'Durchschnittsgehalt',
+    minWage: 'Mindestlohn',
+    taxRate: 'Einkommensteuersatz',
+    costOfLiving: 'Lebenshaltungskostenindex',
+    diffLabel: 'Differenz',
+    salaryGap: 'Gehaltsdifferenz',
+    betterFor: 'Welches Land ist besser?',
+    higherSalary: 'Höheres Durchschnittsgehalt',
+    lowerTaxes: 'Niedrigere Steuersätze',
+    lowerCost: 'Niedrigere Lebenshaltungskosten',
+    relatedComparisons: 'Ähnliche Ländervergleiche',
+    sources: 'Datenquellen & Methodik',
+    sourceIntro: 'Dieser Gehaltsvergleich basiert auf verifizierten Quellen:',
+    lastUpdated: `Zuletzt aktualisiert: April ${year}`,
+    perYear: '/Jahr',
+    viewFullProfile: 'Vollständiges Gehaltsprofil ansehen',
+  },
+  es: {
+    overview: 'Comparación lado a lado',
+    avgSalary: 'Salario medio',
+    minWage: 'Salario mínimo',
+    taxRate: 'Tasa impositiva',
+    costOfLiving: 'Índice de coste de vida',
+    diffLabel: 'Diferencia',
+    salaryGap: 'Diferencia salarial',
+    betterFor: '¿Qué país es mejor?',
+    higherSalary: 'Salario medio más alto',
+    lowerTaxes: 'Tasas impositivas más bajas',
+    lowerCost: 'Coste de vida más bajo',
+    relatedComparisons: 'Comparaciones de países similares',
+    sources: 'Fuentes y metodología',
+    sourceIntro: 'Esta comparación salarial proviene de fuentes verificadas:',
+    lastUpdated: `Última actualización: abril ${year}`,
+    perYear: '/año',
+    viewFullProfile: 'Ver perfil salarial completo',
+  },
+};
+const labels = fb(sectionLabels, lang);
+
+// --------------- "Better for" verdicts ---------------
+const betterForLabels: Record<string, Record<string, string>> = {
+  en: {
+    higherSalaryVerdict: `${higherSalaryName} offers ${pctDiff}% higher average salaries (${fmt(higherSalary)} vs ${fmt(lowerSalary)}/yr).`,
+    lowerTaxVerdict: `${lowerTaxName} has lower starting tax rates, which can mean more take-home pay at lower income brackets.`,
+    lowerCostVerdict: `${lowerCostName} has a cost of living index of ${lowerCostCode === codeA ? dataA.costOfLiving : dataB.costOfLiving} compared to ${lowerCostCode === codeA ? dataB.costOfLiving : dataA.costOfLiving}, meaning everyday expenses are more affordable.`,
+  },
+  fr: {
+    higherSalaryVerdict: `${higherSalaryName} offre des salaires moyens ${pctDiff}% plus élevés (${fmt(higherSalary)} vs ${fmt(lowerSalary)}/an).`,
+    lowerTaxVerdict: `${lowerTaxName} a des taux d'imposition de départ plus bas, ce qui peut signifier un salaire net plus élevé dans les tranches inférieures.`,
+    lowerCostVerdict: `${lowerCostName} a un indice de coût de la vie de ${lowerCostCode === codeA ? dataA.costOfLiving : dataB.costOfLiving} contre ${lowerCostCode === codeA ? dataB.costOfLiving : dataA.costOfLiving}, les dépenses courantes y sont plus abordables.`,
+  },
+  de: {
+    higherSalaryVerdict: `${higherSalaryName} bietet ${pctDiff}% höhere Durchschnittsgehälter (${fmt(higherSalary)} vs ${fmt(lowerSalary)}/Jahr).`,
+    lowerTaxVerdict: `${lowerTaxName} hat niedrigere Eingangssteuersätze, was mehr Nettoeinkommen in den unteren Einkommensbereichen bedeuten kann.`,
+    lowerCostVerdict: `${lowerCostName} hat einen Lebenshaltungskostenindex von ${lowerCostCode === codeA ? dataA.costOfLiving : dataB.costOfLiving} gegenüber ${lowerCostCode === codeA ? dataB.costOfLiving : dataA.costOfLiving}, der Alltag ist dort günstiger.`,
+  },
+  es: {
+    higherSalaryVerdict: `${higherSalaryName} ofrece salarios medios ${pctDiff}% más altos (${fmt(higherSalary)} vs ${fmt(lowerSalary)}/año).`,
+    lowerTaxVerdict: `${lowerTaxName} tiene tasas impositivas iniciales más bajas, lo que puede significar más salario neto en los tramos inferiores.`,
+    lowerCostVerdict: `${lowerCostName} tiene un índice de coste de vida de ${lowerCostCode === codeA ? dataA.costOfLiving : dataB.costOfLiving} frente a ${lowerCostCode === codeA ? dataB.costOfLiving : dataA.costOfLiving}, los gastos cotidianos son más asequibles.`,
+  },
+};
+const verdicts = fb(betterForLabels, lang);
+
+// --------------- Related comparisons (6 pairs involving A or B) ---------------
+const relatedPairs: { cA: string; cB: string }[] = [];
+for (const code of SEED_COUNTRIES) {
+  if (code === codeA || code === codeB) continue;
+  if (relatedPairs.length < 3) {
+    relatedPairs.push({ cA: codeA, cB: code });
+  } else if (relatedPairs.length < 6) {
+    relatedPairs.push({ cA: codeB, cB: code });
+  } else {
+    break;
+  }
+}
+
+// --------------- FAQ items ---------------
+const faqByLang: Record<string, { question: string; answer: string }[]> = {
+  en: [
+    { question: `Which country pays more, ${nameA} or ${nameB}?`, answer: `${higherSalaryName} pays ${pctDiff}% more on average. The mean gross salary is ${fmt(higherSalary)}/yr in ${higherSalaryName} compared to ${fmt(lowerSalary)}/yr in ${lowerSalaryName}.` },
+    { question: `What is the minimum wage in ${nameA} vs ${nameB}?`, answer: `The minimum wage in ${nameA} is ${dataA.minWage} and in ${nameB} it is ${dataB.minWage}. Note that some countries like Italy and Sweden have no statutory minimum wage — wages are set by collective agreements instead.` },
+    { question: `What are the tax rates in ${nameA} compared to ${nameB}?`, answer: `Income tax rates in ${nameA} range from ${dataA.taxRate} while in ${nameB} they range from ${dataB.taxRate}. Effective tax rates depend on income level, deductions, and personal circumstances.` },
+    { question: `Is cost of living higher in ${nameA} or ${nameB}?`, answer: `${nameA} has a cost of living index of ${dataA.costOfLiving} while ${nameB} has ${dataB.costOfLiving}. ${lowerCostName} is more affordable for everyday expenses like rent, groceries, and transportation.` },
+    { question: `Is the salary data for ${nameA} and ${nameB} reliable?`, answer: `Yes. EuroSalary aggregates data from Eurostat, verified job postings from 50+ European job boards, and validated anonymous salary reports. Data is updated regularly and cross-referenced with official EU statistics for ${year}.` },
+  ],
+  fr: [
+    { question: `Quel pays paie le plus, ${nameA} ou ${nameB} ?`, answer: `${higherSalaryName} paie ${pctDiff}% de plus en moyenne. Le salaire brut moyen est de ${fmt(higherSalary)}/an en ${higherSalaryName} contre ${fmt(lowerSalary)}/an en ${lowerSalaryName}.` },
+    { question: `Quel est le salaire minimum en ${nameA} vs ${nameB} ?`, answer: `Le salaire minimum en ${nameA} est de ${dataA.minWage} et en ${nameB} de ${dataB.minWage}. Certains pays n'ont pas de salaire minimum légal — les salaires y sont fixés par conventions collectives.` },
+    { question: `Quels sont les taux d'imposition en ${nameA} par rapport à ${nameB} ?`, answer: `Les taux d'imposition en ${nameA} vont de ${dataA.taxRate} tandis qu'en ${nameB} ils vont de ${dataB.taxRate}. Le taux effectif dépend du revenu et de la situation personnelle.` },
+    { question: `Le coût de la vie est-il plus élevé en ${nameA} ou en ${nameB} ?`, answer: `${nameA} a un indice de coût de la vie de ${dataA.costOfLiving} tandis que ${nameB} a ${dataB.costOfLiving}. ${lowerCostName} est plus abordable pour les dépenses courantes.` },
+    { question: `Les données salariales sont-elles fiables ?`, answer: `Oui. EuroSalary agrège les données d'Eurostat, d'offres d'emploi vérifiées et de déclarations salariales anonymes validées. Les données sont mises à jour régulièrement pour ${year}.` },
+  ],
+  de: [
+    { question: `Welches Land zahlt mehr, ${nameA} oder ${nameB}?`, answer: `${higherSalaryName} zahlt im Durchschnitt ${pctDiff}% mehr. Das mittlere Bruttogehalt beträgt ${fmt(higherSalary)}/Jahr in ${higherSalaryName} gegenüber ${fmt(lowerSalary)}/Jahr in ${lowerSalaryName}.` },
+    { question: `Wie hoch ist der Mindestlohn in ${nameA} vs ${nameB}?`, answer: `Der Mindestlohn in ${nameA} beträgt ${dataA.minWage} und in ${nameB} ${dataB.minWage}. Einige Länder haben keinen gesetzlichen Mindestlohn — die Löhne werden dort durch Tarifverträge festgelegt.` },
+    { question: `Wie sind die Steuersätze in ${nameA} im Vergleich zu ${nameB}?`, answer: `Die Einkommensteuersätze in ${nameA} liegen bei ${dataA.taxRate}, während sie in ${nameB} bei ${dataB.taxRate} liegen. Der effektive Steuersatz hängt von Einkommen und persönlichen Umständen ab.` },
+    { question: `Sind die Lebenshaltungskosten in ${nameA} oder ${nameB} höher?`, answer: `${nameA} hat einen Lebenshaltungskostenindex von ${dataA.costOfLiving}, ${nameB} von ${dataB.costOfLiving}. ${lowerCostName} ist für den Alltag günstiger.` },
+    { question: `Sind die Gehaltsdaten zuverlässig?`, answer: `Ja. EuroSalary aggregiert Daten von Eurostat, verifizierten Stellenangeboten und validierten anonymen Gehaltsberichten. Die Daten werden regelmäßig aktualisiert für ${year}.` },
+  ],
+  es: [
+    { question: `¿Qué país paga más, ${nameA} o ${nameB}?`, answer: `${higherSalaryName} paga un ${pctDiff}% más en promedio. El salario bruto medio es de ${fmt(higherSalary)}/año en ${higherSalaryName} frente a ${fmt(lowerSalary)}/año en ${lowerSalaryName}.` },
+    { question: `¿Cuál es el salario mínimo en ${nameA} vs ${nameB}?`, answer: `El salario mínimo en ${nameA} es de ${dataA.minWage} y en ${nameB} de ${dataB.minWage}. Algunos países no tienen salario mínimo legal — los salarios se fijan mediante convenios colectivos.` },
+    { question: `¿Cuáles son las tasas impositivas en ${nameA} comparado con ${nameB}?`, answer: `Las tasas impositivas en ${nameA} van del ${dataA.taxRate} mientras que en ${nameB} van del ${dataB.taxRate}. La tasa efectiva depende del nivel de ingresos y circunstancias personales.` },
+    { question: `¿Es más caro vivir en ${nameA} o en ${nameB}?`, answer: `${nameA} tiene un índice de coste de vida de ${dataA.costOfLiving} mientras que ${nameB} tiene ${dataB.costOfLiving}. ${lowerCostName} es más asequible para gastos cotidianos.` },
+    { question: `¿Son fiables los datos salariales?`, answer: `Sí. EuroSalary agrega datos de Eurostat, ofertas de empleo verificadas e informes salariales anónimos validados. Los datos se actualizan regularmente para ${year}.` },
+  ],
+};
+const faqItems = fb(faqByLang, lang);
+
+// --------------- Breadcrumb labels (from centralized translations) ---------------
+
+// --------------- Schema ---------------
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: fb(titles, lang),
+    description: fb(descriptions, lang),
+    author: { '@type': 'Organization', name: 'EuroSalary.eu' },
+    datePublished: '2026-01-15',
+    dateModified: '2026-04-04',
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map((f: { question: string; answer: string }) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title={fb(titles, lang)}
+  description={fb(descriptions, lang)}
+  datePublished="2026-01-15"
+  dateModified="2026-04-04"
+  schema={pageSchema}
+>
+  <!-- Hero -->
+  <section class="compare-hero">
+    <div class="compare-hero__dots"></div>
+    <div class="container compare-hero__inner">
+      <nav class="compare-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{fb(uiLabels.home, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a href={`/${lang}/compare/`}>{fb(uiLabels.compare, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="compare-hero__breadcrumbs-current">{nameA} vs {nameB}</span>
+      </nav>
+
+      <div class="compare-hero__grid">
+        <div class="compare-hero__content">
+          <h1 class="compare-hero__title">{fb(titles, lang)}</h1>
+          <p class="compare-hero__answer" set:html={fb(answerTexts, lang)} />
+        </div>
+
+        <div class="compare-hero__versus">
+          <div class="compare-hero__country-card">
+            <span class="compare-hero__flag">{flagA}</span>
+            <strong>{nameA}</strong>
+            <div class="compare-hero__salary">{fmt(salaryA)}</div>
+            <div class="compare-hero__salary-sub">{labels.avgSalary}</div>
+          </div>
+          <div class="compare-hero__vs-badge">VS</div>
+          <div class="compare-hero__country-card">
+            <span class="compare-hero__flag">{flagB}</span>
+            <strong>{nameB}</strong>
+            <div class="compare-hero__salary">{fmt(salaryB)}</div>
+            <div class="compare-hero__salary-sub">{labels.avgSalary}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Body -->
+  <article class="container compare-body">
+    <TLDRBox items={fb(tldrLabels, lang)} />
+
+    <!-- Side-by-Side Comparison Table -->
+    <section class="compare-section">
+      <h2 class="compare-section__title">{labels.overview}</h2>
+      <div class="compare-table-wrap">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th><span class="compare-table__flag">{flagA}</span> {nameA}</th>
+              <th><span class="compare-table__flag">{flagB}</span> {nameB}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{labels.avgSalary}</td>
+              <td class={salaryA >= salaryB ? 'compare-table__winner' : ''}><strong>{fmt(salaryA)}{labels.perYear}</strong></td>
+              <td class={salaryB >= salaryA ? 'compare-table__winner' : ''}><strong>{fmt(salaryB)}{labels.perYear}</strong></td>
+            </tr>
+            <tr>
+              <td>{labels.minWage}</td>
+              <td>{dataA.minWage}</td>
+              <td>{dataB.minWage}</td>
+            </tr>
+            <tr>
+              <td>{labels.taxRate}</td>
+              <td>{dataA.taxRate}</td>
+              <td>{dataB.taxRate}</td>
+            </tr>
+            <tr>
+              <td>{labels.costOfLiving}</td>
+              <td class={dataA.costOfLiving <= dataB.costOfLiving ? 'compare-table__winner' : ''}>{dataA.costOfLiving}</td>
+              <td class={dataB.costOfLiving <= dataA.costOfLiving ? 'compare-table__winner' : ''}>{dataB.costOfLiving}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Salary Difference Bar -->
+    <section class="compare-section">
+      <h2 class="compare-section__title">{labels.salaryGap}</h2>
+      <div class="salary-diff">
+        <div class="salary-diff__row">
+          <div class="salary-diff__label">
+            <span class="salary-diff__flag">{flagA}</span>
+            <span>{nameA}</span>
+          </div>
+          <div class="salary-diff__bar-track">
+            <div class="salary-diff__bar" style={`width: ${barPctA}%`}></div>
+          </div>
+          <div class="salary-diff__value">{fmt(salaryA)}</div>
+        </div>
+        <div class="salary-diff__row">
+          <div class="salary-diff__label">
+            <span class="salary-diff__flag">{flagB}</span>
+            <span>{nameB}</span>
+          </div>
+          <div class="salary-diff__bar-track">
+            <div class="salary-diff__bar salary-diff__bar--alt" style={`width: ${barPctB}%`}></div>
+          </div>
+          <div class="salary-diff__value">{fmt(salaryB)}</div>
+        </div>
+        <div class="salary-diff__summary">
+          <span class="salary-diff__badge">
+            <span class="material-symbols-outlined">trending_up</span>
+            +{pctDiff}% ({fmt(salaryDiff)}{labels.perYear})
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Which Country Is Better For What -->
+    <section class="compare-section">
+      <h2 class="compare-section__title">{labels.betterFor}</h2>
+      <div class="verdicts-grid">
+        <div class="verdict-card">
+          <div class="verdict-card__icon">
+            <span class="material-symbols-outlined">payments</span>
+          </div>
+          <h3 class="verdict-card__title">{labels.higherSalary}</h3>
+          <div class="verdict-card__winner">
+            <span class="verdict-card__flag">{higherSalaryCode === codeA ? flagA : flagB}</span>
+            <strong>{higherSalaryName}</strong>
+          </div>
+          <p class="verdict-card__text">{verdicts.higherSalaryVerdict}</p>
+        </div>
+        <div class="verdict-card">
+          <div class="verdict-card__icon">
+            <span class="material-symbols-outlined">receipt_long</span>
+          </div>
+          <h3 class="verdict-card__title">{labels.lowerTaxes}</h3>
+          <div class="verdict-card__winner">
+            <span class="verdict-card__flag">{lowerTaxCode === codeA ? flagA : flagB}</span>
+            <strong>{lowerTaxName}</strong>
+          </div>
+          <p class="verdict-card__text">{verdicts.lowerTaxVerdict}</p>
+        </div>
+        <div class="verdict-card">
+          <div class="verdict-card__icon">
+            <span class="material-symbols-outlined">shopping_cart</span>
+          </div>
+          <h3 class="verdict-card__title">{labels.lowerCost}</h3>
+          <div class="verdict-card__winner">
+            <span class="verdict-card__flag">{lowerCostCode === codeA ? flagA : flagB}</span>
+            <strong>{lowerCostName}</strong>
+          </div>
+          <p class="verdict-card__text">{verdicts.lowerCostVerdict}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Internal links to country pages -->
+    <section class="compare-section compare-links">
+      <div class="compare-links__grid">
+        <a href={`/${lang}/country/${slugA}/`} class="compare-link-card">
+          <span class="compare-link-card__flag">{flagA}</span>
+          <strong>{nameA}</strong>
+          <span class="compare-link-card__label">{labels.viewFullProfile} &rarr;</span>
+        </a>
+        <a href={`/${lang}/country/${slugB}/`} class="compare-link-card">
+          <span class="compare-link-card__flag">{flagB}</span>
+          <strong>{nameB}</strong>
+          <span class="compare-link-card__label">{labels.viewFullProfile} &rarr;</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Related comparisons -->
+    <section class="compare-section">
+      <h2 class="compare-section__title">{labels.relatedComparisons}</h2>
+      <div class="compare-related__grid">
+        {relatedPairs.map(({ cA, cB }) => {
+          const rNameA = fb(countryNames[cA], lang);
+          const rNameB = fb(countryNames[cB], lang);
+          const rFlagA = countryFlags[cA] || '';
+          const rFlagB = countryFlags[cB] || '';
+          // Ensure consistent ordering: lower index first
+          const idxA = SEED_COUNTRIES.indexOf(cA);
+          const idxB = SEED_COUNTRIES.indexOf(cB);
+          const [pairCodeA, pairCodeB] = idxA < idxB ? [cA, cB] : [cB, cA];
+          const pairSlugA = countrySlugsByLang[lang]?.[pairCodeA] || pairCodeA.toLowerCase();
+          const pairSlugB = countrySlugsByLang[lang]?.[pairCodeB] || pairCodeB.toLowerCase();
+          const pairSlug = `${pairSlugA}-vs-${pairSlugB}`;
+          return (
+            <a href={`/${lang}/compare/country/${pairSlug}/`} class="compare-related__card">
+              <span>{rFlagA} {rNameA} vs {rFlagB} {rNameB}</span>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+
+    <!-- Sources -->
+    <section class="compare-section compare-sources">
+      <h2 class="compare-section__title">{labels.sources}</h2>
+      <p class="compare-sources__intro">{labels.sourceIntro}</p>
+      <div class="compare-sources__grid">
+        <div class="source-card">
+          <span class="material-symbols-outlined source-card__icon">account_balance</span>
+          <strong>Eurostat</strong>
+          <p>EU Labour Force Survey & Structure of Earnings Survey</p>
+        </div>
+        <div class="source-card">
+          <span class="material-symbols-outlined source-card__icon">work</span>
+          <strong>Job Postings</strong>
+          <p>50+ European job boards, 100K+ listings/month</p>
+        </div>
+        <div class="source-card">
+          <span class="material-symbols-outlined source-card__icon">group</span>
+          <strong>Anonymous Reports</strong>
+          <p>User-submitted, validated against statistical models</p>
+        </div>
+      </div>
+      <p class="compare-sources__updated">{labels.lastUpdated}</p>
+    </section>
+
+    <FAQSection items={faqItems} />
+  </article>
+</BaseLayout>
+
+<style>
+  /* ============ Hero ============ */
+  .compare-hero {
+    background: var(--color-primary-container, #0F1F3D);
+    color: var(--color-white, #fff);
+    position: relative;
+    overflow: hidden;
+    padding: var(--space-12) 0 var(--space-14);
+  }
+  .compare-hero__dots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+    pointer-events: none;
+  }
+  .compare-hero__inner {
+    position: relative;
+    z-index: 1;
+  }
+  .compare-hero__breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: var(--space-6);
+  }
+  .compare-hero__breadcrumbs a {
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+  }
+  .compare-hero__breadcrumbs a:hover { color: rgba(255,255,255,0.8); }
+  .compare-hero__breadcrumbs .material-symbols-outlined { font-size: 14px; }
+  .compare-hero__breadcrumbs-current { color: rgba(255,255,255,0.8); }
+  .compare-hero__grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-10);
+    align-items: center;
+  }
+  .compare-hero__title {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: var(--space-4);
+  }
+  .compare-hero__answer {
+    font-size: var(--text-base);
+    color: rgba(255,255,255,0.85);
+    line-height: var(--leading-relaxed);
+    max-width: 60ch;
+  }
+
+  /* VS cards */
+  .compare-hero__versus {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .compare-hero__country-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: var(--space-6);
+    text-align: center;
+    min-width: 150px;
+  }
+  .compare-hero__flag {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+  .compare-hero__country-card strong {
+    display: block;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2);
+  }
+  .compare-hero__salary {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-secondary, #2563EB);
+  }
+  .compare-hero__salary-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 2px;
+  }
+  .compare-hero__vs-badge {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--color-secondary, #2563EB);
+    background: rgba(37,99,235,0.12);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* ============ Body ============ */
+  .compare-body {
+    padding: var(--space-10) 0 var(--space-16);
+  }
+  .compare-section {
+    margin-top: var(--space-12);
+  }
+  .compare-section__title {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--color-primary-container, #0F1F3D);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-6);
+  }
+
+  /* ============ Tables ============ */
+  .compare-table-wrap {
+    overflow-x: auto;
+  }
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+  }
+  .compare-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #75777e;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 2px solid #e6e8ea;
+  }
+  .compare-table td {
+    padding: var(--space-4);
+    border-bottom: 1px solid #f0f1f3;
+    color: #2c2e33;
+  }
+  .compare-table__flag {
+    font-size: var(--text-lg);
+    margin-right: 4px;
+  }
+  .compare-table__winner {
+    color: #16a34a;
+    font-weight: 700;
+  }
+  .compare-table tbody tr:hover {
+    background: #fafbfc;
+  }
+
+  /* ============ Salary Difference Bar ============ */
+  .salary-diff {
+    background: white;
+    border: 1px solid #e6e8ea;
+    border-radius: 8px;
+    padding: var(--space-8);
+  }
+  .salary-diff__row {
+    display: grid;
+    grid-template-columns: 160px 1fr 100px;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+  .salary-diff__label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--color-primary-container, #0F1F3D);
+  }
+  .salary-diff__flag {
+    font-size: 1.25rem;
+  }
+  .salary-diff__bar-track {
+    height: 28px;
+    background: #f0f1f3;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .salary-diff__bar {
+    height: 100%;
+    background: linear-gradient(90deg, #2563EB, #3b82f6);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  .salary-diff__bar--alt {
+    background: linear-gradient(90deg, #0F1F3D, #1e3a5f);
+  }
+  .salary-diff__value {
+    font-weight: 800;
+    font-size: var(--text-sm);
+    text-align: right;
+    color: var(--color-primary-container, #0F1F3D);
+  }
+  .salary-diff__summary {
+    text-align: center;
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid #f0f1f3;
+  }
+  .salary-diff__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: rgba(22,163,74,0.08);
+    color: #16a34a;
+    font-weight: 700;
+    font-size: var(--text-sm);
+    padding: var(--space-2) var(--space-4);
+    border-radius: 20px;
+  }
+  .salary-diff__badge .material-symbols-outlined {
+    font-size: 16px;
+  }
+
+  /* ============ Verdicts / Better For ============ */
+  .verdicts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+  .verdict-card {
+    background: white;
+    border: 1px solid #e6e8ea;
+    border-radius: 8px;
+    padding: var(--space-6);
+    text-align: center;
+  }
+  .verdict-card__icon {
+    margin-bottom: var(--space-3);
+  }
+  .verdict-card__icon .material-symbols-outlined {
+    font-size: 28px;
+    color: var(--color-secondary, #2563EB);
+  }
+  .verdict-card__title {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #75777e;
+    margin-bottom: var(--space-3);
+  }
+  .verdict-card__winner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+  .verdict-card__flag {
+    font-size: 1.5rem;
+  }
+  .verdict-card__winner strong {
+    font-size: var(--text-lg);
+    color: var(--color-primary-container, #0F1F3D);
+  }
+  .verdict-card__text {
+    font-size: 13px;
+    color: #45474e;
+    line-height: 1.6;
+  }
+
+  /* ============ Country Links ============ */
+  .compare-links__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+  }
+  .compare-link-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    background: white;
+    border: 1px solid #e6e8ea;
+    border-radius: 8px;
+    padding: var(--space-8);
+    text-decoration: none;
+    color: var(--color-primary-container, #0F1F3D);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .compare-link-card:hover {
+    border-color: var(--color-secondary, #2563EB);
+    box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+  }
+  .compare-link-card__flag {
+    font-size: 2rem;
+  }
+  .compare-link-card strong {
+    font-size: var(--text-lg);
+  }
+  .compare-link-card__label {
+    font-size: var(--text-sm);
+    color: var(--color-secondary, #2563EB);
+    font-weight: 600;
+  }
+
+  /* ============ Related Comparisons ============ */
+  .compare-related__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+  .compare-related__card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 1px solid #e6e8ea;
+    border-radius: 6px;
+    padding: var(--space-4) var(--space-6);
+    text-decoration: none;
+    color: var(--color-primary-container, #0F1F3D);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    transition: border-color 0.15s;
+    text-align: center;
+  }
+  .compare-related__card:hover {
+    border-color: var(--color-secondary, #2563EB);
+    color: var(--color-secondary, #2563EB);
+  }
+
+  /* ============ Sources ============ */
+  .compare-sources__intro {
+    color: #45474e;
+    margin-bottom: var(--space-6);
+  }
+  .compare-sources__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+  .source-card {
+    background: white;
+    border: 1px solid #e6e8ea;
+    border-left: 4px solid var(--color-secondary, #0051d5);
+    padding: var(--space-6);
+    border-radius: 4px;
+  }
+  .source-card__icon {
+    font-size: 20px;
+    color: var(--color-secondary, #0051d5);
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+  .source-card strong {
+    display: block;
+    font-size: var(--text-sm);
+    color: var(--color-primary-container, #0F1F3D);
+    margin-bottom: 4px;
+  }
+  .source-card p {
+    font-size: 12px;
+    color: #75777e;
+    line-height: 1.5;
+  }
+  .compare-sources__updated {
+    font-size: 12px;
+    color: #75777e;
+    margin-top: var(--space-4);
+  }
+
+  /* ============ Responsive ============ */
+  @media (max-width: 768px) {
+    .compare-hero__grid {
+      grid-template-columns: 1fr;
+    }
+    .compare-hero__versus {
+      justify-content: center;
+    }
+    .compare-hero__country-card {
+      min-width: 120px;
+      padding: var(--space-4);
+    }
+    .salary-diff__row {
+      grid-template-columns: 100px 1fr 80px;
+      gap: var(--space-2);
+    }
+    .verdicts-grid {
+      grid-template-columns: 1fr;
+    }
+    .compare-links__grid {
+      grid-template-columns: 1fr;
+    }
+    .compare-related__grid {
+      grid-template-columns: 1fr;
+    }
+    .compare-sources__grid {
+      grid-template-columns: 1fr;
+    }
+    .compare-table {
+      font-size: 12px;
+    }
+  }
+</style>

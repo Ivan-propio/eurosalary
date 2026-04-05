@@ -1,0 +1,108 @@
+---
+import { fb } from '../i18n/utils';
+import freshness from '../data/freshness.json';
+
+interface Props {
+  lang: string;
+  showSources?: boolean;
+}
+
+const { lang, showSources = false } = Astro.props;
+
+const labels: Record<string, Record<string, string>> = {
+  lastUpdated: { en: 'Data last updated', fr: 'Données mises à jour le', de: 'Daten zuletzt aktualisiert am', es: 'Datos actualizados el' },
+  version: { en: 'Data version', fr: 'Version des données', de: 'Datenversion', es: 'Versión de datos' },
+  eurostat: { en: 'Eurostat sync', fr: 'Sync Eurostat', de: 'Eurostat-Sync', es: 'Sincronización Eurostat' },
+  jobPostings: { en: 'Job postings', fr: 'Offres d\'emploi', de: 'Stellenangebote', es: 'Ofertas de empleo' },
+  userReports: { en: 'User reports', fr: 'Rapports utilisateurs', de: 'Nutzerberichte', es: 'Informes de usuarios' },
+  weekly: { en: 'Updated weekly', fr: 'Mise à jour hebdomadaire', de: 'Wöchentlich aktualisiert', es: 'Actualización semanal' },
+};
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString(lang === 'en' ? 'en-GB' : lang, {
+    year: 'numeric', month: 'short', day: 'numeric',
+  });
+}
+---
+
+<div class="freshness">
+  <div class="freshness__main">
+    <span class="freshness__dot"></span>
+    <span class="freshness__label">{fb(labels.lastUpdated, lang)}:</span>
+    <time datetime={freshness.lastDataRefreshDate} class="freshness__date">{formatDate(freshness.lastDataRefresh)}</time>
+    <span class="freshness__badge">{fb(labels.weekly, lang)}</span>
+  </div>
+
+  {showSources && (
+    <div class="freshness__sources">
+      <div class="freshness__source">
+        <span class="freshness__source-name">{fb(labels.eurostat, lang)}</span>
+        <span class="freshness__source-date">{freshness.sources.eurostat.lastSync ? formatDate(freshness.sources.eurostat.lastSync) : '—'}</span>
+      </div>
+      <div class="freshness__source">
+        <span class="freshness__source-name">{fb(labels.jobPostings, lang)}</span>
+        <span class="freshness__source-date">{freshness.sources.jobPostings.lastSync ? formatDate(freshness.sources.jobPostings.lastSync) : '—'}</span>
+      </div>
+      <div class="freshness__source">
+        <span class="freshness__source-name">{fb(labels.userReports, lang)}</span>
+        <span class="freshness__source-date">{freshness.sources.userReports.lastSync ? formatDate(freshness.sources.userReports.lastSync) : '—'}</span>
+      </div>
+    </div>
+  )}
+</div>
+
+<style>
+  .freshness {
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .freshness__main {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .freshness__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+    flex-shrink: 0;
+  }
+  .freshness__date {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: var(--weight-medium);
+  }
+  .freshness__badge {
+    font-size: 10px;
+    padding: 1px 6px;
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: var(--weight-semibold);
+  }
+  .freshness__sources {
+    display: flex;
+    gap: var(--space-4);
+    padding-left: 14px;
+  }
+  .freshness__source {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .freshness__source-name {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .freshness__source-date {
+    font-size: var(--text-xs);
+    color: rgba(255, 255, 255, 0.6);
+  }
+</style>

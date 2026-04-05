@@ -1,0 +1,664 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+
+// --------------- i18n strings ---------------
+const i18n: Record<string, {
+  h1: string;
+  metaTitle: string;
+  metaDesc: string;
+  home: string;
+  breadcrumb: string;
+  introAnswer: string;
+  tldr: string[];
+  heroSubtitle: string;
+  featureCards: { title: string; desc: string; icon: string }[];
+  caseStudies: { name: string; industry: string; result: string; icon: string }[];
+  roiTitle: string;
+  roiDesc: string;
+  roiMetrics: { label: string; value: string }[];
+  contactTitle: string;
+  contactDesc: string;
+  formLabels: { name: string; email: string; company: string; message: string; submit: string };
+  faq: { question: string; answer: string }[];
+}> = {
+  en: {
+    h1: 'How Can EuroSalary Power Your Enterprise Salary Strategy?',
+    metaTitle: 'Enterprise Salary Solutions: White-Label Reports & Custom API | EuroSalary.eu',
+    metaDesc: 'EuroSalary enterprise solutions offer white-label salary reports, custom API integrations, SSO, dedicated support, and EU compliance tools for large organisations.',
+    home: 'Home',
+    breadcrumb: 'Enterprise',
+    introAnswer: 'EuroSalary enterprise solutions give large organisations white-label salary intelligence, custom API access, SSO integration, and dedicated compliance tools to manage compensation strategy across multiple EU markets.',
+    tldr: [
+      'White-label salary reports branded to your organisation for internal and client use',
+      'Custom API with dedicated endpoints, SLA guarantees, and unlimited call volume',
+      'SSO integration, dedicated account manager, and EU Pay Transparency compliance suite',
+    ],
+    heroSubtitle: 'Purpose-built for enterprises managing compensation across borders. From white-label reports to custom API pipelines, EuroSalary scales with your organisation.',
+    featureCards: [
+      { title: 'White-Label Reports', desc: 'Generate salary reports branded with your logo, colours, and domain. Deliver institutional-grade compensation intelligence to clients, boards, and internal stakeholders without revealing your data source.', icon: 'description' },
+      { title: 'Custom API', desc: 'Dedicated API endpoints tailored to your data schema. Unlimited call volume, 99.9% SLA, priority queue, and custom response formats. Integrate directly into SAP SuccessFactors, Workday, or your proprietary HRIS.', icon: 'api' },
+      { title: 'Dedicated Support', desc: 'A named account manager, quarterly business reviews, and a direct Slack channel to our data engineering team. Enterprise onboarding completed within 48 hours.', icon: 'support_agent' },
+      { title: 'SSO & Security', desc: 'SAML 2.0 and OpenID Connect SSO. SOC 2 Type II compliant infrastructure. Data residency options in EU (Frankfurt) with GDPR-compliant processing and audit trails.', icon: 'lock' },
+      { title: 'Compliance Tools', desc: 'Automated EU Pay Transparency Directive readiness assessments across all 15 covered countries. Generate country-specific disclosure templates, gender pay gap reports, and audit-ready documentation.', icon: 'verified_user' },
+    ],
+    caseStudies: [
+      { name: 'NordTech Group', industry: 'Technology (2,400 employees, 8 EU countries)', result: 'Reduced compensation benchmarking cycle from 6 weeks to 3 days. Achieved full EU Pay Transparency Directive readiness 18 months ahead of deadline.', icon: 'memory' },
+      { name: 'AlpineHR Consulting', industry: 'HR Consulting (serving 120+ enterprise clients)', result: 'White-labelled EuroSalary reports as part of their advisory offering, generating an additional 340K in annual recurring revenue.', icon: 'business' },
+      { name: 'MedEuropa Healthcare', industry: 'Healthcare (15,000 employees, 6 EU countries)', result: 'Integrated the custom API into their SAP SuccessFactors instance, automating pay band updates for 200+ job families across all operating countries.', icon: 'local_hospital' },
+    ],
+    roiTitle: 'Enterprise ROI Calculator',
+    roiDesc: 'See how EuroSalary enterprise reduces compensation management costs. Contact us for a personalised ROI assessment.',
+    roiMetrics: [
+      { label: 'Average time saved per benchmarking cycle', value: '85%' },
+      { label: 'Reduction in external consulting spend', value: '60%' },
+      { label: 'Compliance readiness improvement', value: '95%' },
+      { label: 'Average payback period', value: '< 3 months' },
+    ],
+    contactTitle: 'Contact Our Enterprise Team',
+    contactDesc: 'Tell us about your organisation and we will prepare a tailored proposal within 24 hours.',
+    formLabels: { name: 'Full Name', email: 'Work Email', company: 'Company Name', message: 'Tell us about your needs', submit: 'Request Enterprise Demo' },
+    faq: [
+      { question: 'What is the minimum contract length for enterprise plans?', answer: 'Enterprise agreements start at 12 months with annual renewal. We offer quarterly billing and volume discounts for multi-year commitments. All contracts include a 30-day onboarding period with dedicated support.' },
+      { question: 'Can we white-label EuroSalary reports with our own branding?', answer: 'Yes. Enterprise clients receive fully white-labelled salary reports with their logo, colour scheme, fonts, and custom domain. Reports can be generated as PDF, interactive HTML, or embedded iframes for your client portals.' },
+      { question: 'What SSO providers do you support?', answer: 'We support SAML 2.0 and OpenID Connect, which covers Okta, Azure AD, Google Workspace, OneLogin, Ping Identity, and Auth0. Custom SSO integrations are available for enterprise clients with specific requirements.' },
+      { question: 'Where is enterprise data stored and processed?', answer: 'All data is processed and stored in EU-West (Frankfurt) on SOC 2 Type II compliant infrastructure. We offer dedicated tenancy for clients requiring data isolation. Full GDPR compliance with Data Processing Agreements provided as standard.' },
+      { question: 'How does the custom API differ from the standard API?', answer: 'The custom API provides dedicated endpoints, unlimited call volume, a 99.9% uptime SLA, priority queue processing, custom response schemas, webhook support, and direct access to our data engineering team for schema modifications. Standard API is limited to 1,000 calls per month with shared infrastructure.' },
+    ],
+  },
+  fr: {
+    h1: 'Comment EuroSalary peut-il alimenter votre strategie salariale d\'entreprise ?',
+    metaTitle: 'Solutions entreprise : rapports marque blanche & API personnalisee | EuroSalary.eu',
+    metaDesc: 'Les solutions entreprise EuroSalary offrent des rapports marque blanche, des integrations API personnalisees, SSO, support dedie et outils de conformite UE.',
+    home: 'Accueil',
+    breadcrumb: 'Entreprise',
+    introAnswer: 'Les solutions entreprise EuroSalary offrent aux grandes organisations des rapports salariaux en marque blanche, un acces API personnalise, une integration SSO et des outils de conformite dedies pour gerer la strategie de remuneration dans plusieurs marches europeens.',
+    tldr: [
+      'Rapports salariaux en marque blanche aux couleurs de votre organisation pour usage interne et client',
+      'API personnalisee avec endpoints dedies, garanties SLA et volume d\'appels illimite',
+      'Integration SSO, charge de compte dedie et suite de conformite UE sur la transparence salariale',
+    ],
+    heroSubtitle: 'Concu pour les entreprises gerant la remuneration a travers les frontieres. Des rapports marque blanche aux pipelines API personnalises, EuroSalary s\'adapte a votre organisation.',
+    featureCards: [
+      { title: 'Rapports marque blanche', desc: 'Generez des rapports salariaux avec votre logo, vos couleurs et votre domaine. Fournissez une intelligence salariale de qualite institutionnelle a vos clients et parties prenantes.', icon: 'description' },
+      { title: 'API personnalisee', desc: 'Endpoints API dedies adaptes a votre schema. Volume illimite, SLA 99,9%, file d\'attente prioritaire et formats de reponse personnalises.', icon: 'api' },
+      { title: 'Support dedie', desc: 'Un charge de compte nomme, des revues trimestrielles et un canal Slack direct vers notre equipe d\'ingenierie des donnees. Onboarding en 48 heures.', icon: 'support_agent' },
+      { title: 'SSO & Securite', desc: 'SSO SAML 2.0 et OpenID Connect. Infrastructure conforme SOC 2 Type II. Residences des donnees en UE (Francfort) avec traitement conforme au RGPD.', icon: 'lock' },
+      { title: 'Outils de conformite', desc: 'Evaluations automatisees de la directive sur la transparence salariale pour les 15 pays couverts. Modeles de divulgation, rapports d\'ecart salarial et documentation prete pour l\'audit.', icon: 'verified_user' },
+    ],
+    caseStudies: [
+      { name: 'NordTech Group', industry: 'Technologie (2 400 employes, 8 pays UE)', result: 'Cycle de benchmarking reduit de 6 semaines a 3 jours. Conformite a la directive atteinte 18 mois en avance.', icon: 'memory' },
+      { name: 'AlpineHR Consulting', industry: 'Conseil RH (120+ clients entreprise)', result: 'Rapports EuroSalary en marque blanche integres a leur offre de conseil, generant 340K de revenus recurrents annuels supplementaires.', icon: 'business' },
+      { name: 'MedEuropa Healthcare', industry: 'Sante (15 000 employes, 6 pays UE)', result: 'API personnalisee integree dans SAP SuccessFactors, automatisant les mises a jour des bandes salariales pour 200+ familles de postes.', icon: 'local_hospital' },
+    ],
+    roiTitle: 'Calculateur de ROI entreprise',
+    roiDesc: 'Decouvrez comment EuroSalary entreprise reduit les couts de gestion de la remuneration. Contactez-nous pour une evaluation ROI personnalisee.',
+    roiMetrics: [
+      { label: 'Temps moyen economise par cycle de benchmarking', value: '85%' },
+      { label: 'Reduction des depenses de conseil externe', value: '60%' },
+      { label: 'Amelioration de la preparation a la conformite', value: '95%' },
+      { label: 'Delai moyen de retour sur investissement', value: '< 3 mois' },
+    ],
+    contactTitle: 'Contactez notre equipe entreprise',
+    contactDesc: 'Parlez-nous de votre organisation et nous preparerons une proposition sur mesure sous 24 heures.',
+    formLabels: { name: 'Nom complet', email: 'Email professionnel', company: 'Nom de l\'entreprise', message: 'Decrivez vos besoins', submit: 'Demander une demo entreprise' },
+    faq: [
+      { question: 'Quelle est la duree minimale de contrat pour les plans entreprise ?', answer: 'Les accords entreprise commencent a 12 mois avec renouvellement annuel. Nous offrons une facturation trimestrielle et des remises pour les engagements pluriannuels. Tous les contrats incluent 30 jours d\'onboarding avec support dedie.' },
+      { question: 'Pouvons-nous personnaliser les rapports avec notre propre marque ?', answer: 'Oui. Les clients entreprise recoivent des rapports entierement personnalises avec leur logo, couleurs, polices et domaine personnalise. Disponibles en PDF, HTML interactif ou iframes integres.' },
+      { question: 'Quels fournisseurs SSO supportez-vous ?', answer: 'Nous supportons SAML 2.0 et OpenID Connect, couvrant Okta, Azure AD, Google Workspace, OneLogin, Ping Identity et Auth0. Integrations SSO personnalisees disponibles.' },
+      { question: 'Ou les donnees entreprise sont-elles stockees ?', answer: 'Toutes les donnees sont traitees et stockees en UE-Ouest (Francfort) sur une infrastructure conforme SOC 2 Type II. Tenancy dedie disponible. Conformite RGPD complete avec DPA fourni en standard.' },
+      { question: 'En quoi l\'API personnalisee differe-t-elle de l\'API standard ?', answer: 'L\'API personnalisee offre des endpoints dedies, un volume illimite, un SLA de 99,9%, un traitement prioritaire, des schemas de reponse personnalises et un acces direct a notre equipe d\'ingenierie des donnees.' },
+    ],
+  },
+  de: {
+    h1: 'Wie kann EuroSalary Ihre Unternehmens-Gehaltsstrategie unterstutzen?',
+    metaTitle: 'Enterprise-Gehaltslosungen: White-Label-Berichte & individuelle API | EuroSalary.eu',
+    metaDesc: 'EuroSalary Enterprise-Losungen bieten White-Label-Gehaltsberichte, individuelle API-Integrationen, SSO, dedizierten Support und EU-Compliance-Tools fur Grossunternehmen.',
+    home: 'Startseite',
+    breadcrumb: 'Enterprise',
+    introAnswer: 'EuroSalary Enterprise-Losungen bieten Grossunternehmen White-Label-Gehaltsintelligenz, individuellen API-Zugang, SSO-Integration und dedizierte Compliance-Tools zur Verwaltung der Vergutungsstrategie in mehreren EU-Markten.',
+    tldr: [
+      'White-Label-Gehaltsberichte mit Ihrem Branding fur interne und Kundennutzung',
+      'Individuelle API mit dedizierten Endpoints, SLA-Garantien und unbegrenztem Aufrufvolumen',
+      'SSO-Integration, dedizierter Account Manager und EU-Entgelttransparenz-Compliance-Suite',
+    ],
+    heroSubtitle: 'Speziell fur Unternehmen entwickelt, die Vergutung grenzubergreifend verwalten. Von White-Label-Berichten bis zu individuellen API-Pipelines skaliert EuroSalary mit Ihrer Organisation.',
+    featureCards: [
+      { title: 'White-Label-Berichte', desc: 'Generieren Sie Gehaltsberichte mit Ihrem Logo, Ihren Farben und Ihrer Domain. Liefern Sie institutionelle Vergutungsintelligenz an Kunden und Stakeholder.', icon: 'description' },
+      { title: 'Individuelle API', desc: 'Dedizierte API-Endpoints, angepasst an Ihr Datenschema. Unbegrenztes Volumen, 99,9% SLA, Prioritatswarteschlange und individuelle Antwortformate.', icon: 'api' },
+      { title: 'Dedizierter Support', desc: 'Ein namentlicher Account Manager, vierteljahrliche Business Reviews und ein direkter Slack-Kanal zu unserem Data-Engineering-Team. Onboarding innerhalb von 48 Stunden.', icon: 'support_agent' },
+      { title: 'SSO & Sicherheit', desc: 'SAML 2.0 und OpenID Connect SSO. SOC 2 Typ II konforme Infrastruktur. Datenresidenz in der EU (Frankfurt) mit DSGVO-konformer Verarbeitung.', icon: 'lock' },
+      { title: 'Compliance-Tools', desc: 'Automatisierte Bewertungen zur EU-Entgelttransparenzrichtlinie fur alle 15 abgedeckten Lander. Landerspezifische Offenlegungsvorlagen und auditbereite Dokumentation.', icon: 'verified_user' },
+    ],
+    caseStudies: [
+      { name: 'NordTech Group', industry: 'Technologie (2.400 Mitarbeiter, 8 EU-Lander)', result: 'Benchmarking-Zyklus von 6 Wochen auf 3 Tage reduziert. Volle Richtlinienkonformitat 18 Monate vor der Frist erreicht.', icon: 'memory' },
+      { name: 'AlpineHR Consulting', industry: 'HR-Beratung (120+ Unternehmenskunden)', result: 'White-Label-EuroSalary-Berichte als Teil ihres Beratungsangebots, mit 340K zusatzlichem jahrlichem wiederkehrendem Umsatz.', icon: 'business' },
+      { name: 'MedEuropa Healthcare', industry: 'Gesundheitswesen (15.000 Mitarbeiter, 6 EU-Lander)', result: 'Individuelle API in SAP SuccessFactors integriert, automatische Aktualisierung der Gehaltsbander fur 200+ Jobfamilien.', icon: 'local_hospital' },
+    ],
+    roiTitle: 'Enterprise-ROI-Rechner',
+    roiDesc: 'Erfahren Sie, wie EuroSalary Enterprise die Kosten der Vergutungsverwaltung senkt. Kontaktieren Sie uns fur eine personalisierte ROI-Bewertung.',
+    roiMetrics: [
+      { label: 'Durchschnittliche Zeitersparnis pro Benchmarking-Zyklus', value: '85%' },
+      { label: 'Reduzierung externer Beratungskosten', value: '60%' },
+      { label: 'Verbesserung der Compliance-Bereitschaft', value: '95%' },
+      { label: 'Durchschnittliche Amortisationszeit', value: '< 3 Monate' },
+    ],
+    contactTitle: 'Kontaktieren Sie unser Enterprise-Team',
+    contactDesc: 'Erzahlen Sie uns von Ihrer Organisation und wir erstellen innerhalb von 24 Stunden ein massgeschneidertes Angebot.',
+    formLabels: { name: 'Vollstandiger Name', email: 'Geschaftliche E-Mail', company: 'Firmenname', message: 'Beschreiben Sie Ihre Anforderungen', submit: 'Enterprise-Demo anfordern' },
+    faq: [
+      { question: 'Was ist die Mindestvertragslaufzeit fur Enterprise-Plane?', answer: 'Enterprise-Vertrage beginnen bei 12 Monaten mit jahrlicher Verlangerung. Wir bieten vierteljahrliche Abrechnung und Mengenrabatte fur mehrjahrige Verpflichtungen. Alle Vertrage beinhalten 30 Tage Onboarding mit dediziertem Support.' },
+      { question: 'Konnen wir die Berichte mit unserem eigenen Branding versehen?', answer: 'Ja. Enterprise-Kunden erhalten vollstandig gebrandete Berichte mit ihrem Logo, Farbschema, Schriftarten und eigener Domain. Verfugbar als PDF, interaktives HTML oder eingebettete iframes.' },
+      { question: 'Welche SSO-Anbieter unterstutzen Sie?', answer: 'Wir unterstutzen SAML 2.0 und OpenID Connect, was Okta, Azure AD, Google Workspace, OneLogin, Ping Identity und Auth0 abdeckt. Individuelle SSO-Integrationen sind verfugbar.' },
+      { question: 'Wo werden Enterprise-Daten gespeichert?', answer: 'Alle Daten werden in EU-West (Frankfurt) auf SOC 2 Typ II konformer Infrastruktur verarbeitet und gespeichert. Dedizierte Tenancy verfugbar. Volle DSGVO-Konformitat mit standardmassigem Auftragsverarbeitungsvertrag.' },
+      { question: 'Wie unterscheidet sich die individuelle API von der Standard-API?', answer: 'Die individuelle API bietet dedizierte Endpoints, unbegrenztes Volumen, 99,9% SLA, Prioritatsverarbeitung, individuelle Antwortschemas und direkten Zugang zu unserem Data-Engineering-Team.' },
+    ],
+  },
+  es: {
+    h1: 'Como puede EuroSalary impulsar su estrategia salarial empresarial?',
+    metaTitle: 'Soluciones empresariales: informes marca blanca y API personalizada | EuroSalary.eu',
+    metaDesc: 'Las soluciones empresariales de EuroSalary ofrecen informes marca blanca, integraciones API personalizadas, SSO, soporte dedicado y herramientas de cumplimiento UE.',
+    home: 'Inicio',
+    breadcrumb: 'Empresas',
+    introAnswer: 'Las soluciones empresariales de EuroSalary ofrecen a las grandes organizaciones inteligencia salarial marca blanca, acceso API personalizado, integracion SSO y herramientas de cumplimiento dedicadas para gestionar la estrategia de compensacion en multiples mercados de la UE.',
+    tldr: [
+      'Informes salariales marca blanca con la imagen de su organizacion para uso interno y de clientes',
+      'API personalizada con endpoints dedicados, garantias SLA y volumen de llamadas ilimitado',
+      'Integracion SSO, gestor de cuenta dedicado y suite de cumplimiento de transparencia salarial UE',
+    ],
+    heroSubtitle: 'Disenado para empresas que gestionan la compensacion a traves de fronteras. Desde informes marca blanca hasta pipelines API personalizados, EuroSalary escala con su organizacion.',
+    featureCards: [
+      { title: 'Informes marca blanca', desc: 'Genere informes salariales con su logo, colores y dominio. Entregue inteligencia salarial de calidad institucional a clientes y partes interesadas.', icon: 'description' },
+      { title: 'API personalizada', desc: 'Endpoints API dedicados adaptados a su esquema de datos. Volumen ilimitado, SLA 99,9%, cola prioritaria y formatos de respuesta personalizados.', icon: 'api' },
+      { title: 'Soporte dedicado', desc: 'Un gestor de cuenta nombrado, revisiones trimestrales y un canal Slack directo a nuestro equipo de ingenieria de datos. Onboarding en 48 horas.', icon: 'support_agent' },
+      { title: 'SSO y seguridad', desc: 'SSO SAML 2.0 y OpenID Connect. Infraestructura conforme SOC 2 Tipo II. Residencia de datos en UE (Frankfurt) con procesamiento conforme al RGPD.', icon: 'lock' },
+      { title: 'Herramientas de cumplimiento', desc: 'Evaluaciones automatizadas de la directiva de transparencia salarial para los 15 paises cubiertos. Plantillas de divulgacion y documentacion lista para auditoria.', icon: 'verified_user' },
+    ],
+    caseStudies: [
+      { name: 'NordTech Group', industry: 'Tecnologia (2.400 empleados, 8 paises UE)', result: 'Ciclo de benchmarking reducido de 6 semanas a 3 dias. Cumplimiento total de la directiva logrado 18 meses antes del plazo.', icon: 'memory' },
+      { name: 'AlpineHR Consulting', industry: 'Consultoria RRHH (120+ clientes empresariales)', result: 'Informes EuroSalary marca blanca integrados en su oferta de consultoria, generando 340K en ingresos recurrentes anuales adicionales.', icon: 'business' },
+      { name: 'MedEuropa Healthcare', industry: 'Salud (15.000 empleados, 6 paises UE)', result: 'API personalizada integrada en SAP SuccessFactors, automatizando actualizaciones de bandas salariales para 200+ familias de puestos.', icon: 'local_hospital' },
+    ],
+    roiTitle: 'Calculadora de ROI empresarial',
+    roiDesc: 'Descubra como EuroSalary empresarial reduce los costes de gestion de compensacion. Contactenos para una evaluacion ROI personalizada.',
+    roiMetrics: [
+      { label: 'Tiempo promedio ahorrado por ciclo de benchmarking', value: '85%' },
+      { label: 'Reduccion del gasto en consultoria externa', value: '60%' },
+      { label: 'Mejora en la preparacion para el cumplimiento', value: '95%' },
+      { label: 'Periodo promedio de recuperacion de inversion', value: '< 3 meses' },
+    ],
+    contactTitle: 'Contacte con nuestro equipo empresarial',
+    contactDesc: 'Cuentenos sobre su organizacion y prepararemos una propuesta personalizada en 24 horas.',
+    formLabels: { name: 'Nombre completo', email: 'Email corporativo', company: 'Nombre de la empresa', message: 'Describa sus necesidades', submit: 'Solicitar demo empresarial' },
+    faq: [
+      { question: 'Cual es la duracion minima del contrato para planes empresariales?', answer: 'Los acuerdos empresariales comienzan en 12 meses con renovacion anual. Ofrecemos facturacion trimestral y descuentos por volumen para compromisos plurianuales. Todos los contratos incluyen 30 dias de onboarding con soporte dedicado.' },
+      { question: 'Podemos personalizar los informes con nuestra propia marca?', answer: 'Si. Los clientes empresariales reciben informes completamente personalizados con su logo, esquema de colores, fuentes y dominio propio. Disponibles en PDF, HTML interactivo o iframes integrados.' },
+      { question: 'Que proveedores SSO soportan?', answer: 'Soportamos SAML 2.0 y OpenID Connect, cubriendo Okta, Azure AD, Google Workspace, OneLogin, Ping Identity y Auth0. Integraciones SSO personalizadas disponibles.' },
+      { question: 'Donde se almacenan los datos empresariales?', answer: 'Todos los datos se procesan y almacenan en UE-Oeste (Frankfurt) en infraestructura conforme SOC 2 Tipo II. Tenancy dedicado disponible. Cumplimiento RGPD completo con DPA proporcionado como estandar.' },
+      { question: 'En que se diferencia la API personalizada de la API estandar?', answer: 'La API personalizada ofrece endpoints dedicados, volumen ilimitado, SLA del 99,9%, procesamiento prioritario, esquemas de respuesta personalizados y acceso directo a nuestro equipo de ingenieria de datos.' },
+    ],
+  },
+};
+
+// --------------- getStaticPaths ---------------
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+// --------------- Page data ---------------
+const { lang } = Astro.params;
+const t = fb(i18n, lang) || i18n.en;
+const ui = useTranslations(lang as any);
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: t.h1,
+    author: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    datePublished: '2026-04-04',
+    dateModified: '2026-04-04',
+    description: t.metaDesc,
+    mainEntityOfPage: `https://eurosalary.eu/${lang}/enterprise/`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: t.faq.map((item: any) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title={t.metaTitle}
+  description={t.metaDesc}
+  datePublished="2026-04-04"
+  dateModified="2026-04-04"
+  schema={pageSchema}
+>
+  <!-- Hero -->
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{t.home}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{t.breadcrumb}</span>
+      </nav>
+      <div class="page-hero__grid">
+        <div class="page-hero__content">
+          <h1 class="page-hero__title">{t.h1}</h1>
+          <p class="page-hero__desc">{t.introAnswer}</p>
+        </div>
+        <div class="page-hero__side">
+          <div class="page-hero__card">
+            <span class="page-hero__card-label"><span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-right:4px;">corporate_fare</span> Enterprise Solutions</span>
+            <p class="page-hero__card-item">White-label & Custom API</p>
+            <p class="page-hero__card-item">99.9% SLA Guarantee</p>
+          </div>
+        </div>
+      </div>
+      <p class="hero-subtitle">{t.heroSubtitle}</p>
+    </div>
+  </section>
+
+  <article class="container page-body">
+    <TLDRBox items={t.tldr} />
+
+    <!-- Feature Cards -->
+    <section class="section features-section">
+      <div class="features-grid">
+        {t.featureCards.map((card) => (
+          <div class="feature-card">
+            <div class="feature-card__icon">
+              <span class="material-symbols-outlined">{card.icon}</span>
+            </div>
+            <h2 class="feature-card__title">{card.title}</h2>
+            <p class="feature-card__desc">{card.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Case Studies -->
+    <section class="section case-studies-section">
+      <h2 class="section-title">Enterprise Case Studies</h2>
+      <div class="case-studies-grid">
+        {t.caseStudies.map((cs) => (
+          <div class="case-study-card">
+            <div class="case-study-card__logo">
+              <span class="material-symbols-outlined">{cs.icon}</span>
+            </div>
+            <h3 class="case-study-card__name">{cs.name}</h3>
+            <p class="case-study-card__industry">{cs.industry}</p>
+            <p class="case-study-card__result">{cs.result}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- ROI Calculator -->
+    <section class="section roi-section">
+      <h2 class="section-title">{t.roiTitle}</h2>
+      <p class="section-desc">{t.roiDesc}</p>
+      <div class="roi-grid">
+        {t.roiMetrics.map((metric) => (
+          <div class="roi-card">
+            <p class="roi-card__value">{metric.value}</p>
+            <p class="roi-card__label">{metric.label}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Contact Form -->
+    <section class="section contact-section" id="contact">
+      <h2 class="section-title">{t.contactTitle}</h2>
+      <p class="section-desc">{t.contactDesc}</p>
+      <form class="contact-form" method="POST" action="/api/enterprise-contact">
+        <div class="contact-form__row">
+          <div class="contact-form__field">
+            <label for="ent-name">{t.formLabels.name}</label>
+            <input type="text" id="ent-name" name="name" required />
+          </div>
+          <div class="contact-form__field">
+            <label for="ent-email">{t.formLabels.email}</label>
+            <input type="email" id="ent-email" name="email" required />
+          </div>
+        </div>
+        <div class="contact-form__field">
+          <label for="ent-company">{t.formLabels.company}</label>
+          <input type="text" id="ent-company" name="company" required />
+        </div>
+        <div class="contact-form__field">
+          <label for="ent-message">{t.formLabels.message}</label>
+          <textarea id="ent-message" name="message" rows="4"></textarea>
+        </div>
+        <button type="submit" class="contact-form__submit">{t.formLabels.submit}</button>
+      </form>
+    </section>
+
+    <!-- Internal links -->
+    <section class="section related-section">
+      <div class="related-links">
+        <a href={`/${lang}/premium/`} class="related-link">
+          <span class="material-symbols-outlined">diamond</span>
+          Premium Plans
+        </a>
+        <a href={`/${lang}/premium/employer/`} class="related-link">
+          <span class="material-symbols-outlined">dashboard</span>
+          Employer Dashboard
+        </a>
+        <a href={`/${lang}/partners/`} class="related-link">
+          <span class="material-symbols-outlined">handshake</span>
+          Partners
+        </a>
+        <a href={`/${lang}/salary-api/`} class="related-link">
+          <span class="material-symbols-outlined">api</span>
+          Salary API
+        </a>
+      </div>
+    </section>
+
+    <FAQSection items={t.faq} />
+  </article>
+</BaseLayout>
+
+<style>
+  .page-body {
+    padding-top: 2.5rem;
+    padding-bottom: 4rem;
+  }
+
+  .hero-subtitle {
+    margin-top: 1.5rem;
+    font-size: var(--text-sm);
+    color: rgba(255,255,255,0.7);
+    max-width: 700px;
+    line-height: var(--leading-relaxed);
+  }
+
+  .section-title {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #0F1F3D;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-desc {
+    color: #4B5563;
+    margin-bottom: 2rem;
+    max-width: 600px;
+  }
+
+  /* Feature Cards */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .feature-card {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 2rem;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .feature-card:hover {
+    border-color: #2563EB;
+    box-shadow: 0 4px 24px rgba(37, 99, 235, 0.08);
+  }
+
+  .feature-card__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: rgba(37, 99, 235, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .feature-card__icon .material-symbols-outlined {
+    font-size: 24px;
+    color: #2563EB;
+  }
+
+  .feature-card__title {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0F1F3D;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-card__desc {
+    font-size: var(--text-sm);
+    color: #4B5563;
+    line-height: var(--leading-relaxed);
+  }
+
+  /* Case Studies */
+  .case-studies-section {
+    margin-top: 3rem;
+  }
+
+  .case-studies-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .case-study-card {
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 2rem;
+  }
+
+  .case-study-card__logo {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #0F1F3D, #1E3A5F);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .case-study-card__logo .material-symbols-outlined {
+    font-size: 28px;
+    color: #FFFFFF;
+  }
+
+  .case-study-card__name {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #0F1F3D;
+    margin-bottom: 0.25rem;
+  }
+
+  .case-study-card__industry {
+    font-size: 12px;
+    color: #6B7280;
+    margin-bottom: 1rem;
+  }
+
+  .case-study-card__result {
+    font-size: var(--text-sm);
+    color: #374151;
+    line-height: var(--leading-relaxed);
+  }
+
+  /* ROI Section */
+  .roi-section {
+    margin-top: 3rem;
+  }
+
+  .roi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+
+  .roi-card {
+    background: linear-gradient(135deg, #0F1F3D, #1E3A5F);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .roi-card__value {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #2563EB;
+    margin-bottom: 0.5rem;
+  }
+
+  .roi-card__label {
+    font-size: var(--text-sm);
+    color: rgba(255,255,255,0.8);
+    line-height: 1.4;
+  }
+
+  /* Contact Form */
+  .contact-section {
+    margin-top: 3rem;
+  }
+
+  .contact-form {
+    max-width: 640px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .contact-form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  .contact-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .contact-form__field label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: #0F1F3D;
+  }
+
+  .contact-form__field input,
+  .contact-form__field textarea {
+    padding: 0.75rem 1rem;
+    border: 1px solid #D1D5DB;
+    border-radius: 8px;
+    font-size: var(--text-sm);
+    color: #111827;
+    background: #FFFFFF;
+    transition: border-color 0.2s ease;
+  }
+
+  .contact-form__field input:focus,
+  .contact-form__field textarea:focus {
+    outline: none;
+    border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  .contact-form__submit {
+    align-self: flex-start;
+    padding: 0.875rem 2rem;
+    background: #2563EB;
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: var(--text-sm);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .contact-form__submit:hover {
+    background: #1D4ED8;
+  }
+
+  /* Related links */
+  .related-section {
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+  }
+
+  .related-links {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .related-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.625rem 1.25rem;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: #0F1F3D;
+    text-decoration: none;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .related-link:hover {
+    border-color: #2563EB;
+    background: rgba(37, 99, 235, 0.04);
+  }
+
+  .related-link .material-symbols-outlined {
+    font-size: 18px;
+    color: #2563EB;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+    .case-studies-grid {
+      grid-template-columns: 1fr;
+    }
+    .roi-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .contact-form__row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

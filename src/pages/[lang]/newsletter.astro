@@ -1,0 +1,236 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NewsletterForm from '../../components/NewsletterForm.astro';
+import { languages } from '../../i18n/ui';
+import { getLangFromUrl, useTranslations, fb } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  const langs = Object.keys(languages);
+  return langs.map((lang) => ({ params: { lang } }));
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+// --------------- Translated content ---------------
+
+const h1: Record<string, string> = {
+  en: 'Salary Pulse Europe — Weekly Salary Insights',
+  fr: 'Salary Pulse Europe — Tendances salariales hebdomadaires',
+  de: 'Salary Pulse Europe — Wöchentliche Gehaltseinblicke',
+  es: 'Salary Pulse Europe — Perspectivas salariales semanales',
+};
+
+const metaDescription: Record<string, string> = {
+  en: 'Subscribe to Salary Pulse Europe — a free weekly email every Tuesday with European salary trends, country spotlights, and job market analysis. By EuroSalary.eu.',
+  fr: 'Abonnez-vous à Salary Pulse Europe — un email hebdomadaire gratuit chaque mardi avec les tendances salariales européennes, focus pays et analyse du marché de l\'emploi. Par EuroSalary.eu.',
+  de: 'Abonnieren Sie Salary Pulse Europe — eine kostenlose wöchentliche E-Mail jeden Dienstag mit europäischen Gehaltstrends, Länder-Spotlights und Arbeitsmarktanalysen. Von EuroSalary.eu.',
+  es: 'Suscríbase a Salary Pulse Europe — un email semanal gratuito cada martes con tendencias salariales europeas, análisis por país y perspectivas del mercado laboral. Por EuroSalary.eu.',
+};
+
+const introText: Record<string, string> = {
+  en: 'Stay ahead of the European salary curve. Every Tuesday, we send a concise email packed with the latest salary trends, country-specific insights, and job market analysis — all backed by real data.',
+  fr: 'Restez en avance sur les tendances salariales européennes. Chaque mardi, nous envoyons un email concis avec les dernières tendances salariales, des analyses par pays et une étude du marché de l\'emploi — le tout basé sur des données réelles.',
+  de: 'Bleiben Sie bei europäischen Gehaltstrends auf dem Laufenden. Jeden Dienstag senden wir eine kompakte E-Mail mit den neuesten Gehaltstrends, länderspezifischen Einblicken und Arbeitsmarktanalysen — alles auf echten Daten basierend.',
+  es: 'Manténgase a la vanguardia de las tendencias salariales europeas. Cada martes, enviamos un email conciso con las últimas tendencias salariales, análisis por país y perspectivas del mercado laboral — todo respaldado por datos reales.',
+};
+
+const whatYouGetTitle: Record<string, string> = {
+  en: 'What Subscribers Get',
+  fr: 'Ce que reçoivent les abonnés',
+  de: 'Was Abonnenten erhalten',
+  es: 'Lo que reciben los suscriptores',
+};
+
+const whatYouGetItems: Record<string, string[]> = {
+  en: [
+    'Weekly salary trend analysis across European markets',
+    'Country spotlight: deep dive into one country\'s salary landscape each week',
+    'Job market pulse: which roles are heating up, which are cooling down',
+    'EU policy updates: Pay Transparency Directive developments and impact',
+    'Data highlights: interesting patterns from our latest data collection',
+  ],
+  fr: [
+    'Analyse hebdomadaire des tendances salariales sur les marchés européens',
+    'Focus pays : plongée approfondie dans le paysage salarial d\'un pays chaque semaine',
+    'Pouls du marché de l\'emploi : quels métiers montent, lesquels ralentissent',
+    'Actualités politiques UE : évolutions de la directive de transparence salariale',
+    'Points de données clés : tendances intéressantes de nos dernières collectes',
+  ],
+  de: [
+    'Wöchentliche Gehaltstrend-Analyse über europäische Märkte',
+    'Länder-Spotlight: jede Woche ein tiefer Einblick in die Gehaltslandschaft eines Landes',
+    'Arbeitsmarkt-Puls: welche Rollen im Aufwind, welche rückläufig sind',
+    'EU-Politik-Updates: Entwicklungen der Gehaltstransparenz-Richtlinie und ihre Auswirkungen',
+    'Daten-Highlights: interessante Muster aus unserer neuesten Datenerhebung',
+  ],
+  es: [
+    'Análisis semanal de tendencias salariales en mercados europeos',
+    'Foco país: inmersión profunda en el panorama salarial de un país cada semana',
+    'Pulso del mercado laboral: qué roles están en alza, cuáles en descenso',
+    'Actualizaciones de política UE: evolución de la Directiva de Transparencia Salarial',
+    'Datos destacados: patrones interesantes de nuestras últimas recopilaciones',
+  ],
+};
+
+const sampleTitle: Record<string, string> = {
+  en: 'Sample Content Preview',
+  fr: 'Aperçu du contenu type',
+  de: 'Vorschau auf typische Inhalte',
+  es: 'Vista previa del contenido',
+};
+
+const sampleItems: Record<string, string[]> = {
+  en: [
+    'Germany\'s tech salaries rose 4.2% in Q1 2026 — outpacing inflation for the first time in 3 years',
+    'Country spotlight: Why Portugal is attracting remote workers with competitive net salaries',
+    'The 5 fastest-growing job categories in Europe right now',
+    'How the EU Pay Transparency Directive is already changing job postings in the Netherlands',
+    'Salary gap analysis: Senior vs. Junior developers across 15 European countries',
+  ],
+  fr: [
+    'Les salaires tech en Allemagne ont augmenté de 4,2 % au T1 2026 — dépassant l\'inflation pour la première fois en 3 ans',
+    'Focus pays : Pourquoi le Portugal attire les travailleurs distants avec des salaires nets compétitifs',
+    'Les 5 catégories d\'emploi à la croissance la plus rapide en Europe',
+    'Comment la directive de transparence salariale change déjà les offres d\'emploi aux Pays-Bas',
+    'Analyse des écarts salariaux : Développeurs seniors vs juniors dans 15 pays européens',
+  ],
+  de: [
+    'Deutschlands Tech-Gehälter stiegen im Q1 2026 um 4,2 % — erstmals seit 3 Jahren über der Inflation',
+    'Länder-Spotlight: Warum Portugal Remote-Arbeiter mit wettbewerbsfähigen Nettogehältern anzieht',
+    'Die 5 am schnellsten wachsenden Berufskategorien in Europa',
+    'Wie die EU-Gehaltstransparenz-Richtlinie bereits Stellenanzeigen in den Niederlanden verändert',
+    'Gehaltsanalyse: Senior- vs. Junior-Entwickler in 15 europäischen Ländern',
+  ],
+  es: [
+    'Los salarios tech en Alemania subieron un 4,2 % en el T1 2026 — superando la inflación por primera vez en 3 años',
+    'Foco país: Por qué Portugal atrae a trabajadores remotos con salarios netos competitivos',
+    'Las 5 categorías de empleo de más rápido crecimiento en Europa',
+    'Cómo la Directiva de Transparencia Salarial ya está cambiando las ofertas de empleo en los Países Bajos',
+    'Análisis de brecha salarial: Desarrolladores senior vs. junior en 15 países europeos',
+  ],
+};
+
+const signupTitle: Record<string, string> = {
+  en: 'Subscribe to Salary Pulse Europe',
+  fr: 'Abonnez-vous à Salary Pulse Europe',
+  de: 'Abonnieren Sie Salary Pulse Europe',
+  es: 'Suscríbase a Salary Pulse Europe',
+};
+
+const archiveTitle: Record<string, string> = {
+  en: 'Newsletter Archive',
+  fr: 'Archives de la newsletter',
+  de: 'Newsletter-Archiv',
+  es: 'Archivo del boletín',
+};
+
+const archiveText: Record<string, string> = {
+  en: 'First issue coming soon — subscribe to be the first to receive it.',
+  fr: 'Premier numéro à venir — abonnez-vous pour être le premier à le recevoir.',
+  de: 'Erste Ausgabe kommt bald — abonnieren Sie, um sie als Erster zu erhalten.',
+  es: 'Primer número próximamente — suscríbase para ser el primero en recibirlo.',
+};
+
+const gdprTitle: Record<string, string> = {
+  en: 'Privacy & Data',
+  fr: 'Confidentialité & données',
+  de: 'Datenschutz & Daten',
+  es: 'Privacidad y datos',
+};
+
+const gdprText: Record<string, string> = {
+  en: 'We use Resend to send emails. Your email is stored securely and never shared. Unsubscribe anytime with one click.',
+  fr: 'Nous utilisons Resend pour envoyer les emails. Votre adresse email est stockée de manière sécurisée et jamais partagée. Désabonnez-vous à tout moment en un clic.',
+  de: 'Wir verwenden Resend zum E-Mail-Versand. Ihre E-Mail-Adresse wird sicher gespeichert und niemals weitergegeben. Jederzeit mit einem Klick abmelden.',
+  es: 'Usamos Resend para enviar emails. Su correo electrónico se almacena de forma segura y nunca se comparte. Cancele su suscripción en cualquier momento con un clic.',
+};
+
+const homeBreadcrumb: Record<string, string> = { en: 'Home', fr: 'Accueil', de: 'Startseite', es: 'Inicio' };
+const newsletterBreadcrumb: Record<string, string> = { en: 'Newsletter', fr: 'Newsletter', de: 'Newsletter', es: 'Boletín' };
+
+// --------------- Schema ---------------
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: fb(h1, lang),
+    description: fb(metaDescription, lang),
+    url: `https://eurosalary.eu/${lang}/newsletter/`,
+    inLanguage: lang,
+    datePublished: '2026-01-15',
+    dateModified: '2026-04-02',
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+  },
+];
+---
+
+<BaseLayout
+  title={fb(h1, lang)}
+  description={fb(metaDescription, lang)}
+  datePublished="2026-01-15"
+  dateModified="2026-04-02"
+  schema={pageSchema}
+>
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{fb(homeBreadcrumb, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{fb(newsletterBreadcrumb, lang)}</span>
+      </nav>
+      <h1 class="page-hero__title">Salary Pulse<br/><span class="page-hero__accent">{t('hero.newsletter.title2')}</span></h1>
+      <p class="page-hero__desc">{fb(introText, lang)}</p>
+    </div>
+  </section>
+
+  <div class="container page-body">
+    <!-- What subscribers get -->
+    <section class="section">
+      <h2>{fb(whatYouGetTitle, lang)}</h2>
+      <ul>
+        {fb(whatYouGetItems, lang).map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Sample content -->
+    <section class="section">
+      <h2>{fb(sampleTitle, lang)}</h2>
+      <ul>
+        {fb(sampleItems, lang).map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Newsletter signup -->
+    <section class="section">
+      <h2>{fb(signupTitle, lang)}</h2>
+      <NewsletterForm />
+    </section>
+
+    <!-- Archive -->
+    <section class="section">
+      <h2>{fb(archiveTitle, lang)}</h2>
+      <p>{fb(archiveText, lang)}</p>
+    </section>
+
+    <!-- GDPR -->
+    <section class="section">
+      <h2>{fb(gdprTitle, lang)}</h2>
+      <p>{fb(gdprText, lang)}</p>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-body { padding: 2.5rem 0 4rem; }
+  .page-body h2 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em;
+    color: #0F1F3D; margin-top: 2.5rem; margin-bottom: 1rem;
+  }
+</style>

@@ -1,0 +1,275 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TLDRBox from '../../components/TLDRBox.astro';
+import { countrySlugsByLang, countryFlags } from '../../data/slugs';
+import { languages } from '../../i18n/ui';
+import { fb, useTranslations } from '../../i18n/utils';
+import { countryNames, jobNames, uiLabels } from '../../i18n/translations';
+
+// --------------- Country average salaries ---------------
+const countrySalaries: Record<string, number> = {
+  CH: 100000, LU: 72000, DK: 60000, IE: 58000, DE: 58000, NL: 56000,
+  AT: 55000, SE: 54000, BE: 50000, FR: 50000, FI: 48000, IT: 40000,
+  ES: 36000, PT: 30000, PL: 28000,
+};
+
+// --------------- Top 3 jobs per country ---------------
+const topJobs: Record<string, string[]> = {
+  DE: ['software-engineer', 'financial-analyst', 'doctor'],
+  FR: ['software-engineer', 'doctor', 'lawyer'],
+  ES: ['software-engineer', 'doctor', 'financial-analyst'],
+  NL: ['software-engineer', 'data-scientist', 'doctor'],
+  BE: ['doctor', 'lawyer', 'software-engineer'],
+  IT: ['doctor', 'software-engineer', 'lawyer'],
+  PT: ['software-engineer', 'doctor', 'data-scientist'],
+  PL: ['software-engineer', 'data-scientist', 'devops-engineer'],
+  SE: ['software-engineer', 'doctor', 'data-scientist'],
+  AT: ['doctor', 'software-engineer', 'lawyer'],
+  CH: ['doctor', 'software-engineer', 'financial-analyst'],
+  LU: ['financial-analyst', 'lawyer', 'software-engineer'],
+  IE: ['software-engineer', 'data-scientist', 'financial-analyst'],
+  DK: ['software-engineer', 'doctor', 'data-scientist'],
+  FI: ['software-engineer', 'data-scientist', 'devops-engineer'],
+};
+
+// --------------- Translated UI strings ---------------
+const h1Texts = uiLabels.salaryDataByCountry;
+
+const descTexts: Record<string, string> = {
+  en: 'Compare average salaries across 15 European countries. Explore salary data, top-paying jobs, and cost of living for each nation.',
+  fr: 'Comparez les salaires moyens dans 15 pays européens. Explorez les données salariales, les emplois les mieux payés et le coût de la vie.',
+  de: 'Vergleichen Sie Durchschnittsgehälter in 15 europäischen Ländern. Entdecken Sie Gehaltsdaten, bestbezahlte Berufe und Lebenshaltungskosten.',
+  es: 'Compare salarios promedio en 15 países europeos. Explore datos salariales, empleos mejor pagados y coste de vida de cada nación.',
+};
+
+const tldrTexts: Record<string, string[]> = {
+  en: [
+    '15 European countries covered with verified salary data',
+    'Switzerland leads with €100K average, Poland at €28K',
+    'Software Engineer is the top job in 10 out of 15 countries',
+  ],
+  fr: [
+    '15 pays européens couverts avec des données salariales vérifiées',
+    'La Suisse en tête avec 100 000 € de moyenne, la Pologne à 28 000 €',
+    'Ingénieur logiciel est le métier #1 dans 10 pays sur 15',
+  ],
+  de: [
+    '15 europäische Länder mit verifizierten Gehaltsdaten',
+    'Schweiz führt mit 100.000 € Durchschnitt, Polen bei 28.000 €',
+    'Softwareentwickler ist der Top-Beruf in 10 von 15 Ländern',
+  ],
+  es: [
+    '15 países europeos cubiertos con datos salariales verificados',
+    'Suiza lidera con €100K de media, Polonia con €28K',
+    'Ingeniero de software es el empleo #1 en 10 de 15 países',
+  ],
+};
+
+const avgSalaryLabel = uiLabels.avgSalary;
+const topJobsLabel = uiLabels.topJobs;
+const viewDetailsLabel = uiLabels.viewDetails;
+
+// --------------- getStaticPaths ---------------
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+  }));
+}
+
+// --------------- Page setup ---------------
+const { lang } = Astro.params;
+const t = useTranslations(lang as any);
+const countryCodes = Object.keys(countrySalaries).sort((a, b) => countrySalaries[b] - countrySalaries[a]);
+
+function formatK(amount: number): string {
+  return `€${Math.round(amount / 1000)}K`;
+}
+
+const pageTitle = fb(h1Texts, lang);
+const pageDescription = fb(descTexts, lang);
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: pageTitle,
+    numberOfItems: countryCodes.length,
+    itemListElement: countryCodes.map((code, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: countryNames[code]?.en || code,
+      url: `https://eurosalary.eu/${lang}/country/${countrySlugsByLang[lang]?.[code]}/`,
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  schema={pageSchema}
+>
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{fb(uiLabels.home, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{fb(uiLabels.countries, lang)}</span>
+      </nav>
+      <div class="page-hero__grid page-hero__grid--full">
+        <div class="page-hero__content">
+          <h1 class="page-hero__title">{t('hero.countries.title1')}<br/><span class="page-hero__accent">{t('hero.countries.title2')}</span></h1>
+          <p class="page-hero__desc">{pageDescription}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container page-body">
+    <TLDRBox items={fb(tldrTexts, lang)} />
+
+    <section class="section">
+      <div class="countries-grid">
+        {countryCodes.map((code) => {
+          const name = countryNames[code]?.[lang] || countryNames[code]?.en || code;
+          const flag = countryFlags[code];
+          const salary = countrySalaries[code];
+          const slug = countrySlugsByLang[lang]?.[code];
+          const jobs = topJobs[code] || [];
+          return (
+            <a href={`/${lang}/country/${slug}/`} class="country-card card">
+              <div class="country-card__header">
+                <span class="country-card__flag">{flag}</span>
+                <span class="country-card__name">{name}</span>
+              </div>
+              <div class="country-card__salary">
+                <span class="country-card__salary-label">{fb(avgSalaryLabel, lang)}</span>
+                <span class="country-card__salary-value">{formatK(salary)}</span>
+              </div>
+              <div class="country-card__jobs">
+                <span class="country-card__jobs-label">{fb(topJobsLabel, lang)}</span>
+                <ul>
+                  {jobs.map((job) => (
+                    <li>{jobNames[job]?.[lang] || jobNames[job]?.en || job}</li>
+                  ))}
+                </ul>
+              </div>
+              <span class="country-card__cta">{fb(viewDetailsLabel, lang)} &rarr;</span>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-body {
+    padding-top: 2.5rem;
+    padding-bottom: 4rem;
+  }
+  .page-body h2 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em;
+    color: #0F1F3D; margin-top: 3rem; margin-bottom: 1rem;
+  }
+
+  .countries-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+  }
+
+  .country-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .country-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .country-card__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .country-card__flag {
+    font-size: var(--text-2xl);
+  }
+
+  .country-card__name {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-semibold);
+  }
+
+  .country-card__salary {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .country-card__salary-label {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-gray-500);
+  }
+
+  .country-card__salary-value {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-blue-600);
+  }
+
+  .country-card__jobs {
+    flex: 1;
+  }
+
+  .country-card__jobs-label {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-gray-500);
+    display: block;
+    margin-bottom: var(--space-1);
+  }
+
+  .country-card__jobs ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .country-card__jobs li {
+    font-size: var(--text-sm);
+    color: var(--color-gray-600);
+    padding: 2px 0;
+  }
+
+  .country-card__jobs li::before {
+    content: '· ';
+    color: var(--color-gray-400);
+  }
+
+  .country-card__cta {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--color-blue-600);
+    margin-top: auto;
+  }
+
+  @media (max-width: 768px) {
+    .countries-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,336 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TLDRBox from '../../components/TLDRBox.astro';
+import { languages } from '../../i18n/ui';
+import { fb, useTranslations } from '../../i18n/utils';
+
+// --------------- Translated UI strings ---------------
+const h1Titles: Record<string, string> = {
+  en: 'Gross to Net Salary Calculator',
+  fr: 'Calculateur salaire brut-net',
+  de: 'Brutto-Netto-Gehaltsrechner',
+  es: 'Calculadora de salario bruto a neto',
+};
+
+const descriptions: Record<string, string> = {
+  en: 'Calculate your net salary from gross in 15 European countries. Includes income tax, social contributions, marital status, and child deductions.',
+  fr: 'Calculez votre salaire net à partir du brut dans 15 pays européens. Inclut l\'impôt sur le revenu, les cotisations sociales, le statut marital et les déductions pour enfants.',
+  de: 'Berechnen Sie Ihr Nettogehalt aus dem Bruttogehalt in 15 europäischen Ländern. Einschließlich Einkommensteuer, Sozialabgaben, Familienstand und Kinderfreibeträge.',
+  es: 'Calcule su salario neto a partir del bruto en 15 países europeos. Incluye impuesto sobre la renta, contribuciones sociales, estado civil y deducciones por hijos.',
+};
+
+const tldrItems: Record<string, string[]> = {
+  en: [
+    'Covers 15 European countries with simplified 2026 tax rates',
+    'Accounts for income tax, social contributions, marital status, and children',
+    'Results are estimates — consult a tax professional for exact figures',
+  ],
+  fr: [
+    'Couvre 15 pays européens avec des taux d\'imposition simplifiés 2026',
+    'Prend en compte l\'impôt, les cotisations sociales, le statut marital et les enfants',
+    'Les résultats sont des estimations — consultez un fiscaliste pour des chiffres exacts',
+  ],
+  de: [
+    'Deckt 15 europäische Länder mit vereinfachten Steuersätzen 2026 ab',
+    'Berücksichtigt Einkommensteuer, Sozialabgaben, Familienstand und Kinder',
+    'Ergebnisse sind Schätzungen — konsultieren Sie einen Steuerberater für genaue Zahlen',
+  ],
+  es: [
+    'Cubre 15 países europeos con tasas impositivas simplificadas 2026',
+    'Incluye impuesto sobre la renta, contribuciones sociales, estado civil e hijos',
+    'Los resultados son estimaciones — consulte a un asesor fiscal para cifras exactas',
+  ],
+};
+
+const countryLabel: Record<string, string> = { en: 'Country', fr: 'Pays', de: 'Land', es: 'País' };
+const grossSalaryLabel: Record<string, string> = { en: 'Gross Annual Salary (€)', fr: 'Salaire brut annuel (€)', de: 'Bruttojahresgehalt (€)', es: 'Salario bruto anual (€)' };
+const employmentTypeLabel: Record<string, string> = { en: 'Employment Type', fr: 'Type d\'emploi', de: 'Beschäftigungsart', es: 'Tipo de empleo' };
+const employedLabel: Record<string, string> = { en: 'Employed', fr: 'Salarié', de: 'Angestellt', es: 'Empleado' };
+const selfEmployedLabel: Record<string, string> = { en: 'Self-employed', fr: 'Indépendant', de: 'Selbstständig', es: 'Autónomo' };
+const maritalStatusLabel: Record<string, string> = { en: 'Marital Status', fr: 'Statut marital', de: 'Familienstand', es: 'Estado civil' };
+const singleLabel: Record<string, string> = { en: 'Single', fr: 'Célibataire', de: 'Ledig', es: 'Soltero/a' };
+const marriedLabel: Record<string, string> = { en: 'Married', fr: 'Marié(e)', de: 'Verheiratet', es: 'Casado/a' };
+const childrenLabel: Record<string, string> = { en: 'Children', fr: 'Enfants', de: 'Kinder', es: 'Hijos' };
+const calculateBtnLabel: Record<string, string> = { en: 'Calculate', fr: 'Calculer', de: 'Berechnen', es: 'Calcular' };
+
+const netAnnualLabel: Record<string, string> = { en: 'Net Annual Salary', fr: 'Salaire net annuel', de: 'Nettojahresgehalt', es: 'Salario neto anual' };
+const netMonthlyLabel: Record<string, string> = { en: 'Net Monthly Salary', fr: 'Salaire net mensuel', de: 'Nettomonatsgehalt', es: 'Salario neto mensual' };
+const incomeTaxLabel: Record<string, string> = { en: 'Income Tax', fr: 'Impôt sur le revenu', de: 'Einkommensteuer', es: 'Impuesto sobre la renta' };
+const socialContribLabel: Record<string, string> = { en: 'Social Contributions', fr: 'Cotisations sociales', de: 'Sozialabgaben', es: 'Contribuciones sociales' };
+const effectiveRateLabel: Record<string, string> = { en: 'Effective Tax Rate', fr: 'Taux d\'imposition effectif', de: 'Effektiver Steuersatz', es: 'Tasa impositiva efectiva' };
+
+const homeLabelByLang: Record<string, string> = { en: 'Home', fr: 'Accueil', de: 'Startseite', es: 'Inicio' };
+const calcLabelByLang: Record<string, string> = { en: 'Calculator', fr: 'Calculateur', de: 'Rechner', es: 'Calculadora' };
+
+const countryOptions: Record<string, string> = {
+  DE: 'Germany', FR: 'France', ES: 'Spain', NL: 'Netherlands', BE: 'Belgium',
+  IT: 'Italy', PT: 'Portugal', PL: 'Poland', SE: 'Sweden', AT: 'Austria',
+  CH: 'Switzerland', LU: 'Luxembourg', IE: 'Ireland', DK: 'Denmark', FI: 'Finland',
+};
+
+// --------------- getStaticPaths ---------------
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+  }));
+}
+
+// --------------- Page props ---------------
+const { lang } = Astro.params;
+const t = useTranslations(lang as any);
+const h1 = fb(h1Titles, lang);
+const description = fb(descriptions, lang);
+const tldr = fb(tldrItems, lang);
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: h1,
+    url: `https://eurosalary.eu/${lang}/calculator/`,
+    applicationCategory: 'FinanceApplication',
+    operatingSystem: 'All',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    author: { '@type': 'Organization', name: 'EuroSalary.eu' },
+  },
+];
+---
+
+<BaseLayout
+  title={h1}
+  description={description}
+  schema={pageSchema}
+>
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{fb(homeLabelByLang, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{fb(calcLabelByLang, lang)}</span>
+      </nav>
+      <h1 class="page-hero__title">{t('hero.calculator.title1')}<br/><span class="page-hero__accent">{t('hero.calculator.title2')}</span></h1>
+      <p class="page-hero__desc">{description}</p>
+    </div>
+  </section>
+
+  <div class="container page-body">
+    <TLDRBox items={tldr} />
+
+    <!-- Calculator Form -->
+    <section class="section">
+      <form id="calc-form" class="calc-form card">
+        <div class="form-group">
+          <label class="form-label" for="calc-country">{fb(countryLabel, lang)}</label>
+          <select class="form-select" id="calc-country" name="country" required>
+            {Object.entries(countryOptions).map(([code, name]) => (
+              <option value={code}>{name}</option>
+            ))}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="calc-gross">{fb(grossSalaryLabel, lang)}</label>
+          <input class="form-input" type="number" id="calc-gross" name="gross" min="1000" max="1000000" step="500" placeholder="50000" required />
+        </div>
+
+        <div class="form-group">
+          <span class="form-label">{fb(employmentTypeLabel, lang)}</span>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="employment" value="employed" checked /> {fb(employedLabel, lang)}
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="employment" value="self-employed" /> {fb(selfEmployedLabel, lang)}
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <span class="form-label">{fb(maritalStatusLabel, lang)}</span>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="marital" value="single" checked /> {fb(singleLabel, lang)}
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="marital" value="married" /> {fb(marriedLabel, lang)}
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="calc-children">{fb(childrenLabel, lang)}</label>
+          <select class="form-select" id="calc-children" name="children">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3+</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn--primary calc-form__btn">{fb(calculateBtnLabel, lang)}</button>
+      </form>
+    </section>
+
+    <!-- Results (hidden until calculated) -->
+    <section id="calc-results" class="section calc-results" style="display:none;">
+      <div class="results-grid">
+        <div class="result-item card result-item--primary">
+          <div class="result-item__label">{fb(netAnnualLabel, lang)}</div>
+          <div class="result-item__value" id="result-net-annual">-</div>
+        </div>
+        <div class="result-item card result-item--primary">
+          <div class="result-item__label">{fb(netMonthlyLabel, lang)}</div>
+          <div class="result-item__value" id="result-net-monthly">-</div>
+        </div>
+        <div class="result-item card">
+          <div class="result-item__label">{fb(incomeTaxLabel, lang)}</div>
+          <div class="result-item__value" id="result-income-tax">-</div>
+        </div>
+        <div class="result-item card">
+          <div class="result-item__label">{fb(socialContribLabel, lang)}</div>
+          <div class="result-item__value" id="result-social">-</div>
+        </div>
+        <div class="result-item card">
+          <div class="result-item__label">{fb(effectiveRateLabel, lang)}</div>
+          <div class="result-item__value" id="result-effective-rate">-</div>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<script is:inline>
+  const taxData = {
+    DE: { incomeTax: 0.30, socialContrib: 0.20, married: -0.03, childDeduction: 2500 },
+    FR: { incomeTax: 0.25, socialContrib: 0.22, married: -0.04, childDeduction: 1500 },
+    ES: { incomeTax: 0.24, socialContrib: 0.06, married: -0.02, childDeduction: 1200 },
+    NL: { incomeTax: 0.37, socialContrib: 0.10, married: -0.02, childDeduction: 2000 },
+    BE: { incomeTax: 0.35, socialContrib: 0.13, married: -0.03, childDeduction: 1800 },
+    IT: { incomeTax: 0.27, socialContrib: 0.10, married: -0.02, childDeduction: 1200 },
+    PT: { incomeTax: 0.22, socialContrib: 0.11, married: -0.02, childDeduction: 600 },
+    PL: { incomeTax: 0.17, socialContrib: 0.14, married: -0.02, childDeduction: 1100 },
+    SE: { incomeTax: 0.32, socialContrib: 0.07, married: -0.01, childDeduction: 1500 },
+    AT: { incomeTax: 0.30, socialContrib: 0.18, married: -0.03, childDeduction: 2000 },
+    CH: { incomeTax: 0.18, socialContrib: 0.06, married: -0.02, childDeduction: 3000 },
+    LU: { incomeTax: 0.25, socialContrib: 0.12, married: -0.04, childDeduction: 2500 },
+    IE: { incomeTax: 0.28, socialContrib: 0.04, married: -0.03, childDeduction: 1650 },
+    DK: { incomeTax: 0.38, socialContrib: 0.08, married: -0.02, childDeduction: 1000 },
+    FI: { incomeTax: 0.30, socialContrib: 0.09, married: -0.02, childDeduction: 1200 },
+  };
+
+  function formatEuro(amount) {
+    return '€' + Math.round(amount).toLocaleString('en-US');
+  }
+
+  document.getElementById('calc-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    var country = document.getElementById('calc-country').value;
+    var gross = parseFloat(document.getElementById('calc-gross').value);
+    var isMarried = document.querySelector('input[name="marital"]:checked').value === 'married';
+    var childrenVal = document.getElementById('calc-children').value;
+    var children = childrenVal === '3+' ? 3 : parseInt(childrenVal, 10);
+
+    if (!taxData[country] || isNaN(gross) || gross <= 0) return;
+
+    var td = taxData[country];
+
+    // Calculation
+    var social = gross * td.socialContrib;
+    var taxableIncome = gross - social - (children * td.childDeduction);
+    if (taxableIncome < 0) taxableIncome = 0;
+    var adjustedRate = td.incomeTax + (isMarried ? td.married : 0);
+    if (adjustedRate < 0) adjustedRate = 0;
+    var incomeTaxAmount = taxableIncome * adjustedRate;
+    var net = gross - social - incomeTaxAmount;
+    if (net < 0) net = 0;
+    var effectiveRate = gross > 0 ? ((social + incomeTaxAmount) / gross * 100) : 0;
+
+    document.getElementById('result-net-annual').textContent = formatEuro(net);
+    document.getElementById('result-net-monthly').textContent = formatEuro(net / 12);
+    document.getElementById('result-income-tax').textContent = formatEuro(incomeTaxAmount);
+    document.getElementById('result-social').textContent = formatEuro(social);
+    document.getElementById('result-effective-rate').textContent = effectiveRate.toFixed(1) + '%';
+
+    document.getElementById('calc-results').style.display = 'block';
+    document.getElementById('calc-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+</script>
+
+<style>
+  .page-body { padding: 2.5rem 0 4rem; }
+  .page-body h2 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em;
+    color: #0F1F3D; margin-top: 2.5rem; margin-bottom: 1rem;
+  }
+
+  .calc-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    max-width: 560px;
+  }
+
+  .radio-group {
+    display: flex;
+    gap: var(--space-4);
+    margin-top: var(--space-1);
+  }
+
+  .radio-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    cursor: pointer;
+    font-size: var(--text-base);
+  }
+
+  .calc-form__btn {
+    align-self: flex-start;
+    margin-top: var(--space-2);
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  .result-item {
+    text-align: center;
+  }
+
+  .result-item--primary {
+    border-left: 3px solid var(--color-blue-600);
+  }
+
+  .result-item__label {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-gray-500);
+    margin-bottom: var(--space-2);
+  }
+
+  .result-item__value {
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-blue-600);
+  }
+
+  .result-item:last-child {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 768px) {
+    .results-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .result-item:last-child {
+      grid-column: auto;
+    }
+  }
+</style>

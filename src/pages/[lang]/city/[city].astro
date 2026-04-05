@@ -1,0 +1,722 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { countrySlugsByLang, countryFlags } from '../../../data/slugs';
+import { cityData, citySlugs, cityDisplayNames } from '../../../data/cities';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+import { countryNames, uiLabels } from '../../../i18n/translations';
+
+// --------------- National averages (for comparison) ---------------
+const nationalAvg: Record<string, number> = {
+  DE: 52000, FR: 45000, ES: 32000, NL: 52000, BE: 48000, IT: 36000,
+  PT: 26000, PL: 24000, SE: 50000, AT: 50000, CH: 95000, LU: 68000,
+  IE: 55000, DK: 58000, FI: 44000,
+};
+
+// citySlugs and cityDisplayNames imported from ../../../data/cities
+
+// --------------- Translated UI strings ---------------
+const h1Templates: Record<string, string> = {
+  en: 'What Is the Average Salary in {city}, {country} in 2026?',
+  fr: 'Quel est le salaire moyen \u00e0 {city}, {country} en 2026 ?',
+  de: 'Wie hoch ist das Durchschnittsgehalt in {city}, {country} 2026?',
+  es: '\u00bfCu\u00e1l es el salario promedio en {city}, {country} en 2026?',
+};
+
+const sectionTitles: Record<string, Record<string, string>> = {
+  en: { metrics: 'Key Salary Metrics', purchasing: 'Purchasing Power', national: 'Comparison to National Average', otherCities: 'Other Cities in {country}' },
+  fr: { metrics: 'Indicateurs salariaux cl\u00e9s', purchasing: 'Pouvoir d\u2019achat', national: 'Comparaison avec la moyenne nationale', otherCities: 'Autres villes en {country}' },
+  de: { metrics: 'Wichtige Gehaltskennzahlen', purchasing: 'Kaufkraft', national: 'Vergleich mit dem Landesdurchschnitt', otherCities: 'Weitere St\u00e4dte in {country}' },
+  es: { metrics: 'Indicadores salariales clave', purchasing: 'Poder adquisitivo', national: 'Comparaci\u00f3n con el promedio nacional', otherCities: 'Otras ciudades en {country}' },
+};
+
+const indicatorLabels: Record<string, Record<string, string>> = {
+  en: { avgSalary: 'Average Salary', techSalary: 'Tech Salary', costIndex: 'Cost of Living Index', rentIndex: 'Rent Index', population: 'Population', purchasing: 'Purchasing Power Score' },
+  fr: { avgSalary: 'Salaire moyen', techSalary: 'Salaire tech', costIndex: 'Indice du co\u00fbt de la vie', rentIndex: 'Indice des loyers', population: 'Population', purchasing: 'Score de pouvoir d\u2019achat' },
+  de: { avgSalary: 'Durchschnittsgehalt', techSalary: 'Tech-Gehalt', costIndex: 'Lebenshaltungskostenindex', rentIndex: 'Mietpreisindex', population: 'Bev\u00f6lkerung', purchasing: 'Kaufkraft-Score' },
+  es: { avgSalary: 'Salario promedio', techSalary: 'Salario tech', costIndex: '\u00cdndice de coste de vida', rentIndex: '\u00cdndice de alquiler', population: 'Poblaci\u00f3n', purchasing: 'Puntuaci\u00f3n de poder adquisitivo' },
+};
+
+const compLabels: Record<string, Record<string, string>> = {
+  en: { cityAvg: 'City Average', nationalAvg: 'National Average', diff: 'Difference', higher: 'higher', lower: 'lower', viewCountry: 'View full country page' },
+  fr: { cityAvg: 'Moyenne de la ville', nationalAvg: 'Moyenne nationale', diff: 'Diff\u00e9rence', higher: 'sup\u00e9rieur', lower: 'inf\u00e9rieur', viewCountry: 'Voir la page du pays' },
+  de: { cityAvg: 'Stadtdurchschnitt', nationalAvg: 'Landesdurchschnitt', diff: 'Unterschied', higher: 'h\u00f6her', lower: 'niedriger', viewCountry: 'Zur L\u00e4nderseite' },
+  es: { cityAvg: 'Promedio de la ciudad', nationalAvg: 'Promedio nacional', diff: 'Diferencia', higher: 'superior', lower: 'inferior', viewCountry: 'Ver p\u00e1gina del pa\u00eds' },
+};
+
+const faqTemplates: Record<string, Array<{ q: string; a: string }>> = {
+  en: [
+    { q: 'What is the average salary in {city} in 2026?', a: 'The average gross salary in {city}, {country} is approximately \u20ac{salary} per year. This is {diffDirection} than the national average of \u20ac{nationalSalary}.' },
+    { q: 'How much do tech workers earn in {city}?', a: 'Tech professionals in {city} earn approximately \u20ac{techSalary} per year on average, which is {techPremium}% above the city\'s overall average salary.' },
+    { q: 'What is the cost of living in {city}?', a: '{city} has a cost of living index of {costIndex} and a rent index of {rentIndex}. This makes it {costLevel} compared to other major European cities.' },
+    { q: 'How does {city} compare to other cities in {country}?', a: 'Among cities in {country}, {city} ranks {rank} for average salaries. The salary difference between the highest and lowest paying cities in {country} is significant.' },
+    { q: 'Is {city} a good place to work in Europe?', a: 'With a purchasing power score of {ppScore}, {city} offers a {ppLevel} balance between salaries and cost of living compared to other European cities.' },
+  ],
+  fr: [
+    { q: 'Quel est le salaire moyen \u00e0 {city} en 2026 ?', a: 'Le salaire brut moyen \u00e0 {city}, {country} est d\u2019environ {salary} \u20ac par an. C\u2019est {diffDirection} que la moyenne nationale de {nationalSalary} \u20ac.' },
+    { q: 'Combien gagnent les professionnels tech \u00e0 {city} ?', a: 'Les professionnels tech \u00e0 {city} gagnent environ {techSalary} \u20ac par an en moyenne, soit {techPremium}% au-dessus du salaire moyen de la ville.' },
+    { q: 'Quel est le co\u00fbt de la vie \u00e0 {city} ?', a: '{city} a un indice du co\u00fbt de la vie de {costIndex} et un indice des loyers de {rentIndex}. Cela en fait une ville {costLevel} par rapport aux autres grandes villes europ\u00e9ennes.' },
+    { q: 'Comment {city} se compare aux autres villes de {country} ?', a: 'Parmi les villes de {country}, {city} se classe {rank} pour les salaires moyens. L\u2019\u00e9cart salarial entre les villes les mieux et les moins bien pay\u00e9es de {country} est significatif.' },
+    { q: '{city} est-elle un bon endroit pour travailler en Europe ?', a: 'Avec un score de pouvoir d\u2019achat de {ppScore}, {city} offre un \u00e9quilibre {ppLevel} entre salaires et co\u00fbt de la vie par rapport aux autres villes europ\u00e9ennes.' },
+  ],
+  de: [
+    { q: 'Wie hoch ist das Durchschnittsgehalt in {city} 2026?', a: 'Das durchschnittliche Bruttogehalt in {city}, {country} betr\u00e4gt ca. {salary} \u20ac pro Jahr. Das ist {diffDirection} als der Landesdurchschnitt von {nationalSalary} \u20ac.' },
+    { q: 'Wie viel verdienen Tech-Fachkr\u00e4fte in {city}?', a: 'Tech-Fachkr\u00e4fte in {city} verdienen durchschnittlich etwa {techSalary} \u20ac pro Jahr, das sind {techPremium}% \u00fcber dem allgemeinen Durchschnittsgehalt der Stadt.' },
+    { q: 'Wie hoch sind die Lebenshaltungskosten in {city}?', a: '{city} hat einen Lebenshaltungskostenindex von {costIndex} und einen Mietpreisindex von {rentIndex}. Damit ist es {costLevel} im Vergleich zu anderen europ\u00e4ischen Gro\u00dfst\u00e4dten.' },
+    { q: 'Wie schneidet {city} im Vergleich zu anderen St\u00e4dten in {country} ab?', a: 'Unter den St\u00e4dten in {country} liegt {city} bei den Durchschnittsgeh\u00e4ltern auf Platz {rank}. Der Gehaltsunterschied zwischen den bestbezahlten und den schlechtestbezahlten St\u00e4dten in {country} ist erheblich.' },
+    { q: 'Ist {city} ein guter Arbeitsort in Europa?', a: 'Mit einem Kaufkraft-Score von {ppScore} bietet {city} ein {ppLevel} Gleichgewicht zwischen Geh\u00e4ltern und Lebenshaltungskosten im Vergleich zu anderen europ\u00e4ischen St\u00e4dten.' },
+  ],
+  es: [
+    { q: '\u00bfCu\u00e1l es el salario promedio en {city} en 2026?', a: 'El salario bruto promedio en {city}, {country} es de aproximadamente {salary} \u20ac al a\u00f1o. Esto es {diffDirection} que el promedio nacional de {nationalSalary} \u20ac.' },
+    { q: '\u00bfCu\u00e1nto ganan los profesionales tech en {city}?', a: 'Los profesionales tech en {city} ganan aproximadamente {techSalary} \u20ac al a\u00f1o en promedio, un {techPremium}% por encima del salario promedio general de la ciudad.' },
+    { q: '\u00bfCu\u00e1l es el coste de vida en {city}?', a: '{city} tiene un \u00edndice de coste de vida de {costIndex} y un \u00edndice de alquiler de {rentIndex}. Esto la convierte en una ciudad {costLevel} en comparaci\u00f3n con otras grandes ciudades europeas.' },
+    { q: '\u00bfC\u00f3mo se compara {city} con otras ciudades de {country}?', a: 'Entre las ciudades de {country}, {city} se sit\u00faa en el puesto {rank} en salarios promedio. La diferencia salarial entre las ciudades mejor y peor pagadas de {country} es significativa.' },
+    { q: '\u00bfEs {city} un buen lugar para trabajar en Europa?', a: 'Con una puntuaci\u00f3n de poder adquisitivo de {ppScore}, {city} ofrece un equilibrio {ppLevel} entre salarios y coste de vida en comparaci\u00f3n con otras ciudades europeas.' },
+  ],
+};
+
+const costLevelLabels: Record<string, Record<string, string>> = {
+  en: { low: 'affordable', mid: 'moderately priced', high: 'expensive', vhigh: 'very expensive' },
+  fr: { low: 'abordable', mid: 'mod\u00e9r\u00e9ment ch\u00e8re', high: 'ch\u00e8re', vhigh: 'tr\u00e8s ch\u00e8re' },
+  de: { low: 'g\u00fcnstig', mid: 'moderat', high: 'teuer', vhigh: 'sehr teuer' },
+  es: { low: 'asequible', mid: 'moderadamente cara', high: 'cara', vhigh: 'muy cara' },
+};
+
+const ppLevelLabels: Record<string, Record<string, string>> = {
+  en: { low: 'below-average', mid: 'moderate', good: 'good', great: 'excellent' },
+  fr: { low: 'inf\u00e9rieur \u00e0 la moyenne', mid: 'mod\u00e9r\u00e9', good: 'bon', great: 'excellent' },
+  de: { low: 'unterdurchschnittliches', mid: 'moderates', good: 'gutes', great: 'hervorragendes' },
+  es: { low: 'por debajo del promedio', mid: 'moderado', good: 'bueno', great: 'excelente' },
+};
+
+const diffLabels: Record<string, Record<string, string>> = {
+  en: { higher: 'higher', lower: 'lower' },
+  fr: { higher: 'sup\u00e9rieur', lower: 'inf\u00e9rieur' },
+  de: { higher: 'h\u00f6her', lower: 'niedriger' },
+  es: { higher: 'superior', lower: 'inferior' },
+};
+
+// --------------- getStaticPaths ---------------
+export function getStaticPaths() {
+  const paths: Array<{ params: { lang: string; city: string }; props: { cityKey: string; lang: string } }> = [];
+  for (const lang of Object.keys(languages)) {
+    for (const [cityKey, _data] of Object.entries(cityData)) {
+      const slugMap = citySlugs[cityKey];
+      const slug = slugMap[lang] || slugMap.en;
+      paths.push({
+        params: { lang, city: slug },
+        props: { cityKey, lang },
+      });
+    }
+  }
+  return paths;
+}
+
+// --------------- Page props ---------------
+const { cityKey, lang } = Astro.props;
+const t = useTranslations(lang as any);
+const data = cityData[cityKey]!;
+const countryCode = data.country;
+const flag = countryFlags[countryCode];
+const cityName = fb(cityDisplayNames[cityKey], lang);
+const countryName = fb(countryNames[countryCode], lang);
+const labels = fb(indicatorLabels, lang);
+const sections = fb(sectionTitles, lang);
+const comp = fb(compLabels, lang);
+const crumbs = { home: fb(uiLabels.home, lang), cities: fb(uiLabels.cities, lang) };
+const costLevels = fb(costLevelLabels, lang);
+const ppLevels = fb(ppLevelLabels, lang);
+const diffs = fb(diffLabels, lang);
+
+const countrySlug = countrySlugsByLang[lang]?.[countryCode] || countrySlugsByLang.en[countryCode];
+
+function formatSalary(amount: number): string {
+  return new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(amount);
+}
+
+// Purchasing power: salary / cost of living * 100 (higher = better)
+const ppScore = Math.round((data.avgSalary / data.costIndex) * 10) / 10;
+
+// National comparison
+const natAvg = nationalAvg[countryCode] || data.avgSalary;
+const salaryDiff = data.avgSalary - natAvg;
+const salaryDiffPct = Math.round((Math.abs(salaryDiff) / natAvg) * 100);
+const isHigher = salaryDiff >= 0;
+
+// Tech salary premium
+const techPremium = Math.round(((data.techSalary - data.avgSalary) / data.avgSalary) * 100);
+
+// Cost level
+function getCostLevel(idx: number): string {
+  if (idx < 50) return costLevels.low;
+  if (idx < 70) return costLevels.mid;
+  if (idx < 90) return costLevels.high;
+  return costLevels.vhigh;
+}
+
+// PP level
+function getPPLevel(score: number): string {
+  if (score < 500) return ppLevels.low;
+  if (score < 700) return ppLevels.mid;
+  if (score < 900) return ppLevels.good;
+  return ppLevels.great;
+}
+
+// Rank among cities in same country
+const siblingsInCountry = Object.entries(cityData)
+  .filter(([, d]) => d.country === countryCode)
+  .sort((a, b) => b[1].avgSalary - a[1].avgSalary);
+const cityRank = siblingsInCountry.findIndex(([k]) => k === cityKey) + 1;
+
+// Other cities in same country (excluding current)
+const otherCities = siblingsInCountry.filter(([k]) => k !== cityKey);
+
+// H1
+const h1 = fb(h1Templates, lang).replace('{city}', cityName).replace('{country}', countryName);
+
+// TL;DR bullets
+const tldrBullets: Record<string, string[]> = {
+  en: [
+    `Average salary: ${formatSalary(data.avgSalary)}/year gross (${salaryDiffPct}% ${isHigher ? 'above' : 'below'} ${countryName} average)`,
+    `Tech salary: ${formatSalary(data.techSalary)}/year (${techPremium}% premium over city average)`,
+    `Cost of living index: ${data.costIndex} \u2014 ${getCostLevel(data.costIndex)} compared to major EU cities`,
+  ],
+  fr: [
+    `Salaire moyen : ${formatSalary(data.avgSalary)}/an brut (${salaryDiffPct}% ${isHigher ? 'au-dessus' : 'en dessous'} de la moyenne de ${countryName})`,
+    `Salaire tech : ${formatSalary(data.techSalary)}/an (${techPremium}% de prime par rapport \u00e0 la moyenne de la ville)`,
+    `Indice du co\u00fbt de la vie : ${data.costIndex} \u2014 ${getCostLevel(data.costIndex)} par rapport aux grandes villes de l\u2019UE`,
+  ],
+  de: [
+    `Durchschnittsgehalt: ${formatSalary(data.avgSalary)}/Jahr brutto (${salaryDiffPct}% ${isHigher ? '\u00fcber' : 'unter'} dem Durchschnitt von ${countryName})`,
+    `Tech-Gehalt: ${formatSalary(data.techSalary)}/Jahr (${techPremium}% Aufschlag gegen\u00fcber dem Stadtdurchschnitt)`,
+    `Lebenshaltungskostenindex: ${data.costIndex} \u2014 ${getCostLevel(data.costIndex)} im Vergleich zu europ\u00e4ischen Gro\u00dfst\u00e4dten`,
+  ],
+  es: [
+    `Salario promedio: ${formatSalary(data.avgSalary)}/a\u00f1o bruto (${salaryDiffPct}% ${isHigher ? 'por encima' : 'por debajo'} del promedio de ${countryName})`,
+    `Salario tech: ${formatSalary(data.techSalary)}/a\u00f1o (${techPremium}% de prima sobre el promedio de la ciudad)`,
+    `\u00cdndice de coste de vida: ${data.costIndex} \u2014 ${getCostLevel(data.costIndex)} en comparaci\u00f3n con las principales ciudades de la UE`,
+  ],
+};
+const bullets = fb(tldrBullets, lang);
+
+// FAQ items
+const faqRaw = fb(faqTemplates, lang);
+const faqItems = faqRaw.map((item) => ({
+  question: item.q.replace(/{city}/g, cityName).replace(/{country}/g, countryName),
+  answer: item.a
+    .replace(/{city}/g, cityName)
+    .replace(/{country}/g, countryName)
+    .replace(/{salary}/g, data.avgSalary.toLocaleString())
+    .replace(/{techSalary}/g, data.techSalary.toLocaleString())
+    .replace(/{nationalSalary}/g, natAvg.toLocaleString())
+    .replace(/{costIndex}/g, String(data.costIndex))
+    .replace(/{rentIndex}/g, String(data.rentIndex))
+    .replace(/{techPremium}/g, String(techPremium))
+    .replace(/{diffDirection}/g, isHigher ? diffs.higher : diffs.lower)
+    .replace(/{costLevel}/g, getCostLevel(data.costIndex))
+    .replace(/{rank}/g, String(cityRank))
+    .replace(/{ppScore}/g, String(ppScore))
+    .replace(/{ppLevel}/g, getPPLevel(ppScore)),
+}));
+
+// Page meta
+const pageTitle = `${h1} | EuroSalary.eu`;
+const pageDescriptions: Record<string, string> = {
+  en: `Average salary in ${cityName}, ${countryName}: ${formatSalary(data.avgSalary)}/yr. Tech salary ${formatSalary(data.techSalary)}. Cost of living index ${data.costIndex}. Complete 2026 salary data.`,
+  fr: `Salaire moyen \u00e0 ${cityName}, ${countryName} : ${formatSalary(data.avgSalary)}/an. Salaire tech ${formatSalary(data.techSalary)}. Indice du co\u00fbt de la vie ${data.costIndex}. Donn\u00e9es salariales 2026 compl\u00e8tes.`,
+  de: `Durchschnittsgehalt in ${cityName}, ${countryName}: ${formatSalary(data.avgSalary)}/Jahr. Tech-Gehalt ${formatSalary(data.techSalary)}. Lebenshaltungskostenindex ${data.costIndex}. Vollst\u00e4ndige Gehaltsdaten 2026.`,
+  es: `Salario promedio en ${cityName}, ${countryName}: ${formatSalary(data.avgSalary)}/a\u00f1o. Salario tech ${formatSalary(data.techSalary)}. \u00cdndice de coste de vida ${data.costIndex}. Datos salariales completos 2026.`,
+};
+const pageDescription = fb(pageDescriptions, lang);
+
+// Schema
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: h1,
+    author: { '@type': 'Organization', name: 'EuroSalary.eu' },
+    datePublished: '2026-01-15',
+    dateModified: '2026-04-01',
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+  },
+];
+
+// PP bar width (max 1000 = 100%)
+const ppBarWidth = Math.min(Math.round(ppScore / 10), 100);
+
+// National comparison bar
+const maxBar = Math.max(data.avgSalary, natAvg);
+const cityBarPct = Math.round((data.avgSalary / maxBar) * 100);
+const natBarPct = Math.round((natAvg / maxBar) * 100);
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  datePublished="2026-01-15"
+  dateModified="2026-04-01"
+  schema={pageSchema}
+>
+  <!-- Hero -->
+  <section class="country-hero">
+    <div class="country-hero__bg-icon">
+      <span class="material-symbols-outlined">location_city</span>
+    </div>
+    <div class="container country-hero__inner">
+      <nav class="country-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{crumbs.home}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span>{crumbs.cities}</span>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="country-hero__breadcrumbs-current">{flag} {cityName}</span>
+      </nav>
+
+      <div class="country-hero__grid">
+        <div class="country-hero__content">
+          <div class="country-hero__badge">
+            <span class="country-hero__flag">{flag}</span>
+            <span class="country-hero__badge-text">{cityName}, {countryName}</span>
+          </div>
+          <h1 class="country-hero__title">{h1}</h1>
+          <p class="country-hero__desc">
+            {labels.avgSalary}: {formatSalary(data.avgSalary)} &middot; {labels.techSalary}: {formatSalary(data.techSalary)} &middot; {labels.costIndex}: {data.costIndex} &middot; {labels.population}: {data.population}
+          </p>
+        </div>
+
+        <div class="country-hero__stats">
+          <div class="country-hero__stat-card">
+            <span class="country-hero__stat-label">{labels.avgSalary}</span>
+            <div class="country-hero__stat-value">{formatSalary(data.avgSalary)}</div>
+            <span class="country-hero__stat-note">{t('salary.perYear')}</span>
+          </div>
+          <div class="country-hero__stat-card">
+            <span class="country-hero__stat-label">{labels.techSalary}</span>
+            <div class="country-hero__stat-value">{formatSalary(data.techSalary)}</div>
+            <span class="country-hero__stat-note">+{techPremium}%</span>
+          </div>
+          <div class="country-hero__stat-card">
+            <span class="country-hero__stat-label">{labels.costIndex}</span>
+            <div class="country-hero__stat-value">{data.costIndex}</div>
+            <span class="country-hero__stat-note">vs. EU avg 58.2</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <article class="container city-body">
+    <!-- TL;DR -->
+    <TLDRBox items={bullets} />
+
+    <!-- Key Metrics Cards -->
+    <section class="city-section">
+      <h2 class="city-section__title">{sections.metrics}</h2>
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="material-symbols-outlined metric-card__icon">payments</span>
+          <div class="metric-card__label">{labels.avgSalary}</div>
+          <div class="metric-card__value">{formatSalary(data.avgSalary)}</div>
+          <div class="metric-card__note">{t('salary.perYear')}</div>
+        </div>
+        <div class="metric-card">
+          <span class="material-symbols-outlined metric-card__icon">computer</span>
+          <div class="metric-card__label">{labels.techSalary}</div>
+          <div class="metric-card__value">{formatSalary(data.techSalary)}</div>
+          <div class="metric-card__note">+{techPremium}% premium</div>
+        </div>
+        <div class="metric-card">
+          <span class="material-symbols-outlined metric-card__icon">shopping_cart</span>
+          <div class="metric-card__label">{labels.costIndex}</div>
+          <div class="metric-card__value">{data.costIndex}</div>
+          <div class="metric-card__note">{getCostLevel(data.costIndex)}</div>
+        </div>
+        <div class="metric-card">
+          <span class="material-symbols-outlined metric-card__icon">apartment</span>
+          <div class="metric-card__label">{labels.rentIndex}</div>
+          <div class="metric-card__value">{data.rentIndex}</div>
+          <div class="metric-card__note">vs. EU avg 30.5</div>
+        </div>
+        <div class="metric-card">
+          <span class="material-symbols-outlined metric-card__icon">groups</span>
+          <div class="metric-card__label">{labels.population}</div>
+          <div class="metric-card__value">{data.population}</div>
+          <div class="metric-card__note">{countryName}</div>
+        </div>
+        <div class="metric-card metric-card--accent">
+          <span class="material-symbols-outlined metric-card__icon">trending_up</span>
+          <div class="metric-card__label">{labels.purchasing}</div>
+          <div class="metric-card__value">{ppScore}</div>
+          <div class="metric-card__note">{getPPLevel(ppScore)}</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Purchasing Power -->
+    <section class="city-section">
+      <h2 class="city-section__title">{sections.purchasing}</h2>
+      <div class="pp-card">
+        <div class="pp-card__header">
+          <span class="pp-card__score">{ppScore}</span>
+          <span class="pp-card__level">{getPPLevel(ppScore)}</span>
+        </div>
+        <div class="pp-card__bar-track">
+          <div class="pp-card__bar-fill" style={`width: ${ppBarWidth}%`}></div>
+        </div>
+        <p class="pp-card__desc">
+          {lang === 'en' && `Purchasing power measures how far your salary goes relative to the cost of living. A score of ${ppScore} means ${cityName} offers ${getPPLevel(ppScore)} value for earners.`}
+          {lang === 'fr' && `Le pouvoir d\u2019achat mesure la port\u00e9e de votre salaire par rapport au co\u00fbt de la vie. Un score de ${ppScore} signifie que ${cityName} offre une valeur ${getPPLevel(ppScore)} pour les travailleurs.`}
+          {lang === 'de' && `Die Kaufkraft misst, wie weit Ihr Gehalt im Verh\u00e4ltnis zu den Lebenshaltungskosten reicht. Ein Score von ${ppScore} bedeutet, dass ${cityName} ${getPPLevel(ppScore)} Wert f\u00fcr Arbeitnehmer bietet.`}
+          {lang === 'es' && `El poder adquisitivo mide cu\u00e1nto rinde su salario en relaci\u00f3n con el coste de vida. Una puntuaci\u00f3n de ${ppScore} significa que ${cityName} ofrece un valor ${getPPLevel(ppScore)} para los trabajadores.`}
+        </p>
+      </div>
+    </section>
+
+    <!-- National Comparison -->
+    <section class="city-section">
+      <h2 class="city-section__title">{sections.national.replace('{country}', countryName)}</h2>
+      <div class="comparison-card">
+        <div class="comparison-row">
+          <div class="comparison-row__label">{comp.cityAvg} ({cityName})</div>
+          <div class="comparison-row__bar-track">
+            <div class="comparison-row__bar-fill comparison-row__bar-fill--city" style={`width: ${cityBarPct}%`}></div>
+          </div>
+          <div class="comparison-row__value">{formatSalary(data.avgSalary)}</div>
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-row__label">{comp.nationalAvg} ({countryName})</div>
+          <div class="comparison-row__bar-track">
+            <div class="comparison-row__bar-fill comparison-row__bar-fill--national" style={`width: ${natBarPct}%`}></div>
+          </div>
+          <div class="comparison-row__value">{formatSalary(natAvg)}</div>
+        </div>
+        <div class="comparison-diff">
+          <span class={`comparison-diff__badge ${isHigher ? 'comparison-diff__badge--up' : 'comparison-diff__badge--down'}`}>
+            <span class="material-symbols-outlined">{isHigher ? 'arrow_upward' : 'arrow_downward'}</span>
+            {salaryDiffPct}% {isHigher ? comp.higher : comp.lower}
+          </span>
+          <span class="comparison-diff__amount">{comp.diff}: {formatSalary(Math.abs(salaryDiff))}</span>
+        </div>
+        <a href={`/${lang}/country/${countrySlug}/`} class="comparison-link">
+          {flag} {comp.viewCountry} &rarr;
+        </a>
+      </div>
+    </section>
+
+    <!-- Other Cities in Same Country -->
+    {otherCities.length > 0 && (
+      <section class="city-section">
+        <h2 class="city-section__title">{sections.otherCities.replace('{country}', countryName)}</h2>
+        <div class="other-cities-grid">
+          {otherCities.map(([otherKey, otherData]) => {
+            const otherSlug = citySlugs[otherKey][lang] || citySlugs[otherKey].en;
+            const otherName = fb(cityDisplayNames[otherKey], lang);
+            return (
+              <a href={`/${lang}/city/${otherSlug}/`} class="other-city-card">
+                <div class="other-city-card__left">
+                  <span class="other-city-card__flag">{flag}</span>
+                  <div>
+                    <strong class="other-city-card__name">{otherName}</strong>
+                    <span class="other-city-card__salary">{formatSalary(otherData.avgSalary)}/yr</span>
+                  </div>
+                </div>
+                <div class="other-city-card__right">
+                  <span class="other-city-card__cost">COL: {otherData.costIndex}</span>
+                  <span class="material-symbols-outlined other-city-card__arrow">chevron_right</span>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      </section>
+    )}
+
+    <!-- FAQ -->
+    <FAQSection items={faqItems} />
+  </article>
+</BaseLayout>
+
+<style>
+  /* City body */
+  .city-body { padding: var(--space-10) 0 var(--space-16); }
+
+  .city-section { margin-top: var(--space-12); }
+  .city-section__title {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--color-primary-container, #0F1F3D);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-6);
+  }
+
+  /* Metrics grid */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+  .metric-card {
+    background: white;
+    border: 1px solid var(--color-gray-100, #e6e8ea);
+    padding: var(--space-6);
+    border-radius: 6px;
+    text-align: center;
+  }
+  .metric-card--accent {
+    background: var(--color-primary-container, #0F1F3D);
+    border-color: var(--color-primary-container, #0F1F3D);
+  }
+  .metric-card--accent .metric-card__label,
+  .metric-card--accent .metric-card__note {
+    color: rgba(255, 255, 255, 0.7);
+  }
+  .metric-card--accent .metric-card__value {
+    color: white;
+  }
+  .metric-card--accent .metric-card__icon {
+    color: var(--color-secondary, #2563EB);
+  }
+  .metric-card__icon {
+    font-size: 20px;
+    color: var(--color-secondary, #0051d5);
+    margin-bottom: var(--space-2);
+  }
+  .metric-card__label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #75777e;
+    margin-bottom: var(--space-2);
+  }
+  .metric-card__value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-primary-container, #0F1F3D);
+    letter-spacing: -0.02em;
+  }
+  .metric-card__note {
+    font-size: 11px;
+    color: #75777e;
+    margin-top: 4px;
+  }
+
+  /* Purchasing Power card */
+  .pp-card {
+    background: white;
+    border: 1px solid var(--color-gray-100, #e6e8ea);
+    border-radius: 6px;
+    padding: var(--space-8);
+  }
+  .pp-card__header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+  .pp-card__score {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--color-primary-container, #0F1F3D);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .pp-card__level {
+    font-size: var(--text-sm, 0.875rem);
+    font-weight: 600;
+    color: var(--color-secondary, #2563EB);
+    text-transform: capitalize;
+  }
+  .pp-card__bar-track {
+    width: 100%;
+    height: 8px;
+    background: #eef1f5;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: var(--space-4);
+  }
+  .pp-card__bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-secondary, #2563EB), #10b981);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  .pp-card__desc {
+    font-size: var(--text-sm, 0.875rem);
+    color: #4b5563;
+    line-height: var(--leading-relaxed, 1.625);
+  }
+
+  /* Comparison card */
+  .comparison-card {
+    background: white;
+    border: 1px solid var(--color-gray-100, #e6e8ea);
+    border-radius: 6px;
+    padding: var(--space-8);
+  }
+  .comparison-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 120px;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+  .comparison-row__label {
+    font-size: var(--text-sm, 0.875rem);
+    font-weight: 600;
+    color: var(--color-primary-container, #0F1F3D);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .comparison-row__bar-track {
+    width: 100%;
+    height: 12px;
+    background: #eef1f5;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .comparison-row__bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.5s ease;
+  }
+  .comparison-row__bar-fill--city {
+    background: var(--color-secondary, #2563EB);
+  }
+  .comparison-row__bar-fill--national {
+    background: #94a3b8;
+  }
+  .comparison-row__value {
+    font-size: var(--text-sm, 0.875rem);
+    font-weight: 700;
+    color: var(--color-primary-container, #0F1F3D);
+    text-align: right;
+  }
+  .comparison-diff {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-gray-100, #e6e8ea);
+  }
+  .comparison-diff__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  .comparison-diff__badge .material-symbols-outlined {
+    font-size: 14px;
+  }
+  .comparison-diff__badge--up {
+    background: #ecfdf5;
+    color: #059669;
+  }
+  .comparison-diff__badge--down {
+    background: #fef2f2;
+    color: #dc2626;
+  }
+  .comparison-diff__amount {
+    font-size: var(--text-sm, 0.875rem);
+    color: #4b5563;
+  }
+  .comparison-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    font-size: var(--text-sm, 0.875rem);
+    font-weight: 600;
+    color: var(--color-secondary, #2563EB);
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+  .comparison-link:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+  }
+
+  /* Other cities grid */
+  .other-cities-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+  .other-city-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    border: 1px solid var(--color-gray-100, #e6e8ea);
+    border-left: 4px solid var(--color-secondary, #2563EB);
+    padding: var(--space-4) var(--space-5);
+    border-radius: 4px;
+    text-decoration: none;
+    transition: box-shadow 0.15s, background 0.15s;
+  }
+  .other-city-card:hover {
+    background: #f7f9fb;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .other-city-card__left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .other-city-card__flag {
+    font-size: 1.5rem;
+  }
+  .other-city-card__name {
+    display: block;
+    font-size: var(--text-sm, 0.875rem);
+    font-weight: 600;
+    color: var(--color-primary-container, #0F1F3D);
+  }
+  .other-city-card__salary {
+    display: block;
+    font-size: 12px;
+    color: #75777e;
+    margin-top: 2px;
+  }
+  .other-city-card__right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .other-city-card__cost {
+    font-size: 11px;
+    font-weight: 600;
+    color: #75777e;
+    background: #f3f4f6;
+    padding: 2px 8px;
+    border-radius: 12px;
+  }
+  .other-city-card__arrow {
+    font-size: 18px;
+    color: #75777e;
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+  }
+  .other-city-card:hover .other-city-card__arrow {
+    opacity: 1;
+    transform: translateX(2px);
+  }
+
+  @media (max-width: 768px) {
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    .other-cities-grid { grid-template-columns: 1fr; }
+    .comparison-row {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+    .comparison-row__value { text-align: left; }
+  }
+</style>

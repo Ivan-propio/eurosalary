@@ -1,0 +1,927 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+
+// --------------- i18n strings ---------------
+const i18n: Record<string, {
+  h1: string;
+  metaTitle: string;
+  metaDesc: string;
+  home: string;
+  breadcrumb: string;
+  tldr: string[];
+  intro: string;
+  quickStartTitle: string;
+  quickStartDesc: string;
+  endpointsTitle: string;
+  endpointSalaryTitle: string;
+  endpointSalaryDesc: string;
+  endpointCompareTitle: string;
+  endpointCompareDesc: string;
+  endpointMinWageTitle: string;
+  endpointMinWageDesc: string;
+  responseTitle: string;
+  responseDesc: string;
+  authTitle: string;
+  authDesc: string;
+  authFree: string;
+  authPaid: string;
+  rateLimitsTitle: string;
+  rateLimitsDesc: string;
+  rateLimitTier: string;
+  rateLimitRequests: string;
+  rateLimitWindow: string;
+  pricingTitle: string;
+  pricingDesc: string;
+  pricingFreeLabel: string;
+  pricingFreeDesc: string;
+  pricingDevLabel: string;
+  pricingDevDesc: string;
+  pricingBizLabel: string;
+  pricingBizDesc: string;
+  pricingEntLabel: string;
+  pricingEntDesc: string;
+  sdkTitle: string;
+  sdkDesc: string;
+  ctaTitle: string;
+  ctaDesc: string;
+  ctaButton: string;
+  paramCountry: string;
+  paramJob: string;
+  paramLevel: string;
+  paramFormat: string;
+  parametersTitle: string;
+  faq: Array<{ question: string; answer: string }>;
+}> = {
+  en: {
+    h1: 'How Can You Access European Salary Data via API?',
+    metaTitle: 'Salary API: Access European Salary Data Programmatically | EuroSalary.eu',
+    metaDesc: 'Access salary data for 15 European countries and 21 job categories via a simple REST API. Free tier with 100 requests per hour. JSON responses with gross and net salary breakdowns.',
+    home: 'Home',
+    breadcrumb: 'Salary API',
+    tldr: [
+      'Free tier: 100 requests per hour, no API key required',
+      '15 countries and 21 job categories with junior, mid, and senior levels',
+      'Clean JSON responses with gross salary, net salary, and tax breakdowns',
+    ],
+    intro: 'The EuroSalary API gives developers, researchers, and HR platforms direct access to our harmonised European salary dataset. Every endpoint returns structured JSON, supports four languages, and is backed by the same Eurostat-verified data that powers our website. Start making requests in under a minute with zero configuration.',
+    quickStartTitle: 'Quick Start',
+    quickStartDesc: 'Make your first request right now. No API key needed for the free tier:',
+    endpointsTitle: 'API Endpoints',
+    endpointSalaryTitle: 'Get Salary Data',
+    endpointSalaryDesc: 'Returns gross and net salary figures for a specific country, job, and experience level.',
+    endpointCompareTitle: 'Compare Across Countries',
+    endpointCompareDesc: 'Returns salary data for a given job and level across all available countries, sorted by gross salary descending.',
+    endpointMinWageTitle: 'Minimum Wage',
+    endpointMinWageDesc: 'Returns the current statutory minimum wage for a specific country, including monthly and hourly rates.',
+    responseTitle: 'Response Format',
+    responseDesc: 'All endpoints return JSON with a consistent envelope. Salary values are annual gross in EUR unless otherwise specified.',
+    authTitle: 'Authentication',
+    authDesc: 'Authentication depends on your plan:',
+    authFree: 'Free tier: No API key required. Simply make requests to the endpoints listed above.',
+    authPaid: 'Paid plans: Include your API key in the Authorization header as a Bearer token.',
+    rateLimitsTitle: 'Rate Limits',
+    rateLimitsDesc: 'Rate limits are enforced per IP address for the free tier and per API key for paid plans.',
+    rateLimitTier: 'Tier',
+    rateLimitRequests: 'Requests',
+    rateLimitWindow: 'Window',
+    pricingTitle: 'Pricing',
+    pricingDesc: 'Choose the plan that fits your usage. All plans include the same data quality and endpoint access.',
+    pricingFreeLabel: 'Free',
+    pricingFreeDesc: '100 requests per hour. No key required. Perfect for prototyping and personal projects.',
+    pricingDevLabel: 'Developer -- \u20ac49/mo',
+    pricingDevDesc: '10,000 requests per day. API key with usage dashboard. Email support.',
+    pricingBizLabel: 'Business -- \u20ac199/mo',
+    pricingBizDesc: '100,000 requests per day. Priority support. Webhook notifications for data updates.',
+    pricingEntLabel: 'Enterprise -- Custom',
+    pricingEntDesc: 'Unlimited requests. Dedicated account manager. Custom SLA and data exports.',
+    sdkTitle: 'SDK & Code Examples',
+    sdkDesc: 'Integrate EuroSalary data into your application with these ready-to-use examples.',
+    ctaTitle: 'Ready to Get Started?',
+    ctaDesc: 'Create a free account to start using the API immediately. Upgrade anytime as your usage grows.',
+    ctaButton: 'Create Free Account',
+    paramCountry: 'ISO 3166-1 alpha-2 country code (e.g. DE, FR, ES)',
+    paramJob: 'Job slug in kebab-case (e.g. software-engineer)',
+    paramLevel: 'Experience level: junior, mid, or senior',
+    paramFormat: 'Response format: json (default) or csv',
+    parametersTitle: 'Query Parameters',
+    faq: [
+      { question: 'Is the EuroSalary API free to use?', answer: 'Yes. The free tier gives you 100 requests per hour with no API key required. This is sufficient for personal projects, academic research, and prototyping. Paid plans are available when you need higher limits or dedicated support.' },
+      { question: 'What countries and jobs does the API cover?', answer: 'The API currently covers 15 European countries (Germany, France, Spain, Netherlands, Belgium, Austria, Switzerland, Luxembourg, Ireland, Portugal, Italy, Poland, Czech Republic, Sweden, Denmark) and 21 job categories across technology, finance, healthcare, engineering, and more.' },
+      { question: 'How often is the salary data updated?', answer: 'Salary data is refreshed weekly from job board sources and quarterly from Eurostat. The API always serves the latest available data. You can check the last_updated field in every response to see exactly when the data was last refreshed.' },
+      { question: 'Can I use the API in a commercial product?', answer: 'Yes. All paid plans include a commercial use license. The free tier is limited to non-commercial and personal use. If you are building a product that displays or resells salary data, you need at least the Developer plan.' },
+      { question: 'What happens if I exceed my rate limit?', answer: 'When you exceed your rate limit, the API returns a 429 Too Many Requests response with a Retry-After header indicating how many seconds to wait. Free tier limits reset every hour. Paid plan limits reset daily at midnight UTC.' },
+    ],
+  },
+  fr: {
+    h1: 'Comment acc\u00e9der aux donn\u00e9es salariales europ\u00e9ennes via API\u00a0?',
+    metaTitle: 'API Salaires : acc\u00e9dez aux donn\u00e9es salariales europ\u00e9ennes par programme | EuroSalary.eu',
+    metaDesc: 'Acc\u00e9dez aux donn\u00e9es salariales de 15 pays europ\u00e9ens et 21 cat\u00e9gories d\u2019emploi via une API REST simple. Niveau gratuit avec 100 requ\u00eates par heure. R\u00e9ponses JSON avec ventilation brut et net.',
+    home: 'Accueil',
+    breadcrumb: 'API Salaires',
+    tldr: [
+      'Gratuit\u00a0: 100 requ\u00eates par heure, aucune cl\u00e9 API n\u00e9cessaire',
+      '15 pays et 21 cat\u00e9gories d\u2019emploi avec niveaux junior, confirm\u00e9 et senior',
+      'R\u00e9ponses JSON structur\u00e9es avec salaire brut, net et ventilation fiscale',
+    ],
+    intro: 'L\u2019API EuroSalary offre aux d\u00e9veloppeurs, chercheurs et plateformes RH un acc\u00e8s direct \u00e0 notre base de donn\u00e9es salariales europ\u00e9ennes harmonis\u00e9es. Chaque endpoint renvoie du JSON structur\u00e9, prend en charge quatre langues et s\u2019appuie sur les m\u00eames donn\u00e9es v\u00e9rifi\u00e9es par Eurostat qui alimentent notre site web. Commencez \u00e0 faire des requ\u00eates en moins d\u2019une minute sans aucune configuration.',
+    quickStartTitle: 'D\u00e9marrage rapide',
+    quickStartDesc: 'Faites votre premi\u00e8re requ\u00eate maintenant. Aucune cl\u00e9 API n\u00e9cessaire pour le niveau gratuit\u00a0:',
+    endpointsTitle: 'Points d\u2019acc\u00e8s API',
+    endpointSalaryTitle: 'Obtenir les donn\u00e9es salariales',
+    endpointSalaryDesc: 'Renvoie les salaires brut et net pour un pays, un m\u00e9tier et un niveau d\u2019exp\u00e9rience sp\u00e9cifiques.',
+    endpointCompareTitle: 'Comparer entre pays',
+    endpointCompareDesc: 'Renvoie les donn\u00e9es salariales pour un m\u00e9tier et un niveau donn\u00e9s dans tous les pays disponibles, tri\u00e9es par salaire brut d\u00e9croissant.',
+    endpointMinWageTitle: 'Salaire minimum',
+    endpointMinWageDesc: 'Renvoie le salaire minimum l\u00e9gal actuel pour un pays sp\u00e9cifique, y compris les taux mensuels et horaires.',
+    responseTitle: 'Format de r\u00e9ponse',
+    responseDesc: 'Tous les endpoints renvoient du JSON avec une enveloppe coh\u00e9rente. Les valeurs salariales sont en brut annuel en EUR sauf indication contraire.',
+    authTitle: 'Authentification',
+    authDesc: 'L\u2019authentification d\u00e9pend de votre forfait\u00a0:',
+    authFree: 'Niveau gratuit\u00a0: aucune cl\u00e9 API requise. Faites simplement des requ\u00eates aux endpoints list\u00e9s ci-dessus.',
+    authPaid: 'Forfaits payants\u00a0: incluez votre cl\u00e9 API dans l\u2019en-t\u00eate Authorization comme token Bearer.',
+    rateLimitsTitle: 'Limites de d\u00e9bit',
+    rateLimitsDesc: 'Les limites de d\u00e9bit sont appliqu\u00e9es par adresse IP pour le niveau gratuit et par cl\u00e9 API pour les forfaits payants.',
+    rateLimitTier: 'Forfait',
+    rateLimitRequests: 'Requ\u00eates',
+    rateLimitWindow: 'Fen\u00eatre',
+    pricingTitle: 'Tarification',
+    pricingDesc: 'Choisissez le forfait adapt\u00e9 \u00e0 votre utilisation. Tous les forfaits incluent la m\u00eame qualit\u00e9 de donn\u00e9es et le m\u00eame acc\u00e8s aux endpoints.',
+    pricingFreeLabel: 'Gratuit',
+    pricingFreeDesc: '100 requ\u00eates par heure. Aucune cl\u00e9 requise. Parfait pour le prototypage et les projets personnels.',
+    pricingDevLabel: 'D\u00e9veloppeur -- 49\u00a0\u20ac/mois',
+    pricingDevDesc: '10\u00a0000 requ\u00eates par jour. Cl\u00e9 API avec tableau de bord d\u2019utilisation. Support par email.',
+    pricingBizLabel: 'Business -- 199\u00a0\u20ac/mois',
+    pricingBizDesc: '100\u00a0000 requ\u00eates par jour. Support prioritaire. Notifications webhook pour les mises \u00e0 jour de donn\u00e9es.',
+    pricingEntLabel: 'Entreprise -- Sur mesure',
+    pricingEntDesc: 'Requ\u00eates illimit\u00e9es. Gestionnaire de compte d\u00e9di\u00e9. SLA personnalis\u00e9 et exports de donn\u00e9es.',
+    sdkTitle: 'SDK et exemples de code',
+    sdkDesc: 'Int\u00e9grez les donn\u00e9es EuroSalary dans votre application avec ces exemples pr\u00eats \u00e0 l\u2019emploi.',
+    ctaTitle: 'Pr\u00eat \u00e0 commencer\u00a0?',
+    ctaDesc: 'Cr\u00e9ez un compte gratuit pour commencer \u00e0 utiliser l\u2019API imm\u00e9diatement. Passez \u00e0 un forfait sup\u00e9rieur \u00e0 tout moment.',
+    ctaButton: 'Cr\u00e9er un compte gratuit',
+    paramCountry: 'Code pays ISO 3166-1 alpha-2 (ex. DE, FR, ES)',
+    paramJob: 'Slug du m\u00e9tier en kebab-case (ex. software-engineer)',
+    paramLevel: 'Niveau d\u2019exp\u00e9rience\u00a0: junior, mid ou senior',
+    paramFormat: 'Format de r\u00e9ponse\u00a0: json (par d\u00e9faut) ou csv',
+    parametersTitle: 'Param\u00e8tres de requ\u00eate',
+    faq: [
+      { question: 'L\u2019API EuroSalary est-elle gratuite\u00a0?', answer: 'Oui. Le niveau gratuit vous donne 100 requ\u00eates par heure sans cl\u00e9 API. C\u2019est suffisant pour les projets personnels, la recherche acad\u00e9mique et le prototypage. Des forfaits payants sont disponibles lorsque vous avez besoin de limites plus \u00e9lev\u00e9es ou d\u2019un support d\u00e9di\u00e9.' },
+      { question: 'Quels pays et m\u00e9tiers l\u2019API couvre-t-elle\u00a0?', answer: 'L\u2019API couvre actuellement 15 pays europ\u00e9ens (Allemagne, France, Espagne, Pays-Bas, Belgique, Autriche, Suisse, Luxembourg, Irlande, Portugal, Italie, Pologne, R\u00e9publique tch\u00e8que, Su\u00e8de, Danemark) et 21 cat\u00e9gories d\u2019emploi dans la technologie, la finance, la sant\u00e9, l\u2019ing\u00e9nierie et plus encore.' },
+      { question: '\u00c0 quelle fr\u00e9quence les donn\u00e9es salariales sont-elles mises \u00e0 jour\u00a0?', answer: 'Les donn\u00e9es salariales sont actualis\u00e9es chaque semaine \u00e0 partir des sites d\u2019emploi et trimestriellement depuis Eurostat. L\u2019API sert toujours les derni\u00e8res donn\u00e9es disponibles. Consultez le champ last_updated dans chaque r\u00e9ponse pour savoir exactement quand les donn\u00e9es ont \u00e9t\u00e9 rafra\u00eechies.' },
+      { question: 'Puis-je utiliser l\u2019API dans un produit commercial\u00a0?', answer: 'Oui. Tous les forfaits payants incluent une licence d\u2019utilisation commerciale. Le niveau gratuit est limit\u00e9 \u00e0 un usage non commercial et personnel. Si vous construisez un produit qui affiche ou revend des donn\u00e9es salariales, vous avez besoin au minimum du forfait D\u00e9veloppeur.' },
+      { question: 'Que se passe-t-il si je d\u00e9passe ma limite de d\u00e9bit\u00a0?', answer: 'Lorsque vous d\u00e9passez votre limite, l\u2019API renvoie une r\u00e9ponse 429 Too Many Requests avec un en-t\u00eate Retry-After indiquant le nombre de secondes \u00e0 attendre. Les limites du niveau gratuit se r\u00e9initialisent chaque heure. Les limites des forfaits payants se r\u00e9initialisent quotidiennement \u00e0 minuit UTC.' },
+    ],
+  },
+  de: {
+    h1: 'Wie k\u00f6nnen Sie \u00fcber eine API auf europ\u00e4ische Gehaltsdaten zugreifen?',
+    metaTitle: 'Gehalts-API: Europ\u00e4ische Gehaltsdaten programmatisch abrufen | EuroSalary.eu',
+    metaDesc: 'Greifen Sie auf Gehaltsdaten f\u00fcr 15 europ\u00e4ische L\u00e4nder und 21 Berufskategorien \u00fcber eine einfache REST-API zu. Kostenlose Stufe mit 100 Anfragen pro Stunde. JSON-Antworten mit Brutto- und Nettogehaltsaufschl\u00fcsselung.',
+    home: 'Startseite',
+    breadcrumb: 'Gehalts-API',
+    tldr: [
+      'Kostenlos: 100 Anfragen pro Stunde, kein API-Schl\u00fcssel erforderlich',
+      '15 L\u00e4nder und 21 Berufskategorien mit Junior-, Mid- und Senior-Level',
+      'Strukturierte JSON-Antworten mit Bruttogehalt, Nettogehalt und Steueraufschl\u00fcsselung',
+    ],
+    intro: 'Die EuroSalary-API bietet Entwicklern, Forschern und HR-Plattformen direkten Zugang zu unserem harmonisierten europ\u00e4ischen Gehaltsdatensatz. Jeder Endpoint liefert strukturiertes JSON, unterst\u00fctzt vier Sprachen und basiert auf denselben Eurostat-verifizierten Daten, die unsere Website antreiben. Starten Sie in weniger als einer Minute ohne jede Konfiguration.',
+    quickStartTitle: 'Schnellstart',
+    quickStartDesc: 'Stellen Sie jetzt Ihre erste Anfrage. Kein API-Schl\u00fcssel f\u00fcr die kostenlose Stufe n\u00f6tig:',
+    endpointsTitle: 'API-Endpunkte',
+    endpointSalaryTitle: 'Gehaltsdaten abrufen',
+    endpointSalaryDesc: 'Gibt Brutto- und Nettogehaltszahlen f\u00fcr ein bestimmtes Land, einen Beruf und eine Erfahrungsstufe zur\u00fcck.',
+    endpointCompareTitle: 'L\u00e4nder\u00fcbergreifend vergleichen',
+    endpointCompareDesc: 'Gibt Gehaltsdaten f\u00fcr einen bestimmten Beruf und ein Level \u00fcber alle verf\u00fcgbaren L\u00e4nder zur\u00fcck, sortiert nach Bruttogehalt absteigend.',
+    endpointMinWageTitle: 'Mindestlohn',
+    endpointMinWageDesc: 'Gibt den aktuellen gesetzlichen Mindestlohn f\u00fcr ein bestimmtes Land zur\u00fcck, einschlie\u00dflich Monats- und Stundens\u00e4tzen.',
+    responseTitle: 'Antwortformat',
+    responseDesc: 'Alle Endpunkte geben JSON mit einer einheitlichen H\u00fclle zur\u00fcck. Gehaltswerte sind j\u00e4hrliche Bruttowerte in EUR, sofern nicht anders angegeben.',
+    authTitle: 'Authentifizierung',
+    authDesc: 'Die Authentifizierung h\u00e4ngt von Ihrem Tarif ab:',
+    authFree: 'Kostenlose Stufe: Kein API-Schl\u00fcssel erforderlich. Stellen Sie einfach Anfragen an die oben genannten Endpunkte.',
+    authPaid: 'Bezahltarife: F\u00fcgen Sie Ihren API-Schl\u00fcssel im Authorization-Header als Bearer-Token ein.',
+    rateLimitsTitle: 'Ratenlimits',
+    rateLimitsDesc: 'Ratenlimits werden pro IP-Adresse f\u00fcr die kostenlose Stufe und pro API-Schl\u00fcssel f\u00fcr Bezahltarife durchgesetzt.',
+    rateLimitTier: 'Stufe',
+    rateLimitRequests: 'Anfragen',
+    rateLimitWindow: 'Zeitfenster',
+    pricingTitle: 'Preise',
+    pricingDesc: 'W\u00e4hlen Sie den Tarif, der zu Ihrer Nutzung passt. Alle Tarife beinhalten dieselbe Datenqualit\u00e4t und denselben Endpoint-Zugang.',
+    pricingFreeLabel: 'Kostenlos',
+    pricingFreeDesc: '100 Anfragen pro Stunde. Kein Schl\u00fcssel erforderlich. Perfekt f\u00fcr Prototyping und pers\u00f6nliche Projekte.',
+    pricingDevLabel: 'Entwickler -- 49\u00a0\u20ac/Monat',
+    pricingDevDesc: '10.000 Anfragen pro Tag. API-Schl\u00fcssel mit Nutzungs-Dashboard. E-Mail-Support.',
+    pricingBizLabel: 'Business -- 199\u00a0\u20ac/Monat',
+    pricingBizDesc: '100.000 Anfragen pro Tag. Priorit\u00e4ts-Support. Webhook-Benachrichtigungen bei Datenaktualisierungen.',
+    pricingEntLabel: 'Enterprise -- Individuell',
+    pricingEntDesc: 'Unbegrenzte Anfragen. Dedizierter Account-Manager. Individuelles SLA und Datenexporte.',
+    sdkTitle: 'SDK & Codebeispiele',
+    sdkDesc: 'Integrieren Sie EuroSalary-Daten in Ihre Anwendung mit diesen fertigen Beispielen.',
+    ctaTitle: 'Bereit loszulegen?',
+    ctaDesc: 'Erstellen Sie ein kostenloses Konto, um die API sofort zu nutzen. Upgraden Sie jederzeit bei steigender Nutzung.',
+    ctaButton: 'Kostenloses Konto erstellen',
+    paramCountry: 'ISO 3166-1 Alpha-2-L\u00e4ndercode (z.B. DE, FR, ES)',
+    paramJob: 'Berufs-Slug in Kebab-Case (z.B. software-engineer)',
+    paramLevel: 'Erfahrungsstufe: junior, mid oder senior',
+    paramFormat: 'Antwortformat: json (Standard) oder csv',
+    parametersTitle: 'Abfrageparameter',
+    faq: [
+      { question: 'Ist die EuroSalary-API kostenlos nutzbar?', answer: 'Ja. Die kostenlose Stufe bietet 100 Anfragen pro Stunde ohne API-Schl\u00fcssel. Das reicht f\u00fcr pers\u00f6nliche Projekte, akademische Forschung und Prototyping. Bezahltarife sind verf\u00fcgbar, wenn Sie h\u00f6here Limits oder dedizierten Support ben\u00f6tigen.' },
+      { question: 'Welche L\u00e4nder und Berufe deckt die API ab?', answer: 'Die API deckt derzeit 15 europ\u00e4ische L\u00e4nder ab (Deutschland, Frankreich, Spanien, Niederlande, Belgien, \u00d6sterreich, Schweiz, Luxemburg, Irland, Portugal, Italien, Polen, Tschechien, Schweden, D\u00e4nemark) und 21 Berufskategorien in Technologie, Finanzen, Gesundheitswesen, Ingenieurwesen und mehr.' },
+      { question: 'Wie oft werden die Gehaltsdaten aktualisiert?', answer: 'Gehaltsdaten werden w\u00f6chentlich aus Jobb\u00f6rsen und viertelj\u00e4hrlich von Eurostat aktualisiert. Die API liefert immer die neuesten verf\u00fcgbaren Daten. Pr\u00fcfen Sie das Feld last_updated in jeder Antwort, um genau zu sehen, wann die Daten zuletzt aktualisiert wurden.' },
+      { question: 'Kann ich die API in einem kommerziellen Produkt verwenden?', answer: 'Ja. Alle Bezahltarife beinhalten eine kommerzielle Nutzungslizenz. Die kostenlose Stufe ist auf nicht-kommerzielle und pers\u00f6nliche Nutzung beschr\u00e4nkt. Wenn Sie ein Produkt entwickeln, das Gehaltsdaten anzeigt oder weiterverkauft, ben\u00f6tigen Sie mindestens den Entwickler-Tarif.' },
+      { question: 'Was passiert, wenn ich mein Ratenlimit \u00fcberschreite?', answer: 'Bei \u00dcberschreitung Ihres Ratenlimits gibt die API eine 429-Antwort (Too Many Requests) mit einem Retry-After-Header zur\u00fcck, der angibt, wie viele Sekunden zu warten sind. Die Limits der kostenlosen Stufe werden st\u00fcndlich zur\u00fcckgesetzt. Bezahltarif-Limits werden t\u00e4glich um Mitternacht UTC zur\u00fcckgesetzt.' },
+    ],
+  },
+  es: {
+    h1: '\u00bfC\u00f3mo puedes acceder a datos salariales europeos mediante API?',
+    metaTitle: 'API de Salarios: accede a datos salariales europeos program\u00e1ticamente | EuroSalary.eu',
+    metaDesc: 'Accede a datos salariales de 15 pa\u00edses europeos y 21 categor\u00edas laborales mediante una API REST sencilla. Nivel gratuito con 100 solicitudes por hora. Respuestas JSON con desglose bruto y neto.',
+    home: 'Inicio',
+    breadcrumb: 'API de Salarios',
+    tldr: [
+      'Gratis: 100 solicitudes por hora, sin clave API necesaria',
+      '15 pa\u00edses y 21 categor\u00edas laborales con niveles junior, medio y senior',
+      'Respuestas JSON limpias con salario bruto, neto y desglose fiscal',
+    ],
+    intro: 'La API de EuroSalary ofrece a desarrolladores, investigadores y plataformas de RRHH acceso directo a nuestro conjunto de datos salariales europeos armonizados. Cada endpoint devuelve JSON estructurado, soporta cuatro idiomas y se basa en los mismos datos verificados por Eurostat que alimentan nuestro sitio web. Empieza a hacer solicitudes en menos de un minuto sin ninguna configuraci\u00f3n.',
+    quickStartTitle: 'Inicio r\u00e1pido',
+    quickStartDesc: 'Haz tu primera solicitud ahora mismo. No se necesita clave API para el nivel gratuito:',
+    endpointsTitle: 'Endpoints de la API',
+    endpointSalaryTitle: 'Obtener datos salariales',
+    endpointSalaryDesc: 'Devuelve las cifras de salario bruto y neto para un pa\u00eds, puesto y nivel de experiencia espec\u00edficos.',
+    endpointCompareTitle: 'Comparar entre pa\u00edses',
+    endpointCompareDesc: 'Devuelve datos salariales para un puesto y nivel dados en todos los pa\u00edses disponibles, ordenados por salario bruto descendente.',
+    endpointMinWageTitle: 'Salario m\u00ednimo',
+    endpointMinWageDesc: 'Devuelve el salario m\u00ednimo legal vigente para un pa\u00eds espec\u00edfico, incluyendo tasas mensuales y por hora.',
+    responseTitle: 'Formato de respuesta',
+    responseDesc: 'Todos los endpoints devuelven JSON con una estructura consistente. Los valores salariales son brutos anuales en EUR salvo indicaci\u00f3n contraria.',
+    authTitle: 'Autenticaci\u00f3n',
+    authDesc: 'La autenticaci\u00f3n depende de tu plan:',
+    authFree: 'Nivel gratuito: no se requiere clave API. Simplemente haz solicitudes a los endpoints listados arriba.',
+    authPaid: 'Planes de pago: incluye tu clave API en el encabezado Authorization como token Bearer.',
+    rateLimitsTitle: 'L\u00edmites de velocidad',
+    rateLimitsDesc: 'Los l\u00edmites se aplican por direcci\u00f3n IP para el nivel gratuito y por clave API para los planes de pago.',
+    rateLimitTier: 'Plan',
+    rateLimitRequests: 'Solicitudes',
+    rateLimitWindow: 'Ventana',
+    pricingTitle: 'Precios',
+    pricingDesc: 'Elige el plan que se adapte a tu uso. Todos los planes incluyen la misma calidad de datos y acceso a endpoints.',
+    pricingFreeLabel: 'Gratuito',
+    pricingFreeDesc: '100 solicitudes por hora. Sin clave necesaria. Perfecto para prototipos y proyectos personales.',
+    pricingDevLabel: 'Desarrollador -- 49\u00a0\u20ac/mes',
+    pricingDevDesc: '10.000 solicitudes por d\u00eda. Clave API con panel de uso. Soporte por email.',
+    pricingBizLabel: 'Business -- 199\u00a0\u20ac/mes',
+    pricingBizDesc: '100.000 solicitudes por d\u00eda. Soporte prioritario. Notificaciones webhook para actualizaciones de datos.',
+    pricingEntLabel: 'Enterprise -- Personalizado',
+    pricingEntDesc: 'Solicitudes ilimitadas. Gestor de cuenta dedicado. SLA personalizado y exportaciones de datos.',
+    sdkTitle: 'SDK y ejemplos de c\u00f3digo',
+    sdkDesc: 'Integra los datos de EuroSalary en tu aplicaci\u00f3n con estos ejemplos listos para usar.',
+    ctaTitle: '\u00bfListo para empezar?',
+    ctaDesc: 'Crea una cuenta gratuita para empezar a usar la API de inmediato. Actualiza tu plan en cualquier momento seg\u00fan crezca tu uso.',
+    ctaButton: 'Crear cuenta gratuita',
+    paramCountry: 'C\u00f3digo de pa\u00eds ISO 3166-1 alfa-2 (ej. DE, FR, ES)',
+    paramJob: 'Slug del puesto en kebab-case (ej. software-engineer)',
+    paramLevel: 'Nivel de experiencia: junior, mid o senior',
+    paramFormat: 'Formato de respuesta: json (por defecto) o csv',
+    parametersTitle: 'Par\u00e1metros de consulta',
+    faq: [
+      { question: '\u00bfEs gratuita la API de EuroSalary?', answer: 'S\u00ed. El nivel gratuito te da 100 solicitudes por hora sin clave API. Es suficiente para proyectos personales, investigaci\u00f3n acad\u00e9mica y prototipos. Los planes de pago est\u00e1n disponibles cuando necesites l\u00edmites m\u00e1s altos o soporte dedicado.' },
+      { question: '\u00bfQu\u00e9 pa\u00edses y puestos cubre la API?', answer: 'La API cubre actualmente 15 pa\u00edses europeos (Alemania, Francia, Espa\u00f1a, Pa\u00edses Bajos, B\u00e9lgica, Austria, Suiza, Luxemburgo, Irlanda, Portugal, Italia, Polonia, Rep\u00fablica Checa, Suecia, Dinamarca) y 21 categor\u00edas laborales en tecnolog\u00eda, finanzas, salud, ingenier\u00eda y m\u00e1s.' },
+      { question: '\u00bfCon qu\u00e9 frecuencia se actualizan los datos salariales?', answer: 'Los datos salariales se actualizan semanalmente desde portales de empleo y trimestralmente desde Eurostat. La API siempre sirve los \u00faltimos datos disponibles. Consulta el campo last_updated en cada respuesta para saber exactamente cu\u00e1ndo se actualizaron los datos.' },
+      { question: '\u00bfPuedo usar la API en un producto comercial?', answer: 'S\u00ed. Todos los planes de pago incluyen licencia de uso comercial. El nivel gratuito est\u00e1 limitado a uso no comercial y personal. Si est\u00e1s construyendo un producto que muestra o revende datos salariales, necesitas al menos el plan Desarrollador.' },
+      { question: '\u00bfQu\u00e9 sucede si excedo mi l\u00edmite de velocidad?', answer: 'Cuando excedes tu l\u00edmite, la API devuelve una respuesta 429 Too Many Requests con un encabezado Retry-After indicando cu\u00e1ntos segundos esperar. Los l\u00edmites del nivel gratuito se restablecen cada hora. Los l\u00edmites de planes de pago se restablecen diariamente a medianoche UTC.' },
+    ],
+  },
+};
+
+// --------------- getStaticPaths ---------------
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+// --------------- Page data ---------------
+const { lang } = Astro.params;
+const t = fb(i18n, lang) || i18n.en;
+const ui = useTranslations(lang as any);
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: t.h1,
+    author: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    datePublished: '2026-04-01',
+    dateModified: '2026-04-04',
+    description: t.metaDesc,
+    mainEntityOfPage: `https://eurosalary.eu/${lang}/salary-api/`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: t.faq.map((item: any) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title={t.metaTitle}
+  description={t.metaDesc}
+  datePublished="2026-04-01"
+  dateModified="2026-04-04"
+  schema={pageSchema}
+>
+  <!-- Hero -->
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{t.home}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{t.breadcrumb}</span>
+      </nav>
+      <div class="page-hero__grid">
+        <div class="page-hero__content">
+          <h1 class="page-hero__title">{t.h1}</h1>
+          <p class="page-hero__desc">{t.intro}</p>
+        </div>
+        <div class="page-hero__side">
+          <div class="page-hero__card api-version-card">
+            <span class="page-hero__card-label">API</span>
+            <p class="page-hero__card-item">v1.0</p>
+            <p class="page-hero__card-item">REST / JSON</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <article class="container page-body">
+
+    <!-- TL;DR -->
+    <TLDRBox items={t.tldr} />
+
+    <!-- Quick Start -->
+    <section class="section">
+      <h2>{t.quickStartTitle}</h2>
+      <p>{t.quickStartDesc}</p>
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">bash</span>
+          <span class="code-block__label">curl</span>
+        </div>
+        <pre><code>{`curl -s "https://api.eurosalary.eu/v1/salary?country=DE&job=software-engineer&level=mid" | jq .`}</code></pre>
+      </div>
+    </section>
+
+    <!-- Endpoints -->
+    <section class="section">
+      <h2>{t.endpointsTitle}</h2>
+
+      <!-- Salary endpoint -->
+      <div class="endpoint">
+        <h3>{t.endpointSalaryTitle}</h3>
+        <p>{t.endpointSalaryDesc}</p>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__method">GET</span>
+            <span class="code-block__label">/api/v1/salary</span>
+          </div>
+          <pre><code>GET /api/v1/salary?country=DE&amp;job=software-engineer&amp;level=mid</code></pre>
+        </div>
+      </div>
+
+      <!-- Compare endpoint -->
+      <div class="endpoint">
+        <h3>{t.endpointCompareTitle}</h3>
+        <p>{t.endpointCompareDesc}</p>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__method">GET</span>
+            <span class="code-block__label">/api/v1/compare</span>
+          </div>
+          <pre><code>GET /api/v1/compare?job=software-engineer&amp;level=mid</code></pre>
+        </div>
+      </div>
+
+      <!-- Minimum wage endpoint -->
+      <div class="endpoint">
+        <h3>{t.endpointMinWageTitle}</h3>
+        <p>{t.endpointMinWageDesc}</p>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__method">GET</span>
+            <span class="code-block__label">/api/v1/minimum-wage</span>
+          </div>
+          <pre><code>GET /api/v1/minimum-wage?country=DE</code></pre>
+        </div>
+      </div>
+
+      <!-- Query Parameters -->
+      <div class="endpoint">
+        <h3>{t.parametersTitle}</h3>
+        <table class="api-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>country</code></td><td><code>string</code></td><td>{t.paramCountry}</td></tr>
+            <tr><td><code>job</code></td><td><code>string</code></td><td>{t.paramJob}</td></tr>
+            <tr><td><code>level</code></td><td><code>string</code></td><td>{t.paramLevel}</td></tr>
+            <tr><td><code>format</code></td><td><code>string</code></td><td>{t.paramFormat}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Response Examples -->
+    <section class="section">
+      <h2>{t.responseTitle}</h2>
+      <p>{t.responseDesc}</p>
+
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">json</span>
+          <span class="code-block__label">/api/v1/salary</span>
+        </div>
+        <pre><code>{`{
+  "status": "ok",
+  "data": {
+    "country": "DE",
+    "country_name": "Germany",
+    "job": "software-engineer",
+    "job_title": "Software Engineer",
+    "level": "mid",
+    "currency": "EUR",
+    "salary_gross_annual": 62400,
+    "salary_net_annual": 39200,
+    "salary_gross_monthly": 5200,
+    "salary_net_monthly": 3267,
+    "tax_rate": 0.372,
+    "social_contributions": 0.205,
+    "last_updated": "2026-03-31T00:00:00Z",
+    "sources": ["eurostat", "job_boards", "submissions"],
+    "sample_size": 1842,
+    "confidence": "high"
+  }
+}`}</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">json</span>
+          <span class="code-block__label">/api/v1/minimum-wage</span>
+        </div>
+        <pre><code>{`{
+  "status": "ok",
+  "data": {
+    "country": "DE",
+    "country_name": "Germany",
+    "currency": "EUR",
+    "minimum_wage_monthly": 2054,
+    "minimum_wage_hourly": 12.82,
+    "effective_date": "2026-01-01",
+    "last_updated": "2026-03-31T00:00:00Z"
+  }
+}`}</code></pre>
+      </div>
+    </section>
+
+    <!-- Authentication -->
+    <section class="section">
+      <h2>{t.authTitle}</h2>
+      <p>{t.authDesc}</p>
+      <div class="auth-methods">
+        <div class="auth-card">
+          <div class="auth-card__badge auth-card__badge--free">Free</div>
+          <p>{t.authFree}</p>
+        </div>
+        <div class="auth-card">
+          <div class="auth-card__badge auth-card__badge--paid">Paid</div>
+          <p>{t.authPaid}</p>
+          <div class="code-block code-block--compact">
+            <pre><code>Authorization: Bearer YOUR_API_KEY</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Rate Limits -->
+    <section class="section">
+      <h2>{t.rateLimitsTitle}</h2>
+      <p>{t.rateLimitsDesc}</p>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>{t.rateLimitTier}</th>
+            <th>{t.rateLimitRequests}</th>
+            <th>{t.rateLimitWindow}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Free</td><td>100</td><td>1 hour</td></tr>
+          <tr><td>Developer</td><td>10,000</td><td>24 hours</td></tr>
+          <tr><td>Business</td><td>100,000</td><td>24 hours</td></tr>
+          <tr><td>Enterprise</td><td>Unlimited</td><td>--</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Pricing -->
+    <section class="section">
+      <h2>{t.pricingTitle}</h2>
+      <p>{t.pricingDesc}</p>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-card__header">
+            <h3>{t.pricingFreeLabel}</h3>
+            <span class="pricing-card__price">&euro;0</span>
+          </div>
+          <p>{t.pricingFreeDesc}</p>
+        </div>
+        <div class="pricing-card pricing-card--popular">
+          <div class="pricing-card__header">
+            <h3>{t.pricingDevLabel}</h3>
+            <span class="pricing-card__price">&euro;49<small>/mo</small></span>
+          </div>
+          <p>{t.pricingDevDesc}</p>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-card__header">
+            <h3>{t.pricingBizLabel}</h3>
+            <span class="pricing-card__price">&euro;199<small>/mo</small></span>
+          </div>
+          <p>{t.pricingBizDesc}</p>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-card__header">
+            <h3>{t.pricingEntLabel}</h3>
+            <span class="pricing-card__price">Custom</span>
+          </div>
+          <p>{t.pricingEntDesc}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SDK Examples -->
+    <section class="section">
+      <h2>{t.sdkTitle}</h2>
+      <p>{t.sdkDesc}</p>
+
+      <!-- JavaScript -->
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">javascript</span>
+          <span class="code-block__label">Node.js / Browser</span>
+        </div>
+        <pre><code>{`const response = await fetch(
+  "https://api.eurosalary.eu/v1/salary?country=DE&job=software-engineer&level=mid"
+);
+const { data } = await response.json();
+
+console.log(data.salary_gross_annual); // 62400
+console.log(data.salary_net_monthly);  // 3267`}</code></pre>
+      </div>
+
+      <!-- Python -->
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">python</span>
+          <span class="code-block__label">Python 3</span>
+        </div>
+        <pre><code>{`import requests
+
+response = requests.get(
+    "https://api.eurosalary.eu/v1/salary",
+    params={"country": "DE", "job": "software-engineer", "level": "mid"}
+)
+data = response.json()["data"]
+
+print(f"Gross: €{data['salary_gross_annual']:,}")  # Gross: €62,400
+print(f"Net:   €{data['salary_net_monthly']:,}")    # Net:   €3,267`}</code></pre>
+      </div>
+
+      <!-- curl with auth -->
+      <div class="code-block">
+        <div class="code-block__header">
+          <span class="code-block__lang">bash</span>
+          <span class="code-block__label">curl (authenticated)</span>
+        </div>
+        <pre><code>{`curl -H "Authorization: Bearer YOUR_API_KEY" \\
+  "https://api.eurosalary.eu/v1/compare?job=software-engineer&level=mid" | jq .`}</code></pre>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <FAQSection items={t.faq} />
+
+    <!-- CTA -->
+    <section class="section cta-section">
+      <h2>{t.ctaTitle}</h2>
+      <p>{t.ctaDesc}</p>
+      <a href={`/${lang}/premium/`} class="cta-button">{t.ctaButton}</a>
+    </section>
+
+  </article>
+</BaseLayout>
+
+<style>
+  /* ---- Page body ---- */
+  .page-body {
+    padding-top: 2.5rem;
+    padding-bottom: 4rem;
+  }
+  .page-body h2 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #0F1F3D;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+  }
+  .page-body h3 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0F1F3D;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .page-body p {
+    line-height: 1.7;
+    color: rgba(15, 31, 61, 0.85);
+    margin-bottom: 1rem;
+  }
+
+  /* ---- API version card ---- */
+  .api-version-card {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  /* ---- Code blocks ---- */
+  .code-block {
+    background: #1a1a2e;
+    border-radius: 8px;
+    margin: 1rem 0 1.5rem;
+    overflow: hidden;
+    border: 1px solid rgba(37, 99, 235, 0.2);
+  }
+  .code-block__header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .code-block__lang {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #2563EB;
+    background: rgba(37, 99, 235, 0.15);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+  }
+  .code-block__method {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.15);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+  }
+  .code-block__label {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .code-block pre {
+    margin: 0;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+  }
+  .code-block code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #e2e8f0;
+    white-space: pre;
+  }
+  .code-block--compact {
+    margin: 0.75rem 0 0;
+  }
+
+  /* ---- Endpoint blocks ---- */
+  .endpoint {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(15, 31, 61, 0.08);
+  }
+  .endpoint:last-child {
+    border-bottom: none;
+  }
+
+  /* ---- API tables ---- */
+  .api-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+  }
+  .api-table thead {
+    background: #0F1F3D;
+    color: #fff;
+  }
+  .api-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .api-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(15, 31, 61, 0.08);
+    color: rgba(15, 31, 61, 0.85);
+  }
+  .api-table code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.8rem;
+    color: #2563EB;
+    background: rgba(37, 99, 235, 0.08);
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+  }
+  .api-table tbody tr:hover {
+    background: rgba(37, 99, 235, 0.03);
+  }
+
+  /* ---- Auth cards ---- */
+  .auth-methods {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+  .auth-card {
+    background: #f8fafc;
+    border: 1px solid rgba(15, 31, 61, 0.1);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+  .auth-card p {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+  .auth-card__badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+  }
+  .auth-card__badge--free {
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.1);
+  }
+  .auth-card__badge--paid {
+    color: #2563EB;
+    background: rgba(37, 99, 235, 0.1);
+  }
+
+  /* ---- Pricing grid ---- */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+  .pricing-card {
+    background: #f8fafc;
+    border: 1px solid rgba(15, 31, 61, 0.1);
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: border-color 0.2s;
+  }
+  .pricing-card:hover {
+    border-color: rgba(37, 99, 235, 0.3);
+  }
+  .pricing-card--popular {
+    border-color: #2563EB;
+    background: linear-gradient(180deg, rgba(37, 99, 235, 0.04) 0%, #f8fafc 100%);
+    position: relative;
+  }
+  .pricing-card__header {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(15, 31, 61, 0.08);
+  }
+  .pricing-card__header h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    color: #0F1F3D;
+  }
+  .pricing-card__price {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #0F1F3D;
+  }
+  .pricing-card__price small {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(15, 31, 61, 0.5);
+  }
+  .pricing-card p {
+    font-size: 0.85rem;
+    color: rgba(15, 31, 61, 0.7);
+    line-height: 1.6;
+  }
+
+  /* ---- CTA section ---- */
+  .cta-section {
+    text-align: center;
+    padding: 3rem 2rem;
+    margin-top: 2rem;
+    background: linear-gradient(135deg, #0F1F3D 0%, #1a2f5a 100%);
+    border-radius: 12px;
+    color: #fff;
+  }
+  .cta-section h2 {
+    color: #fff;
+  }
+  .cta-section p {
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 500px;
+    margin: 0 auto 1.5rem;
+  }
+  .cta-button {
+    display: inline-block;
+    padding: 0.85rem 2rem;
+    background: #2563EB;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .cta-button:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 900px) {
+    .pricing-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .auth-methods {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 600px) {
+    .pricing-grid {
+      grid-template-columns: 1fr;
+    }
+    .api-table {
+      font-size: 0.8rem;
+    }
+    .api-table th,
+    .api-table td {
+      padding: 0.5rem 0.65rem;
+    }
+    .code-block code {
+      font-size: 0.75rem;
+    }
+  }
+</style>

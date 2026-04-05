@@ -1,0 +1,353 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { countrySlugsByLang, jobSlugsByLang, countryFlags } from '../../../data/slugs';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+import { countryNames, jobNames, uiLabels } from '../../../i18n/translations';
+
+// --------------- Country data ---------------
+const countryDataMap: Record<string, { avgSalary: number; minWage: string; minWageAnnual: string; taxRate: string; taxType: string; costOfLiving: number; population: string; popNote: string; currency: string; currencyNote: string }> = {
+  DE: { avgSalary: 52000, minWage: '\u20AC12.82/hr', minWageAnnual: '~\u20AC28,000/year', taxRate: '14-45%', taxType: 'progressive', costOfLiving: 65.3, population: '84.5M', popNote: 'largest EU economy', currency: 'EUR', currencyNote: 'Eurozone member' },
+  FR: { avgSalary: 45000, minWage: '\u20AC11.65/hr', minWageAnnual: '~\u20AC25,000/year', taxRate: '11-45%', taxType: 'progressive', costOfLiving: 62.8, population: '68M', popNote: '2nd largest EU', currency: 'EUR', currencyNote: 'Eurozone member' },
+  ES: { avgSalary: 32000, minWage: '\u20AC8.45/hr', minWageAnnual: '~\u20AC18,000/year', taxRate: '19-47%', taxType: 'progressive', costOfLiving: 52.4, population: '47.5M', popNote: '4th largest EU', currency: 'EUR', currencyNote: 'Eurozone member' },
+  NL: { avgSalary: 52000, minWage: '\u20AC13.27/hr', minWageAnnual: '~\u20AC28,500/year', taxRate: '9.32-49.5%', taxType: 'progressive', costOfLiving: 68.5, population: '17.8M', popNote: 'high density', currency: 'EUR', currencyNote: 'Eurozone member' },
+  BE: { avgSalary: 48000, minWage: '\u20AC12.10/hr', minWageAnnual: '~\u20AC26,000/year', taxRate: '25-50%', taxType: 'progressive', costOfLiving: 63.1, population: '11.6M', popNote: 'EU capital', currency: 'EUR', currencyNote: 'Eurozone member' },
+  IT: { avgSalary: 36000, minWage: 'None', minWageAnnual: 'sector agreements', taxRate: '23-43%', taxType: 'progressive', costOfLiving: 56.2, population: '59M', popNote: '3rd largest EU', currency: 'EUR', currencyNote: 'Eurozone member' },
+  PT: { avgSalary: 26000, minWage: '\u20AC5.27/hr', minWageAnnual: '~\u20AC11,200/year', taxRate: '14.5-48%', taxType: 'progressive', costOfLiving: 45.3, population: '10.3M', popNote: 'growing tech hub', currency: 'EUR', currencyNote: 'Eurozone member' },
+  PL: { avgSalary: 24000, minWage: '\u20AC5.10/hr', minWageAnnual: '~\u20AC10,800/year', taxRate: '12-32%', taxType: 'progressive', costOfLiving: 38.7, population: '37.7M', popNote: 'largest CEE', currency: 'PLN', currencyNote: 'Polish Z\u0142oty (salaries shown in EUR)' },
+  SE: { avgSalary: 50000, minWage: 'None', minWageAnnual: 'collective agreements', taxRate: '20-52%', taxType: 'progressive + municipal', costOfLiving: 69.8, population: '10.5M', popNote: 'Nordic model', currency: 'SEK', currencyNote: 'Swedish Krona (salaries shown in EUR)' },
+  AT: { avgSalary: 50000, minWage: '\u20AC10.90/hr', minWageAnnual: '~\u20AC23,000/year', taxRate: '20-55%', taxType: 'progressive', costOfLiving: 64.0, population: '9.1M', popNote: 'high quality of life', currency: 'EUR', currencyNote: 'Eurozone member' },
+  CH: { avgSalary: 95000, minWage: 'Varies by canton', minWageAnnual: '~CHF 50,000/year', taxRate: '0-11.5%', taxType: 'federal + cantonal', costOfLiving: 122.4, population: '8.9M', popNote: 'EFTA member', currency: 'CHF', currencyNote: 'Swiss Franc (salaries shown in EUR)' },
+  LU: { avgSalary: 68000, minWage: '\u20AC14.86/hr', minWageAnnual: '~\u20AC32,000/year', taxRate: '0-42%', taxType: 'progressive', costOfLiving: 82.1, population: '0.66M', popNote: 'highest GDP/capita EU', currency: 'EUR', currencyNote: 'Eurozone member' },
+  IE: { avgSalary: 55000, minWage: '\u20AC12.70/hr', minWageAnnual: '~\u20AC27,000/year', taxRate: '20-40%', taxType: 'two-rate', costOfLiving: 73.2, population: '5.1M', popNote: 'EU tech hub', currency: 'EUR', currencyNote: 'Eurozone member' },
+  DK: { avgSalary: 58000, minWage: 'None', minWageAnnual: 'collective agreements', taxRate: '37-52%', taxType: 'progressive + municipal', costOfLiving: 83.5, population: '5.9M', popNote: 'Nordic model', currency: 'DKK', currencyNote: 'Danish Krone (salaries shown in EUR)' },
+  FI: { avgSalary: 44000, minWage: 'None', minWageAnnual: 'collective agreements', taxRate: '12.64-44%', taxType: 'progressive + municipal', costOfLiving: 67.5, population: '5.5M', popNote: 'Nordic model', currency: 'EUR', currencyNote: 'Eurozone member' },
+};
+
+
+// --------------- FAQ templates (complex structure, kept inline) ---------------
+const faqTemplates: Record<string, Array<{ q: string; a: string }>> = {
+  en: [
+    { q: 'What is the average salary in {country} in 2026?', a: 'The average gross salary in {country} is approximately \u20AC{salary} per year across all professions. Actual salaries vary significantly by sector, experience level, and city.' },
+    { q: 'How much tax do you pay in {country}?', a: '{country} uses a {taxType} income tax system with rates of {taxRate}. Social contributions and local taxes may apply on top of the base income tax rate.' },
+    { q: 'How does {country} compare to other European countries for salaries?', a: 'With an average salary of \u20AC{salary}/year and a cost of living index of {col}, {country} offers a specific balance of earnings and expenses compared to the European average.' },
+  ],
+  fr: [
+    { q: 'Quel est le salaire moyen en {country} en 2026 ?', a: 'Le salaire brut moyen en {country} est d\'environ {salary} \u20AC par an toutes professions confondues. Les salaires r\u00e9els varient consid\u00e9rablement selon le secteur, l\'exp\u00e9rience et la ville.' },
+    { q: 'Combien d\'imp\u00f4ts paie-t-on en {country} ?', a: '{country} utilise un syst\u00e8me d\'imposition {taxType} avec des taux de {taxRate}. Des cotisations sociales et des imp\u00f4ts locaux peuvent s\'appliquer en plus.' },
+    { q: 'Comment {country} se compare aux autres pays europ\u00e9ens ?', a: 'Avec un salaire moyen de {salary} \u20AC/an et un indice du co\u00fbt de la vie de {col}, {country} offre un \u00e9quilibre sp\u00e9cifique entre revenus et d\u00e9penses par rapport \u00e0 la moyenne europ\u00e9enne.' },
+  ],
+  de: [
+    { q: 'Wie hoch ist das Durchschnittsgehalt in {country} 2026?', a: 'Das durchschnittliche Bruttogehalt in {country} betr\u00e4gt ca. {salary} \u20AC pro Jahr \u00fcber alle Berufe hinweg. Die tats\u00e4chlichen Geh\u00e4lter variieren erheblich nach Branche, Erfahrung und Stadt.' },
+    { q: 'Wie viel Steuern zahlt man in {country}?', a: '{country} verwendet ein {taxType}es Einkommensteuersystem mit S\u00e4tzen von {taxRate}. Sozialabgaben und lokale Steuern k\u00f6nnen zus\u00e4tzlich anfallen.' },
+    { q: 'Wie schneidet {country} im Vergleich zu anderen europ\u00e4ischen L\u00e4ndern ab?', a: 'Mit einem Durchschnittsgehalt von {salary} \u20AC/Jahr und einem Lebenshaltungskostenindex von {col} bietet {country} ein spezifisches Gleichgewicht zwischen Einkommen und Ausgaben im Vergleich zum europ\u00e4ischen Durchschnitt.' },
+  ],
+  es: [
+    { q: '\u00bfCu\u00e1l es el salario promedio en {country} en 2026?', a: 'El salario bruto promedio en {country} es de aproximadamente {salary} \u20AC al a\u00f1o en todas las profesiones. Los salarios reales var\u00edan significativamente seg\u00fan el sector, la experiencia y la ciudad.' },
+    { q: '\u00bfCu\u00e1ntos impuestos se pagan en {country}?', a: '{country} utiliza un sistema de impuesto sobre la renta {taxType} con tasas del {taxRate}. Las contribuciones sociales e impuestos locales pueden aplicarse adicionalmente.' },
+    { q: '\u00bfC\u00f3mo se compara {country} con otros pa\u00edses europeos?', a: 'Con un salario promedio de {salary} \u20AC/a\u00f1o y un \u00edndice de coste de vida de {col}, {country} ofrece un equilibrio espec\u00edfico entre ingresos y gastos en comparaci\u00f3n con la media europea.' },
+  ],
+};
+
+
+// --------------- getStaticPaths ---------------
+export function getStaticPaths() {
+  const paths: Array<{ params: { lang: string; country: string }; props: { countryCode: string; lang: string } }> = [];
+  for (const lang of Object.keys(languages)) {
+    const slugs = countrySlugsByLang[lang];
+    for (const [code, slug] of Object.entries(slugs)) {
+      paths.push({
+        params: { lang, country: slug },
+        props: { countryCode: code, lang },
+      });
+    }
+  }
+  return paths;
+}
+
+// --------------- Page props ---------------
+const { countryCode, lang } = Astro.props;
+const t = useTranslations(lang as any);
+const data = countryDataMap[countryCode]!;
+const countryName = fb(countryNames[countryCode], lang);
+const countrySlug = countrySlugsByLang[lang][countryCode];
+const flag = countryFlags[countryCode];
+const labels = {
+  avgSalary: fb(uiLabels.avgSalaryLabel, lang),
+  minWage: fb(uiLabels.minWageLabel, lang),
+  taxRate: fb(uiLabels.taxRateLabel, lang),
+  col: fb(uiLabels.colLabel, lang),
+  population: fb(uiLabels.populationLabel, lang),
+  currency: fb(uiLabels.currencyLabel, lang),
+};
+const tableHeaders = {
+  job: fb(uiLabels.jobTitleHeader, lang),
+  link: fb(uiLabels.viewSalaryLink, lang),
+};
+
+const jobSlugs = jobSlugsByLang[lang] || jobSlugsByLang.en;
+const localizedJobNames: Record<string, string> = Object.fromEntries(
+  Object.keys(jobNames).map((key) => [key, fb(jobNames[key], lang)])
+);
+
+function formatSalary(amount: number): string {
+  return new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(amount);
+}
+
+const h1 = fb(uiLabels.h1Country, lang).replace('{country}', countryName);
+const overviewTitle = fb(uiLabels.economicOverviewTitle, lang).replace('{country}', countryName);
+const jobsTitle = fb(uiLabels.topJobsInCountry, lang).replace('{country}', countryName);
+
+const faqItems = fb(faqTemplates, lang).map((item) => ({
+  question: item.q.replace(/{country}/g, countryName),
+  answer: item.a
+    .replace(/{country}/g, countryName)
+    .replace(/{salary}/g, data.avgSalary.toLocaleString())
+    .replace(/{taxRate}/g, data.taxRate)
+    .replace(/{taxType}/g, data.taxType)
+    .replace(/{col}/g, String(data.costOfLiving)),
+}));
+
+const pageTitle = `${h1} | EuroSalary.eu`;
+const pageDescriptions: Record<string, string> = {
+  en: `Complete salary guide for ${countryName} in 2026. Average salary ${formatSalary(data.avgSalary)}/yr. Top paying jobs, tax rates, cost of living, and comparison with other EU countries.`,
+  fr: `Guide complet des salaires en ${countryName} en 2026. Salaire moyen ${formatSalary(data.avgSalary)}/an. Emplois les mieux payés, taux d'imposition, coût de la vie et comparaison avec les autres pays de l'UE.`,
+  de: `Kompletter Gehaltsguide für ${countryName} 2026. Durchschnittsgehalt ${formatSalary(data.avgSalary)}/Jahr. Top-Berufe, Steuersätze, Lebenshaltungskosten und EU-Vergleich.`,
+  es: `Guía completa de salarios en ${countryName} en 2026. Salario promedio ${formatSalary(data.avgSalary)}/año. Empleos mejor pagados, tasas impositivas, coste de vida y comparación con otros países de la UE.`,
+};
+const pageDescription = fb(pageDescriptions, lang);
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: h1,
+    author: { '@type': 'Organization', name: 'EuroSalary.eu' },
+    datePublished: '2026-01-15',
+    dateModified: '2026-04-01',
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+  },
+];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  datePublished="2026-01-15"
+  dateModified="2026-04-01"
+  schema={pageSchema}
+>
+  <!-- Hero -->
+  <section class="country-hero">
+    <div class="country-hero__bg-icon">
+      <span class="material-symbols-outlined">account_balance</span>
+    </div>
+    <div class="container country-hero__inner">
+      <nav class="country-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{fb(uiLabels.home, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a href={`/${lang}/countries/`}>{fb(uiLabels.countries, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="country-hero__breadcrumbs-current">{countryName}</span>
+      </nav>
+
+      <div class="country-hero__grid">
+        <div class="country-hero__content">
+          <div class="country-hero__badge">
+            <span class="country-hero__flag">{flag}</span>
+            <span class="country-hero__badge-text">{t('nav.countries')}</span>
+          </div>
+          <h1 class="country-hero__title">{h1}</h1>
+          <p class="country-hero__desc">
+            {labels.avgSalary}: {formatSalary(data.avgSalary)} · {labels.taxRate}: {data.taxRate} ({data.taxType}) · {labels.population}: {data.population} · {labels.currency}: {data.currency}
+          </p>
+        </div>
+
+        <div class="country-hero__stats">
+          <div class="country-hero__stat-card">
+            <span class="country-hero__stat-label">{labels.avgSalary}</span>
+            <div class="country-hero__stat-value">{formatSalary(data.avgSalary)}</div>
+            <span class="country-hero__stat-note">{t('salary.perYear')}</span>
+          </div>
+          <div class="country-hero__stat-card">
+            <span class="country-hero__stat-label">{labels.col}</span>
+            <div class="country-hero__stat-value">{data.costOfLiving}</div>
+            <span class="country-hero__stat-note">{t('hero.country.euAvg')}</span>
+          </div>
+          <div class="country-hero__stat-card">
+            <span class="country-hero__stat-label">{labels.taxRate}</span>
+            <div class="country-hero__stat-value">{data.taxRate}</div>
+            <span class="country-hero__stat-note">{data.taxType}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <article class="container country-body">
+    <!-- TL;DR -->
+    <TLDRBox items={[
+      `${labels.avgSalary}: ${formatSalary(data.avgSalary)} ${t('hero.country.perYearGross')}`,
+      `${labels.minWage}: ${data.minWage} (${data.minWageAnnual})`,
+      `${labels.taxRate}: ${data.taxRate} (${data.taxType})`,
+    ]} />
+
+    <!-- Economic Indicators -->
+    <section class="country-section">
+      <h2 class="country-section__title">{overviewTitle}</h2>
+      <div class="indicators-grid">
+        <div class="indicator-card">
+          <span class="material-symbols-outlined indicator-card__icon">payments</span>
+          <div class="indicator-card__label">{labels.avgSalary}</div>
+          <div class="indicator-card__value">{formatSalary(data.avgSalary)}</div>
+          <div class="indicator-card__note">{t('salary.perYear')}</div>
+        </div>
+        <div class="indicator-card">
+          <span class="material-symbols-outlined indicator-card__icon">gavel</span>
+          <div class="indicator-card__label">{labels.minWage}</div>
+          <div class="indicator-card__value">{data.minWage}</div>
+          <div class="indicator-card__note">{data.minWageAnnual}</div>
+        </div>
+        <div class="indicator-card">
+          <span class="material-symbols-outlined indicator-card__icon">receipt_long</span>
+          <div class="indicator-card__label">{labels.taxRate}</div>
+          <div class="indicator-card__value">{data.taxRate}</div>
+          <div class="indicator-card__note">{data.taxType}</div>
+        </div>
+        <div class="indicator-card">
+          <span class="material-symbols-outlined indicator-card__icon">shopping_cart</span>
+          <div class="indicator-card__label">{labels.col}</div>
+          <div class="indicator-card__value">{data.costOfLiving}</div>
+          <div class="indicator-card__note">vs. EU avg 58.2</div>
+        </div>
+        <div class="indicator-card">
+          <span class="material-symbols-outlined indicator-card__icon">groups</span>
+          <div class="indicator-card__label">{labels.population}</div>
+          <div class="indicator-card__value">{data.population}</div>
+          <div class="indicator-card__note">{data.popNote}</div>
+        </div>
+        <div class="indicator-card">
+          <span class="material-symbols-outlined indicator-card__icon">euro</span>
+          <div class="indicator-card__label">{labels.currency}</div>
+          <div class="indicator-card__value">{data.currency}</div>
+          <div class="indicator-card__note">{data.currencyNote}</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Top Jobs -->
+    <section class="country-section">
+      <h2 class="country-section__title">{jobsTitle}</h2>
+      <div class="jobs-grid">
+        {Object.entries(localizedJobNames).map(([canonicalKey, displayName]) => (
+          <a href={`/${lang}/salary/${countrySlug}/${jobSlugs[canonicalKey]}/`} class="job-card">
+            <div class="job-card__left">
+              <strong class="job-card__name">{displayName}</strong>
+            </div>
+            <span class="job-card__arrow material-symbols-outlined">chevron_right</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <FAQSection items={faqItems} />
+  </article>
+</BaseLayout>
+
+<style>
+  /* Body */
+  .country-body { padding: var(--space-10) 0 var(--space-16); }
+
+  .country-section { margin-top: var(--space-12); }
+  .country-section__title {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--color-primary-container, #0F1F3D);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-6);
+  }
+
+  /* Indicators */
+  .indicators-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+  .indicator-card {
+    background: white;
+    border: 1px solid var(--color-gray-100, #e6e8ea);
+    padding: var(--space-6);
+    border-radius: 6px;
+    text-align: center;
+  }
+  .indicator-card__icon {
+    font-size: 20px;
+    color: var(--color-secondary, #0051d5);
+    margin-bottom: var(--space-2);
+  }
+  .indicator-card__label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #75777e;
+    margin-bottom: var(--space-2);
+  }
+  .indicator-card__value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-primary-container, #0F1F3D);
+    letter-spacing: -0.02em;
+  }
+  .indicator-card__note {
+    font-size: 11px;
+    color: #75777e;
+    margin-top: 4px;
+  }
+
+  /* Jobs */
+  .jobs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+  .job-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    border: 1px solid var(--color-gray-100, #e6e8ea);
+    border-left: 4px solid var(--color-secondary, #0051d5);
+    padding: var(--space-4) var(--space-5);
+    border-radius: 4px;
+    text-decoration: none;
+    transition: box-shadow 0.15s, background 0.15s;
+  }
+  .job-card:hover {
+    background: #f7f9fb;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .job-card__name {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-primary-container, #0F1F3D);
+  }
+  .job-card__arrow {
+    font-size: 18px;
+    color: #75777e;
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+  }
+  .job-card:hover .job-card__arrow {
+    opacity: 1;
+    transform: translateX(2px);
+  }
+
+  @media (max-width: 768px) {
+    .indicators-grid { grid-template-columns: repeat(2, 1fr); }
+    .jobs-grid { grid-template-columns: 1fr; }
+  }
+</style>

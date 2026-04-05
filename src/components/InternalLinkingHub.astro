@@ -1,0 +1,211 @@
+---
+import { countrySlugsByLang, countryFlags } from '../data/slugs';
+import { languages } from '../i18n/ui';
+import { fb } from '../i18n/utils';
+import { countryNames } from '../i18n/translations';
+
+interface Props {
+  lang: string;
+  currentPage?: string; // slug of current page to exclude
+  showCountries?: boolean;
+  showTools?: boolean;
+  showResources?: boolean;
+}
+
+const { lang, currentPage = '', showCountries = true, showTools = true, showResources = true } = Astro.props;
+
+const sectionTitles: Record<string, Record<string, string>> = {
+  countries: { en: 'Explore by Country', fr: 'Explorer par pays', de: 'Nach Land erkunden', es: 'Explorar por país' },
+  tools: { en: 'Salary Tools', fr: 'Outils salariaux', de: 'Gehaltstools', es: 'Herramientas salariales' },
+  resources: { en: 'Resources', fr: 'Ressources', de: 'Ressourcen', es: 'Recursos' },
+};
+
+const toolLinks: Record<string, Record<string, { label: string; desc: string }>> = {
+  calculator: { en: { label: 'Salary Calculator', desc: 'Compare net salary across countries' }, fr: { label: 'Calculateur de salaire', desc: 'Comparez le salaire net entre pays' }, de: { label: 'Gehaltsrechner', desc: 'Nettogehalt länderübergreifend vergleichen' }, es: { label: 'Calculadora salarial', desc: 'Compare el salario neto entre países' } },
+  compare: { en: { label: 'Job Comparisons', desc: 'Compare salaries for any role across Europe' }, fr: { label: 'Comparaisons', desc: 'Comparez les salaires pour tout métier en Europe' }, de: { label: 'Berufsvergleiche', desc: 'Gehälter für jede Rolle in Europa vergleichen' }, es: { label: 'Comparaciones', desc: 'Compare salarios para cualquier puesto en Europa' } },
+  transparency: { en: { label: 'Salary Transparency', desc: 'EU Pay Transparency Directive tracker' }, fr: { label: 'Transparence salariale', desc: 'Suivi de la directive européenne' }, de: { label: 'Gehaltstransparenz', desc: 'EU-Transparenzrichtlinie Tracker' }, es: { label: 'Transparencia salarial', desc: 'Seguimiento de la directiva de la UE' } },
+};
+
+const resourceLinks: Record<string, Record<string, { label: string; desc: string }>> = {
+  methodology: { en: { label: 'Our Methodology', desc: 'How we collect and validate salary data' }, fr: { label: 'Notre méthodologie', desc: 'Comment nous collectons les données salariales' }, de: { label: 'Unsere Methodik', desc: 'So erheben und validieren wir Gehaltsdaten' }, es: { label: 'Nuestra metodología', desc: 'Cómo recopilamos y validamos los datos salariales' } },
+  blog: { en: { label: 'Salary Blog', desc: 'Insights and trends in European salaries' }, fr: { label: 'Blog salaires', desc: 'Analyses et tendances des salaires européens' }, de: { label: 'Gehaltsblog', desc: 'Einblicke und Trends bei europäischen Gehältern' }, es: { label: 'Blog salarial', desc: 'Análisis y tendencias de salarios europeos' } },
+  premium: { en: { label: 'Premium Reports', desc: 'Detailed salary intelligence for professionals' }, fr: { label: 'Rapports premium', desc: 'Données salariales détaillées pour les professionnels' }, de: { label: 'Premium-Berichte', desc: 'Detaillierte Gehaltsanalysen für Profis' }, es: { label: 'Informes premium', desc: 'Inteligencia salarial detallada para profesionales' } },
+};
+
+const slugs = countrySlugsByLang[lang] || countrySlugsByLang.en;
+---
+
+<aside class="linking-hub">
+  <div class="container">
+    {showCountries && (
+      <div class="linking-hub__section">
+        <h3 class="linking-hub__heading">
+          <span class="material-symbols-outlined">public</span>
+          {fb(sectionTitles.countries, lang)}
+        </h3>
+        <div class="linking-hub__grid linking-hub__grid--countries">
+          {Object.entries(slugs).map(([code, slug]) => (
+            <a href={`/${lang}/country/${slug}/`} class="linking-hub__country-link">
+              <span class="linking-hub__flag">{countryFlags[code]}</span>
+              <span>{fb(countryNames[code], lang)}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {showTools && (
+      <div class="linking-hub__section">
+        <h3 class="linking-hub__heading">
+          <span class="material-symbols-outlined">build</span>
+          {fb(sectionTitles.tools, lang)}
+        </h3>
+        <div class="linking-hub__grid linking-hub__grid--tools">
+          <a href={`/${lang}/calculator/`} class="linking-hub__card">
+            <span class="material-symbols-outlined linking-hub__card-icon">calculate</span>
+            <div>
+              <div class="linking-hub__card-label">{fb(toolLinks.calculator, lang).label}</div>
+              <div class="linking-hub__card-desc">{fb(toolLinks.calculator, lang).desc}</div>
+            </div>
+          </a>
+          <a href={`/${lang}/compare/`} class="linking-hub__card">
+            <span class="material-symbols-outlined linking-hub__card-icon">compare_arrows</span>
+            <div>
+              <div class="linking-hub__card-label">{fb(toolLinks.compare, lang).label}</div>
+              <div class="linking-hub__card-desc">{fb(toolLinks.compare, lang).desc}</div>
+            </div>
+          </a>
+          <a href={`/${lang}/salary-transparency/`} class="linking-hub__card">
+            <span class="material-symbols-outlined linking-hub__card-icon">visibility</span>
+            <div>
+              <div class="linking-hub__card-label">{fb(toolLinks.transparency, lang).label}</div>
+              <div class="linking-hub__card-desc">{fb(toolLinks.transparency, lang).desc}</div>
+            </div>
+          </a>
+        </div>
+      </div>
+    )}
+
+    {showResources && (
+      <div class="linking-hub__section">
+        <h3 class="linking-hub__heading">
+          <span class="material-symbols-outlined">menu_book</span>
+          {fb(sectionTitles.resources, lang)}
+        </h3>
+        <div class="linking-hub__grid linking-hub__grid--tools">
+          <a href={`/${lang}/methodology/`} class="linking-hub__card">
+            <span class="material-symbols-outlined linking-hub__card-icon">science</span>
+            <div>
+              <div class="linking-hub__card-label">{fb(resourceLinks.methodology, lang).label}</div>
+              <div class="linking-hub__card-desc">{fb(resourceLinks.methodology, lang).desc}</div>
+            </div>
+          </a>
+          <a href={`/${lang}/blog/`} class="linking-hub__card">
+            <span class="material-symbols-outlined linking-hub__card-icon">article</span>
+            <div>
+              <div class="linking-hub__card-label">{fb(resourceLinks.blog, lang).label}</div>
+              <div class="linking-hub__card-desc">{fb(resourceLinks.blog, lang).desc}</div>
+            </div>
+          </a>
+          <a href={`/${lang}/premium/`} class="linking-hub__card">
+            <span class="material-symbols-outlined linking-hub__card-icon">workspace_premium</span>
+            <div>
+              <div class="linking-hub__card-label">{fb(resourceLinks.premium, lang).label}</div>
+              <div class="linking-hub__card-desc">{fb(resourceLinks.premium, lang).desc}</div>
+            </div>
+          </a>
+        </div>
+      </div>
+    )}
+  </div>
+</aside>
+
+<style>
+  .linking-hub {
+    background: rgba(15, 31, 61, 0.4);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding: var(--space-12) 0;
+    margin-top: var(--space-12);
+  }
+  .linking-hub__section {
+    margin-bottom: var(--space-10);
+  }
+  .linking-hub__section:last-child {
+    margin-bottom: 0;
+  }
+  .linking-hub__heading {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-semibold);
+    color: var(--color-white);
+    margin-bottom: var(--space-6);
+  }
+  .linking-hub__heading .material-symbols-outlined {
+    color: var(--color-secondary);
+    font-size: 20px;
+  }
+  .linking-hub__grid {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .linking-hub__grid--countries {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+  .linking-hub__grid--tools {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+  .linking-hub__country-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    transition: all 0.15s ease;
+  }
+  .linking-hub__country-link:hover {
+    background: rgba(37, 99, 235, 0.15);
+    border-color: rgba(37, 99, 235, 0.3);
+    color: var(--color-white);
+  }
+  .linking-hub__flag {
+    font-size: 16px;
+  }
+  .linking-hub__card {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+  .linking-hub__card:hover {
+    background: rgba(37, 99, 235, 0.1);
+    border-color: rgba(37, 99, 235, 0.25);
+  }
+  .linking-hub__card-icon {
+    color: var(--color-secondary);
+    font-size: 20px;
+    margin-top: 2px;
+  }
+  .linking-hub__card-label {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-white);
+    margin-bottom: 2px;
+  }
+  .linking-hub__card-desc {
+    font-size: var(--text-xs);
+    color: rgba(255, 255, 255, 0.55);
+    line-height: var(--leading-relaxed);
+  }
+</style>

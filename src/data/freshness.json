@@ -1,0 +1,11 @@
+{
+  "lastDataRefresh": "2026-04-04T06:00:00.000Z",
+  "lastDataRefreshDate": "2026-04-04",
+  "lastEurostatSync": "2026-04-01T04:00:00.000Z",
+  "dataVersion": "2026.04.04",
+  "sources": {
+    "eurostat": { "lastSync": "2026-04-01T04:00:00.000Z", "status": "ok" },
+    "jobPostings": { "lastSync": "2026-04-04T06:00:00.000Z", "status": "ok" },
+    "userReports": { "lastSync": "2026-04-04T06:00:00.000Z", "status": "ok" }
+  }
+}

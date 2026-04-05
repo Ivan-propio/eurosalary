@@ -1,0 +1,70 @@
+name: Daily Health Check
+
+on:
+  schedule:
+    - cron: '0 8 * * *' # Daily at 08:00 UTC
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check production site
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://eurosalary.eu/en/)
+          if [ "$STATUS" != "200" ]; then
+            echo "::error::Production site returned HTTP $STATUS"
+            exit 1
+          fi
+          echo "Production site OK (HTTP $STATUS)"
+
+      - name: Check key pages
+        run: |
+          PAGES=(
+            "https://eurosalary.eu/en/"
+            "https://eurosalary.eu/fr/"
+            "https://eurosalary.eu/de/"
+            "https://eurosalary.eu/es/"
+            "https://eurosalary.eu/en/salary/germany/software-engineer/"
+            "https://eurosalary.eu/en/country/germany/"
+            "https://eurosalary.eu/en/methodology/"
+            "https://eurosalary.eu/en/blog/"
+            "https://eurosalary.eu/robots.txt"
+            "https://eurosalary.eu/llms.txt"
+          )
+          FAILED=0
+          for PAGE in "${PAGES[@]}"; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$PAGE")
+            if [ "$STATUS" != "200" ]; then
+              echo "::warning::$PAGE returned HTTP $STATUS"
+              FAILED=$((FAILED + 1))
+            else
+              echo "OK: $PAGE"
+            fi
+          done
+          if [ $FAILED -gt 0 ]; then
+            echo "::error::$FAILED pages failed health check"
+            exit 1
+          fi
+
+      - name: Check sitemap
+        run: |
+          curl -s https://eurosalary.eu/sitemap-index.xml | head -5
+          echo "Sitemap accessible"
+
+      - name: Check robots.txt
+        run: |
+          curl -s https://eurosalary.eu/robots.txt | grep -q "Sitemap:" || {
+            echo "::error::robots.txt missing sitemap reference"
+            exit 1
+          }
+          echo "robots.txt OK"
+
+      - name: Check llms.txt
+        run: |
+          curl -s https://eurosalary.eu/llms.txt | grep -q "EuroSalary" || {
+            echo "::error::llms.txt not serving correctly"
+            exit 1
+          }
+          echo "llms.txt OK"

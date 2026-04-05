@@ -1,0 +1,952 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { languages, type Lang } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+const { lang } = Astro.props as { lang: Lang };
+const t = useTranslations(lang as Lang);
+
+// --------------- i18n content ---------------
+const i18n: Record<string, {
+  h1: string;
+  metaTitle: string;
+  metaDesc: string;
+  home: string;
+  breadcrumb: string;
+  introAnswer: string;
+  tldr: string[];
+  monthlyLabel: string;
+  annualLabel: string;
+  annualSave: string;
+  perMonth: string;
+  perYear: string;
+  custom: string;
+  free: { name: string; price: string; desc: string; cta: string; features: string[] };
+  pro: { name: string; priceM: string; priceA: string; desc: string; cta: string; features: string[] };
+  biz: { name: string; priceM: string; priceA: string; desc: string; cta: string; badge: string; features: string[] };
+  enterprise: { name: string; price: string; desc: string; cta: string; features: string[] };
+  trustTitle: string;
+  trustBadges: string[];
+  guaranteeTitle: string;
+  guaranteeDesc: string;
+  faq: { question: string; answer: string }[];
+}> = {
+  en: {
+    h1: 'What Does Each EuroSalary Plan Include?',
+    metaTitle: 'Pricing Plans | EuroSalary.eu',
+    metaDesc: 'Choose the right EuroSalary plan: Free basic data, Professional city-level intelligence, Business PDF reports and team access, or Enterprise custom solutions.',
+    home: 'Home',
+    breadcrumb: 'Pricing',
+    introAnswer: 'EuroSalary offers four tiers of European salary intelligence. The Free plan covers basic salary data for 15 countries. Professional unlocks city-level breakdowns and net salary calculations. Business adds PDF reports, bulk export, and team access. Enterprise delivers white-label solutions with custom integrations.',
+    tldr: [
+      'Free plan: basic salary data for 15 countries and 21 job titles',
+      'Professional and Business plans with city-level data, net calculations, and PDF reports',
+      'Enterprise tier with white-label, custom integrations, and dedicated support',
+    ],
+    monthlyLabel: 'Monthly',
+    annualLabel: 'Annual',
+    annualSave: 'Save 20%',
+    perMonth: '/mo',
+    perYear: '/yr',
+    custom: 'Custom',
+    free: {
+      name: 'Free',
+      price: '\u20AC0',
+      desc: 'Basic European salary data for individual research and exploration.',
+      cta: 'Get Started Free',
+      features: [
+        'Basic salary data for 15 countries',
+        '21 job titles with gross averages',
+        'Country-level comparisons',
+        'API access (100 requests/hour)',
+        'Community support',
+      ],
+    },
+    pro: {
+      name: 'Professional',
+      priceM: '\u20AC29',
+      priceA: '\u20AC279',
+      desc: 'Full salary intelligence for recruiters and HR professionals.',
+      cta: 'Start Professional',
+      features: [
+        'Everything in Free',
+        'Full salary data with seniority bands',
+        'City-level breakdowns',
+        'Net salary calculator (tax + social)',
+        'API access (10,000 requests/day)',
+        'Email alerts for tracked roles',
+        'CSV export',
+        'Priority email support',
+      ],
+    },
+    biz: {
+      name: 'Business',
+      priceM: '\u20AC99',
+      priceA: '\u20AC949',
+      desc: 'Complete platform for compensation teams and multi-market operations.',
+      cta: 'Start Business',
+      badge: 'Most Popular',
+      features: [
+        'Everything in Professional',
+        'PDF salary reports per country',
+        'Bulk data export (JSON, CSV, Excel)',
+        'Team access (up to 10 seats)',
+        'Gender pay gap analysis',
+        'Industry-specific comparisons',
+        'Historical trends (3-year data)',
+        'Priority support with SLA',
+      ],
+    },
+    enterprise: {
+      name: 'Enterprise',
+      price: 'Custom',
+      desc: 'White-label salary data and custom integrations for platforms and large organizations.',
+      cta: 'Contact Sales',
+      features: [
+        'Everything in Business',
+        'White-label data integration',
+        'Custom API endpoints',
+        'Dedicated account manager',
+        'Custom report generation',
+        'SSO / SAML authentication',
+        'Unlimited team seats',
+        'Enterprise SLA (99.9% uptime)',
+      ],
+    },
+    trustTitle: 'Trusted by European businesses',
+    trustBadges: [
+      'Used by 500+ companies',
+      'Data from Eurostat & OECD',
+      'GDPR compliant',
+    ],
+    guaranteeTitle: '30-Day Money-Back Guarantee',
+    guaranteeDesc: 'Try any paid plan risk-free. If it does not meet your needs within 30 days, we will issue a full refund, no questions asked.',
+    faq: [
+      { question: 'Can I switch plans at any time?', answer: 'Yes. You can upgrade or downgrade your plan at any time. When upgrading, you only pay the prorated difference. When downgrading, the credit is applied to your next billing cycle.' },
+      { question: 'What payment methods do you accept?', answer: 'We accept all major credit cards (Visa, Mastercard, American Express) and SEPA direct debit for European customers. Enterprise plans can be invoiced with NET-30 terms.' },
+      { question: 'Is there a free trial for paid plans?', answer: 'We offer a 30-day money-back guarantee on all paid plans instead of a traditional trial. This gives you full access to all features from day one.' },
+      { question: 'How does the API rate limiting work?', answer: 'Free tier: 100 requests per hour. Professional: 10,000 requests per day. Business: 50,000 requests per day. Enterprise: custom limits based on your agreement. Rate limits reset at midnight UTC.' },
+      { question: 'Can I add more team seats?', answer: 'Business plans include 10 seats. Additional seats are available for \u20AC9/seat/month. Enterprise plans include unlimited seats.' },
+    ],
+  },
+  fr: {
+    h1: 'Que comprend chaque plan EuroSalary ?',
+    metaTitle: 'Tarifs | EuroSalary.eu',
+    metaDesc: 'Choisissez le bon plan EuroSalary : donn\u00e9es gratuites, intelligence par ville, rapports PDF et \u00e9quipe, ou solutions entreprise personnalis\u00e9es.',
+    home: 'Accueil',
+    breadcrumb: 'Tarifs',
+    introAnswer: 'EuroSalary propose quatre niveaux d\'intelligence salariale europ\u00e9enne. Le plan Gratuit couvre les donn\u00e9es de base pour 15 pays. Professionnel d\u00e9bloque les donn\u00e9es par ville et les calculs de salaire net. Business ajoute les rapports PDF et l\'acc\u00e8s \u00e9quipe. Enterprise offre des solutions en marque blanche.',
+    tldr: [
+      'Plan gratuit : donn\u00e9es salariales de base pour 15 pays et 21 m\u00e9tiers',
+      'Plans Professionnel et Business avec donn\u00e9es par ville, calculs nets et rapports PDF',
+      'Niveau Enterprise avec marque blanche, int\u00e9grations personnalis\u00e9es et support d\u00e9di\u00e9',
+    ],
+    monthlyLabel: 'Mensuel',
+    annualLabel: 'Annuel',
+    annualSave: '\u00c9conomisez 20%',
+    perMonth: '/mois',
+    perYear: '/an',
+    custom: 'Sur mesure',
+    free: {
+      name: 'Gratuit',
+      price: '\u20AC0',
+      desc: 'Donn\u00e9es salariales europ\u00e9ennes de base pour la recherche individuelle.',
+      cta: 'Commencer gratuitement',
+      features: [
+        'Donn\u00e9es salariales de base pour 15 pays',
+        '21 m\u00e9tiers avec moyennes brutes',
+        'Comparaisons par pays',
+        'Acc\u00e8s API (100 requ\u00eates/heure)',
+        'Support communautaire',
+      ],
+    },
+    pro: {
+      name: 'Professionnel',
+      priceM: '\u20AC29',
+      priceA: '\u20AC279',
+      desc: 'Intelligence salariale compl\u00e8te pour recruteurs et professionnels RH.',
+      cta: 'D\u00e9marrer Professionnel',
+      features: [
+        'Tout du plan Gratuit',
+        'Donn\u00e9es salariales compl\u00e8tes avec bandes de s\u00e9niorit\u00e9',
+        'Ventilations par ville',
+        'Calculateur de salaire net (imp\u00f4ts + social)',
+        'Acc\u00e8s API (10 000 requ\u00eates/jour)',
+        'Alertes email pour les postes suivis',
+        'Export CSV',
+        'Support email prioritaire',
+      ],
+    },
+    biz: {
+      name: 'Business',
+      priceM: '\u20AC99',
+      priceA: '\u20AC949',
+      desc: 'Plateforme compl\u00e8te pour les \u00e9quipes r\u00e9mun\u00e9ration et op\u00e9rations multi-march\u00e9s.',
+      cta: 'D\u00e9marrer Business',
+      badge: 'Le plus populaire',
+      features: [
+        'Tout du plan Professionnel',
+        'Rapports salariaux PDF par pays',
+        'Export en masse (JSON, CSV, Excel)',
+        'Acc\u00e8s \u00e9quipe (jusqu\'\u00e0 10 si\u00e8ges)',
+        'Analyse de l\'\u00e9cart salarial hommes-femmes',
+        'Comparaisons par secteur',
+        'Tendances historiques (donn\u00e9es sur 3 ans)',
+        'Support prioritaire avec SLA',
+      ],
+    },
+    enterprise: {
+      name: 'Enterprise',
+      price: 'Sur mesure',
+      desc: 'Donn\u00e9es salariales en marque blanche et int\u00e9grations personnalis\u00e9es pour plateformes.',
+      cta: 'Contacter les ventes',
+      features: [
+        'Tout du plan Business',
+        'Int\u00e9gration en marque blanche',
+        'Endpoints API personnalis\u00e9s',
+        'Account manager d\u00e9di\u00e9',
+        'G\u00e9n\u00e9ration de rapports personnalis\u00e9s',
+        'Authentification SSO / SAML',
+        'Si\u00e8ges \u00e9quipe illimit\u00e9s',
+        'SLA Enterprise (99,9% de disponibilit\u00e9)',
+      ],
+    },
+    trustTitle: 'La confiance des entreprises europ\u00e9ennes',
+    trustBadges: [
+      'Utilis\u00e9 par 500+ entreprises',
+      'Donn\u00e9es Eurostat & OCDE',
+      'Conforme au RGPD',
+    ],
+    guaranteeTitle: 'Garantie satisfait ou rembours\u00e9 30 jours',
+    guaranteeDesc: 'Essayez tout plan payant sans risque. S\'il ne r\u00e9pond pas \u00e0 vos besoins sous 30 jours, nous vous remboursons int\u00e9gralement.',
+    faq: [
+      { question: 'Puis-je changer de plan \u00e0 tout moment ?', answer: 'Oui. Vous pouvez changer de plan \u00e0 tout moment. En cas de mise \u00e0 niveau, vous ne payez que la diff\u00e9rence au prorata.' },
+      { question: 'Quels modes de paiement acceptez-vous ?', answer: 'Nous acceptons les principales cartes (Visa, Mastercard, Amex) et le pr\u00e9l\u00e8vement SEPA. Les plans Enterprise peuvent \u00eatre factur\u00e9s.' },
+      { question: 'Y a-t-il un essai gratuit pour les plans payants ?', answer: 'Nous offrons une garantie satisfait ou rembours\u00e9 30 jours au lieu d\'un essai traditionnel.' },
+      { question: 'Comment fonctionne la limitation de l\'API ?', answer: 'Gratuit : 100 requ\u00eates/heure. Professionnel : 10 000/jour. Business : 50 000/jour. Enterprise : limites personnalis\u00e9es.' },
+      { question: 'Puis-je ajouter des si\u00e8ges \u00e9quipe suppl\u00e9mentaires ?', answer: 'Le plan Business inclut 10 si\u00e8ges. Des si\u00e8ges suppl\u00e9mentaires sont disponibles \u00e0 9\u20AC/si\u00e8ge/mois. Enterprise inclut des si\u00e8ges illimit\u00e9s.' },
+    ],
+  },
+  de: {
+    h1: 'Was beinhaltet jeder EuroSalary-Plan?',
+    metaTitle: 'Preispl\u00e4ne | EuroSalary.eu',
+    metaDesc: 'W\u00e4hlen Sie den richtigen EuroSalary-Plan: Kostenlose Basisdaten, Professional Stadtebene, Business PDF-Berichte und Team, oder Enterprise-L\u00f6sungen.',
+    home: 'Startseite',
+    breadcrumb: 'Preise',
+    introAnswer: 'EuroSalary bietet vier Stufen europ\u00e4ischer Gehaltsintelligenz. Der kostenlose Plan deckt Basisdaten f\u00fcr 15 L\u00e4nder ab. Professional erschlie\u00dft Stadtebene und Nettogehaltsberechnungen. Business f\u00fcgt PDF-Berichte und Teamzugang hinzu. Enterprise liefert White-Label-L\u00f6sungen.',
+    tldr: [
+      'Kostenloser Plan: Basisdaten f\u00fcr 15 L\u00e4nder und 21 Berufe',
+      'Professional- und Business-Pl\u00e4ne mit Stadtdaten, Nettoberechnungen und PDF-Berichten',
+      'Enterprise-Stufe mit White-Label, individuellen Integrationen und dediziertem Support',
+    ],
+    monthlyLabel: 'Monatlich',
+    annualLabel: 'J\u00e4hrlich',
+    annualSave: '20% sparen',
+    perMonth: '/Monat',
+    perYear: '/Jahr',
+    custom: 'Individuell',
+    free: {
+      name: 'Kostenlos',
+      price: '\u20AC0',
+      desc: 'Europ\u00e4ische Grundgehaltsdaten f\u00fcr individuelle Recherche.',
+      cta: 'Kostenlos starten',
+      features: [
+        'Grundgehaltsdaten f\u00fcr 15 L\u00e4nder',
+        '21 Berufe mit Bruttodurchschnitten',
+        'L\u00e4ndervergleiche',
+        'API-Zugang (100 Anfragen/Stunde)',
+        'Community-Support',
+      ],
+    },
+    pro: {
+      name: 'Professional',
+      priceM: '\u20AC29',
+      priceA: '\u20AC279',
+      desc: 'Vollst\u00e4ndige Gehaltsintelligenz f\u00fcr Recruiter und HR-Profis.',
+      cta: 'Professional starten',
+      features: [
+        'Alles aus Kostenlos',
+        'Vollst\u00e4ndige Gehaltsdaten mit Seniori\u00e4tsstufen',
+        'Aufschl\u00fcsselung nach St\u00e4dten',
+        'Nettogehaltsrechner (Steuern + Sozial)',
+        'API-Zugang (10.000 Anfragen/Tag)',
+        'E-Mail-Benachrichtigungen',
+        'CSV-Export',
+        'Priorit\u00e4ts-E-Mail-Support',
+      ],
+    },
+    biz: {
+      name: 'Business',
+      priceM: '\u20AC99',
+      priceA: '\u20AC949',
+      desc: 'Komplettplattform f\u00fcr Verg\u00fctungsteams und Multi-Markt-Operationen.',
+      cta: 'Business starten',
+      badge: 'Am beliebtesten',
+      features: [
+        'Alles aus Professional',
+        'PDF-Gehaltsberichte pro Land',
+        'Massenexport (JSON, CSV, Excel)',
+        'Teamzugang (bis zu 10 Pl\u00e4tze)',
+        'Gender-Pay-Gap-Analyse',
+        'Branchenspezifische Vergleiche',
+        'Historische Trends (3-Jahres-Daten)',
+        'Priorit\u00e4ts-Support mit SLA',
+      ],
+    },
+    enterprise: {
+      name: 'Enterprise',
+      price: 'Individuell',
+      desc: 'White-Label-Gehaltsdaten und individuelle Integrationen f\u00fcr Plattformen.',
+      cta: 'Vertrieb kontaktieren',
+      features: [
+        'Alles aus Business',
+        'White-Label-Datenintegration',
+        'Individuelle API-Endpunkte',
+        'Dedizierter Account Manager',
+        'Individuelle Berichtserstellung',
+        'SSO / SAML-Authentifizierung',
+        'Unbegrenzte Teampl\u00e4tze',
+        'Enterprise-SLA (99,9% Verf\u00fcgbarkeit)',
+      ],
+    },
+    trustTitle: 'Vertraut von europ\u00e4ischen Unternehmen',
+    trustBadges: [
+      'Genutzt von 500+ Unternehmen',
+      'Daten von Eurostat & OECD',
+      'DSGVO-konform',
+    ],
+    guaranteeTitle: '30-Tage-Geld-zur\u00fcck-Garantie',
+    guaranteeDesc: 'Testen Sie jeden kostenpflichtigen Plan risikofrei. Wenn er Ihren Anforderungen nicht entspricht, erstatten wir den vollen Betrag.',
+    faq: [
+      { question: 'Kann ich den Plan jederzeit wechseln?', answer: 'Ja. Sie k\u00f6nnen jederzeit upgraden oder downgraden. Beim Upgrade zahlen Sie nur die anteilige Differenz.' },
+      { question: 'Welche Zahlungsmethoden akzeptieren Sie?', answer: 'Alle g\u00e4ngigen Kreditkarten (Visa, Mastercard, Amex) und SEPA-Lastschrift. Enterprise-Pl\u00e4ne k\u00f6nnen in Rechnung gestellt werden.' },
+      { question: 'Gibt es eine kostenlose Testversion f\u00fcr kostenpflichtige Pl\u00e4ne?', answer: 'Wir bieten eine 30-Tage-Geld-zur\u00fcck-Garantie statt einer traditionellen Testversion.' },
+      { question: 'Wie funktioniert die API-Ratenlimitierung?', answer: 'Kostenlos: 100 Anfragen/Stunde. Professional: 10.000/Tag. Business: 50.000/Tag. Enterprise: individuelle Limits.' },
+      { question: 'Kann ich zus\u00e4tzliche Teampl\u00e4tze hinzuf\u00fcgen?', answer: 'Business enth\u00e4lt 10 Pl\u00e4tze. Zus\u00e4tzliche Pl\u00e4tze f\u00fcr 9\u20AC/Platz/Monat. Enterprise enth\u00e4lt unbegrenzte Pl\u00e4tze.' },
+    ],
+  },
+  es: {
+    h1: '\u00bfQu\u00e9 incluye cada plan de EuroSalary?',
+    metaTitle: 'Planes y Precios | EuroSalary.eu',
+    metaDesc: 'Elija el plan EuroSalary adecuado: datos gratuitos, inteligencia por ciudad, informes PDF y acceso de equipo, o soluciones empresariales personalizadas.',
+    home: 'Inicio',
+    breadcrumb: 'Precios',
+    introAnswer: 'EuroSalary ofrece cuatro niveles de inteligencia salarial europea. El plan Gratuito cubre datos b\u00e1sicos para 15 pa\u00edses. Profesional desbloquea datos por ciudad y c\u00e1lculos netos. Business a\u00f1ade informes PDF y acceso de equipo. Enterprise ofrece soluciones de marca blanca.',
+    tldr: [
+      'Plan gratuito: datos salariales b\u00e1sicos para 15 pa\u00edses y 21 puestos',
+      'Planes Profesional y Business con datos por ciudad, c\u00e1lculos netos e informes PDF',
+      'Nivel Enterprise con marca blanca, integraciones personalizadas y soporte dedicado',
+    ],
+    monthlyLabel: 'Mensual',
+    annualLabel: 'Anual',
+    annualSave: 'Ahorra 20%',
+    perMonth: '/mes',
+    perYear: '/a\u00f1o',
+    custom: 'Personalizado',
+    free: {
+      name: 'Gratuito',
+      price: '\u20AC0',
+      desc: 'Datos salariales europeos b\u00e1sicos para investigaci\u00f3n individual.',
+      cta: 'Empezar gratis',
+      features: [
+        'Datos salariales b\u00e1sicos para 15 pa\u00edses',
+        '21 puestos con promedios brutos',
+        'Comparaciones por pa\u00eds',
+        'Acceso API (100 solicitudes/hora)',
+        'Soporte comunitario',
+      ],
+    },
+    pro: {
+      name: 'Profesional',
+      priceM: '\u20AC29',
+      priceA: '\u20AC279',
+      desc: 'Inteligencia salarial completa para reclutadores y profesionales de RRHH.',
+      cta: 'Iniciar Profesional',
+      features: [
+        'Todo del plan Gratuito',
+        'Datos salariales completos con bandas de antig\u00fcedad',
+        'Desgloses por ciudad',
+        'Calculadora de salario neto (impuestos + social)',
+        'Acceso API (10.000 solicitudes/d\u00eda)',
+        'Alertas por email para puestos seguidos',
+        'Exportaci\u00f3n CSV',
+        'Soporte email prioritario',
+      ],
+    },
+    biz: {
+      name: 'Business',
+      priceM: '\u20AC99',
+      priceA: '\u20AC949',
+      desc: 'Plataforma completa para equipos de compensaci\u00f3n y operaciones multi-mercado.',
+      cta: 'Iniciar Business',
+      badge: 'M\u00e1s popular',
+      features: [
+        'Todo del plan Profesional',
+        'Informes salariales PDF por pa\u00eds',
+        'Exportaci\u00f3n masiva (JSON, CSV, Excel)',
+        'Acceso de equipo (hasta 10 puestos)',
+        'An\u00e1lisis de brecha salarial de g\u00e9nero',
+        'Comparaciones por sector',
+        'Tendencias hist\u00f3ricas (datos de 3 a\u00f1os)',
+        'Soporte prioritario con SLA',
+      ],
+    },
+    enterprise: {
+      name: 'Enterprise',
+      price: 'Personalizado',
+      desc: 'Datos salariales de marca blanca e integraciones personalizadas para plataformas.',
+      cta: 'Contactar ventas',
+      features: [
+        'Todo del plan Business',
+        'Integraci\u00f3n de marca blanca',
+        'Endpoints API personalizados',
+        'Account manager dedicado',
+        'Generaci\u00f3n de informes personalizados',
+        'Autenticaci\u00f3n SSO / SAML',
+        'Puestos de equipo ilimitados',
+        'SLA Enterprise (99,9% de disponibilidad)',
+      ],
+    },
+    trustTitle: 'La confianza de empresas europeas',
+    trustBadges: [
+      'Usado por 500+ empresas',
+      'Datos de Eurostat y OCDE',
+      'Conforme con RGPD',
+    ],
+    guaranteeTitle: 'Garant\u00eda de devoluci\u00f3n de 30 d\u00edas',
+    guaranteeDesc: 'Pruebe cualquier plan de pago sin riesgo. Si no cumple sus necesidades en 30 d\u00edas, le reembolsamos \u00edntegramente.',
+    faq: [
+      { question: '\u00bfPuedo cambiar de plan en cualquier momento?', answer: 'S\u00ed. Puede actualizar o bajar de plan en cualquier momento. Al actualizar, solo paga la diferencia prorrateada.' },
+      { question: '\u00bfQu\u00e9 m\u00e9todos de pago aceptan?', answer: 'Aceptamos las principales tarjetas (Visa, Mastercard, Amex) y d\u00e9bito directo SEPA. Los planes Enterprise pueden facturarse.' },
+      { question: '\u00bfHay prueba gratuita para planes de pago?', answer: 'Ofrecemos garant\u00eda de devoluci\u00f3n de 30 d\u00edas en lugar de una prueba tradicional.' },
+      { question: '\u00bfC\u00f3mo funciona la limitaci\u00f3n de la API?', answer: 'Gratuito: 100 solicitudes/hora. Profesional: 10.000/d\u00eda. Business: 50.000/d\u00eda. Enterprise: l\u00edmites personalizados.' },
+      { question: '\u00bfPuedo a\u00f1adir m\u00e1s puestos de equipo?', answer: 'Business incluye 10 puestos. Puestos adicionales disponibles por 9\u20AC/puesto/mes. Enterprise incluye puestos ilimitados.' },
+    ],
+  },
+};
+
+const c = fb(i18n, lang);
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: c.h1,
+    author: { '@type': 'Organization', name: 'EuroSalary.eu' },
+    datePublished: '2026-04-04',
+    dateModified: '2026-04-04',
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: c.faq.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  },
+];
+---
+
+<BaseLayout title={c.metaTitle} description={c.metaDesc} datePublished="2026-04-04" dateModified="2026-04-04" schema={pageSchema}>
+  <!-- Hero -->
+  <section class="pricing-hero">
+    <div class="pricing-hero__dots"></div>
+    <div class="container pricing-hero__inner">
+      <nav class="pricing-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{c.home}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span>{c.breadcrumb}</span>
+      </nav>
+      <div class="pricing-hero__badge">
+        <span class="material-symbols-outlined">payments</span>
+        {c.breadcrumb}
+      </div>
+      <h1>{c.h1}</h1>
+      <p class="pricing-hero__answer">{c.introAnswer}</p>
+    </div>
+  </section>
+
+  <article class="container pricing-body">
+    <TLDRBox items={c.tldr} />
+
+    <!-- Billing Toggle -->
+    <section class="pricing-section">
+      <div class="pricing-toggle" id="billing-toggle">
+        <button class="pricing-toggle__btn pricing-toggle__btn--active" data-period="monthly">{c.monthlyLabel}</button>
+        <button class="pricing-toggle__btn" data-period="annual">
+          {c.annualLabel}
+          <span class="pricing-toggle__save">{c.annualSave}</span>
+        </button>
+      </div>
+
+      <!-- Cards -->
+      <div class="pricing-cards">
+        <!-- Free -->
+        <div class="pricing-card">
+          <div class="pricing-card__header">
+            <h3>{c.free.name}</h3>
+            <p class="pricing-card__desc">{c.free.desc}</p>
+          </div>
+          <div class="pricing-card__price">
+            <span class="pricing-card__amount">{c.free.price}</span>
+          </div>
+          <a href={`/${lang}/`} class="pricing-card__cta pricing-card__cta--outline">{c.free.cta}</a>
+          <ul class="pricing-card__features">
+            {c.free.features.map((f) => (
+              <li>
+                <span class="pricing-card__check">&#10003;</span>
+                {f}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <!-- Professional -->
+        <div class="pricing-card">
+          <div class="pricing-card__header">
+            <h3>{c.pro.name}</h3>
+            <p class="pricing-card__desc">{c.pro.desc}</p>
+          </div>
+          <div class="pricing-card__price">
+            <span class="pricing-card__amount" data-monthly={c.pro.priceM} data-annual={c.pro.priceA}>{c.pro.priceM}</span>
+            <span class="pricing-card__period" data-monthly={c.perMonth} data-annual={c.perYear}>{c.perMonth}</span>
+          </div>
+          <a href="#" class="pricing-card__cta pricing-card__cta--outline">{c.pro.cta}</a>
+          <ul class="pricing-card__features">
+            {c.pro.features.map((f) => (
+              <li>
+                <span class="pricing-card__check">&#10003;</span>
+                {f}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <!-- Business (Featured) -->
+        <div class="pricing-card pricing-card--featured">
+          <div class="pricing-card__popular">{c.biz.badge}</div>
+          <div class="pricing-card__header">
+            <h3>{c.biz.name}</h3>
+            <p class="pricing-card__desc">{c.biz.desc}</p>
+          </div>
+          <div class="pricing-card__price">
+            <span class="pricing-card__amount" data-monthly={c.biz.priceM} data-annual={c.biz.priceA}>{c.biz.priceM}</span>
+            <span class="pricing-card__period" data-monthly={c.perMonth} data-annual={c.perYear}>{c.perMonth}</span>
+          </div>
+          <a href="#" class="pricing-card__cta pricing-card__cta--filled">{c.biz.cta}</a>
+          <ul class="pricing-card__features">
+            {c.biz.features.map((f) => (
+              <li>
+                <span class="pricing-card__check pricing-card__check--featured">&#10003;</span>
+                {f}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <!-- Enterprise -->
+        <div class="pricing-card">
+          <div class="pricing-card__header">
+            <h3>{c.enterprise.name}</h3>
+            <p class="pricing-card__desc">{c.enterprise.desc}</p>
+          </div>
+          <div class="pricing-card__price">
+            <span class="pricing-card__amount">{c.custom}</span>
+          </div>
+          <a href="#" class="pricing-card__cta pricing-card__cta--outline">{c.enterprise.cta}</a>
+          <ul class="pricing-card__features">
+            {c.enterprise.features.map((f) => (
+              <li>
+                <span class="pricing-card__check">&#10003;</span>
+                {f}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trust Badges -->
+    <section class="pricing-section pricing-trust">
+      <h2 class="pricing-trust__title">{c.trustTitle}</h2>
+      <div class="pricing-trust__badges">
+        {c.trustBadges.map((badge, i) => (
+          <div class="pricing-trust__badge">
+            <span class="material-symbols-outlined">
+              {i === 0 ? 'business' : i === 1 ? 'verified' : 'shield'}
+            </span>
+            <span>{badge}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Guarantee -->
+    <section class="pricing-section">
+      <div class="pricing-guarantee">
+        <span class="material-symbols-outlined">verified_user</span>
+        <div>
+          <strong>{c.guaranteeTitle}</strong>
+          <p>{c.guaranteeDesc}</p>
+        </div>
+      </div>
+    </section>
+
+    <FAQSection items={c.faq} />
+
+    <!-- Methodology link -->
+    <section class="pricing-section pricing-methodology">
+      <p class="pricing-methodology__link">
+        <span class="material-symbols-outlined">science</span>
+        <a href={`/${lang}/methodology/`}>{t('nav.methodology')}</a> — {fb({ en: 'Learn how we source, validate, and standardize European salary data.', fr: 'D\u00e9couvrez comment nous sour\u00e7ons et validons les donn\u00e9es salariales.', de: 'Erfahren Sie, wie wir Gehaltsdaten beschaffen und validieren.', es: 'Conozca c\u00f3mo obtenemos y validamos los datos salariales.' }, lang)}
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  /* ===== Hero ===== */
+  .pricing-hero {
+    background: var(--color-primary-container, #0F1F3D);
+    color: white;
+    padding: var(--space-16) 0 var(--space-12);
+    position: relative;
+    overflow: hidden;
+  }
+  .pricing-hero__dots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .pricing-hero__inner { position: relative; z-index: 1; max-width: 720px; }
+  .pricing-hero__breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: rgba(203, 213, 225, 0.6);
+    margin-bottom: var(--space-6);
+  }
+  .pricing-hero__breadcrumbs a {
+    color: rgba(203, 213, 225, 0.6);
+    text-decoration: none;
+  }
+  .pricing-hero__breadcrumbs a:hover { color: white; }
+  .pricing-hero__breadcrumbs .material-symbols-outlined { font-size: 14px; }
+  .pricing-hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(37, 99, 235, 0.2);
+    border: 1px solid rgba(37, 99, 235, 0.3);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #93c5fd;
+    margin-bottom: var(--space-4);
+  }
+  .pricing-hero__badge .material-symbols-outlined { font-size: 14px; }
+  .pricing-hero h1 {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: var(--space-4);
+  }
+  .pricing-hero__answer {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: rgba(203, 213, 225, 0.85);
+  }
+
+  /* ===== Body ===== */
+  .pricing-body { padding: var(--space-10) 0 var(--space-16); }
+  .pricing-section { margin-top: var(--space-12); }
+
+  /* ===== Toggle ===== */
+  .pricing-toggle {
+    display: inline-flex;
+    background: #f1f3f5;
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: var(--space-10);
+  }
+  .pricing-toggle__btn {
+    padding: 10px 24px;
+    background: transparent;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    color: #45474e;
+    cursor: pointer;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.15s;
+  }
+  .pricing-toggle__btn--active {
+    background: white;
+    color: var(--color-primary-container, #0F1F3D);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .pricing-toggle__save {
+    font-size: 11px;
+    font-weight: 700;
+    background: #dcfce7;
+    color: #16a34a;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  /* ===== Cards Grid ===== */
+  .pricing-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-5);
+    align-items: start;
+  }
+  .pricing-card {
+    background: white;
+    border: 1px solid #e6e8ea;
+    border-radius: 10px;
+    padding: var(--space-7);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .pricing-card--featured {
+    border-color: var(--color-secondary, #2563EB);
+    border-width: 2px;
+    box-shadow: 0 4px 24px rgba(37, 99, 235, 0.12);
+    padding-top: calc(var(--space-7) + 8px);
+  }
+  .pricing-card__popular {
+    position: absolute;
+    top: -13px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-secondary, #2563EB);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 16px;
+    border-radius: 12px;
+    white-space: nowrap;
+  }
+  .pricing-card__header h3 {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-primary-container, #0F1F3D);
+    margin-bottom: var(--space-1);
+  }
+  .pricing-card__desc {
+    font-size: 13px;
+    color: #75777e;
+    line-height: 1.5;
+    margin-bottom: var(--space-5);
+  }
+  .pricing-card__price {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-bottom: var(--space-5);
+  }
+  .pricing-card__amount {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--color-primary-container, #0F1F3D);
+    letter-spacing: -0.02em;
+  }
+  .pricing-card__period {
+    font-size: 14px;
+    color: #75777e;
+  }
+
+  /* ===== CTA Buttons ===== */
+  .pricing-card__cta {
+    display: block;
+    text-align: center;
+    padding: 12px 20px;
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.15s;
+    margin-bottom: var(--space-6);
+  }
+  .pricing-card__cta--outline {
+    border: 2px solid var(--color-secondary, #2563EB);
+    color: var(--color-secondary, #2563EB);
+    background: transparent;
+  }
+  .pricing-card__cta--outline:hover {
+    background: var(--color-secondary, #2563EB);
+    color: white;
+  }
+  .pricing-card__cta--filled {
+    background: var(--color-secondary, #2563EB);
+    color: white;
+    border: 2px solid var(--color-secondary, #2563EB);
+  }
+  .pricing-card__cta--filled:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+  }
+
+  /* ===== Feature Lists ===== */
+  .pricing-card__features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .pricing-card__features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+    color: #374151;
+    line-height: 1.45;
+  }
+  .pricing-card__check {
+    flex-shrink: 0;
+    color: #16a34a;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.3;
+  }
+  .pricing-card__check--featured {
+    color: var(--color-secondary, #2563EB);
+  }
+
+  /* ===== Trust Badges ===== */
+  .pricing-trust { text-align: center; }
+  .pricing-trust__title {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-primary-container, #0F1F3D);
+    margin-bottom: var(--space-6);
+  }
+  .pricing-trust__badges {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-8);
+    flex-wrap: wrap;
+  }
+  .pricing-trust__badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f8fafc;
+    border: 1px solid #e6e8ea;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-primary-container, #0F1F3D);
+  }
+  .pricing-trust__badge .material-symbols-outlined {
+    font-size: 20px;
+    color: var(--color-secondary, #2563EB);
+  }
+
+  /* ===== Guarantee ===== */
+  .pricing-guarantee {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: var(--space-5) var(--space-6);
+  }
+  .pricing-guarantee .material-symbols-outlined {
+    font-size: 28px;
+    color: #16a34a;
+    flex-shrink: 0;
+  }
+  .pricing-guarantee strong {
+    display: block;
+    font-size: 14px;
+    color: #15803d;
+    margin-bottom: 2px;
+  }
+  .pricing-guarantee p {
+    font-size: 13px;
+    color: #45474e;
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  /* ===== Methodology ===== */
+  .pricing-methodology__link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--text-sm);
+    color: #45474e;
+  }
+  .pricing-methodology__link .material-symbols-outlined {
+    font-size: 18px;
+    color: var(--color-secondary, #2563EB);
+  }
+  .pricing-methodology__link a {
+    color: var(--color-secondary, #2563EB);
+    font-weight: 600;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 1024px) {
+    .pricing-cards { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .pricing-cards { grid-template-columns: 1fr; }
+    .pricing-trust__badges { flex-direction: column; align-items: center; }
+  }
+</style>
+
+<script>
+  const toggle = document.getElementById('billing-toggle');
+  if (toggle) {
+    const buttons = toggle.querySelectorAll('.pricing-toggle__btn');
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        buttons.forEach((b) => b.classList.remove('pricing-toggle__btn--active'));
+        btn.classList.add('pricing-toggle__btn--active');
+        const period = btn.getAttribute('data-period') as 'monthly' | 'annual';
+
+        // Update all prices
+        document.querySelectorAll('.pricing-card__amount[data-monthly]').forEach((el) => {
+          const amount = el as HTMLElement;
+          amount.textContent = amount.dataset[period] || amount.textContent;
+        });
+        document.querySelectorAll('.pricing-card__period[data-monthly]').forEach((el) => {
+          const periodEl = el as HTMLElement;
+          periodEl.textContent = periodEl.dataset[period] || periodEl.textContent;
+        });
+      });
+    });
+  }
+</script>

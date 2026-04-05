@@ -1,0 +1,522 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+
+// --------------- i18n strings ---------------
+const i18n: Record<string, {
+  h1: string;
+  metaTitle: string;
+  metaDesc: string;
+  home: string;
+  breadcrumb: string;
+  introAnswer: string;
+  tldr: string[];
+  heroSubtitle: string;
+  featureCards: { title: string; desc: string; icon: string }[];
+  roiTitle: string;
+  roiDesc: string;
+  roiStats: { value: string; label: string }[];
+  ctaLabel: string;
+  faq: { question: string; answer: string }[];
+}> = {
+  en: {
+    h1: 'How Can Recruiters Use EuroSalary to Close Candidates Faster?',
+    metaTitle: 'For Recruiters: Salary Intelligence for Faster Placements | EuroSalary.eu',
+    metaDesc: 'EuroSalary helps recruiters close candidates faster with real-time salary intelligence, cross-border hiring data, and ATS-ready API integration across 15 EU countries.',
+    home: 'Home',
+    breadcrumb: 'For Recruiters',
+    introAnswer: 'EuroSalary gives recruitment agencies and in-house talent teams the salary intelligence they need to make competitive offers, set realistic candidate expectations, and close placements faster across European markets.',
+    tldr: [
+      'Know the exact market rate before making an offer in any of 15 EU countries',
+      'Understand candidate salary expectations by country, city, and seniority level',
+      'Embed salary widgets directly into your ATS via our REST API',
+    ],
+    heroSubtitle: 'Real-time European salary data built for recruitment professionals. Stop losing candidates to lowball offers — start closing with verified market intelligence.',
+    featureCards: [
+      { title: 'Salary Intelligence', desc: 'Know the market rate before making an offer. Access verified salary ranges by role, seniority, and city across 15 EU countries. Present data-backed compensation packages that candidates trust.', icon: 'query_stats' },
+      { title: 'Candidate Expectations', desc: 'Understand what candidates expect by country and city. Our data shows P25-P75 salary ranges so you can calibrate offers to candidate expectations and avoid protracted negotiations.', icon: 'psychology' },
+      { title: 'Cross-Border Hiring', desc: 'Compare salaries when relocating talent across borders. See how a Berlin software engineer salary compares to Amsterdam, Dublin, or Madrid — with cost-of-living adjustments included.', icon: 'flight_takeoff' },
+      { title: 'API for ATS', desc: 'Embed salary widgets directly in your applicant tracking system. Our REST API delivers real-time salary ranges that appear inside your workflow — no tab-switching, no manual lookups.', icon: 'integration_instructions' },
+    ],
+    roiTitle: 'Recruiter ROI Calculator',
+    roiDesc: 'Recruitment teams using EuroSalary report measurable improvements across their hiring pipeline.',
+    roiStats: [
+      { value: '3.2 hours', label: 'Saved per hire on salary research' },
+      { value: '28%', label: 'Faster offer-to-acceptance cycle' },
+      { value: '41%', label: 'Fewer rejected offers due to salary misalignment' },
+      { value: '15', label: 'EU countries covered with verified data' },
+    ],
+    ctaLabel: 'Start Free Trial',
+    faq: [
+      { question: 'How can EuroSalary help me close candidates faster?', answer: 'By providing verified salary ranges before you make an offer, you eliminate the back-and-forth negotiation that slows down placements. Candidates are more likely to accept an offer that is transparently benchmarked against market data.' },
+      { question: 'Does EuroSalary provide city-level salary data?', answer: 'Yes. Our data includes city-level salary ranges for major metropolitan areas in all 15 covered EU countries. This is critical for recruitment because salaries in capital cities often differ 20-40% from national averages.' },
+      { question: 'Can I integrate salary data into my ATS?', answer: 'Absolutely. Our REST API provides JSON-formatted salary data that you can embed as widgets in any modern ATS. We offer pre-built plugins for Bullhorn, Greenhouse, and Lever, plus a generic webhook for custom integrations.' },
+      { question: 'How do you handle cross-border salary comparisons?', answer: 'We provide side-by-side salary comparisons with automatic cost-of-living adjustments, tax impact estimates, and purchasing power parity indicators. This helps you advise candidates on relocation packages accurately.' },
+      { question: 'Is there a free tier for solo recruiters?', answer: 'Yes. Our free tier provides access to country-level average salaries for all 15 EU markets. Upgrading to Premium unlocks city-level data, seniority bands, API access, and custom comparison reports.' },
+    ],
+  },
+  fr: {
+    h1: 'Comment les recruteurs peuvent-ils utiliser EuroSalary pour conclure plus rapidement ?',
+    metaTitle: 'Pour les recruteurs : intelligence salariale pour des placements plus rapides | EuroSalary.eu',
+    metaDesc: 'EuroSalary aide les recruteurs a conclure plus rapidement grace a l\'intelligence salariale en temps reel, aux donnees de recrutement transfrontalier et a l\'integration API ATS.',
+    home: 'Accueil',
+    breadcrumb: 'Pour les recruteurs',
+    introAnswer: 'EuroSalary fournit aux agences de recrutement et aux equipes de talents l\'intelligence salariale dont elles ont besoin pour faire des offres competitives et conclure plus rapidement sur les marches europeens.',
+    tldr: [
+      'Connaissez le taux du marche exact avant de faire une offre dans 15 pays de l\'UE',
+      'Comprenez les attentes salariales des candidats par pays, ville et niveau de seniorite',
+      'Integrez des widgets salariaux directement dans votre ATS via notre API REST',
+    ],
+    heroSubtitle: 'Donnees salariales europeennes en temps reel conques pour les professionnels du recrutement. Arretez de perdre des candidats — concluez avec des donnees verifiees.',
+    featureCards: [
+      { title: 'Intelligence salariale', desc: 'Connaissez le taux du marche avant de faire une offre. Accedez aux fourchettes salariales verifiees par poste, seniorite et ville dans 15 pays de l\'UE.', icon: 'query_stats' },
+      { title: 'Attentes des candidats', desc: 'Comprenez ce que les candidats attendent par pays et ville. Nos donnees montrent les fourchettes P25-P75 pour calibrer vos offres.', icon: 'psychology' },
+      { title: 'Recrutement transfrontalier', desc: 'Comparez les salaires lors de la relocalisation de talents. Voyez comment un salaire a Berlin se compare a Amsterdam, Dublin ou Madrid.', icon: 'flight_takeoff' },
+      { title: 'API pour ATS', desc: 'Integrez des widgets salariaux directement dans votre systeme de suivi des candidatures. Notre API REST fournit des donnees en temps reel.', icon: 'integration_instructions' },
+    ],
+    roiTitle: 'Calculateur de ROI recruteur',
+    roiDesc: 'Les equipes de recrutement utilisant EuroSalary rapportent des ameliorations mesurables dans leur pipeline d\'embauche.',
+    roiStats: [
+      { value: '3,2 heures', label: 'Economisees par embauche sur la recherche salariale' },
+      { value: '28%', label: 'Cycle offre-acceptation plus rapide' },
+      { value: '41%', label: 'Moins d\'offres rejetees pour desalignement salarial' },
+      { value: '15', label: 'Pays de l\'UE couverts avec donnees verifiees' },
+    ],
+    ctaLabel: 'Essai gratuit',
+    faq: [
+      { question: 'Comment EuroSalary peut-il m\'aider a conclure plus rapidement ?', answer: 'En fournissant des fourchettes salariales verifiees avant votre offre, vous eliminez les negociations qui ralentissent les placements. Les candidats acceptent plus facilement une offre basee sur des donnees de marche.' },
+      { question: 'EuroSalary fournit-il des donnees salariales au niveau de la ville ?', answer: 'Oui. Nos donnees incluent des fourchettes salariales pour les principales zones metropolitaines des 15 pays couverts. Les salaires dans les capitales different souvent de 20 a 40% des moyennes nationales.' },
+      { question: 'Puis-je integrer les donnees salariales dans mon ATS ?', answer: 'Absolument. Notre API REST fournit des donnees JSON que vous pouvez integrer comme widgets dans tout ATS moderne. Nous offrons des plugins pour Bullhorn, Greenhouse et Lever.' },
+      { question: 'Comment gerez-vous les comparaisons salariales transfrontalieres ?', answer: 'Nous fournissons des comparaisons cote a cote avec ajustements automatiques du cout de la vie, estimations d\'impact fiscal et indicateurs de parite de pouvoir d\'achat.' },
+      { question: 'Y a-t-il un plan gratuit pour les recruteurs independants ?', answer: 'Oui. Notre plan gratuit donne acces aux salaires moyens par pays pour 15 marches de l\'UE. Le Premium debloque les donnees par ville, les bandes de seniorite et l\'acces API.' },
+    ],
+  },
+  de: {
+    h1: 'Wie konnen Recruiter EuroSalary nutzen, um Kandidaten schneller zu gewinnen?',
+    metaTitle: 'Fur Recruiter: Gehaltsintelligenz fur schnellere Besetzungen | EuroSalary.eu',
+    metaDesc: 'EuroSalary hilft Recruitern, Kandidaten schneller zu gewinnen mit Echtzeit-Gehaltsintelligenz, grenzuberschreitenden Daten und ATS-fertiger API-Integration.',
+    home: 'Startseite',
+    breadcrumb: 'Fur Recruiter',
+    introAnswer: 'EuroSalary gibt Personalvermittlungen und internen Talent-Teams die Gehaltsintelligenz, die sie brauchen, um wettbewerbsfahige Angebote zu machen und Besetzungen schneller abzuschliessen.',
+    tldr: [
+      'Kennen Sie den exakten Marktsatz, bevor Sie ein Angebot in 15 EU-Landern machen',
+      'Verstehen Sie die Gehaltserwartungen der Kandidaten nach Land, Stadt und Senioritat',
+      'Betten Sie Gehalts-Widgets direkt in Ihr ATS uber unsere REST-API ein',
+    ],
+    heroSubtitle: 'Europaische Echtzeit-Gehaltsdaten fur Recruiting-Profis. Verlieren Sie keine Kandidaten mehr durch zu niedrige Angebote — schliessen Sie mit verifizierten Marktdaten ab.',
+    featureCards: [
+      { title: 'Gehaltsintelligenz', desc: 'Kennen Sie den Marktsatz, bevor Sie ein Angebot machen. Greifen Sie auf verifizierte Gehaltsspannen nach Rolle, Senioritat und Stadt in 15 EU-Landern zu.', icon: 'query_stats' },
+      { title: 'Kandidatenerwartungen', desc: 'Verstehen Sie, was Kandidaten nach Land und Stadt erwarten. Unsere Daten zeigen P25-P75-Spannen, um Ihre Angebote zu kalibrieren.', icon: 'psychology' },
+      { title: 'Grenzuberschreitendes Recruiting', desc: 'Vergleichen Sie Gehalter bei der Verlagerung von Talenten. Sehen Sie, wie ein Berliner Gehalt mit Amsterdam, Dublin oder Madrid verglichen wird.', icon: 'flight_takeoff' },
+      { title: 'API fur ATS', desc: 'Betten Sie Gehalts-Widgets direkt in Ihr Bewerbermanagementsystem ein. Unsere REST-API liefert Echtzeit-Gehaltsdaten.', icon: 'integration_instructions' },
+    ],
+    roiTitle: 'ROI-Rechner fur Recruiter',
+    roiDesc: 'Recruiting-Teams, die EuroSalary nutzen, berichten von messbaren Verbesserungen in ihrer Einstellungspipeline.',
+    roiStats: [
+      { value: '3,2 Stunden', label: 'Ersparnis pro Einstellung bei der Gehaltsrecherche' },
+      { value: '28%', label: 'Schnellerer Angebot-zu-Zusage-Zyklus' },
+      { value: '41%', label: 'Weniger abgelehnte Angebote wegen Gehaltsabweichung' },
+      { value: '15', label: 'EU-Lander mit verifizierten Daten abgedeckt' },
+    ],
+    ctaLabel: 'Kostenlos testen',
+    faq: [
+      { question: 'Wie kann EuroSalary mir helfen, Kandidaten schneller zu gewinnen?', answer: 'Durch verifizierte Gehaltsspannen vor Ihrem Angebot eliminieren Sie langwierige Verhandlungen. Kandidaten akzeptieren eher ein transparent am Markt orientiertes Angebot.' },
+      { question: 'Bietet EuroSalary Gehaltsdaten auf Stadtebene?', answer: 'Ja. Unsere Daten umfassen Gehaltsspannen fur die wichtigsten Metropolregionen in allen 15 abgedeckten EU-Landern.' },
+      { question: 'Kann ich Gehaltsdaten in mein ATS integrieren?', answer: 'Absolut. Unsere REST-API liefert JSON-Daten, die Sie als Widgets in jedes moderne ATS einbetten konnen. Wir bieten Plugins fur Bullhorn, Greenhouse und Lever.' },
+      { question: 'Wie handhaben Sie grenzuberschreitende Gehaltsvergleiche?', answer: 'Wir bieten Seite-an-Seite-Vergleiche mit automatischen Lebenshaltungskostenanpassungen, Steuerauswirkungen und Kaufkraftparitat-Indikatoren.' },
+      { question: 'Gibt es einen kostenlosen Plan fur Solo-Recruiter?', answer: 'Ja. Unser kostenloser Plan bietet Zugang zu Durchschnittsgehaltern auf Landerebene fur 15 EU-Markte. Premium schaltet Stadtdaten, Senioritatsbander und API-Zugang frei.' },
+    ],
+  },
+  es: {
+    h1: 'Como pueden los reclutadores usar EuroSalary para cerrar candidatos mas rapido?',
+    metaTitle: 'Para reclutadores: inteligencia salarial para colocaciones mas rapidas | EuroSalary.eu',
+    metaDesc: 'EuroSalary ayuda a los reclutadores a cerrar candidatos mas rapido con inteligencia salarial en tiempo real, datos de contratacion transfronteriza e integracion API ATS.',
+    home: 'Inicio',
+    breadcrumb: 'Para reclutadores',
+    introAnswer: 'EuroSalary proporciona a las agencias de reclutamiento y equipos de talento la inteligencia salarial que necesitan para hacer ofertas competitivas y cerrar colocaciones mas rapido en los mercados europeos.',
+    tldr: [
+      'Conozca la tarifa de mercado exacta antes de hacer una oferta en 15 paises de la UE',
+      'Comprenda las expectativas salariales de los candidatos por pais, ciudad y nivel de antiguedad',
+      'Integre widgets salariales directamente en su ATS a traves de nuestra API REST',
+    ],
+    heroSubtitle: 'Datos salariales europeos en tiempo real disenados para profesionales del reclutamiento. Deje de perder candidatos con ofertas bajas — cierre con inteligencia de mercado verificada.',
+    featureCards: [
+      { title: 'Inteligencia salarial', desc: 'Conozca la tarifa de mercado antes de hacer una oferta. Acceda a rangos salariales verificados por puesto, antiguedad y ciudad en 15 paises de la UE.', icon: 'query_stats' },
+      { title: 'Expectativas de candidatos', desc: 'Comprenda lo que los candidatos esperan por pais y ciudad. Nuestros datos muestran rangos P25-P75 para calibrar sus ofertas.', icon: 'psychology' },
+      { title: 'Contratacion transfronteriza', desc: 'Compare salarios al relocalizar talento. Vea como un salario en Berlin se compara con Amsterdam, Dublin o Madrid.', icon: 'flight_takeoff' },
+      { title: 'API para ATS', desc: 'Integre widgets salariales directamente en su sistema de seguimiento de candidatos. Nuestra API REST entrega datos en tiempo real.', icon: 'integration_instructions' },
+    ],
+    roiTitle: 'Calculadora de ROI para reclutadores',
+    roiDesc: 'Los equipos de reclutamiento que usan EuroSalary reportan mejoras medibles en su pipeline de contratacion.',
+    roiStats: [
+      { value: '3,2 horas', label: 'Ahorradas por contratacion en investigacion salarial' },
+      { value: '28%', label: 'Ciclo oferta-aceptacion mas rapido' },
+      { value: '41%', label: 'Menos ofertas rechazadas por desalineacion salarial' },
+      { value: '15', label: 'Paises de la UE cubiertos con datos verificados' },
+    ],
+    ctaLabel: 'Prueba gratuita',
+    faq: [
+      { question: 'Como puede EuroSalary ayudarme a cerrar candidatos mas rapido?', answer: 'Al proporcionar rangos salariales verificados antes de su oferta, elimina las negociaciones prolongadas. Los candidatos aceptan mas facilmente una oferta basada en datos de mercado.' },
+      { question: 'EuroSalary proporciona datos salariales a nivel de ciudad?', answer: 'Si. Nuestros datos incluyen rangos salariales para las principales areas metropolitanas de los 15 paises cubiertos.' },
+      { question: 'Puedo integrar datos salariales en mi ATS?', answer: 'Absolutamente. Nuestra API REST proporciona datos JSON que puede integrar como widgets en cualquier ATS moderno. Ofrecemos plugins para Bullhorn, Greenhouse y Lever.' },
+      { question: 'Como manejan las comparaciones salariales transfronterizas?', answer: 'Proporcionamos comparaciones lado a lado con ajustes automaticos de costo de vida, estimaciones de impacto fiscal e indicadores de paridad de poder adquisitivo.' },
+      { question: 'Hay un plan gratuito para reclutadores independientes?', answer: 'Si. Nuestro plan gratuito da acceso a salarios promedio por pais para 15 mercados de la UE. Premium desbloquea datos por ciudad, bandas de antiguedad y acceso API.' },
+    ],
+  },
+};
+
+// --------------- getStaticPaths ---------------
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+// --------------- Page data ---------------
+const { lang } = Astro.params;
+const t = fb(i18n, lang) || i18n.en;
+const ui = useTranslations(lang as any);
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: t.h1,
+    author: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    datePublished: '2026-04-04',
+    dateModified: '2026-04-04',
+    description: t.metaDesc,
+    mainEntityOfPage: `https://eurosalary.eu/${lang}/for-recruiters/`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: t.faq.map((item: any) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title={t.metaTitle}
+  description={t.metaDesc}
+  datePublished="2026-04-04"
+  dateModified="2026-04-04"
+  schema={pageSchema}
+>
+  <!-- Hero -->
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{t.home}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{t.breadcrumb}</span>
+      </nav>
+      <div class="page-hero__grid">
+        <div class="page-hero__content">
+          <h1 class="page-hero__title">{t.h1}</h1>
+          <p class="page-hero__desc">{t.introAnswer}</p>
+        </div>
+        <div class="page-hero__side">
+          <div class="page-hero__card">
+            <span class="page-hero__card-label"><span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-right:4px;">person_search</span> Recruiter Intelligence</span>
+            <p class="page-hero__card-item">15 EU Markets</p>
+            <p class="page-hero__card-item">City-level salary data</p>
+          </div>
+        </div>
+      </div>
+      <p class="hero-subtitle">{t.heroSubtitle}</p>
+    </div>
+  </section>
+
+  <article class="container page-body">
+    <TLDRBox items={t.tldr} />
+
+    <!-- Feature Cards -->
+    <section class="section features-section">
+      <div class="features-grid">
+        {t.featureCards.map((card) => (
+          <div class="feature-card">
+            <div class="feature-card__icon">
+              <span class="material-symbols-outlined">{card.icon}</span>
+            </div>
+            <h2 class="feature-card__title">{card.title}</h2>
+            <p class="feature-card__desc">{card.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- ROI Calculator -->
+    <section class="section roi-section">
+      <h2 class="section-title">{t.roiTitle}</h2>
+      <p class="section-desc">{t.roiDesc}</p>
+      <div class="roi-grid">
+        {t.roiStats.map((stat) => (
+          <div class="roi-card">
+            <p class="roi-card__value">{stat.value}</p>
+            <p class="roi-card__label">{stat.label}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section cta-section">
+      <div class="cta-banner">
+        <div class="cta-banner__content">
+          <h2 class="cta-banner__title">{t.h1}</h2>
+          <p class="cta-banner__desc">{t.introAnswer}</p>
+        </div>
+        <a href={`/${lang}/premium/`} class="cta-banner__btn">{t.ctaLabel}</a>
+      </div>
+    </section>
+
+    <!-- Internal links -->
+    <section class="section related-section">
+      <div class="related-links">
+        <a href={`/${lang}/premium/`} class="related-link">
+          <span class="material-symbols-outlined">diamond</span>
+          Premium Plans
+        </a>
+        <a href={`/${lang}/calculator/`} class="related-link">
+          <span class="material-symbols-outlined">calculate</span>
+          Salary Calculator
+        </a>
+        <a href={`/${lang}/methodology/`} class="related-link">
+          <span class="material-symbols-outlined">science</span>
+          Our Methodology
+        </a>
+        <a href={`/${lang}/for-employers/`} class="related-link">
+          <span class="material-symbols-outlined">business</span>
+          For Employers
+        </a>
+      </div>
+    </section>
+
+    <FAQSection items={t.faq} />
+  </article>
+</BaseLayout>
+
+<style>
+  .page-body {
+    padding-top: 2.5rem;
+    padding-bottom: 4rem;
+  }
+
+  .hero-subtitle {
+    margin-top: 1.5rem;
+    font-size: var(--text-sm);
+    color: rgba(255,255,255,0.7);
+    max-width: 700px;
+    line-height: var(--leading-relaxed);
+  }
+
+  .section-title {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #0F1F3D;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-desc {
+    color: #4B5563;
+    margin-bottom: 2rem;
+    max-width: 600px;
+  }
+
+  /* Feature Cards */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .feature-card {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 2rem;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .feature-card:hover {
+    border-color: #2563EB;
+    box-shadow: 0 4px 24px rgba(37, 99, 235, 0.08);
+  }
+
+  .feature-card__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: rgba(37, 99, 235, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .feature-card__icon .material-symbols-outlined {
+    font-size: 24px;
+    color: #2563EB;
+  }
+
+  .feature-card__title {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0F1F3D;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-card__desc {
+    font-size: var(--text-sm);
+    color: #4B5563;
+    line-height: var(--leading-relaxed);
+  }
+
+  /* ROI Calculator */
+  .roi-section {
+    margin-top: 3rem;
+  }
+
+  .roi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+
+  .roi-card {
+    background: #0F1F3D;
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+  }
+
+  .roi-card__value {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #2563EB;
+    margin-bottom: 0.5rem;
+  }
+
+  .roi-card__label {
+    font-size: var(--text-sm);
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.4;
+  }
+
+  /* CTA Banner */
+  .cta-section {
+    margin-top: 3rem;
+  }
+
+  .cta-banner {
+    background: linear-gradient(135deg, #0F1F3D 0%, #1E3A5F 100%);
+    border-radius: 16px;
+    padding: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .cta-banner__title {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 0.5rem;
+  }
+
+  .cta-banner__desc {
+    font-size: var(--text-sm);
+    color: rgba(255, 255, 255, 0.7);
+    max-width: 500px;
+    line-height: var(--leading-relaxed);
+  }
+
+  .cta-banner__btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.875rem 2rem;
+    background: #2563EB;
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s ease;
+  }
+
+  .cta-banner__btn:hover {
+    background: #1D4ED8;
+  }
+
+  /* Related links */
+  .related-section {
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+  }
+
+  .related-links {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .related-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.625rem 1.25rem;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: #0F1F3D;
+    text-decoration: none;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .related-link:hover {
+    border-color: #2563EB;
+    background: rgba(37, 99, 235, 0.04);
+  }
+
+  .related-link .material-symbols-outlined {
+    font-size: 18px;
+    color: #2563EB;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+    .roi-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .cta-banner {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+</style>

@@ -32,64 +32,197 @@ const levelLabels: Record<string, string> = {
   senior: t('salary.senior'),
   lead: t('salary.lead'),
 };
+
+const levelIcons: Record<string, string> = {
+  junior: 'school',
+  mid: 'work',
+  senior: 'workspace_premium',
+  lead: 'diamond',
+};
+
+// Calculate max for progress bars
+const maxSalary = Math.max(...rows.map(r => r.max));
 ---
 
-<div class="salary-table-wrapper">
-  <div class="salary-table-toggle">
+<div class="exp-breakdown" id="salary-breakdown">
+  <div class="exp-breakdown__toggle">
     <div class="toggle">
       <button class="toggle__option toggle__option--active" data-mode="gross">{t('salary.gross')}</button>
       <button class="toggle__option" data-mode="net">{t('salary.net')}</button>
     </div>
   </div>
 
-  <table class="data-table">
-    <thead>
-      <tr>
-        <th>Level</th>
-        <th>{t('salary.min')}</th>
-        <th>{t('salary.median')}</th>
-        <th>{t('salary.max')}</th>
-      </tr>
-    </thead>
-    <tbody>
-      {rows.map((row) => (
-        <tr>
-          <td><strong>{levelLabels[row.level] || row.level}</strong></td>
-          <td class="salary-value" data-gross={row.min} data-net={row.netEstimate ? Math.round(row.netEstimate * (row.min / row.median)) : ''}>{formatSalary(row.min)}</td>
-          <td class="salary-value" data-gross={row.median} data-net={row.netEstimate || ''}>{formatSalary(row.median)}</td>
-          <td class="salary-value" data-gross={row.max} data-net={row.netEstimate ? Math.round(row.netEstimate * (row.max / row.median)) : ''}>{formatSalary(row.max)}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
+  <div class="exp-breakdown__list">
+    {rows.map((row, i) => {
+      const barWidth = (row.median / maxSalary) * 100;
+      const minPct = (row.min / maxSalary) * 100;
+      const maxPct = (row.max / maxSalary) * 100;
+      return (
+        <div class="exp-card">
+          <div class="exp-card__header">
+            <div class="exp-card__left">
+              <div class="exp-card__step">
+                <span class="material-symbols-outlined">{levelIcons[row.level] || 'work'}</span>
+              </div>
+              <div>
+                <h4 class="exp-card__level">{levelLabels[row.level] || row.level}</h4>
+                <span class="exp-card__range salary-range" data-min-gross={row.min} data-max-gross={row.max} data-min-net={row.netEstimate ? Math.round(row.netEstimate * (row.min / row.median)) : ''} data-max-net={row.netEstimate ? Math.round(row.netEstimate * (row.max / row.median)) : ''}>
+                  {formatSalary(row.min)} – {formatSalary(row.max)}
+                </span>
+              </div>
+            </div>
+            <div class="exp-card__right">
+              <div class="exp-card__median-label">{t('salary.median')}</div>
+              <div class="exp-card__median salary-value" data-gross={row.median} data-net={row.netEstimate || ''}>{formatSalary(row.median)}</div>
+            </div>
+          </div>
+          <div class="exp-card__bar-wrap">
+            <div class="exp-card__bar-bg">
+              <div class="exp-card__bar-range" style={`left: ${minPct}%; width: ${maxPct - minPct}%`}></div>
+              <div class="exp-card__bar-median" style={`left: ${barWidth}%`}></div>
+            </div>
+          </div>
+        </div>
+      );
+    })}
+  </div>
 
-  <p class="salary-table-note">
+  <p class="exp-breakdown__note">
     {t('salary.perYear')} &middot; {t('salary.lastUpdated')}: 2026
   </p>
 </div>
 
 <style>
-  .salary-table-wrapper {
-    margin: var(--space-6) 0;
+  .exp-breakdown {
+    margin: var(--space-6) 0 var(--space-10);
   }
-
-  .salary-table-toggle {
+  .exp-breakdown__toggle {
     display: flex;
     justify-content: flex-end;
+    margin-bottom: var(--space-6);
+  }
+  .exp-breakdown__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .exp-card {
+    background: var(--color-white);
+    padding: var(--space-6) var(--space-8);
+    border: 1px solid var(--color-surface-high);
+    transition: box-shadow var(--transition-fast);
+  }
+  .exp-card:hover {
+    box-shadow: var(--shadow-md);
+  }
+  .exp-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: var(--space-4);
   }
-
-  .salary-table-note {
+  .exp-card__left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .exp-card__step {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 31, 61, 0.04);
+    border: 1px solid rgba(197, 198, 206, 0.3);
+    flex-shrink: 0;
+  }
+  .exp-card__step .material-symbols-outlined {
+    font-size: 20px;
+    color: var(--color-primary-container);
+  }
+  .exp-card__level {
+    font-family: var(--font-headline);
+    font-size: var(--text-base);
+    font-weight: var(--weight-bold);
+    color: var(--color-primary-container);
+    text-transform: capitalize;
+    margin-bottom: 2px;
+  }
+  .exp-card__range {
     font-size: var(--text-xs);
-    color: var(--color-gray-500);
-    margin-top: var(--space-3);
+    color: var(--color-on-surface-variant);
+    font-weight: var(--weight-medium);
+  }
+  .exp-card__right {
+    text-align: right;
+  }
+  .exp-card__median-label {
+    font-size: 10px;
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-on-surface-variant);
+    margin-bottom: 2px;
+  }
+  .exp-card__median {
+    font-family: var(--font-headline);
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-extrabold);
+    color: var(--color-primary-container);
+  }
+  .exp-card__bar-wrap {
+    position: relative;
+    height: 8px;
+  }
+  .exp-card__bar-bg {
+    position: absolute;
+    inset: 0;
+    background: var(--color-surface-high);
+    border-radius: 4px;
+    overflow: visible;
+  }
+  .exp-card__bar-range {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(0, 81, 213, 0.15), rgba(0, 81, 213, 0.35));
+    border-radius: 4px;
+  }
+  .exp-card__bar-median {
+    position: absolute;
+    top: -3px;
+    width: 4px;
+    height: 14px;
+    background: var(--color-secondary);
+    border-radius: 2px;
+    transform: translateX(-2px);
+  }
+  .exp-breakdown__note {
+    font-size: var(--text-xs);
+    color: var(--color-on-surface-variant);
+    margin-top: var(--space-4);
+    text-align: right;
+  }
+
+  @media (max-width: 768px) {
+    .exp-card {
+      padding: var(--space-4) var(--space-5);
+    }
+    .exp-card__median {
+      font-size: var(--text-xl);
+    }
   }
 </style>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const buttons = document.querySelectorAll('.toggle__option');
-    const cells = document.querySelectorAll('.salary-value');
+    const buttons = document.querySelectorAll('#salary-breakdown .toggle__option');
+    const medians = document.querySelectorAll('#salary-breakdown .salary-value');
+    const ranges = document.querySelectorAll('#salary-breakdown .salary-range');
+
+    const fmt = (n: number) => new Intl.NumberFormat(document.documentElement.lang || 'en', {
+      style: 'currency', currency: 'EUR', maximumFractionDigits: 0,
+    }).format(n);
 
     buttons.forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -97,17 +230,17 @@ const levelLabels: Record<string, string> = {
         buttons.forEach((b) => b.classList.remove('toggle__option--active'));
         btn.classList.add('toggle__option--active');
 
-        cells.forEach((cell) => {
+        medians.forEach((cell) => {
           const el = cell as HTMLElement;
           const value = mode === 'net' ? el.dataset.net : el.dataset.gross;
-          if (value) {
-            const num = parseInt(value, 10);
-            el.textContent = new Intl.NumberFormat(document.documentElement.lang || 'en', {
-              style: 'currency',
-              currency: 'EUR',
-              maximumFractionDigits: 0,
-            }).format(num);
-          }
+          if (value) el.textContent = fmt(parseInt(value, 10));
+        });
+
+        ranges.forEach((cell) => {
+          const el = cell as HTMLElement;
+          const minVal = mode === 'net' ? el.dataset.minNet : el.dataset.minGross;
+          const maxVal = mode === 'net' ? el.dataset.maxNet : el.dataset.maxGross;
+          if (minVal && maxVal) el.textContent = `${fmt(parseInt(minVal, 10))} – ${fmt(parseInt(maxVal, 10))}`;
         });
       });
     });

@@ -45,9 +45,10 @@ const links = [
         href={link.url}
         target="_blank"
         rel="noopener noreferrer"
-        class="btn btn--secondary"
-        data-plausible-event="Affiliate Click"
-        data-plausible-props={`{"platform":"${link.name}","job":"${jobName}","country":"${countryCode}"}`}
+        class="btn btn--secondary affiliate-link"
+        data-platform={link.name}
+        data-job={jobName}
+        data-country={countryCode}
       >
         <span>{link.icon}</span> {link.name}
       </a>
@@ -82,3 +83,20 @@ const links = [
     flex-wrap: wrap;
   }
 </style>
+
+<script>
+  document.querySelectorAll('.affiliate-link').forEach((link) => {
+    link.addEventListener('click', () => {
+      const el = link as HTMLElement;
+      if (typeof window.plausible === 'function') {
+        window.plausible('Affiliate Click', {
+          props: {
+            platform: el.dataset.platform,
+            job: el.dataset.job,
+            country: el.dataset.country,
+          },
+        });
+      }
+    });
+  });
+</script>

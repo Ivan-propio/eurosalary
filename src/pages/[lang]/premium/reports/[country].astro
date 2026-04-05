@@ -1,0 +1,756 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../../components/TLDRBox.astro';
+import FAQSection from '../../../../components/FAQSection.astro';
+import { countrySlugsByLang, countryFlags } from '../../../../data/slugs';
+import { languages, type Lang } from '../../../../i18n/ui';
+import { fb, useTranslations } from '../../../../i18n/utils';
+import { countryNames, uiLabels } from '../../../../i18n/translations';
+
+export function getStaticPaths() {
+  const paths = [];
+  for (const lang of Object.keys(languages)) {
+    const slugs = countrySlugsByLang[lang];
+    for (const [code, slug] of Object.entries(slugs)) {
+      paths.push({
+        params: { lang, country: slug },
+        props: { countryCode: code, lang },
+      });
+    }
+  }
+  return paths;
+}
+
+const { countryCode, lang } = Astro.props as { countryCode: string; lang: Lang };
+const t = useTranslations(lang as Lang);
+const flag = countryFlags[countryCode] || '';
+const countryName = fb(countryNames[countryCode], lang) || countryCode;
+
+// --------------- Sample salary data (teaser) ---------------
+const sampleRoles = [
+  { role: 'Software Engineer', junior: '35,000', mid: '52,000', senior: '72,000', lead: '92,000' },
+  { role: 'Product Manager', junior: '38,000', mid: '55,000', senior: '75,000', lead: '95,000' },
+  { role: 'Data Scientist', junior: '33,000', mid: '50,000', senior: '70,000', lead: '88,000' },
+  { role: 'UX Designer', junior: '28,000', mid: '42,000', senior: '58,000', lead: '72,000' },
+  { role: 'DevOps Engineer', junior: '36,000', mid: '54,000', senior: '74,000', lead: '94,000' },
+  { role: 'Financial Analyst', junior: '30,000', mid: '45,000', senior: '62,000', lead: '80,000' },
+];
+
+// --------------- i18n content ---------------
+const i18n: Record<string, {
+  h1: string;
+  metaTitle: string;
+  metaDesc: string;
+  home: string;
+  premium: string;
+  reports: string;
+  introAnswer: string;
+  tldr: string[];
+  previewTitle: string;
+  previewNote: string;
+  includedTitle: string;
+  included: string[];
+  sampleTitle: string;
+  role: string;
+  juniorLabel: string;
+  midLabel: string;
+  seniorLabel: string;
+  leadLabel: string;
+  blurredLabel: string;
+  pricingTitle: string;
+  singleCountryLabel: string;
+  singleCountryDesc: string;
+  allCountriesLabel: string;
+  allCountriesDesc: string;
+  buyReport: string;
+  buyAll: string;
+  bestValue: string;
+  guaranteeTitle: string;
+  guaranteeDesc: string;
+  faq: { question: string; answer: string }[];
+}> = {
+  en: {
+    h1: `What Does the Premium Salary Report for ${countryName} Include?`,
+    metaTitle: `Premium Salary Report: ${countryName} | EuroSalary.eu`,
+    metaDesc: `Get the complete salary report for ${countryName}: 50+ job roles, city-level data, net salary calculations, gender pay gap analysis, and quarterly updates.`,
+    home: 'Home',
+    premium: 'Premium',
+    reports: 'Reports',
+    introAnswer: `The EuroSalary Premium Report for ${countryName} delivers institutional-grade salary intelligence covering 50+ job roles across 4 experience levels, city-level breakdowns, net salary calculations with country-specific tax modeling, and quarterly data refreshes.`,
+    tldr: [
+      `Detailed salary bands for 50+ roles in ${countryName} across 4 experience levels`,
+      `City-level breakdowns for major metropolitan areas with cost-of-living adjustments`,
+      'Quarterly data updates with historical trend analysis and PDF + API access',
+    ],
+    previewTitle: 'Report Preview',
+    previewNote: 'Showing 6 of 50+ roles. Full report includes all experience levels, cities, and net calculations.',
+    includedTitle: "What's Included in the Full Report",
+    included: [
+      'Detailed salary bands for 50+ roles (Junior, Mid, Senior, Lead)',
+      `City-level breakdowns for 3-5 major cities in ${countryName}`,
+      'Net salary calculations with country-specific tax and social contributions',
+      'Benefits and bonus data (13th month, vacation, stock options)',
+      'Gender pay gap analysis by role and seniority',
+      'Industry-specific salary comparisons (Tech, Finance, Healthcare, etc.)',
+      'Historical trends with 3-year data and quarterly updates',
+      'PDF download + REST API access with JSON endpoints',
+    ],
+    sampleTitle: `Sample: ${countryName} Salary Bands (EUR/year)`,
+    role: 'Role',
+    juniorLabel: 'Junior',
+    midLabel: 'Mid-Level',
+    seniorLabel: 'Senior',
+    leadLabel: 'Lead',
+    blurredLabel: 'Premium Only',
+    pricingTitle: 'Get the Full Report',
+    singleCountryLabel: 'Single Country',
+    singleCountryDesc: `Complete salary report for ${countryName} with all roles, cities, and net calculations.`,
+    allCountriesLabel: 'All Countries',
+    allCountriesDesc: 'Premium reports for all 15 European countries. Best value for multi-market teams.',
+    buyReport: 'Buy Report',
+    buyAll: 'Buy All Countries',
+    bestValue: 'Best Value',
+    guaranteeTitle: '30-Day Money-Back Guarantee',
+    guaranteeDesc: 'Not satisfied? Get a full refund within 30 days, no questions asked.',
+    faq: [
+      { question: `How often is the ${countryName} salary report updated?`, answer: `The ${countryName} report is updated quarterly with the latest Eurostat, OECD, and verified job posting data. You receive automatic updates for 12 months after purchase.` },
+      { question: 'What data sources power this report?', answer: 'Our reports combine Eurostat Structure of Earnings Survey data, OECD statistics, verified job postings from major European job boards, and anonymous salary submissions validated against tax records.' },
+      { question: 'Can I share the report with my team?', answer: 'The single-country report includes a team license for up to 5 users. For larger teams, consider our Business plan at eurosalary.eu/pricing which includes unlimited team access.' },
+      { question: 'Do you offer refunds?', answer: 'Yes. We offer a 30-day money-back guarantee. If the report does not meet your expectations, contact us for a full refund.' },
+      { question: 'Is the data available via API?', answer: 'Yes. Every premium report includes REST API access with JSON endpoints. You can query salary data programmatically for integration into your HR tools, ATS, or compensation platforms.' },
+    ],
+  },
+  fr: {
+    h1: `Que contient le rapport salarial Premium pour ${countryName} ?`,
+    metaTitle: `Rapport salarial Premium : ${countryName} | EuroSalary.eu`,
+    metaDesc: `Obtenez le rapport salarial complet pour ${countryName} : 50+ postes, donn\u00e9es par ville, calculs de salaire net et mises \u00e0 jour trimestrielles.`,
+    home: 'Accueil',
+    premium: 'Premium',
+    reports: 'Rapports',
+    introAnswer: `Le rapport Premium EuroSalary pour ${countryName} fournit une intelligence salariale de niveau institutionnel couvrant plus de 50 postes sur 4 niveaux d'exp\u00e9rience, des ventilations par ville, des calculs de salaire net et des mises \u00e0 jour trimestrielles.`,
+    tldr: [
+      `Bandes salariales d\u00e9taill\u00e9es pour 50+ postes en ${countryName} sur 4 niveaux d'exp\u00e9rience`,
+      `Ventilations par ville pour les principales zones m\u00e9tropolitaines`,
+      'Mises \u00e0 jour trimestrielles avec analyse des tendances historiques et acc\u00e8s PDF + API',
+    ],
+    previewTitle: 'Aper\u00e7u du rapport',
+    previewNote: 'Affichage de 6 des 50+ postes. Le rapport complet inclut tous les niveaux, villes et calculs nets.',
+    includedTitle: 'Ce qui est inclus dans le rapport complet',
+    included: [
+      'Bandes salariales d\u00e9taill\u00e9es pour 50+ postes (Junior, Confirm\u00e9, Senior, Lead)',
+      `Ventilations par ville pour 3-5 grandes villes de ${countryName}`,
+      'Calculs de salaire net avec imp\u00f4ts et cotisations sociales sp\u00e9cifiques au pays',
+      'Donn\u00e9es sur les avantages et bonus (13\u00e8me mois, vacances, stock-options)',
+      'Analyse de l\'\u00e9cart de r\u00e9mun\u00e9ration hommes-femmes par poste et s\u00e9niorit\u00e9',
+      'Comparaisons salariales par secteur (Tech, Finance, Sant\u00e9, etc.)',
+      'Tendances historiques sur 3 ans avec mises \u00e0 jour trimestrielles',
+      'T\u00e9l\u00e9chargement PDF + acc\u00e8s API REST avec endpoints JSON',
+    ],
+    sampleTitle: `Exemple : bandes salariales ${countryName} (EUR/an)`,
+    role: 'Poste',
+    juniorLabel: 'Junior',
+    midLabel: 'Confirm\u00e9',
+    seniorLabel: 'Senior',
+    leadLabel: 'Lead',
+    blurredLabel: 'Premium uniquement',
+    pricingTitle: 'Obtenir le rapport complet',
+    singleCountryLabel: 'Pays unique',
+    singleCountryDesc: `Rapport salarial complet pour ${countryName} avec tous les postes, villes et calculs nets.`,
+    allCountriesLabel: 'Tous les pays',
+    allCountriesDesc: 'Rapports premium pour les 15 pays europ\u00e9ens. Meilleur rapport qualit\u00e9-prix.',
+    buyReport: 'Acheter le rapport',
+    buyAll: 'Acheter tous les pays',
+    bestValue: 'Meilleur prix',
+    guaranteeTitle: 'Garantie satisfait ou rembours\u00e9 30 jours',
+    guaranteeDesc: 'Pas satisfait ? Remboursement int\u00e9gral sous 30 jours, sans questions.',
+    faq: [
+      { question: `\u00c0 quelle fr\u00e9quence le rapport ${countryName} est-il mis \u00e0 jour ?`, answer: `Le rapport ${countryName} est mis \u00e0 jour trimestriellement avec les derni\u00e8res donn\u00e9es Eurostat, OCDE et offres d'emploi v\u00e9rifi\u00e9es.` },
+      { question: 'Quelles sources de donn\u00e9es alimentent ce rapport ?', answer: 'Nos rapports combinent les donn\u00e9es Eurostat, les statistiques de l\'OCDE, les offres d\'emploi v\u00e9rifi\u00e9es et les soumissions salariales anonymes valid\u00e9es.' },
+      { question: 'Puis-je partager le rapport avec mon \u00e9quipe ?', answer: 'Le rapport pays unique inclut une licence \u00e9quipe pour 5 utilisateurs maximum. Pour les plus grandes \u00e9quipes, consultez notre plan Business.' },
+      { question: 'Proposez-vous des remboursements ?', answer: 'Oui. Garantie satisfait ou rembours\u00e9 30 jours. Contactez-nous pour un remboursement int\u00e9gral.' },
+      { question: 'Les donn\u00e9es sont-elles disponibles via API ?', answer: 'Oui. Chaque rapport premium inclut un acc\u00e8s API REST avec endpoints JSON pour l\'int\u00e9gration dans vos outils RH.' },
+    ],
+  },
+  de: {
+    h1: `Was enth\u00e4lt der Premium-Gehaltsbericht f\u00fcr ${countryName}?`,
+    metaTitle: `Premium Gehaltsbericht: ${countryName} | EuroSalary.eu`,
+    metaDesc: `Erhalten Sie den vollst\u00e4ndigen Gehaltsbericht f\u00fcr ${countryName}: 50+ Berufe, Stadtdaten, Nettogehaltsberechnungen und quartalsm\u00e4\u00dfige Aktualisierungen.`,
+    home: 'Startseite',
+    premium: 'Premium',
+    reports: 'Berichte',
+    introAnswer: `Der EuroSalary Premium-Bericht f\u00fcr ${countryName} liefert institutionelle Gehaltsintelligenz mit \u00fcber 50 Berufsrollen auf 4 Erfahrungsstufen, Aufschl\u00fcsselungen nach St\u00e4dten, Nettogehaltsberechnungen und quartalsm\u00e4\u00dfigen Aktualisierungen.`,
+    tldr: [
+      `Detaillierte Gehaltsb\u00e4nder f\u00fcr 50+ Berufe in ${countryName} auf 4 Erfahrungsstufen`,
+      `Aufschl\u00fcsselungen nach St\u00e4dten f\u00fcr gro\u00dfe Metropolregionen`,
+      'Quartalsm\u00e4\u00dfige Aktualisierungen mit historischer Trendanalyse und PDF + API-Zugang',
+    ],
+    previewTitle: 'Berichtsvorschau',
+    previewNote: 'Anzeige von 6 der 50+ Berufe. Der vollst\u00e4ndige Bericht umfasst alle Stufen, St\u00e4dte und Nettoberechnungen.',
+    includedTitle: 'Was im vollst\u00e4ndigen Bericht enthalten ist',
+    included: [
+      'Detaillierte Gehaltsb\u00e4nder f\u00fcr 50+ Berufe (Junior, Mid, Senior, Lead)',
+      `Aufschl\u00fcsselungen f\u00fcr 3-5 gro\u00dfe St\u00e4dte in ${countryName}`,
+      'Nettogehaltsberechnungen mit l\u00e4nderspezifischen Steuern und Sozialabgaben',
+      'Daten zu Zusatzleistungen und Boni (13. Gehalt, Urlaub, Aktienoptionen)',
+      'Gender-Pay-Gap-Analyse nach Rolle und Seniorit\u00e4t',
+      'Branchenspezifische Gehaltsvergleiche (Tech, Finanzen, Gesundheit, etc.)',
+      'Historische Trends mit 3-Jahres-Daten und quartalsm\u00e4\u00dfigen Aktualisierungen',
+      'PDF-Download + REST-API-Zugang mit JSON-Endpunkten',
+    ],
+    sampleTitle: `Beispiel: ${countryName} Gehaltsb\u00e4nder (EUR/Jahr)`,
+    role: 'Beruf',
+    juniorLabel: 'Junior',
+    midLabel: 'Mid-Level',
+    seniorLabel: 'Senior',
+    leadLabel: 'Lead',
+    blurredLabel: 'Nur Premium',
+    pricingTitle: 'Den vollst\u00e4ndigen Bericht erhalten',
+    singleCountryLabel: 'Einzelnes Land',
+    singleCountryDesc: `Vollst\u00e4ndiger Gehaltsbericht f\u00fcr ${countryName} mit allen Berufen, St\u00e4dten und Nettoberechnungen.`,
+    allCountriesLabel: 'Alle L\u00e4nder',
+    allCountriesDesc: 'Premium-Berichte f\u00fcr alle 15 europ\u00e4ischen L\u00e4nder. Bestes Preis-Leistungs-Verh\u00e4ltnis.',
+    buyReport: 'Bericht kaufen',
+    buyAll: 'Alle L\u00e4nder kaufen',
+    bestValue: 'Bester Preis',
+    guaranteeTitle: '30-Tage-Geld-zur\u00fcck-Garantie',
+    guaranteeDesc: 'Nicht zufrieden? Volle R\u00fcckerstattung innerhalb von 30 Tagen.',
+    faq: [
+      { question: `Wie oft wird der ${countryName}-Bericht aktualisiert?`, answer: `Der ${countryName}-Bericht wird quartalsm\u00e4\u00dfig mit den neuesten Eurostat-, OECD- und verifizierten Stellenangebotsdaten aktualisiert.` },
+      { question: 'Welche Datenquellen werden f\u00fcr diesen Bericht verwendet?', answer: 'Unsere Berichte kombinieren Eurostat-Daten, OECD-Statistiken, verifizierte Stellenangebote und anonyme Gehaltsangaben.' },
+      { question: 'Kann ich den Bericht mit meinem Team teilen?', answer: 'Der Einzellandbericht enth\u00e4lt eine Teamlizenz f\u00fcr bis zu 5 Benutzer. F\u00fcr gr\u00f6\u00dfere Teams empfehlen wir unseren Business-Plan.' },
+      { question: 'Bieten Sie R\u00fcckerstattungen an?', answer: 'Ja. 30-Tage-Geld-zur\u00fcck-Garantie. Kontaktieren Sie uns f\u00fcr eine volle R\u00fcckerstattung.' },
+      { question: 'Sind die Daten \u00fcber eine API verf\u00fcgbar?', answer: 'Ja. Jeder Premium-Bericht enth\u00e4lt REST-API-Zugang mit JSON-Endpunkten f\u00fcr die Integration in Ihre HR-Tools.' },
+    ],
+  },
+  es: {
+    h1: `\u00bfQu\u00e9 incluye el informe salarial Premium para ${countryName}?`,
+    metaTitle: `Informe Salarial Premium: ${countryName} | EuroSalary.eu`,
+    metaDesc: `Obtenga el informe salarial completo para ${countryName}: 50+ puestos, datos por ciudad, c\u00e1lculos de salario neto y actualizaciones trimestrales.`,
+    home: 'Inicio',
+    premium: 'Premium',
+    reports: 'Informes',
+    introAnswer: `El informe Premium de EuroSalary para ${countryName} ofrece inteligencia salarial de nivel institucional cubriendo m\u00e1s de 50 puestos en 4 niveles de experiencia, desgloses por ciudad, c\u00e1lculos de salario neto y actualizaciones trimestrales.`,
+    tldr: [
+      `Bandas salariales detalladas para 50+ puestos en ${countryName} en 4 niveles de experiencia`,
+      `Desgloses por ciudad para las principales \u00e1reas metropolitanas`,
+      'Actualizaciones trimestrales con an\u00e1lisis de tendencias hist\u00f3ricas y acceso PDF + API',
+    ],
+    previewTitle: 'Vista previa del informe',
+    previewNote: 'Mostrando 6 de 50+ puestos. El informe completo incluye todos los niveles, ciudades y c\u00e1lculos netos.',
+    includedTitle: 'Qu\u00e9 incluye el informe completo',
+    included: [
+      'Bandas salariales detalladas para 50+ puestos (Junior, Mid, Senior, Lead)',
+      `Desgloses por ciudad para 3-5 grandes ciudades de ${countryName}`,
+      'C\u00e1lculos de salario neto con impuestos y contribuciones sociales espec\u00edficos del pa\u00eds',
+      'Datos de beneficios y bonificaciones (paga extra, vacaciones, stock options)',
+      'An\u00e1lisis de brecha salarial de g\u00e9nero por puesto y antig\u00fcedad',
+      'Comparaciones salariales por sector (Tech, Finanzas, Salud, etc.)',
+      'Tendencias hist\u00f3ricas con datos de 3 a\u00f1os y actualizaciones trimestrales',
+      'Descarga PDF + acceso API REST con endpoints JSON',
+    ],
+    sampleTitle: `Ejemplo: bandas salariales de ${countryName} (EUR/a\u00f1o)`,
+    role: 'Puesto',
+    juniorLabel: 'Junior',
+    midLabel: 'Mid-Level',
+    seniorLabel: 'Senior',
+    leadLabel: 'Lead',
+    blurredLabel: 'Solo Premium',
+    pricingTitle: 'Obtener el informe completo',
+    singleCountryLabel: 'Pa\u00eds individual',
+    singleCountryDesc: `Informe salarial completo para ${countryName} con todos los puestos, ciudades y c\u00e1lculos netos.`,
+    allCountriesLabel: 'Todos los pa\u00edses',
+    allCountriesDesc: 'Informes premium para los 15 pa\u00edses europeos. Mejor relaci\u00f3n calidad-precio.',
+    buyReport: 'Comprar informe',
+    buyAll: 'Comprar todos los pa\u00edses',
+    bestValue: 'Mejor precio',
+    guaranteeTitle: 'Garant\u00eda de devoluci\u00f3n de 30 d\u00edas',
+    guaranteeDesc: '\u00bfNo est\u00e1 satisfecho? Reembolso completo en 30 d\u00edas, sin preguntas.',
+    faq: [
+      { question: `\u00bfCon qu\u00e9 frecuencia se actualiza el informe de ${countryName}?`, answer: `El informe de ${countryName} se actualiza trimestralmente con los \u00faltimos datos de Eurostat, OCDE y ofertas de empleo verificadas.` },
+      { question: '\u00bfQu\u00e9 fuentes de datos alimentan este informe?', answer: 'Nuestros informes combinan datos de Eurostat, estad\u00edsticas de la OCDE, ofertas de empleo verificadas y env\u00edos salariales an\u00f3nimos validados.' },
+      { question: '\u00bfPuedo compartir el informe con mi equipo?', answer: 'El informe de pa\u00eds individual incluye una licencia de equipo para hasta 5 usuarios. Para equipos m\u00e1s grandes, consulte nuestro plan Business.' },
+      { question: '\u00bfOfrecen reembolsos?', answer: 'S\u00ed. Garant\u00eda de devoluci\u00f3n de 30 d\u00edas. Cont\u00e1ctenos para un reembolso completo.' },
+      { question: '\u00bfLos datos est\u00e1n disponibles v\u00eda API?', answer: 'S\u00ed. Cada informe premium incluye acceso API REST con endpoints JSON para la integraci\u00f3n en sus herramientas de RRHH.' },
+    ],
+  },
+};
+
+const c = fb(i18n, lang);
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: c.h1,
+    author: { '@type': 'Organization', name: 'EuroSalary.eu' },
+    datePublished: '2026-04-04',
+    dateModified: '2026-04-04',
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: c.faq.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: `Premium Salary Report: ${countryName}`,
+    description: c.metaDesc,
+    offers: [
+      { '@type': 'Offer', price: '49', priceCurrency: 'EUR', name: 'Single Country Report' },
+      { '@type': 'Offer', price: '149', priceCurrency: 'EUR', name: 'All Countries Bundle' },
+    ],
+  },
+];
+---
+
+<BaseLayout title={c.metaTitle} description={c.metaDesc} datePublished="2026-04-04" dateModified="2026-04-04" schema={pageSchema}>
+  <!-- Hero -->
+  <section class="report-hero">
+    <div class="report-hero__dots"></div>
+    <div class="container report-hero__inner">
+      <nav class="report-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{c.home}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a href={`/${lang}/premium/`}>{c.premium}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span>{c.reports}</span>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span>{countryName}</span>
+      </nav>
+      <div class="report-hero__badge">
+        <span class="material-symbols-outlined">workspace_premium</span>
+        Premium Report
+      </div>
+      <h1>{flag} {c.h1}</h1>
+      <p class="report-hero__answer">{c.introAnswer}</p>
+    </div>
+  </section>
+
+  <article class="container report-body">
+    <TLDRBox items={c.tldr} />
+
+    <!-- Sample Data Table (Preview with blur) -->
+    <section class="report-section">
+      <h2>{c.previewTitle}</h2>
+      <p class="report-section__note">{c.previewNote}</p>
+      <div class="report-table-wrapper">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>{c.role}</th>
+              <th>{c.juniorLabel}</th>
+              <th>{c.midLabel}</th>
+              <th>{c.seniorLabel}</th>
+              <th>{c.leadLabel}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sampleRoles.map((row, i) => (
+              <tr>
+                <td class="report-table__role">{row.role}</td>
+                <td>{i < 2 ? `\u20AC${row.junior}` : ''}<span class={i >= 2 ? 'blurred-cell' : 'hidden'}>{i >= 2 ? `\u20AC${row.junior}` : ''}</span></td>
+                <td>{i < 2 ? `\u20AC${row.mid}` : ''}<span class={i >= 2 ? 'blurred-cell' : 'hidden'}>{i >= 2 ? `\u20AC${row.mid}` : ''}</span></td>
+                <td><span class="blurred-cell">{`\u20AC${row.senior}`}</span></td>
+                <td><span class="blurred-cell">{`\u20AC${row.lead}`}</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div class="report-table__overlay">
+          <span class="material-symbols-outlined">lock</span>
+          <span>{c.blurredLabel}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- What's Included -->
+    <section class="report-section">
+      <h2>{c.includedTitle}</h2>
+      <div class="report-included">
+        {c.included.map((item, i) => (
+          <div class="report-included__item">
+            <span class="report-included__number">{i + 1}</span>
+            <span class="report-included__text">{item}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="report-section report-pricing">
+      <h2>{c.pricingTitle}</h2>
+      <div class="report-pricing__cards">
+        <div class="report-pricing__card">
+          <div class="report-pricing__card-header">
+            <span class="material-symbols-outlined">description</span>
+            <h3>{c.singleCountryLabel}</h3>
+          </div>
+          <div class="report-pricing__price">
+            <span class="report-pricing__amount">&euro;49</span>
+            <span class="report-pricing__period">one-time</span>
+          </div>
+          <p class="report-pricing__desc">{c.singleCountryDesc}</p>
+          <a href="#" class="report-pricing__cta">{c.buyReport}</a>
+        </div>
+        <div class="report-pricing__card report-pricing__card--featured">
+          <div class="report-pricing__best-value">{c.bestValue}</div>
+          <div class="report-pricing__card-header">
+            <span class="material-symbols-outlined">public</span>
+            <h3>{c.allCountriesLabel}</h3>
+          </div>
+          <div class="report-pricing__price">
+            <span class="report-pricing__amount">&euro;149</span>
+            <span class="report-pricing__period">one-time</span>
+          </div>
+          <p class="report-pricing__desc">{c.allCountriesDesc}</p>
+          <a href="#" class="report-pricing__cta report-pricing__cta--featured">{c.buyAll}</a>
+        </div>
+      </div>
+      <div class="report-guarantee">
+        <span class="material-symbols-outlined">verified_user</span>
+        <div>
+          <strong>{c.guaranteeTitle}</strong>
+          <p>{c.guaranteeDesc}</p>
+        </div>
+      </div>
+    </section>
+
+    <FAQSection items={c.faq} />
+
+    <!-- Link back to methodology -->
+    <section class="report-section report-methodology">
+      <p class="report-methodology__link">
+        <span class="material-symbols-outlined">science</span>
+        <a href={`/${lang}/methodology/`}>{t('nav.methodology')}</a> — {fb({ en: 'Learn how we source, validate, and standardize European salary data.', fr: 'D\u00e9couvrez comment nous sour\u00e7ons et validons les donn\u00e9es salariales.', de: 'Erfahren Sie, wie wir Gehaltsdaten beschaffen und validieren.', es: 'Conozca c\u00f3mo obtenemos y validamos los datos salariales.' }, lang)}
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  /* ===== Hero ===== */
+  .report-hero {
+    background: var(--color-primary-container, #0F1F3D);
+    color: white;
+    padding: var(--space-16) 0 var(--space-12);
+    position: relative;
+    overflow: hidden;
+  }
+  .report-hero__dots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .report-hero__inner { position: relative; z-index: 1; max-width: 720px; }
+  .report-hero__breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: rgba(203, 213, 225, 0.6);
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+  }
+  .report-hero__breadcrumbs a {
+    color: rgba(203, 213, 225, 0.6);
+    text-decoration: none;
+  }
+  .report-hero__breadcrumbs a:hover { color: white; }
+  .report-hero__breadcrumbs .material-symbols-outlined { font-size: 14px; }
+  .report-hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(37, 99, 235, 0.2);
+    border: 1px solid rgba(37, 99, 235, 0.3);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #93c5fd;
+    margin-bottom: var(--space-4);
+  }
+  .report-hero__badge .material-symbols-outlined { font-size: 14px; }
+  .report-hero h1 {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: var(--space-4);
+  }
+  .report-hero__answer {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: rgba(203, 213, 225, 0.85);
+  }
+
+  /* ===== Body ===== */
+  .report-body { padding: var(--space-10) 0 var(--space-16); }
+  .report-section { margin-top: var(--space-12); }
+  .report-section h2 {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--color-primary-container, #0F1F3D);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-4);
+  }
+  .report-section__note {
+    font-size: 13px;
+    color: #75777e;
+    margin-bottom: var(--space-6);
+  }
+
+  /* ===== Sample Table ===== */
+  .report-table-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid #e6e8ea;
+  }
+  .report-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .report-table thead {
+    background: var(--color-primary-container, #0F1F3D);
+    color: white;
+  }
+  .report-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .report-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f3f5;
+  }
+  .report-table__role {
+    font-weight: 600;
+    color: var(--color-primary-container, #0F1F3D);
+  }
+  .report-table tbody tr:hover {
+    background: #f8fafc;
+  }
+  .blurred-cell {
+    filter: blur(6px);
+    user-select: none;
+    pointer-events: none;
+    color: #64748b;
+  }
+  .hidden { display: none; }
+  .report-table__overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(transparent, rgba(255,255,255,0.95));
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 8px;
+    padding-bottom: 16px;
+    color: var(--color-secondary, #2563EB);
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .report-table__overlay .material-symbols-outlined { font-size: 20px; }
+
+  /* ===== What's Included ===== */
+  .report-included {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+  }
+  .report-included__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: var(--space-4) var(--space-5);
+    background: white;
+    border: 1px solid #e6e8ea;
+    border-radius: 6px;
+  }
+  .report-included__number {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-secondary, #2563EB);
+    color: white;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .report-included__text {
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.5;
+  }
+
+  /* ===== Pricing Cards ===== */
+  .report-pricing__cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+    margin-top: var(--space-8);
+    margin-bottom: var(--space-8);
+  }
+  .report-pricing__card {
+    background: white;
+    border: 1px solid #e6e8ea;
+    border-radius: 8px;
+    padding: var(--space-8);
+    position: relative;
+  }
+  .report-pricing__card--featured {
+    border-color: var(--color-secondary, #2563EB);
+    border-width: 2px;
+    box-shadow: 0 4px 24px rgba(37, 99, 235, 0.12);
+  }
+  .report-pricing__best-value {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-secondary, #2563EB);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 16px;
+    border-radius: 12px;
+  }
+  .report-pricing__card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: var(--space-4);
+  }
+  .report-pricing__card-header .material-symbols-outlined {
+    font-size: 24px;
+    color: var(--color-secondary, #2563EB);
+  }
+  .report-pricing__card-header h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-primary-container, #0F1F3D);
+  }
+  .report-pricing__price {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: var(--space-4);
+  }
+  .report-pricing__amount {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--color-primary-container, #0F1F3D);
+    letter-spacing: -0.02em;
+  }
+  .report-pricing__period {
+    font-size: 14px;
+    color: #75777e;
+  }
+  .report-pricing__desc {
+    font-size: 14px;
+    color: #45474e;
+    line-height: 1.5;
+    margin-bottom: var(--space-6);
+  }
+  .report-pricing__cta {
+    display: block;
+    text-align: center;
+    padding: 12px 24px;
+    border: 2px solid var(--color-secondary, #2563EB);
+    color: var(--color-secondary, #2563EB);
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .report-pricing__cta:hover {
+    background: var(--color-secondary, #2563EB);
+    color: white;
+  }
+  .report-pricing__cta--featured {
+    background: var(--color-secondary, #2563EB);
+    color: white;
+  }
+  .report-pricing__cta--featured:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+  }
+
+  /* ===== Guarantee ===== */
+  .report-guarantee {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: var(--space-5) var(--space-6);
+  }
+  .report-guarantee .material-symbols-outlined {
+    font-size: 28px;
+    color: #16a34a;
+    flex-shrink: 0;
+  }
+  .report-guarantee strong {
+    display: block;
+    font-size: 14px;
+    color: #15803d;
+    margin-bottom: 2px;
+  }
+  .report-guarantee p {
+    font-size: 13px;
+    color: #45474e;
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  /* ===== Methodology Link ===== */
+  .report-methodology__link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--text-sm);
+    color: #45474e;
+  }
+  .report-methodology__link .material-symbols-outlined {
+    font-size: 18px;
+    color: var(--color-secondary, #2563EB);
+  }
+  .report-methodology__link a {
+    color: var(--color-secondary, #2563EB);
+    font-weight: 600;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .report-included { grid-template-columns: 1fr; }
+    .report-pricing__cards { grid-template-columns: 1fr; }
+    .report-table { font-size: 12px; }
+    .report-table th, .report-table td { padding: 8px 10px; }
+  }
+</style>

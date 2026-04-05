@@ -1,0 +1,680 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../../components/TLDRBox.astro';
+import SalaryTable from '../../../../components/SalaryTable.astro';
+import FAQSection from '../../../../components/FAQSection.astro';
+import CountryCompare from '../../../../components/CountryCompare.astro';
+import JobAffiliateCTA from '../../../../components/JobAffiliateCTA.astro';
+import SalaryForm from '../../../../components/SalaryForm.astro';
+import { supabase } from '../../../../lib/supabase';
+import { countrySlugsByLang, jobSlugsByLang, countryFlags } from '../../../../data/slugs';
+import { languages } from '../../../../i18n/ui';
+import { fb, useTranslations } from '../../../../i18n/utils';
+import { uiLabels, countryNames, jobNames } from '../../../../i18n/translations';
+
+export async function getStaticPaths() {
+  const { data: salaryData } = await supabase
+    .from('salary_data')
+    .select(`
+      salary_min, salary_max, salary_median, salary_net_estimate, experience_level,
+      jobs!inner(slug, name_en, name_fr, name_de, name_es),
+      countries!inner(slug, code, name_en, name_fr, name_de, name_es, currency, tax_notes)
+    `);
+
+  if (!salaryData) return [];
+
+  const grouped: Record<string, any[]> = {};
+  for (const row of salaryData) {
+    const key = `${(row.jobs as any).slug}__${(row.countries as any).code}`;
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(row);
+  }
+
+  const langs = Object.keys(languages);
+  const paths: any[] = [];
+
+  for (const [key, rows] of Object.entries(grouped)) {
+    const [jobSlug, countryCode] = key.split('__');
+    const job = rows[0].jobs as any;
+    const country = rows[0].countries as any;
+
+    const levelOrder = { junior: 0, mid: 1, senior: 2, lead: 3 };
+    const salaryRows = rows
+      .sort((a: any, b: any) => (levelOrder[a.experience_level as keyof typeof levelOrder] ?? 0) - (levelOrder[b.experience_level as keyof typeof levelOrder] ?? 0))
+      .map((r: any) => ({
+        level: r.experience_level,
+        min: r.salary_min,
+        median: r.salary_median,
+        max: r.salary_max,
+        netEstimate: r.salary_net_estimate,
+      }));
+
+    const compareRows = salaryData.filter(
+      (r: any) => (r.jobs as any).slug === jobSlug && (r.countries as any).code !== countryCode && r.experience_level === 'mid'
+    );
+
+    for (const lang of langs) {
+      const countrySlug = fb(countrySlugsByLang, lang)?.[countryCode];
+      const jobSlugLocalized = fb(jobSlugsByLang, lang)?.[jobSlug];
+      if (!countrySlug || !jobSlugLocalized) continue;
+
+      const jobName = fb(jobNames[(job as any).slug], lang) || (job as any).name_en;
+      const countryName = fb(countryNames[countryCode], lang) || (country as any).name_en;
+
+      const compareItems = compareRows.map((r: any) => ({
+        countryName: fb(countryNames[(r.countries as any).code], lang) || (r.countries as any).name_en,
+        countrySlug: fb(countrySlugsByLang, lang)?.[(r.countries as any).code] || (r.countries as any).slug,
+        countryCode: (r.countries as any).code,
+        flag: countryFlags[(r.countries as any).code] || '',
+        medianSalary: r.salary_median,
+      })).sort((a: any, b: any) => b.medianSalary - a.medianSalary).slice(0, 8);
+
+      const midRow = salaryRows.find((r: any) => r.level === 'mid') || salaryRows[0];
+
+      paths.push({
+        params: { lang, country: countrySlug, job: jobSlugLocalized },
+        props: {
+          lang, jobSlug, jobName, countryCode, countryName, countrySlug,
+          salaryRows, compareItems, midRow, currency: country.currency || 'EUR',
+          taxNotes: country.tax_notes || '',
+        },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { lang, jobSlug, jobName, countryCode, countryName, countrySlug, salaryRows, compareItems, midRow, currency, taxNotes } = Astro.props;
+const t = useTranslations(lang as any);
+
+const fmt = (n: number) => new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
+
+const year = '2026';
+const titles: Record<string, string> = {
+  en: `What is the Average ${jobName} Salary in ${countryName} in ${year}?`,
+  fr: `Quel est le salaire moyen d'un ${jobName} en ${countryName} en ${year} ?`,
+  de: `Was verdient ein ${jobName} in ${countryName} im Jahr ${year}?`,
+  es: `¿Cuál es el salario promedio de un ${jobName} en ${countryName} en ${year}?`,
+  it: `Qual è lo stipendio medio di un ${jobName} in ${countryName} nel ${year}?`,
+  pt: `Qual é o salário médio de um ${jobName} em ${countryName} em ${year}?`,
+  nl: `Wat is het gemiddelde ${jobName} salaris in ${countryName} in ${year}?`,
+  pl: `Jakie jest średnie wynagrodzenie ${jobName} w ${countryName} w ${year} roku?`,
+  ro: `Care este salariul mediu al unui ${jobName} în ${countryName} în ${year}?`,
+  cs: `Jaký je průměrný plat ${jobName} v ${countryName} v roce ${year}?`,
+  sv: `Vad är den genomsnittliga ${jobName}-lönen i ${countryName} ${year}?`,
+  da: `Hvad er den gennemsnitlige ${jobName}-løn i ${countryName} i ${year}?`,
+  fi: `Mikä on ${jobName}-keskipalkka maassa ${countryName} vuonna ${year}?`,
+  el: `Ποιος είναι ο μέσος μισθός ενός ${jobName} στην ${countryName} το ${year};`,
+  hu: `Mennyi az átlagos ${jobName} fizetés ${countryName} területén ${year}-ben?`,
+  sk: `Aký je priemerný plat ${jobName} v ${countryName} v roku ${year}?`,
+  bg: `Каква е средната заплата на ${jobName} в ${countryName} през ${year}?`,
+  hr: `Kolika je prosječna plaća za ${jobName} u ${countryName} u ${year}.?`,
+  sl: `Kakšna je povprečna plača za ${jobName} v ${countryName} v letu ${year}?`,
+  lt: `Koks yra vidutinis ${jobName} atlyginimas šalyje ${countryName} ${year} m.?`,
+  lv: `Kāda ir vidējā ${jobName} alga valstī ${countryName} ${year}. gadā?`,
+  et: `Milline on ${jobName} keskmine palk riigis ${countryName} aastal ${year}?`,
+  mt: `Kemm hu s-salarju medju ta' ${jobName} f'${countryName} fl-${year}?`,
+  ga: `Cad é an meántuarastal do ${jobName} in ${countryName} i ${year}?`,
+};
+
+const descriptions: Record<string, string> = {
+  en: `The average ${jobName} salary in ${countryName} is ${fmt(midRow.median)}/yr gross. Range: ${fmt(salaryRows[0]?.min || midRow.min)} to ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Updated ${year}. Source: Eurostat + verified job postings.`,
+  fr: `Le salaire moyen d'un ${jobName} en ${countryName} est de ${fmt(midRow.median)}/an brut. De ${fmt(salaryRows[0]?.min || midRow.min)} à ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Mis à jour ${year}.`,
+  de: `Das durchschnittliche ${jobName}-Gehalt in ${countryName} beträgt ${fmt(midRow.median)}/Jahr brutto. Spanne: ${fmt(salaryRows[0]?.min || midRow.min)} bis ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Stand ${year}.`,
+  es: `El salario promedio de un ${jobName} en ${countryName} es ${fmt(midRow.median)}/año bruto. Rango: ${fmt(salaryRows[0]?.min || midRow.min)} a ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Actualizado ${year}.`,
+  it: `Lo stipendio medio di un ${jobName} in ${countryName} è di ${fmt(midRow.median)}/anno lordi. Intervallo: da ${fmt(salaryRows[0]?.min || midRow.min)} a ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Aggiornato ${year}.`,
+  pt: `O salário médio de um ${jobName} em ${countryName} é de ${fmt(midRow.median)}/ano bruto. Intervalo: ${fmt(salaryRows[0]?.min || midRow.min)} a ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Atualizado ${year}.`,
+  nl: `Het gemiddelde ${jobName}-salaris in ${countryName} is ${fmt(midRow.median)}/jaar bruto. Bereik: ${fmt(salaryRows[0]?.min || midRow.min)} tot ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Bijgewerkt ${year}.`,
+  pl: `Średnie wynagrodzenie ${jobName} w ${countryName} wynosi ${fmt(midRow.median)}/rok brutto. Zakres: od ${fmt(salaryRows[0]?.min || midRow.min)} do ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Zaktualizowano ${year}.`,
+  ro: `Salariul mediu al unui ${jobName} în ${countryName} este de ${fmt(midRow.median)}/an brut. Interval: ${fmt(salaryRows[0]?.min || midRow.min)} la ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Actualizat ${year}.`,
+  cs: `Průměrný plat ${jobName} v ${countryName} je ${fmt(midRow.median)}/rok hrubého. Rozmezí: ${fmt(salaryRows[0]?.min || midRow.min)} až ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Aktualizováno ${year}.`,
+  sv: `Genomsnittslönen för en ${jobName} i ${countryName} är ${fmt(midRow.median)}/år brutto. Intervall: ${fmt(salaryRows[0]?.min || midRow.min)} till ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Uppdaterat ${year}.`,
+  da: `Den gennemsnitlige ${jobName}-løn i ${countryName} er ${fmt(midRow.median)}/år brutto. Interval: ${fmt(salaryRows[0]?.min || midRow.min)} til ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Opdateret ${year}.`,
+  fi: `${jobName}-keskipalkka maassa ${countryName} on ${fmt(midRow.median)}/vuosi brutto. Vaihteluväli: ${fmt(salaryRows[0]?.min || midRow.min)} – ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Päivitetty ${year}.`,
+  el: `Ο μέσος μισθός ενός ${jobName} στην ${countryName} είναι ${fmt(midRow.median)}/έτος μεικτά. Εύρος: ${fmt(salaryRows[0]?.min || midRow.min)} έως ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Ενημέρωση ${year}.`,
+  hu: `Az átlagos ${jobName} fizetés ${countryName} területén ${fmt(midRow.median)}/év bruttó. Tartomány: ${fmt(salaryRows[0]?.min || midRow.min)} – ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Frissítve ${year}.`,
+  sk: `Priemerný plat ${jobName} v ${countryName} je ${fmt(midRow.median)}/rok hrubého. Rozsah: ${fmt(salaryRows[0]?.min || midRow.min)} až ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Aktualizované ${year}.`,
+  bg: `Средната заплата на ${jobName} в ${countryName} е ${fmt(midRow.median)}/год. бруто. Диапазон: ${fmt(salaryRows[0]?.min || midRow.min)} до ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Актуализирано ${year}.`,
+  hr: `Prosječna plaća za ${jobName} u ${countryName} iznosi ${fmt(midRow.median)}/god. bruto. Raspon: ${fmt(salaryRows[0]?.min || midRow.min)} do ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Ažurirano ${year}.`,
+  sl: `Povprečna plača za ${jobName} v ${countryName} je ${fmt(midRow.median)}/leto bruto. Razpon: ${fmt(salaryRows[0]?.min || midRow.min)} do ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Posodobljeno ${year}.`,
+  lt: `Vidutinis ${jobName} atlyginimas šalyje ${countryName} yra ${fmt(midRow.median)}/metus bruto. Intervalas: nuo ${fmt(salaryRows[0]?.min || midRow.min)} iki ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Atnaujinta ${year}.`,
+  lv: `Vidējā ${jobName} alga valstī ${countryName} ir ${fmt(midRow.median)}/gadā bruto. Diapazons: ${fmt(salaryRows[0]?.min || midRow.min)} līdz ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Atjaunināts ${year}.`,
+  et: `${jobName} keskmine palk riigis ${countryName} on ${fmt(midRow.median)}/aastas bruto. Vahemik: ${fmt(salaryRows[0]?.min || midRow.min)} kuni ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Uuendatud ${year}.`,
+  mt: `Is-salarju medju ta' ${jobName} f'${countryName} huwa ${fmt(midRow.median)}/sena gross. Firxa: ${fmt(salaryRows[0]?.min || midRow.min)} sa ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Aġġornat ${year}.`,
+  ga: `Is é an meántuarastal do ${jobName} in ${countryName} ná ${fmt(midRow.median)}/bl. comhlán. Raon: ${fmt(salaryRows[0]?.min || midRow.min)} go ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}. Nuashonraithe ${year}.`,
+};
+
+const answerTexts: Record<string, string> = {
+  en: `The average gross salary for a ${jobName} in ${countryName} is <strong>${fmt(midRow.median)} per year</strong> (mid-level). ${salaryRows.length > 1 ? `Salaries range from ${fmt(salaryRows[0].min)} for entry-level to ${fmt(salaryRows[salaryRows.length - 1].max)} for senior positions.` : ''} After taxes, the estimated net take-home is approximately ${fmt(midRow.netEstimate)}.`,
+  fr: `Le salaire brut moyen d'un ${jobName} en ${countryName} est de <strong>${fmt(midRow.median)} par an</strong> (niveau intermédiaire). ${salaryRows.length > 1 ? `Les salaires vont de ${fmt(salaryRows[0].min)} pour les débutants à ${fmt(salaryRows[salaryRows.length - 1].max)} pour les postes seniors.` : ''} Après impôts, le salaire net estimé est d'environ ${fmt(midRow.netEstimate)}.`,
+  de: `Das durchschnittliche Bruttogehalt für einen ${jobName} in ${countryName} beträgt <strong>${fmt(midRow.median)} pro Jahr</strong> (mittleres Niveau). ${salaryRows.length > 1 ? `Die Gehälter reichen von ${fmt(salaryRows[0].min)} für Einsteiger bis ${fmt(salaryRows[salaryRows.length - 1].max)} für Senior-Positionen.` : ''} Nach Steuern liegt das geschätzte Nettogehalt bei ca. ${fmt(midRow.netEstimate)}.`,
+  es: `El salario bruto promedio de un ${jobName} en ${countryName} es de <strong>${fmt(midRow.median)} al año</strong> (nivel intermedio). ${salaryRows.length > 1 ? `Los salarios van desde ${fmt(salaryRows[0].min)} para principiantes hasta ${fmt(salaryRows[salaryRows.length - 1].max)} para posiciones senior.` : ''} Después de impuestos, el salario neto estimado es de aproximadamente ${fmt(midRow.netEstimate)}.`,
+  it: `Lo stipendio lordo medio per un ${jobName} in ${countryName} è di <strong>${fmt(midRow.median)} all'anno</strong> (livello intermedio). ${salaryRows.length > 1 ? `Gli stipendi vanno da ${fmt(salaryRows[0].min)} per i neoassunti a ${fmt(salaryRows[salaryRows.length - 1].max)} per le posizioni senior.` : ''} Al netto delle tasse, lo stipendio netto stimato è di circa ${fmt(midRow.netEstimate)}.`,
+  pt: `O salário bruto médio de um ${jobName} em ${countryName} é de <strong>${fmt(midRow.median)} por ano</strong> (nível intermédio). ${salaryRows.length > 1 ? `Os salários variam de ${fmt(salaryRows[0].min)} para iniciantes a ${fmt(salaryRows[salaryRows.length - 1].max)} para cargos seniores.` : ''} Após impostos, o salário líquido estimado é de aproximadamente ${fmt(midRow.netEstimate)}.`,
+  nl: `Het gemiddelde bruto salaris voor een ${jobName} in ${countryName} is <strong>${fmt(midRow.median)} per jaar</strong> (middenniveau). ${salaryRows.length > 1 ? `Salarissen variëren van ${fmt(salaryRows[0].min)} voor instapniveau tot ${fmt(salaryRows[salaryRows.length - 1].max)} voor seniorposities.` : ''} Na belastingen is het geschatte nettoloon ongeveer ${fmt(midRow.netEstimate)}.`,
+  pl: `Średnie wynagrodzenie brutto dla ${jobName} w ${countryName} wynosi <strong>${fmt(midRow.median)} rocznie</strong> (poziom średniozaawansowany). ${salaryRows.length > 1 ? `Wynagrodzenia wahają się od ${fmt(salaryRows[0].min)} dla początkujących do ${fmt(salaryRows[salaryRows.length - 1].max)} dla stanowisk seniorskich.` : ''} Po odliczeniu podatków szacowane wynagrodzenie netto wynosi ok. ${fmt(midRow.netEstimate)}.`,
+  ro: `Salariul brut mediu pentru un ${jobName} în ${countryName} este de <strong>${fmt(midRow.median)} pe an</strong> (nivel intermediar). ${salaryRows.length > 1 ? `Salariile variază de la ${fmt(salaryRows[0].min)} pentru începători la ${fmt(salaryRows[salaryRows.length - 1].max)} pentru pozițiile senior.` : ''} După impozite, salariul net estimat este de aproximativ ${fmt(midRow.netEstimate)}.`,
+  cs: `Průměrný hrubý plat pro ${jobName} v ${countryName} je <strong>${fmt(midRow.median)} ročně</strong> (střední úroveň). ${salaryRows.length > 1 ? `Platy se pohybují od ${fmt(salaryRows[0].min)} pro juniorní pozice po ${fmt(salaryRows[salaryRows.length - 1].max)} pro seniorní pozice.` : ''} Po zdanění je odhadovaný čistý příjem přibližně ${fmt(midRow.netEstimate)}.`,
+  sv: `Den genomsnittliga bruttolönen för en ${jobName} i ${countryName} är <strong>${fmt(midRow.median)} per år</strong> (mellannivå). ${salaryRows.length > 1 ? `Lönerna varierar från ${fmt(salaryRows[0].min)} för nybörjare till ${fmt(salaryRows[salaryRows.length - 1].max)} för seniorpositioner.` : ''} Efter skatt är den beräknade nettolönen ungefär ${fmt(midRow.netEstimate)}.`,
+  da: `Den gennemsnitlige bruttoløn for en ${jobName} i ${countryName} er <strong>${fmt(midRow.median)} om året</strong> (mellemniveau). ${salaryRows.length > 1 ? `Lønningerne spænder fra ${fmt(salaryRows[0].min)} for begyndere til ${fmt(salaryRows[salaryRows.length - 1].max)} for seniorstillinger.` : ''} Efter skat er den anslåede nettoløn ca. ${fmt(midRow.netEstimate)}.`,
+  fi: `${jobName}-ammatin keskimääräinen bruttopalkka maassa ${countryName} on <strong>${fmt(midRow.median)} vuodessa</strong> (keskitaso). ${salaryRows.length > 1 ? `Palkat vaihtelevat ${fmt(salaryRows[0].min)} aloitustasosta ${fmt(salaryRows[salaryRows.length - 1].max)} senioritasolle.` : ''} Verojen jälkeen arvioitu nettopalkka on noin ${fmt(midRow.netEstimate)}.`,
+  el: `Ο μέσος μεικτός μισθός για έναν ${jobName} στην ${countryName} είναι <strong>${fmt(midRow.median)} τον χρόνο</strong> (μεσαίο επίπεδο). ${salaryRows.length > 1 ? `Οι μισθοί κυμαίνονται από ${fmt(salaryRows[0].min)} για αρχάριους έως ${fmt(salaryRows[salaryRows.length - 1].max)} για ανώτερες θέσεις.` : ''} Μετά τους φόρους, ο εκτιμώμενος καθαρός μισθός είναι περίπου ${fmt(midRow.netEstimate)}.`,
+  hu: `Az átlagos bruttó fizetés egy ${jobName} pozícióban ${countryName} területén <strong>évi ${fmt(midRow.median)}</strong> (középszintű). ${salaryRows.length > 1 ? `A fizetések ${fmt(salaryRows[0].min)}-tól (junior) ${fmt(salaryRows[salaryRows.length - 1].max)}-ig (senior) terjednek.` : ''} Adók levonása után a becsült nettó fizetés körülbelül ${fmt(midRow.netEstimate)}.`,
+  sk: `Priemerný hrubý plat pre ${jobName} v ${countryName} je <strong>${fmt(midRow.median)} ročne</strong> (stredná úroveň). ${salaryRows.length > 1 ? `Platy sa pohybujú od ${fmt(salaryRows[0].min)} pre juniorné pozície po ${fmt(salaryRows[salaryRows.length - 1].max)} pre seniorné pozície.` : ''} Po zdanení je odhadovaný čistý príjem približne ${fmt(midRow.netEstimate)}.`,
+  bg: `Средната брутна заплата за ${jobName} в ${countryName} е <strong>${fmt(midRow.median)} годишно</strong> (средно ниво). ${salaryRows.length > 1 ? `Заплатите варират от ${fmt(salaryRows[0].min)} за начинаещи до ${fmt(salaryRows[salaryRows.length - 1].max)} за старши позиции.` : ''} След данъци нетната заплата е приблизително ${fmt(midRow.netEstimate)}.`,
+  hr: `Prosječna bruto plaća za ${jobName} u ${countryName} iznosi <strong>${fmt(midRow.median)} godišnje</strong> (srednja razina). ${salaryRows.length > 1 ? `Plaće se kreću od ${fmt(salaryRows[0].min)} za početnike do ${fmt(salaryRows[salaryRows.length - 1].max)} za seniorske pozicije.` : ''} Nakon poreza, procijenjeni neto iznos je otprilike ${fmt(midRow.netEstimate)}.`,
+  sl: `Povprečna bruto plača za ${jobName} v ${countryName} je <strong>${fmt(midRow.median)} na leto</strong> (srednja raven). ${salaryRows.length > 1 ? `Plače segajo od ${fmt(salaryRows[0].min)} za začetnike do ${fmt(salaryRows[salaryRows.length - 1].max)} za višje pozicije.` : ''} Po obdavčitvi je ocenjena neto plača približno ${fmt(midRow.netEstimate)}.`,
+  lt: `Vidutinis ${jobName} bruto atlyginimas šalyje ${countryName} yra <strong>${fmt(midRow.median)} per metus</strong> (vidutinis lygis). ${salaryRows.length > 1 ? `Atlyginimai svyruoja nuo ${fmt(salaryRows[0].min)} pradedantiesiems iki ${fmt(salaryRows[salaryRows.length - 1].max)} vyresniems specialistams.` : ''} Po mokesčių grynasis atlyginimas yra apie ${fmt(midRow.netEstimate)}.`,
+  lv: `Vidējā ${jobName} bruto alga valstī ${countryName} ir <strong>${fmt(midRow.median)} gadā</strong> (vidējais līmenis). ${salaryRows.length > 1 ? `Algas svārstās no ${fmt(salaryRows[0].min)} iesācējiem līdz ${fmt(salaryRows[salaryRows.length - 1].max)} augstākā līmeņa pozīcijām.` : ''} Pēc nodokļiem aplēstā neto alga ir aptuveni ${fmt(midRow.netEstimate)}.`,
+  et: `${jobName} keskmine brutopalk riigis ${countryName} on <strong>${fmt(midRow.median)} aastas</strong> (keskmine tase). ${salaryRows.length > 1 ? `Palgad jäävad vahemikku ${fmt(salaryRows[0].min)} algajatele kuni ${fmt(salaryRows[salaryRows.length - 1].max)} vanempositsioonidele.` : ''} Pärast makse on hinnanguline netopalk ligikaudu ${fmt(midRow.netEstimate)}.`,
+  mt: `Is-salarju gross medju għal ${jobName} f'${countryName} huwa <strong>${fmt(midRow.median)} fis-sena</strong> (livell medju). ${salaryRows.length > 1 ? `Is-salarji jvarjaw minn ${fmt(salaryRows[0].min)} għal livell ta' bidu sa ${fmt(salaryRows[salaryRows.length - 1].max)} għal pożizzjonijiet għolja.` : ''} Wara t-taxxi, is-salarju nett stmat huwa madwar ${fmt(midRow.netEstimate)}.`,
+  ga: `Is é an meántuarastal comhlán do ${jobName} in ${countryName} ná <strong>${fmt(midRow.median)} sa bhliain</strong> (meánleibhéal). ${salaryRows.length > 1 ? `Tá tuarastail idir ${fmt(salaryRows[0].min)} do leibhéal iontrála agus ${fmt(salaryRows[salaryRows.length - 1].max)} do phoist shinsearacha.` : ''} Tar éis cánacha, is thart ar ${fmt(midRow.netEstimate)} an glantuarastal measta.`,
+};
+
+const tldrLabels: Record<string, string[]> = {
+  en: [
+    `Median salary: ${fmt(midRow.median)}/yr gross (${fmt(midRow.netEstimate)} net) for mid-level`,
+    `Range: ${fmt(salaryRows[0]?.min || midRow.min)} to ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} ranks #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} in the EU for ${jobName} pay` : `Data based on Eurostat and verified job postings`,
+  ],
+  fr: [
+    `Salaire médian : ${fmt(midRow.median)}/an brut (${fmt(midRow.netEstimate)} net) niveau intermédiaire`,
+    `Fourchette : ${fmt(salaryRows[0]?.min || midRow.min)} à ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} est #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} dans l'UE pour le salaire de ${jobName}` : `Données basées sur Eurostat et offres vérifiées`,
+  ],
+  de: [
+    `Mediangehalt: ${fmt(midRow.median)}/Jahr brutto (${fmt(midRow.netEstimate)} netto) mittleres Niveau`,
+    `Spanne: ${fmt(salaryRows[0]?.min || midRow.min)} bis ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} liegt auf Platz #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} in der EU beim ${jobName}-Gehalt` : `Daten basierend auf Eurostat und verifizierten Stellenangeboten`,
+  ],
+  es: [
+    `Salario mediano: ${fmt(midRow.median)}/año bruto (${fmt(midRow.netEstimate)} neto) nivel intermedio`,
+    `Rango: ${fmt(salaryRows[0]?.min || midRow.min)} a ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} ocupa el puesto #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} en la UE para salario de ${jobName}` : `Datos basados en Eurostat y ofertas verificadas`,
+  ],
+  it: [
+    `Stipendio mediano: ${fmt(midRow.median)}/anno lordi (${fmt(midRow.netEstimate)} netti) livello intermedio`,
+    `Intervallo: da ${fmt(salaryRows[0]?.min || midRow.min)} a ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} è al #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} posto nell'UE per lo stipendio di ${jobName}` : `Dati basati su Eurostat e annunci verificati`,
+  ],
+  pt: [
+    `Salário mediano: ${fmt(midRow.median)}/ano bruto (${fmt(midRow.netEstimate)} líquido) nível intermédio`,
+    `Intervalo: ${fmt(salaryRows[0]?.min || midRow.min)} a ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} ocupa o #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} lugar na UE para salário de ${jobName}` : `Dados baseados no Eurostat e anúncios verificados`,
+  ],
+  nl: [
+    `Mediaan salaris: ${fmt(midRow.median)}/jaar bruto (${fmt(midRow.netEstimate)} netto) middenniveau`,
+    `Bereik: ${fmt(salaryRows[0]?.min || midRow.min)} tot ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} staat op #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} in de EU voor ${jobName}-salaris` : `Gegevens gebaseerd op Eurostat en geverifieerde vacatures`,
+  ],
+  pl: [
+    `Mediana wynagrodzenia: ${fmt(midRow.median)}/rok brutto (${fmt(midRow.netEstimate)} netto) poziom średniozaawansowany`,
+    `Zakres: od ${fmt(salaryRows[0]?.min || midRow.min)} do ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} zajmuje #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} miejsce w UE pod względem wynagrodzenia ${jobName}` : `Dane na podstawie Eurostatu i zweryfikowanych ofert pracy`,
+  ],
+  ro: [
+    `Salariu median: ${fmt(midRow.median)}/an brut (${fmt(midRow.netEstimate)} net) nivel intermediar`,
+    `Interval: ${fmt(salaryRows[0]?.min || midRow.min)} la ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} ocupă locul #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} în UE pentru salariul de ${jobName}` : `Date bazate pe Eurostat și anunțuri verificate`,
+  ],
+  cs: [
+    `Mediánový plat: ${fmt(midRow.median)}/rok hrubého (${fmt(midRow.netEstimate)} čistého) střední úroveň`,
+    `Rozmezí: ${fmt(salaryRows[0]?.min || midRow.min)} až ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} je na #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} místě v EU pro plat ${jobName}` : `Údaje založené na Eurostatu a ověřených nabídkách práce`,
+  ],
+  sv: [
+    `Medianlön: ${fmt(midRow.median)}/år brutto (${fmt(midRow.netEstimate)} netto) mellannivå`,
+    `Intervall: ${fmt(salaryRows[0]?.min || midRow.min)} till ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} ligger på #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} i EU för ${jobName}-lön` : `Data baserad på Eurostat och verifierade jobbannonser`,
+  ],
+  da: [
+    `Medianløn: ${fmt(midRow.median)}/år brutto (${fmt(midRow.netEstimate)} netto) mellemniveau`,
+    `Interval: ${fmt(salaryRows[0]?.min || midRow.min)} til ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} ligger på #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} i EU for ${jobName}-løn` : `Data baseret på Eurostat og verificerede jobannoncer`,
+  ],
+  fi: [
+    `Mediaanipalkka: ${fmt(midRow.median)}/vuosi brutto (${fmt(midRow.netEstimate)} netto) keskitaso`,
+    `Vaihteluväli: ${fmt(salaryRows[0]?.min || midRow.min)} – ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} on sijalla #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} EU:ssa ${jobName}-palkassa` : `Tiedot perustuvat Eurostatiin ja vahvistettuihin työpaikkailmoituksiin`,
+  ],
+  el: [
+    `Διάμεσος μισθός: ${fmt(midRow.median)}/έτος μεικτά (${fmt(midRow.netEstimate)} καθαρά) μεσαίο επίπεδο`,
+    `Εύρος: ${fmt(salaryRows[0]?.min || midRow.min)} έως ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} κατατάσσεται #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} στην ΕΕ για μισθό ${jobName}` : `Δεδομένα βάσει Eurostat και επαληθευμένων αγγελιών`,
+  ],
+  hu: [
+    `Medián fizetés: ${fmt(midRow.median)}/év bruttó (${fmt(midRow.netEstimate)} nettó) középszint`,
+    `Tartomány: ${fmt(salaryRows[0]?.min || midRow.min)} – ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} a #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} helyen áll az EU-ban a ${jobName} fizetésnél` : `Adatok az Eurostat és ellenőrzött álláshirdetések alapján`,
+  ],
+  sk: [
+    `Mediánový plat: ${fmt(midRow.median)}/rok hrubého (${fmt(midRow.netEstimate)} čistého) stredná úroveň`,
+    `Rozsah: ${fmt(salaryRows[0]?.min || midRow.min)} až ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} je na #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} mieste v EÚ pre plat ${jobName}` : `Údaje založené na Eurostate a overených pracovných ponukách`,
+  ],
+  bg: [
+    `Медианна заплата: ${fmt(midRow.median)}/год. бруто (${fmt(midRow.netEstimate)} нето) средно ниво`,
+    `Диапазон: ${fmt(salaryRows[0]?.min || midRow.min)} до ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} е на #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} място в ЕС за заплата на ${jobName}` : `Данни от Евростат и проверени обяви за работа`,
+  ],
+  hr: [
+    `Medijalna plaća: ${fmt(midRow.median)}/god. bruto (${fmt(midRow.netEstimate)} neto) srednja razina`,
+    `Raspon: ${fmt(salaryRows[0]?.min || midRow.min)} do ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} je na #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} mjestu u EU za plaću ${jobName}` : `Podaci temeljeni na Eurostatu i provjerenim oglasima za posao`,
+  ],
+  sl: [
+    `Mediana plače: ${fmt(midRow.median)}/leto bruto (${fmt(midRow.netEstimate)} neto) srednja raven`,
+    `Razpon: ${fmt(salaryRows[0]?.min || midRow.min)} do ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} je na #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} mestu v EU za plačo ${jobName}` : `Podatki temeljijo na Eurostatu in preverjenih zaposlitvenih oglasih`,
+  ],
+  lt: [
+    `Medianinis atlyginimas: ${fmt(midRow.median)}/metus bruto (${fmt(midRow.netEstimate)} neto) vidutinis lygis`,
+    `Intervalas: nuo ${fmt(salaryRows[0]?.min || midRow.min)} iki ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} užima #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} vietą ES pagal ${jobName} atlyginimą` : `Duomenys pagrįsti Eurostatu ir patikrintais darbo skelbimais`,
+  ],
+  lv: [
+    `Mediānā alga: ${fmt(midRow.median)}/gadā bruto (${fmt(midRow.netEstimate)} neto) vidējais līmenis`,
+    `Diapazons: ${fmt(salaryRows[0]?.min || midRow.min)} līdz ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} ieņem #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} vietu ES ${jobName} algā` : `Dati balstīti uz Eurostat un verificētiem darba sludinājumiem`,
+  ],
+  et: [
+    `Mediaanpalk: ${fmt(midRow.median)}/aastas bruto (${fmt(midRow.netEstimate)} neto) keskmine tase`,
+    `Vahemik: ${fmt(salaryRows[0]?.min || midRow.min)} kuni ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} on #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} kohal EL-is ${jobName} palga poolest` : `Andmed põhinevad Eurostatil ja kontrollitud tööpakkumistel`,
+  ],
+  mt: [
+    `Salarju medjan: ${fmt(midRow.median)}/sena gross (${fmt(midRow.netEstimate)} nett) livell medju`,
+    `Firxa: ${fmt(salaryRows[0]?.min || midRow.min)} sa ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `${countryName} jokkupa l-post #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} fl-UE għas-salarju ta' ${jobName}` : `Data bbażata fuq Eurostat u reklami verifikati`,
+  ],
+  ga: [
+    `Meántuarastal: ${fmt(midRow.median)}/bl. comhlán (${fmt(midRow.netEstimate)} glan) meánleibhéal`,
+    `Raon: ${fmt(salaryRows[0]?.min || midRow.min)} go ${fmt(salaryRows[salaryRows.length - 1]?.max || midRow.max)}`,
+    compareItems.length > 0 ? `Tá ${countryName} sa #${compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1} áit san AE do phá ${jobName}` : `Sonraí bunaithe ar Eurostat agus fógraí poist deimhnithe`,
+  ],
+};
+
+const labels = {
+  breakdown: fb(uiLabels.salaryBreakdownByLevel, lang).replace('{job}', jobName),
+  sources: fb(uiLabels.sourcesTitle, lang),
+  sourceIntro: fb(uiLabels.sourcesIntro, lang),
+  lastUpdated: fb(uiLabels.sourcesLastUpdated, lang).replace('{year}', year),
+  submit: fb(uiLabels.submitSalary, lang),
+};
+
+const euRank = compareItems.filter((c: any) => c.medianSalary > midRow.median).length + 1;
+
+const faqByLang: Record<string, { question: string; answer: string }[]> = {
+  en: [
+    { question: `What is the average salary for a ${jobName} in ${countryName} in ${year}?`, answer: `The average (median) gross salary for a ${jobName} in ${countryName} is ${fmt(midRow.median)} per year for a mid-level professional. ${salaryRows.length > 1 ? `Junior professionals earn around ${fmt(salaryRows[0].median)}, while senior professionals can expect ${fmt(salaryRows[salaryRows.length - 1].median)} or more.` : ''} These figures are based on Eurostat data and verified job postings.` },
+    { question: `How much does a ${jobName} earn after taxes in ${countryName}?`, answer: `A mid-level ${jobName} earning ${fmt(midRow.median)} gross in ${countryName} takes home approximately ${fmt(midRow.netEstimate)} net per year. ${taxNotes || 'Tax rates vary depending on personal circumstances.'}` },
+    { question: `How does the ${jobName} salary in ${countryName} compare to other EU countries?`, answer: compareItems.length > 0 ? `${countryName} ranks #${euRank} for ${jobName} salaries. ${compareItems[0] ? `${compareItems[0].countryName} leads with ${fmt(compareItems[0].medianSalary)}.` : ''}` : `Comparative data is being compiled for more countries.` },
+    { question: `What factors affect ${jobName} salary in ${countryName}?`, answer: `Key factors include experience level, city, industry sector, company size, and specific technical skills. Tax rates and cost of living also significantly impact net take-home pay.` },
+    { question: `Is the ${jobName} salary data reliable?`, answer: `Yes. EuroSalary aggregates data from Eurostat, verified job postings from 50+ European job boards, and validated anonymous salary reports. Our methodology is transparent and continuously updated.` },
+  ],
+  fr: [
+    { question: `Quel est le salaire moyen d'un ${jobName} en ${countryName} en ${year} ?`, answer: `Le salaire brut médian d'un ${jobName} en ${countryName} est de ${fmt(midRow.median)} par an pour un professionnel de niveau intermédiaire.` },
+    { question: `Combien gagne un ${jobName} après impôts en ${countryName} ?`, answer: `Un ${jobName} de niveau intermédiaire gagnant ${fmt(midRow.median)} brut en ${countryName} perçoit environ ${fmt(midRow.netEstimate)} net par an.` },
+    { question: `Comment se situe le salaire d'un ${jobName} en ${countryName} par rapport aux autres pays de l'UE ?`, answer: compareItems.length > 0 ? `${countryName} se classe #${euRank} pour les salaires de ${jobName} dans l'UE.` : `Les données comparatives sont en cours de compilation.` },
+    { question: `Quels facteurs influencent le salaire d'un ${jobName} en ${countryName} ?`, answer: `Les principaux facteurs incluent le niveau d'expérience, la ville, le secteur d'activité, la taille de l'entreprise et les compétences techniques spécifiques.` },
+    { question: `Les données salariales sont-elles fiables ?`, answer: `Oui. EuroSalary agrège les données d'Eurostat, d'offres d'emploi vérifiées et de déclarations salariales anonymes validées. Notre méthodologie est transparente et continuellement mise à jour.` },
+  ],
+  de: [
+    { question: `Was verdient ein ${jobName} in ${countryName} im Jahr ${year}?`, answer: `Das Median-Bruttogehalt eines ${jobName} in ${countryName} beträgt ${fmt(midRow.median)} pro Jahr für ein mittleres Erfahrungsniveau.` },
+    { question: `Wie viel verdient ein ${jobName} nach Steuern in ${countryName}?`, answer: `Ein ${jobName} mit mittlerem Erfahrungsniveau, der ${fmt(midRow.median)} brutto verdient, nimmt in ${countryName} ca. ${fmt(midRow.netEstimate)} netto pro Jahr mit nach Hause.` },
+    { question: `Wie schneidet das ${jobName}-Gehalt in ${countryName} im EU-Vergleich ab?`, answer: compareItems.length > 0 ? `${countryName} liegt auf Platz #${euRank} bei ${jobName}-Gehältern in der EU.` : `Vergleichsdaten werden zusammengestellt.` },
+    { question: `Welche Faktoren beeinflussen das ${jobName}-Gehalt in ${countryName}?`, answer: `Wichtige Faktoren sind Erfahrungsniveau, Stadt, Branche, Unternehmensgröße und spezifische Fachkenntnisse.` },
+    { question: `Sind die Gehaltsdaten zuverlässig?`, answer: `Ja. EuroSalary aggregiert Daten von Eurostat, verifizierten Stellenangeboten und validierten anonymen Gehaltsberichten. Unsere Methodik ist transparent und wird kontinuierlich aktualisiert.` },
+  ],
+  es: [
+    { question: `¿Cuál es el salario promedio de un ${jobName} en ${countryName} en ${year}?`, answer: `El salario bruto mediano de un ${jobName} en ${countryName} es de ${fmt(midRow.median)} al año para un profesional de nivel intermedio.` },
+    { question: `¿Cuánto gana un ${jobName} después de impuestos en ${countryName}?`, answer: `Un ${jobName} de nivel intermedio que gana ${fmt(midRow.median)} bruto en ${countryName} recibe aproximadamente ${fmt(midRow.netEstimate)} neto al año.` },
+    { question: `¿Cómo se compara el salario de un ${jobName} en ${countryName} con otros países de la UE?`, answer: compareItems.length > 0 ? `${countryName} ocupa el puesto #${euRank} en salarios de ${jobName} en la UE.` : `Se están compilando datos comparativos.` },
+    { question: `¿Qué factores afectan el salario de un ${jobName} en ${countryName}?`, answer: `Los factores clave incluyen nivel de experiencia, ciudad, sector industrial, tamaño de empresa y habilidades técnicas específicas.` },
+    { question: `¿Son fiables los datos salariales?`, answer: `Sí. EuroSalary agrega datos de Eurostat, ofertas de empleo verificadas e informes salariales anónimos validados. Nuestra metodología es transparente y se actualiza continuamente.` },
+  ],
+  it: [
+    { question: `Qual è lo stipendio medio di un ${jobName} in ${countryName} nel ${year}?`, answer: `Lo stipendio lordo mediano di un ${jobName} in ${countryName} è di ${fmt(midRow.median)} all'anno per un professionista di livello intermedio. ${salaryRows.length > 1 ? `I professionisti junior guadagnano circa ${fmt(salaryRows[0].median)}, mentre i senior possono aspettarsi ${fmt(salaryRows[salaryRows.length - 1].median)} o più.` : ''} Questi dati si basano su Eurostat e annunci di lavoro verificati.` },
+    { question: `Quanto guadagna un ${jobName} al netto delle tasse in ${countryName}?`, answer: `Un ${jobName} di livello intermedio che guadagna ${fmt(midRow.median)} lordi in ${countryName} percepisce circa ${fmt(midRow.netEstimate)} netti all'anno. ${taxNotes || 'Le aliquote fiscali variano in base alla situazione personale.'}` },
+    { question: `Come si confronta lo stipendio di un ${jobName} in ${countryName} con altri paesi dell'UE?`, answer: compareItems.length > 0 ? `${countryName} è al #${euRank} posto per gli stipendi dei ${jobName}. ${compareItems[0] ? `${compareItems[0].countryName} è in testa con ${fmt(compareItems[0].medianSalary)}.` : ''}` : `I dati comparativi sono in fase di raccolta.` },
+    { question: `Quali fattori influenzano lo stipendio di un ${jobName} in ${countryName}?`, answer: `I fattori chiave includono livello di esperienza, città, settore industriale, dimensioni dell'azienda e competenze tecniche specifiche. Le aliquote fiscali e il costo della vita influenzano significativamente lo stipendio netto.` },
+    { question: `I dati sugli stipendi sono affidabili?`, answer: `Sì. EuroSalary aggrega dati da Eurostat, annunci di lavoro verificati da oltre 50 portali europei e rapporti salariali anonimi validati. La nostra metodologia è trasparente e costantemente aggiornata.` },
+  ],
+  pt: [
+    { question: `Qual é o salário médio de um ${jobName} em ${countryName} em ${year}?`, answer: `O salário bruto mediano de um ${jobName} em ${countryName} é de ${fmt(midRow.median)} por ano para um profissional de nível intermédio. ${salaryRows.length > 1 ? `Profissionais juniores ganham cerca de ${fmt(salaryRows[0].median)}, enquanto os seniores podem esperar ${fmt(salaryRows[salaryRows.length - 1].median)} ou mais.` : ''} Estes valores baseiam-se no Eurostat e anúncios de emprego verificados.` },
+    { question: `Quanto ganha um ${jobName} após impostos em ${countryName}?`, answer: `Um ${jobName} de nível intermédio que ganha ${fmt(midRow.median)} bruto em ${countryName} recebe aproximadamente ${fmt(midRow.netEstimate)} líquido por ano. ${taxNotes || 'As taxas de imposto variam conforme a situação pessoal.'}` },
+    { question: `Como se compara o salário de um ${jobName} em ${countryName} com outros países da UE?`, answer: compareItems.length > 0 ? `${countryName} ocupa o #${euRank} lugar para salários de ${jobName}. ${compareItems[0] ? `${compareItems[0].countryName} lidera com ${fmt(compareItems[0].medianSalary)}.` : ''}` : `Os dados comparativos estão a ser compilados.` },
+    { question: `Que fatores afetam o salário de um ${jobName} em ${countryName}?`, answer: `Os fatores principais incluem nível de experiência, cidade, setor de atividade, dimensão da empresa e competências técnicas específicas. As taxas de imposto e o custo de vida também afetam significativamente o salário líquido.` },
+    { question: `Os dados salariais são fiáveis?`, answer: `Sim. O EuroSalary agrega dados do Eurostat, anúncios de emprego verificados de mais de 50 portais europeus e relatórios salariais anónimos validados. A nossa metodologia é transparente e continuamente atualizada.` },
+  ],
+  nl: [
+    { question: `Wat is het gemiddelde salaris van een ${jobName} in ${countryName} in ${year}?`, answer: `Het mediaan bruto salaris van een ${jobName} in ${countryName} is ${fmt(midRow.median)} per jaar voor een professional op middenniveau. ${salaryRows.length > 1 ? `Junior professionals verdienen rond de ${fmt(salaryRows[0].median)}, terwijl senior professionals ${fmt(salaryRows[salaryRows.length - 1].median)} of meer kunnen verwachten.` : ''} Deze cijfers zijn gebaseerd op Eurostat en geverifieerde vacatures.` },
+    { question: `Hoeveel verdient een ${jobName} na belastingen in ${countryName}?`, answer: `Een ${jobName} op middenniveau die ${fmt(midRow.median)} bruto verdient in ${countryName} houdt ongeveer ${fmt(midRow.netEstimate)} netto per jaar over. ${taxNotes || 'Belastingtarieven variëren afhankelijk van persoonlijke omstandigheden.'}` },
+    { question: `Hoe verhoudt het ${jobName}-salaris in ${countryName} zich tot andere EU-landen?`, answer: compareItems.length > 0 ? `${countryName} staat op #${euRank} voor ${jobName}-salarissen. ${compareItems[0] ? `${compareItems[0].countryName} is koploper met ${fmt(compareItems[0].medianSalary)}.` : ''}` : `Vergelijkende gegevens worden samengesteld.` },
+    { question: `Welke factoren beïnvloeden het ${jobName}-salaris in ${countryName}?`, answer: `Belangrijke factoren zijn ervaringsniveau, stad, bedrijfssector, bedrijfsgrootte en specifieke technische vaardigheden. Belastingtarieven en kosten van levensonderhoud hebben ook een aanzienlijke invloed op het nettoloon.` },
+    { question: `Zijn de salarisgegevens betrouwbaar?`, answer: `Ja. EuroSalary verzamelt gegevens van Eurostat, geverifieerde vacatures van meer dan 50 Europese vacatureportalen en gevalideerde anonieme salarisrapporten. Onze methodologie is transparant en wordt voortdurend bijgewerkt.` },
+  ],
+  pl: [
+    { question: `Jakie jest średnie wynagrodzenie ${jobName} w ${countryName} w ${year} roku?`, answer: `Mediana wynagrodzenia brutto dla ${jobName} w ${countryName} wynosi ${fmt(midRow.median)} rocznie na poziomie średniozaawansowanym. ${salaryRows.length > 1 ? `Początkujący zarabiają około ${fmt(salaryRows[0].median)}, a starsi specjaliści mogą oczekiwać ${fmt(salaryRows[salaryRows.length - 1].median)} lub więcej.` : ''} Dane oparte na Eurostacie i zweryfikowanych ofertach pracy.` },
+    { question: `Ile zarabia ${jobName} po podatkach w ${countryName}?`, answer: `${jobName} na poziomie średniozaawansowanym zarabiający ${fmt(midRow.median)} brutto w ${countryName} otrzymuje około ${fmt(midRow.netEstimate)} netto rocznie. ${taxNotes || 'Stawki podatkowe różnią się w zależności od sytuacji osobistej.'}` },
+    { question: `Jak wypada wynagrodzenie ${jobName} w ${countryName} na tle innych krajów UE?`, answer: compareItems.length > 0 ? `${countryName} zajmuje #${euRank} miejsce pod względem wynagrodzeń ${jobName}. ${compareItems[0] ? `${compareItems[0].countryName} prowadzi z ${fmt(compareItems[0].medianSalary)}.` : ''}` : `Dane porównawcze są w trakcie kompilacji.` },
+    { question: `Jakie czynniki wpływają na wynagrodzenie ${jobName} w ${countryName}?`, answer: `Kluczowe czynniki to poziom doświadczenia, miasto, sektor, wielkość firmy i konkretne umiejętności techniczne. Stawki podatkowe i koszty utrzymania również znacząco wpływają na wynagrodzenie netto.` },
+    { question: `Czy dane o wynagrodzeniach są wiarygodne?`, answer: `Tak. EuroSalary agreguje dane z Eurostatu, zweryfikowanych ofert pracy z ponad 50 europejskich portali i zwalidowanych anonimowych raportów płacowych. Nasza metodologia jest przejrzysta i stale aktualizowana.` },
+  ],
+  ro: [
+    { question: `Care este salariul mediu al unui ${jobName} în ${countryName} în ${year}?`, answer: `Salariul brut median al unui ${jobName} în ${countryName} este de ${fmt(midRow.median)} pe an pentru un profesionist de nivel intermediar. ${salaryRows.length > 1 ? `Profesioniștii juniori câștigă aproximativ ${fmt(salaryRows[0].median)}, în timp ce seniorii pot aștepta ${fmt(salaryRows[salaryRows.length - 1].median)} sau mai mult.` : ''} Aceste cifre se bazează pe Eurostat și anunțuri de angajare verificate.` },
+    { question: `Cât câștigă un ${jobName} după impozite în ${countryName}?`, answer: `Un ${jobName} de nivel intermediar care câștigă ${fmt(midRow.median)} brut în ${countryName} primește aproximativ ${fmt(midRow.netEstimate)} net pe an. ${taxNotes || 'Ratele de impozitare variază în funcție de circumstanțele personale.'}` },
+    { question: `Cum se compară salariul unui ${jobName} în ${countryName} cu alte țări din UE?`, answer: compareItems.length > 0 ? `${countryName} ocupă locul #${euRank} pentru salariile ${jobName}. ${compareItems[0] ? `${compareItems[0].countryName} conduce cu ${fmt(compareItems[0].medianSalary)}.` : ''}` : `Datele comparative sunt în curs de compilare.` },
+    { question: `Ce factori influențează salariul unui ${jobName} în ${countryName}?`, answer: `Factorii cheie includ nivelul de experiență, orașul, sectorul industrial, dimensiunea companiei și competențele tehnice specifice. Ratele de impozitare și costul vieții influențează semnificativ salariul net.` },
+    { question: `Sunt fiabile datele salariale?`, answer: `Da. EuroSalary agregă date de la Eurostat, anunțuri de angajare verificate de pe peste 50 de portaluri europene și rapoarte salariale anonime validate. Metodologia noastră este transparentă și actualizată continuu.` },
+  ],
+  cs: [
+    { question: `Jaký je průměrný plat ${jobName} v ${countryName} v roce ${year}?`, answer: `Mediánový hrubý plat pro ${jobName} v ${countryName} je ${fmt(midRow.median)} ročně na střední úrovni. ${salaryRows.length > 1 ? `Juniorní profesionálové vydělávají kolem ${fmt(salaryRows[0].median)}, zatímco seniorní mohou očekávat ${fmt(salaryRows[salaryRows.length - 1].median)} nebo více.` : ''} Tyto údaje jsou založeny na Eurostatu a ověřených pracovních nabídkách.` },
+    { question: `Kolik vydělává ${jobName} po zdanění v ${countryName}?`, answer: `${jobName} na střední úrovni s hrubým platem ${fmt(midRow.median)} v ${countryName} si domů odnese přibližně ${fmt(midRow.netEstimate)} čistého ročně. ${taxNotes || 'Daňové sazby se liší podle osobních okolností.'}` },
+    { question: `Jak se plat ${jobName} v ${countryName} srovnává s ostatními zeměmi EU?`, answer: compareItems.length > 0 ? `${countryName} je na #${euRank} místě v platech ${jobName}. ${compareItems[0] ? `${compareItems[0].countryName} vede s ${fmt(compareItems[0].medianSalary)}.` : ''}` : `Srovnávací data se připravují.` },
+    { question: `Jaké faktory ovlivňují plat ${jobName} v ${countryName}?`, answer: `Klíčové faktory zahrnují úroveň zkušeností, město, průmyslové odvětví, velikost firmy a specifické technické dovednosti. Daňové sazby a životní náklady rovněž výrazně ovlivňují čistý příjem.` },
+    { question: `Jsou údaje o platech spolehlivé?`, answer: `Ano. EuroSalary agreguje data z Eurostatu, ověřených pracovních nabídek z více než 50 evropských portálů a validovaných anonymních platových hlášení. Naše metodologie je transparentní a průběžně aktualizovaná.` },
+  ],
+  sv: [
+    { question: `Vad är den genomsnittliga lönen för en ${jobName} i ${countryName} ${year}?`, answer: `Medianbruttolönen för en ${jobName} i ${countryName} är ${fmt(midRow.median)} per år på mellannivå. ${salaryRows.length > 1 ? `Juniora yrkesverksamma tjänar cirka ${fmt(salaryRows[0].median)}, medan seniora kan förvänta sig ${fmt(salaryRows[salaryRows.length - 1].median)} eller mer.` : ''} Dessa siffror baseras på Eurostat och verifierade jobbannonser.` },
+    { question: `Hur mycket tjänar en ${jobName} efter skatt i ${countryName}?`, answer: `En ${jobName} på mellannivå som tjänar ${fmt(midRow.median)} brutto i ${countryName} tar hem ungefär ${fmt(midRow.netEstimate)} netto per år. ${taxNotes || 'Skattesatser varierar beroende på personliga omständigheter.'}` },
+    { question: `Hur jämför sig ${jobName}-lönen i ${countryName} med andra EU-länder?`, answer: compareItems.length > 0 ? `${countryName} ligger på #${euRank} för ${jobName}-löner. ${compareItems[0] ? `${compareItems[0].countryName} leder med ${fmt(compareItems[0].medianSalary)}.` : ''}` : `Jämförelsedata sammanställs.` },
+    { question: `Vilka faktorer påverkar ${jobName}-lönen i ${countryName}?`, answer: `Nyckelfaktorer inkluderar erfarenhetsnivå, stad, bransch, företagsstorlek och specifika tekniska färdigheter. Skattesatser och levnadskostnader påverkar också nettolönen avsevärt.` },
+    { question: `Är löneuppgifterna tillförlitliga?`, answer: `Ja. EuroSalary samlar data från Eurostat, verifierade jobbannonser från 50+ europeiska jobbportaler och validerade anonyma lönerapporter. Vår metodik är transparent och uppdateras löpande.` },
+  ],
+  da: [
+    { question: `Hvad er den gennemsnitlige løn for en ${jobName} i ${countryName} i ${year}?`, answer: `Medianbruttolønen for en ${jobName} i ${countryName} er ${fmt(midRow.median)} om året på mellemniveau. ${salaryRows.length > 1 ? `Junior-fagfolk tjener cirka ${fmt(salaryRows[0].median)}, mens seniorer kan forvente ${fmt(salaryRows[salaryRows.length - 1].median)} eller mere.` : ''} Disse tal er baseret på Eurostat og verificerede jobannoncer.` },
+    { question: `Hvor meget tjener en ${jobName} efter skat i ${countryName}?`, answer: `En ${jobName} på mellemniveau, der tjener ${fmt(midRow.median)} brutto i ${countryName}, tager ca. ${fmt(midRow.netEstimate)} netto hjem om året. ${taxNotes || 'Skattesatser varierer afhængigt af personlige omstændigheder.'}` },
+    { question: `Hvordan sammenligner ${jobName}-lønnen i ${countryName} sig med andre EU-lande?`, answer: compareItems.length > 0 ? `${countryName} ligger på #${euRank} for ${jobName}-lønninger. ${compareItems[0] ? `${compareItems[0].countryName} fører med ${fmt(compareItems[0].medianSalary)}.` : ''}` : `Sammenlignende data er under udarbejdelse.` },
+    { question: `Hvilke faktorer påvirker ${jobName}-lønnen i ${countryName}?`, answer: `Nøglefaktorer inkluderer erfaringsniveau, by, branche, virksomhedsstørrelse og specifikke tekniske færdigheder. Skattesatser og leveomkostninger påvirker også nettolønnen betydeligt.` },
+    { question: `Er løndata pålidelige?`, answer: `Ja. EuroSalary samler data fra Eurostat, verificerede jobannoncer fra 50+ europæiske jobportaler og validerede anonyme lønrapporter. Vores metodik er transparent og opdateres løbende.` },
+  ],
+  fi: [
+    { question: `Mikä on ${jobName}-keskipalkka maassa ${countryName} vuonna ${year}?`, answer: `${jobName}-ammatin mediaanikeskipalkka maassa ${countryName} on ${fmt(midRow.median)} vuodessa keskitasolla. ${salaryRows.length > 1 ? `Aloittelijat ansaitsevat noin ${fmt(salaryRows[0].median)}, kun taas kokeneemmat voivat odottaa ${fmt(salaryRows[salaryRows.length - 1].median)} tai enemmän.` : ''} Nämä luvut perustuvat Eurostatiin ja vahvistettuihin työpaikkailmoituksiin.` },
+    { question: `Kuinka paljon ${jobName} ansaitsee verojen jälkeen maassa ${countryName}?`, answer: `Keskitason ${jobName}, joka ansaitsee ${fmt(midRow.median)} bruttona maassa ${countryName}, saa noin ${fmt(midRow.netEstimate)} nettona vuodessa. ${taxNotes || 'Veroprosentit vaihtelevat henkilökohtaisten olosuhteiden mukaan.'}` },
+    { question: `Miten ${jobName}-palkka maassa ${countryName} vertautuu muihin EU-maihin?`, answer: compareItems.length > 0 ? `${countryName} on sijalla #${euRank} ${jobName}-palkoissa. ${compareItems[0] ? `${compareItems[0].countryName} johtaa ${fmt(compareItems[0].medianSalary)}:lla.` : ''}` : `Vertailutietoja kootaan parhaillaan.` },
+    { question: `Mitkä tekijät vaikuttavat ${jobName}-palkkaan maassa ${countryName}?`, answer: `Avaintekijöitä ovat kokemus, kaupunki, toimiala, yrityksen koko ja erityiset tekniset taidot. Veroprosentit ja elinkustannukset vaikuttavat myös merkittävästi nettopalkkaan.` },
+    { question: `Ovatko palkkatiedot luotettavia?`, answer: `Kyllä. EuroSalary kokoaa tietoja Eurostatista, vahvistetuista työpaikkailmoituksista yli 50 eurooppalaiselta portaalilta ja validoiduista nimettömistä palkkaraporteista. Menetelmämme on läpinäkyvä ja jatkuvasti päivitetty.` },
+  ],
+  el: [
+    { question: `Ποιος είναι ο μέσος μισθός ενός ${jobName} στην ${countryName} το ${year};`, answer: `Ο διάμεσος μεικτός μισθός για ${jobName} στην ${countryName} είναι ${fmt(midRow.median)} τον χρόνο σε μεσαίο επίπεδο. ${salaryRows.length > 1 ? `Οι αρχάριοι κερδίζουν περίπου ${fmt(salaryRows[0].median)}, ενώ οι ανώτεροι μπορούν να αναμένουν ${fmt(salaryRows[salaryRows.length - 1].median)} ή περισσότερα.` : ''} Τα στοιχεία βασίζονται στη Eurostat και σε επαληθευμένες αγγελίες εργασίας.` },
+    { question: `Πόσα κερδίζει ένας ${jobName} μετά τους φόρους στην ${countryName};`, answer: `Ένας ${jobName} μεσαίου επιπέδου που κερδίζει ${fmt(midRow.median)} μεικτά στην ${countryName} λαμβάνει περίπου ${fmt(midRow.netEstimate)} καθαρά ετησίως. ${taxNotes || 'Οι φορολογικοί συντελεστές διαφέρουν ανάλογα με τις προσωπικές συνθήκες.'}` },
+    { question: `Πώς συγκρίνεται ο μισθός ${jobName} στην ${countryName} με άλλες χώρες της ΕΕ;`, answer: compareItems.length > 0 ? `Η ${countryName} κατατάσσεται #${euRank} στους μισθούς ${jobName}. ${compareItems[0] ? `${compareItems[0].countryName} προηγείται με ${fmt(compareItems[0].medianSalary)}.` : ''}` : `Τα συγκριτικά δεδομένα βρίσκονται υπό σύνταξη.` },
+    { question: `Ποιοι παράγοντες επηρεάζουν τον μισθό ${jobName} στην ${countryName};`, answer: `Βασικοί παράγοντες περιλαμβάνουν το επίπεδο εμπειρίας, την πόλη, τον βιομηχανικό τομέα, το μέγεθος της εταιρείας και τις συγκεκριμένες τεχνικές δεξιότητες. Οι φορολογικοί συντελεστές και το κόστος ζωής επηρεάζουν σημαντικά τον καθαρό μισθό.` },
+    { question: `Είναι αξιόπιστα τα δεδομένα μισθών;`, answer: `Ναι. Η EuroSalary συγκεντρώνει δεδομένα από τη Eurostat, επαληθευμένες αγγελίες εργασίας από 50+ ευρωπαϊκά portals και επικυρωμένες ανώνυμες αναφορές μισθών. Η μεθοδολογία μας είναι διαφανής και ενημερώνεται συνεχώς.` },
+  ],
+  hu: [
+    { question: `Mennyi az átlagos ${jobName} fizetés ${countryName} területén ${year}-ben?`, answer: `A ${jobName} medián bruttó fizetése ${countryName} területén ${fmt(midRow.median)} évente középszinten. ${salaryRows.length > 1 ? `A junior szakemberek körülbelül ${fmt(salaryRows[0].median)}-t keresnek, míg a seniorok ${fmt(salaryRows[salaryRows.length - 1].median)}-t vagy többet várhatnak.` : ''} Ezek az adatok az Eurostaton és ellenőrzött álláshirdetéseken alapulnak.` },
+    { question: `Mennyit keres egy ${jobName} adók levonása után ${countryName} területén?`, answer: `Egy középszintű ${jobName}, aki ${fmt(midRow.median)} bruttót keres ${countryName} területén, körülbelül ${fmt(midRow.netEstimate)} nettót visz haza évente. ${taxNotes || 'Az adókulcsok személyes körülményektől függően változnak.'}` },
+    { question: `Hogyan viszonyul a ${jobName} fizetés ${countryName} területén más EU-országokhoz?`, answer: compareItems.length > 0 ? `${countryName} a #${euRank} helyen áll a ${jobName} fizetéseknél. ${compareItems[0] ? `${compareItems[0].countryName} vezet ${fmt(compareItems[0].medianSalary)}-tal.` : ''}` : `Az összehasonlító adatokat jelenleg állítjuk össze.` },
+    { question: `Milyen tényezők befolyásolják a ${jobName} fizetést ${countryName} területén?`, answer: `A kulcstényezők közé tartozik a tapasztalati szint, a város, az iparág, a cégméret és a specifikus technikai készségek. Az adókulcsok és a megélhetési költségek is jelentősen befolyásolják a nettó fizetést.` },
+    { question: `Megbízhatóak a fizetési adatok?`, answer: `Igen. Az EuroSalary az Eurostat, több mint 50 európai álláshirdetési portál ellenőrzött álláshirdetései és validált névtelen fizetési jelentések adatait gyűjti össze. Módszertanunk átlátható és folyamatosan frissül.` },
+  ],
+  sk: [
+    { question: `Aký je priemerný plat ${jobName} v ${countryName} v roku ${year}?`, answer: `Mediánový hrubý plat pre ${jobName} v ${countryName} je ${fmt(midRow.median)} ročne na strednej úrovni. ${salaryRows.length > 1 ? `Juniorní profesionáli zarábajú okolo ${fmt(salaryRows[0].median)}, zatiaľ čo seniori môžu očakávať ${fmt(salaryRows[salaryRows.length - 1].median)} alebo viac.` : ''} Tieto údaje sú založené na Eurostate a overených pracovných ponukách.` },
+    { question: `Koľko zarobí ${jobName} po zdanení v ${countryName}?`, answer: `${jobName} na strednej úrovni s hrubým platom ${fmt(midRow.median)} v ${countryName} si odnesie domov približne ${fmt(midRow.netEstimate)} čistého ročne. ${taxNotes || 'Daňové sadzby sa líšia podľa osobných okolností.'}` },
+    { question: `Ako sa plat ${jobName} v ${countryName} porovnáva s inými krajinami EÚ?`, answer: compareItems.length > 0 ? `${countryName} je na #${euRank} mieste v platoch ${jobName}. ${compareItems[0] ? `${compareItems[0].countryName} vedie s ${fmt(compareItems[0].medianSalary)}.` : ''}` : `Porovnávacie údaje sa pripravujú.` },
+    { question: `Aké faktory ovplyvňujú plat ${jobName} v ${countryName}?`, answer: `Kľúčové faktory zahŕňajú úroveň skúseností, mesto, priemyselné odvetvie, veľkosť firmy a špecifické technické zručnosti. Daňové sadzby a životné náklady tiež výrazne ovplyvňujú čistý príjem.` },
+    { question: `Sú údaje o platoch spoľahlivé?`, answer: `Áno. EuroSalary agreguje údaje z Eurostatu, overených pracovných ponúk z viac ako 50 európskych portálov a validovaných anonymných platových hlásení. Naša metodológia je transparentná a priebežne aktualizovaná.` },
+  ],
+  bg: [
+    { question: `Каква е средната заплата на ${jobName} в ${countryName} през ${year}?`, answer: `Медианната брутна заплата за ${jobName} в ${countryName} е ${fmt(midRow.median)} годишно на средно ниво. ${salaryRows.length > 1 ? `Начинаещите печелят около ${fmt(salaryRows[0].median)}, докато старшите специалисти могат да очакват ${fmt(salaryRows[salaryRows.length - 1].median)} или повече.` : ''} Тези данни се базират на Евростат и проверени обяви за работа.` },
+    { question: `Колко печели ${jobName} след данъци в ${countryName}?`, answer: `${jobName} на средно ниво, който печели ${fmt(midRow.median)} бруто в ${countryName}, получава около ${fmt(midRow.netEstimate)} нето годишно. ${taxNotes || 'Данъчните ставки варират в зависимост от личните обстоятелства.'}` },
+    { question: `Как се сравнява заплатата на ${jobName} в ${countryName} с други страни от ЕС?`, answer: compareItems.length > 0 ? `${countryName} е на #${euRank} място за заплати на ${jobName}. ${compareItems[0] ? `${compareItems[0].countryName} води с ${fmt(compareItems[0].medianSalary)}.` : ''}` : `Сравнителните данни се подготвят.` },
+    { question: `Кои фактори влияят на заплатата на ${jobName} в ${countryName}?`, answer: `Ключовите фактори включват ниво на опит, град, промишлен сектор, размер на компанията и специфични технически умения. Данъчните ставки и разходите за живот също значително влияят на нетната заплата.` },
+    { question: `Надеждни ли са данните за заплатите?`, answer: `Да. EuroSalary агрегира данни от Евростат, проверени обяви за работа от над 50 европейски портала и валидирани анонимни отчети за заплати. Нашата методология е прозрачна и непрекъснато актуализирана.` },
+  ],
+  hr: [
+    { question: `Kolika je prosječna plaća za ${jobName} u ${countryName} u ${year}.?`, answer: `Medijalna bruto plaća za ${jobName} u ${countryName} iznosi ${fmt(midRow.median)} godišnje na srednjoj razini. ${salaryRows.length > 1 ? `Početnici zarađuju oko ${fmt(salaryRows[0].median)}, dok seniori mogu očekivati ${fmt(salaryRows[salaryRows.length - 1].median)} ili više.` : ''} Ovi podaci temelje se na Eurostatu i provjerenim oglasima za posao.` },
+    { question: `Koliko zarađuje ${jobName} nakon poreza u ${countryName}?`, answer: `${jobName} na srednjoj razini koji zarađuje ${fmt(midRow.median)} bruto u ${countryName} prima oko ${fmt(midRow.netEstimate)} neto godišnje. ${taxNotes || 'Porezne stope variraju ovisno o osobnim okolnostima.'}` },
+    { question: `Kako se plaća za ${jobName} u ${countryName} uspoređuje s drugim zemljama EU?`, answer: compareItems.length > 0 ? `${countryName} je na #${euRank} mjestu za plaće ${jobName}. ${compareItems[0] ? `${compareItems[0].countryName} predvodi s ${fmt(compareItems[0].medianSalary)}.` : ''}` : `Usporedni podaci se pripremaju.` },
+    { question: `Koji čimbenici utječu na plaću za ${jobName} u ${countryName}?`, answer: `Ključni čimbenici uključuju razinu iskustva, grad, industrijski sektor, veličinu tvrtke i specifične tehničke vještine. Porezne stope i troškovi života također značajno utječu na neto plaću.` },
+    { question: `Jesu li podaci o plaćama pouzdani?`, answer: `Da. EuroSalary prikuplja podatke iz Eurostata, provjerenih oglasa za posao s više od 50 europskih portala i validiranih anonimnih izvješća o plaćama. Naša metodologija je transparentna i kontinuirano ažurirana.` },
+  ],
+  sl: [
+    { question: `Kakšna je povprečna plača za ${jobName} v ${countryName} v letu ${year}?`, answer: `Mediana bruto plače za ${jobName} v ${countryName} je ${fmt(midRow.median)} na leto na srednji ravni. ${salaryRows.length > 1 ? `Začetniki zaslužijo približno ${fmt(salaryRows[0].median)}, medtem ko višji strokovnjaki lahko pričakujejo ${fmt(salaryRows[salaryRows.length - 1].median)} ali več.` : ''} Ti podatki temeljijo na Eurostatu in preverjenih zaposlitvenih oglasih.` },
+    { question: `Koliko zasluži ${jobName} po obdavčitvi v ${countryName}?`, answer: `${jobName} na srednji ravni, ki zasluži ${fmt(midRow.median)} bruto v ${countryName}, domov odnese približno ${fmt(midRow.netEstimate)} neto letno. ${taxNotes || 'Davčne stopnje se razlikujejo glede na osebne okoliščine.'}` },
+    { question: `Kako se plača za ${jobName} v ${countryName} primerja z drugimi državami EU?`, answer: compareItems.length > 0 ? `${countryName} je na #${euRank} mestu za plače ${jobName}. ${compareItems[0] ? `${compareItems[0].countryName} vodi z ${fmt(compareItems[0].medianSalary)}.` : ''}` : `Primerjalni podatki se pripravljajo.` },
+    { question: `Kateri dejavniki vplivajo na plačo za ${jobName} v ${countryName}?`, answer: `Ključni dejavniki vključujejo raven izkušenj, mesto, industrijski sektor, velikost podjetja in specifična tehnična znanja. Davčne stopnje in življenjski stroški prav tako pomembno vplivajo na neto plačo.` },
+    { question: `Ali so podatki o plačah zanesljivi?`, answer: `Da. EuroSalary zbira podatke iz Eurostata, preverjenih zaposlitvenih oglasov z več kot 50 evropskih portalov in potrjenih anonimnih poročil o plačah. Naša metodologija je pregledna in se nenehno posodablja.` },
+  ],
+  lt: [
+    { question: `Koks yra vidutinis ${jobName} atlyginimas šalyje ${countryName} ${year} m.?`, answer: `${jobName} medianos bruto atlyginimas šalyje ${countryName} yra ${fmt(midRow.median)} per metus vidutiniu lygiu. ${salaryRows.length > 1 ? `Pradedantieji uždirba apie ${fmt(salaryRows[0].median)}, o vyresni specialistai gali tikėtis ${fmt(salaryRows[salaryRows.length - 1].median)} ar daugiau.` : ''} Šie duomenys pagrįsti Eurostatu ir patikrintais darbo skelbimais.` },
+    { question: `Kiek uždirba ${jobName} po mokesčių šalyje ${countryName}?`, answer: `Vidutinio lygio ${jobName}, uždirbantis ${fmt(midRow.median)} bruto šalyje ${countryName}, gauna apie ${fmt(midRow.netEstimate)} neto per metus. ${taxNotes || 'Mokesčių tarifai skiriasi priklausomai nuo asmeninių aplinkybių.'}` },
+    { question: `Kaip ${jobName} atlyginimas šalyje ${countryName} lyginasi su kitomis ES šalimis?`, answer: compareItems.length > 0 ? `${countryName} užima #${euRank} vietą pagal ${jobName} atlyginimus. ${compareItems[0] ? `${compareItems[0].countryName} pirmauja su ${fmt(compareItems[0].medianSalary)}.` : ''}` : `Lyginamieji duomenys renkami.` },
+    { question: `Kokie veiksniai turi įtakos ${jobName} atlyginimui šalyje ${countryName}?`, answer: `Pagrindiniai veiksniai apima patirties lygį, miestą, pramonės sektorių, įmonės dydį ir konkrečius techninius įgūdžius. Mokesčių tarifai ir pragyvenimo išlaidos taip pat reikšmingai veikia grynąjį atlyginimą.` },
+    { question: `Ar atlyginimų duomenys yra patikimi?`, answer: `Taip. EuroSalary surenka duomenis iš Eurostato, patikrintų darbo skelbimų iš daugiau nei 50 Europos portalų ir patvirtintų anoniminių atlyginimų ataskaitų. Mūsų metodologija yra skaidri ir nuolat atnaujinama.` },
+  ],
+  lv: [
+    { question: `Kāda ir vidējā ${jobName} alga valstī ${countryName} ${year}. gadā?`, answer: `${jobName} mediānā bruto alga valstī ${countryName} ir ${fmt(midRow.median)} gadā vidējā līmenī. ${salaryRows.length > 1 ? `Iesācēji pelna aptuveni ${fmt(salaryRows[0].median)}, savukārt augstākā līmeņa speciālisti var sagaidīt ${fmt(salaryRows[salaryRows.length - 1].median)} vai vairāk.` : ''} Šie dati ir balstīti uz Eurostat un verificētiem darba sludinājumiem.` },
+    { question: `Cik pelna ${jobName} pēc nodokļiem valstī ${countryName}?`, answer: `Vidējā līmeņa ${jobName}, kas pelna ${fmt(midRow.median)} bruto valstī ${countryName}, saņem aptuveni ${fmt(midRow.netEstimate)} neto gadā. ${taxNotes || 'Nodokļu likmes atšķiras atkarībā no personīgajiem apstākļiem.'}` },
+    { question: `Kā ${jobName} alga valstī ${countryName} salīdzinās ar citām ES valstīm?`, answer: compareItems.length > 0 ? `${countryName} ieņem #${euRank} vietu ${jobName} algās. ${compareItems[0] ? `${compareItems[0].countryName} ir līderis ar ${fmt(compareItems[0].medianSalary)}.` : ''}` : `Salīdzinošie dati tiek apkopoti.` },
+    { question: `Kādi faktori ietekmē ${jobName} algu valstī ${countryName}?`, answer: `Galvenie faktori ietver pieredzes līmeni, pilsētu, nozari, uzņēmuma lielumu un specifiskas tehniskās prasmes. Nodokļu likmes un dzīves dārdzība arī būtiski ietekmē neto algu.` },
+    { question: `Vai algu dati ir uzticami?`, answer: `Jā. EuroSalary apkopo datus no Eurostat, verificētiem darba sludinājumiem no vairāk nekā 50 Eiropas portāliem un validētiem anonīmiem algu ziņojumiem. Mūsu metodoloģija ir pārskatāma un pastāvīgi atjaunināta.` },
+  ],
+  et: [
+    { question: `Milline on ${jobName} keskmine palk riigis ${countryName} aastal ${year}?`, answer: `${jobName} mediaanbrutopalk riigis ${countryName} on ${fmt(midRow.median)} aastas keskmisel tasemel. ${salaryRows.length > 1 ? `Algajad teenivad umbes ${fmt(salaryRows[0].median)}, samas vanemspetsialistid võivad oodata ${fmt(salaryRows[salaryRows.length - 1].median)} või rohkem.` : ''} Need andmed põhinevad Eurostatil ja kontrollitud tööpakkumistel.` },
+    { question: `Kui palju teenib ${jobName} pärast makse riigis ${countryName}?`, answer: `Kesktaseme ${jobName}, kes teenib ${fmt(midRow.median)} bruto riigis ${countryName}, saab kätte ligikaudu ${fmt(midRow.netEstimate)} neto aastas. ${taxNotes || 'Maksumäärad varieeruvad sõltuvalt isiklikest asjaoludest.'}` },
+    { question: `Kuidas võrdleb ${jobName} palk riigis ${countryName} teiste EL-i riikidega?`, answer: compareItems.length > 0 ? `${countryName} on #${euRank} kohal ${jobName} palkade osas. ${compareItems[0] ? `${compareItems[0].countryName} on esikohal ${fmt(compareItems[0].medianSalary)}-ga.` : ''}` : `Võrdlusandmeid koostatakse.` },
+    { question: `Millised tegurid mõjutavad ${jobName} palka riigis ${countryName}?`, answer: `Peamised tegurid hõlmavad kogemuse taset, linna, tööstusharu, ettevõtte suurust ja spetsiifilisi tehnilisi oskusi. Maksumäärad ja elukallidus mõjutavad samuti oluliselt netopalka.` },
+    { question: `Kas palgaandmed on usaldusväärsed?`, answer: `Jah. EuroSalary koondab andmeid Eurostatist, kontrollitud tööpakkumistest enam kui 50 Euroopa portaalist ja valideeritud anonüümsetest palgaaruannetest. Meie metoodika on läbipaistev ja pidevalt uuendatav.` },
+  ],
+  mt: [
+    { question: `Kemm hu s-salarju medju ta' ${jobName} f'${countryName} fl-${year}?`, answer: `Is-salarju gross medjan għal ${jobName} f'${countryName} huwa ${fmt(midRow.median)} fis-sena f'livell medju. ${salaryRows.length > 1 ? `Il-professjonisti tal-bidu jaqilgħu madwar ${fmt(salaryRows[0].median)}, filwaqt li s-senjuri jistgħu jistennew ${fmt(salaryRows[salaryRows.length - 1].median)} jew aktar.` : ''} Dawn iċ-ċifri huma bbażati fuq Eurostat u reklami ta' xogħol verifikati.` },
+    { question: `Kemm jaqla' ${jobName} wara t-taxxi f'${countryName}?`, answer: `${jobName} ta' livell medju li jaqla' ${fmt(midRow.median)} gross f'${countryName} jieħu madwar ${fmt(midRow.netEstimate)} nett fis-sena. ${taxNotes || 'Ir-rati tat-taxxa jvarjaw skont iċ-ċirkostanzi personali.'}` },
+    { question: `Kif jitqabbel is-salarju ta' ${jobName} f'${countryName} ma' pajjiżi oħra tal-UE?`, answer: compareItems.length > 0 ? `${countryName} jokkupa l-post #${euRank} għas-salarji ta' ${jobName}. ${compareItems[0] ? `${compareItems[0].countryName} jmexxi b'${fmt(compareItems[0].medianSalary)}.` : ''}` : `Id-data komparattiva qed tiġi kompilata.` },
+    { question: `Liema fatturi jaffettwaw is-salarju ta' ${jobName} f'${countryName}?`, answer: `Il-fatturi ewlenin jinkludu l-livell ta' esperjenza, il-belt, is-settur industrijali, id-daqs tal-kumpanija u ħiliet tekniċi speċifiċi. Ir-rati tat-taxxa u l-għoli tal-ħajja wkoll jaffettwaw b'mod sinifikanti s-salarju nett.` },
+    { question: `Id-data dwar is-salarji hija affidabbli?`, answer: `Iva. EuroSalary tiġbor data minn Eurostat, reklami ta' xogħol verifikati minn aktar minn 50 portal Ewropew u rapporti ta' salarji anonimi validati. Il-metodoloġija tagħna hija trasparenti u aġġornata b'mod kontinwu.` },
+  ],
+  ga: [
+    { question: `Cad é an meántuarastal do ${jobName} in ${countryName} i ${year}?`, answer: `Is é an meántuarastal comhlán meánach do ${jobName} in ${countryName} ná ${fmt(midRow.median)} sa bhliain ag meánleibhéal. ${salaryRows.length > 1 ? `Tuilleann gairmithe sóisearacha thart ar ${fmt(salaryRows[0].median)}, agus is féidir le gairmithe sinsearacha ${fmt(salaryRows[salaryRows.length - 1].median)} nó níos mó a bheith ag súil leo.` : ''} Tá na figiúirí seo bunaithe ar Eurostat agus ar fhógraí poist deimhnithe.` },
+    { question: `Cé mhéad a thuilleann ${jobName} tar éis cánacha in ${countryName}?`, answer: `Faigheann ${jobName} meánleibhéil a thuilleann ${fmt(midRow.median)} comhlán in ${countryName} thart ar ${fmt(midRow.netEstimate)} glan sa bhliain. ${taxNotes || 'Athraíonn rátaí cánach ag brath ar chúinsí pearsanta.'}` },
+    { question: `Conas a dhéanann tuarastal ${jobName} in ${countryName} comparáid le tíortha eile an AE?`, answer: compareItems.length > 0 ? `Tá ${countryName} sa #${euRank} áit do thuarastail ${jobName}. ${compareItems[0] ? `Tá ${compareItems[0].countryName} chun tosaigh le ${fmt(compareItems[0].medianSalary)}.` : ''}` : `Tá sonraí comparáideacha á dtiomsú.` },
+    { question: `Cad iad na tosca a théann i bhfeidhm ar thuarastal ${jobName} in ${countryName}?`, answer: `I measc na bpríomhthosca tá leibhéal taithí, cathair, earnáil tionsclaíochta, méid na cuideachta agus scileanna teicniúla sonracha. Bíonn tionchar suntasach ag rátaí cánach agus costas maireachtála ar an nglantuarastal freisin.` },
+    { question: `An bhfuil na sonraí tuarastail iontaofa?`, answer: `Tá. Bailíonn EuroSalary sonraí ó Eurostat, fógraí poist deimhnithe ó 50+ tairseach Eorpach agus tuairiscí tuarastail anaithnid bailíochtaithe. Tá ár modheolaíocht trédhearcach agus á nuashonrú go leanúnach.` },
+  ],
+};
+const faqItems = faqByLang[lang] || faqByLang.en;
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: fb(titles, lang),
+    author: { '@type': 'Organization', name: 'EuroSalary.eu' },
+    datePublished: '2026-01-15',
+    dateModified: '2026-04-04',
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: `${jobName} Salary Data — ${countryName} ${year}`,
+    description: fb(descriptions, lang),
+    url: `https://eurosalary.eu/${lang}/salary/${countrySlug}/${Astro.params.job}/`,
+    creator: { '@type': 'Organization', name: 'EuroSalary.eu' },
+    temporalCoverage: `2025/${year}`,
+    spatialCoverage: { '@type': 'Place', name: countryName },
+    variableMeasured: 'Annual gross salary in EUR',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map((f: { question: string; answer: string }) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  },
+];
+
+const flag = countryFlags[countryCode] || '';
+---
+
+<BaseLayout
+  title={fb(titles, lang)}
+  description={fb(descriptions, lang)}
+  datePublished="2026-01-15"
+  dateModified="2026-04-01"
+  schema={pageSchema}
+>
+  <!-- Hero -->
+  <section class="salary-hero">
+    <div class="salary-hero__dots"></div>
+    <div class="container salary-hero__inner">
+      <nav class="salary-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{fb(uiLabels.home, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a href={`/${lang}/countries/`}>{fb(uiLabels.salaries, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a href={`/${lang}/country/${countrySlug}/`}>{countryName}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="salary-hero__breadcrumbs-current">{jobName}</span>
+      </nav>
+
+      <div class="salary-hero__grid">
+        <div class="salary-hero__content">
+          <div class="salary-hero__flag">{flag}</div>
+          <h1 class="salary-hero__title">{fb(titles, lang)}</h1>
+          <p class="salary-hero__answer" set:html={fb(answerTexts, lang)} />
+        </div>
+
+        <div class="salary-hero__stat-card">
+          <div class="salary-hero__stat-top">
+            <span class="salary-hero__stat-label">{t('hero.salary.statLabel')}</span>
+            <div class="salary-hero__stat-value">{fmt(midRow.median)}</div>
+            <div class="salary-hero__stat-sub">
+              <span>{t('hero.salary.netLabel')} ~{fmt(midRow.netEstimate)}</span>
+            </div>
+          </div>
+          {compareItems.length > 0 && (
+            <div class="salary-hero__rank">
+              <span class="material-symbols-outlined">leaderboard</span>
+              {t('hero.salary.rankInEU').replace('{rank}', String(euRank)).replace('{job}', jobName)}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Body -->
+  <article class="container salary-body">
+    <TLDRBox items={fb(tldrLabels, lang)} />
+
+    <section class="salary-section">
+      <h2 class="salary-section__title">{labels.breakdown}</h2>
+      <SalaryTable
+        rows={salaryRows}
+        lang={lang}
+        countryName={countryName}
+        jobName={jobName}
+        currency={currency}
+      />
+    </section>
+
+    {compareItems.length > 0 && (
+      <section class="salary-section">
+        <CountryCompare
+          items={compareItems}
+          lang={lang}
+          jobName={jobName}
+          jobSlug={Astro.params.job}
+        />
+      </section>
+    )}
+
+    <!-- Sources -->
+    <section class="salary-section salary-sources">
+      <h2 class="salary-section__title">{labels.sources}</h2>
+      <p class="salary-sources__intro">{labels.sourceIntro}</p>
+      <div class="salary-sources__grid">
+        <div class="source-card">
+          <span class="material-symbols-outlined source-card__icon">account_balance</span>
+          <strong>Eurostat</strong>
+          <p>{fb(uiLabels.sourceEurostatDesc, lang)}</p>
+        </div>
+        <div class="source-card">
+          <span class="material-symbols-outlined source-card__icon">work</span>
+          <strong>{fb(uiLabels.sourceJobPostingsTitle, lang)}</strong>
+          <p>{fb(uiLabels.sourceJobPostingsDesc, lang)}</p>
+        </div>
+        <div class="source-card">
+          <span class="material-symbols-outlined source-card__icon">group</span>
+          <strong>{fb(uiLabels.sourceReportsTitle, lang)}</strong>
+          <p>{fb(uiLabels.sourceReportsDesc, lang)}</p>
+        </div>
+      </div>
+      <p class="salary-sources__updated">{labels.lastUpdated}</p>
+    </section>
+
+    <FAQSection items={faqItems} />
+
+    <section class="salary-section">
+      <JobAffiliateCTA country={countryName} job={jobName} lang={lang} />
+    </section>
+
+    <section class="salary-section">
+      <SalaryForm lang={lang} />
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  /* Body */
+  .salary-body { padding: var(--space-10) 0 var(--space-16); }
+  .salary-section { margin-top: var(--space-12); }
+  .salary-section__title {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--color-primary-container, #0F1F3D);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-6);
+  }
+
+  /* Sources */
+  .salary-sources__intro {
+    color: #45474e;
+    margin-bottom: var(--space-6);
+  }
+  .salary-sources__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+  .source-card {
+    background: white;
+    border: 1px solid #e6e8ea;
+    border-left: 4px solid var(--color-secondary, #0051d5);
+    padding: var(--space-6);
+    border-radius: 4px;
+  }
+  .source-card__icon {
+    font-size: 20px;
+    color: var(--color-secondary, #0051d5);
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+  .source-card strong {
+    display: block;
+    font-size: var(--text-sm);
+    color: var(--color-primary-container, #0F1F3D);
+    margin-bottom: 4px;
+  }
+  .source-card p {
+    font-size: 12px;
+    color: #75777e;
+    line-height: 1.5;
+  }
+  .salary-sources__updated {
+    font-size: 12px;
+    color: #75777e;
+    margin-top: var(--space-4);
+  }
+
+  @media (max-width: 768px) {
+    .salary-sources__grid { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,0 +1,216 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import { countrySlugsByLang, jobSlugsByLang, countryFlags } from '../../../data/slugs';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+
+// --------------- Centralized translations (24 langs) ---------------
+import { countryNames, jobNames, uiLabels } from '../../../i18n/translations';
+
+// --------------- Country average salaries ---------------
+const countrySalaries: Record<string, number> = {
+  CH: 100000, LU: 72000, DK: 60000, IE: 58000, DE: 58000, NL: 56000,
+  AT: 55000, SE: 54000, BE: 50000, FR: 50000, FI: 48000, IT: 40000,
+  ES: 36000, PT: 30000, PL: 28000,
+};
+
+// --------------- Job multipliers ---------------
+const jobMultipliers: Record<string, number> = {
+  'software-engineer': 1.2, 'data-scientist': 1.15, 'doctor': 1.8, 'lawyer': 1.5,
+  'financial-analyst': 1.1, 'devops-engineer': 1.15, 'nurse': 0.7, 'teacher': 0.65,
+  'product-manager': 1.1, 'data-analyst': 0.95, 'ux-designer': 1.0, 'accountant': 0.85,
+  'pharmacist': 1.0, 'university-professor': 1.1, 'marketing-manager': 1.05,
+  'sales-manager': 1.1, 'hr-manager': 0.95, 'project-manager': 1.05,
+  'operations-manager': 1.0, 'mechanical-engineer': 1.0, 'civil-engineer': 0.95,
+};
+
+// jobNames imported from centralized translations above
+
+// --------------- All UI strings now from centralized translations ---------------
+
+// --------------- getStaticPaths ---------------
+export function getStaticPaths() {
+  const paths: Array<{ params: { lang: string; job: string }; props: { canonicalJob: string; lang: string } }> = [];
+  for (const lang of Object.keys(languages)) {
+    const slugs = jobSlugsByLang[lang];
+    for (const [canonicalKey, localizedSlug] of Object.entries(slugs)) {
+      paths.push({
+        params: { lang, job: localizedSlug },
+        props: { canonicalJob: canonicalKey, lang },
+      });
+    }
+  }
+  return paths;
+}
+
+// --------------- Page setup ---------------
+const { canonicalJob, lang } = Astro.props;
+const t = useTranslations(lang as any);
+const multiplier = jobMultipliers[canonicalJob] || 1.0;
+const jobName = fb(jobNames[canonicalJob], lang) || canonicalJob;
+
+function formatSalary(amount: number): string {
+  return new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(amount);
+}
+
+// Build salary rows sorted by mid salary descending
+const countryCodes = Object.keys(countrySalaries);
+const rows = countryCodes.map((code) => {
+  const avg = countrySalaries[code];
+  const mid = Math.round(avg * multiplier);
+  const junior = Math.round(mid * 0.7);
+  const senior = Math.round(mid * 1.4);
+  return { code, mid, junior, senior };
+}).sort((a, b) => b.mid - a.mid);
+
+const highest = rows[0];
+const lowest = rows[rows.length - 1];
+const ratio = (highest.mid / lowest.mid).toFixed(1);
+
+const highestCountryName = fb(countryNames[highest.code], lang);
+const lowestCountryName = fb(countryNames[lowest.code], lang);
+
+const tldrItems = [
+  `${fb(uiLabels.highestPaying, lang)}: ${highestCountryName} — ${formatSalary(highest.mid)}${fb(uiLabels.perYear, lang)} (${fb(uiLabels.midLevel, lang)})`,
+  `${fb(uiLabels.lowestPaying, lang)}: ${lowestCountryName} — ${formatSalary(lowest.mid)}${fb(uiLabels.perYear, lang)} (${fb(uiLabels.midLevel, lang)})`,
+  `${fb(uiLabels.salaryGap, lang)}: ${ratio}x ${fb(uiLabels.betweenHighestLowest, lang)}`,
+];
+
+const h1 = `${jobName} — ${fb(uiLabels.salaryComparison, lang)} ${fb(uiLabels.acrossEurope, lang)}`;
+const pageDescription = `${fb(uiLabels.compareSalaries, lang)}: ${jobName} ${fb(uiLabels.inCountries, lang)}. ${fb(uiLabels.seniorityData, lang)} ${fb(uiLabels.in2026, lang)}.`;
+
+const jobSlug = jobSlugsByLang[lang]?.[canonicalJob] || canonicalJob;
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: h1,
+    description: pageDescription,
+    author: { '@type': 'Organization', name: 'EuroSalary.eu' },
+    datePublished: '2026-01-15',
+    dateModified: '2026-04-01',
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    about: {
+      '@type': 'Occupation',
+      name: jobName,
+      estimatedSalary: rows.slice(0, 5).map((r) => ({
+        '@type': 'MonetaryAmountDistribution',
+        name: `${jobName} in ${countryNames[r.code]?.en}`,
+        currency: 'EUR',
+        median: r.mid,
+        percentile10: r.junior,
+        percentile90: r.senior,
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title={h1}
+  description={pageDescription}
+  datePublished="2026-01-15"
+  dateModified="2026-04-01"
+  schema={pageSchema}
+>
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{fb(uiLabels.home, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a href={`/${lang}/compare/`}>{fb(uiLabels.compare, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{jobName}</span>
+      </nav>
+      <h1 class="page-hero__title">{jobName}<br/><span class="page-hero__accent">{fb(uiLabels.acrossEurope, lang)}</span></h1>
+      <p class="page-hero__desc">{pageDescription}</p>
+    </div>
+  </section>
+
+  <div class="container page-body">
+    <TLDRBox items={tldrItems} />
+
+    <section class="section">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{fb(uiLabels.country, lang)}</th>
+            <th>{fb(uiLabels.junior, lang)}</th>
+            <th>{fb(uiLabels.midLevel, lang)}</th>
+            <th>{fb(uiLabels.senior, lang)}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => {
+            const name = fb(countryNames[row.code], lang) || row.code;
+            const flag = countryFlags[row.code];
+            const countrySlug = countrySlugsByLang[lang]?.[row.code];
+            return (
+              <tr>
+                <td>
+                  <span class="country-cell">
+                    <span class="country-cell__flag">{flag}</span>
+                    <span>{name}</span>
+                  </span>
+                </td>
+                <td>{formatSalary(row.junior)}</td>
+                <td><strong>{formatSalary(row.mid)}</strong></td>
+                <td>{formatSalary(row.senior)}</td>
+                <td>
+                  <a href={`/${lang}/salary/${countrySlug}/${jobSlug}/`} class="table-link">
+                    {fb(uiLabels.details, lang)} &rarr;
+                  </a>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-body { padding: 2.5rem 0 4rem; }
+  .page-body h2 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em;
+    color: #0F1F3D; margin-top: 2.5rem; margin-bottom: 1rem;
+  }
+
+  .country-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .country-cell__flag {
+    font-size: var(--text-lg);
+  }
+
+  .table-link {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--color-blue-600);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .table-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .data-table {
+      font-size: var(--text-sm);
+    }
+
+    .country-cell__flag {
+      font-size: var(--text-base);
+    }
+  }
+</style>

@@ -1,5 +1,50 @@
 ---
-// Root redirect — detect language and redirect to /en/ by default
-// Browser language detection happens client-side in BaseLayout
-return Astro.redirect('/en/');
+// Root page: smart locale-aware redirect.
+// Detects best language from: stored preference > browser language > geo hint > EN fallback.
+// For bots/crawlers: meta refresh to /en/ (x-default canonical).
 ---
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="refresh" content="0;url=/en/" />
+  <title>EuroSalary.eu — European Salary Intelligence</title>
+  <meta name="robots" content="noindex, follow" />
+  <link rel="canonical" href="https://eurosalary.eu/en/" />
+  <script is:inline>
+    (function() {
+      var supported = ['en','fr','de','es','it','pt','nl','pl','ro','cs','sv','da','fi','el','hu','sk','bg','hr','sl','lt','lv','et','mt','ga'];
+
+      // 1. Check stored preference
+      var stored = null;
+      try { stored = localStorage.getItem('eurosalary-lang'); } catch(e) {}
+      if (stored && supported.indexOf(stored) !== -1) {
+        window.location.replace('/' + stored + '/');
+        return;
+      }
+
+      // 2. Check browser Accept-Language
+      var browserLang = (navigator.language || navigator.userLanguage || 'en').split('-')[0].toLowerCase();
+      if (supported.indexOf(browserLang) !== -1) {
+        try { localStorage.setItem('eurosalary-lang', browserLang); } catch(e) {}
+        window.location.replace('/' + browserLang + '/');
+        return;
+      }
+
+      // 3. Check navigator.languages for broader match
+      var langs = navigator.languages || [];
+      for (var i = 0; i < langs.length; i++) {
+        var l = langs[i].split('-')[0].toLowerCase();
+        if (supported.indexOf(l) !== -1) {
+          try { localStorage.setItem('eurosalary-lang', l); } catch(e) {}
+          window.location.replace('/' + l + '/');
+          return;
+        }
+      }
+
+      // 4. Fallback to English
+      window.location.replace('/en/');
+    })();
+  </script>
+</head>
+<body></body>
+</html>

@@ -11,10 +11,65 @@ const t = useTranslations(lang);
 ---
 
 <div class="tldr-box">
-  <div class="tldr-box__title">{t('tldr.title')}</div>
+  <div class="tldr-box__header">
+    <span class="material-symbols-outlined tldr-box__icon">bolt</span>
+    <span class="tldr-box__title">{t('tldr.title')}</span>
+  </div>
   <ul>
     {items.map((item) => (
       <li>{item}</li>
     ))}
   </ul>
 </div>
+
+<style>
+  .tldr-box {
+    background: var(--color-primary-container);
+    color: var(--color-white);
+    padding: var(--space-8) var(--space-10);
+    margin-bottom: var(--space-10);
+    border-left: 4px solid var(--color-secondary);
+    position: relative;
+  }
+  .tldr-box__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+  .tldr-box__icon {
+    color: var(--color-secondary);
+    font-size: 16px;
+  }
+  .tldr-box__title {
+    font-size: 10px;
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--color-secondary);
+  }
+  .tldr-box ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .tldr-box li {
+    padding-left: var(--space-6);
+    position: relative;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    line-height: var(--leading-relaxed);
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .tldr-box li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 4px;
+    height: 12px;
+    background: var(--color-secondary);
+    border-radius: 2px;
+  }
+</style>

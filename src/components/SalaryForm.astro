@@ -1,8 +1,11 @@
 ---
-import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import { getLangFromUrl, useTranslations, fb } from '../i18n/utils';
+import { countryNames } from '../i18n/translations';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
+
+const formCountries = ['DE', 'FR', 'NL', 'BE', 'ES', 'IT', 'AT', 'IE', 'PT', 'PL', 'SE', 'DK', 'FI', 'LU', 'CZ'] as const;
 ---
 
 <section class="salary-form-section section section--light" id="submit-salary">
@@ -21,21 +24,9 @@ const t = useTranslations(lang);
           <label class="form-label" for="sf-country">{t('form.salaryReport.country')}</label>
           <select id="sf-country" name="country" class="form-select" required>
             <option value="">--</option>
-            <option value="DE">Germany</option>
-            <option value="FR">France</option>
-            <option value="NL">Netherlands</option>
-            <option value="BE">Belgium</option>
-            <option value="ES">Spain</option>
-            <option value="IT">Italy</option>
-            <option value="AT">Austria</option>
-            <option value="IE">Ireland</option>
-            <option value="PT">Portugal</option>
-            <option value="PL">Poland</option>
-            <option value="SE">Sweden</option>
-            <option value="DK">Denmark</option>
-            <option value="FI">Finland</option>
-            <option value="LU">Luxembourg</option>
-            <option value="CZ">Czech Republic</option>
+            {formCountries.map((code) => (
+              <option value={code}>{fb(countryNames[code], lang)}</option>
+            ))}
           </select>
         </div>
 

@@ -1,0 +1,499 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TLDRBox from '../../components/TLDRBox.astro';
+import FAQSection from '../../components/FAQSection.astro';
+import { languages, type Lang } from '../../i18n/ui';
+import { fb, useTranslations } from '../../i18n/utils';
+
+const i18n: Record<string, {
+  h1: string;
+  metaTitle: string;
+  metaDesc: string;
+  home: string;
+  breadcrumb: string;
+  introAnswer: string;
+  tldr: string[];
+  whyTitle: string;
+  whyDesc: string;
+  features: { title: string; desc: string; icon: string }[];
+  forEmployersTitle: string;
+  forEmployersDesc: string;
+  forRecruitersTitle: string;
+  forRecruitersDesc: string;
+  apiTitle: string;
+  apiDesc: string;
+  waitlistTitle: string;
+  waitlistDesc: string;
+  waitlistCTA: string;
+  emailPlaceholder: string;
+  faq: { question: string; answer: string }[];
+}> = {
+  en: {
+    h1: 'What Premium Salary Intelligence Does EuroSalary Offer?',
+    metaTitle: 'Premium Salary Intelligence | EuroSalary.eu',
+    metaDesc: 'Access premium European salary reports, employer benchmarking dashboards, recruiter API, and transparency compliance tools. Built for HR teams, recruiters, and enterprises.',
+    home: 'Home',
+    breadcrumb: 'Premium',
+    introAnswer: 'EuroSalary Premium provides deep salary intelligence including downloadable reports, employer benchmarking, recruiter API access, and EU salary transparency compliance tools — all powered by Eurostat-verified data across 15 European countries.',
+    tldr: [
+      'Premium salary reports with seniority bands, tax-adjusted pay, and city comparisons',
+      'Employer benchmarking dashboards and transparency compliance tools',
+      'Recruiter API with real-time salary data across all EU markets',
+    ],
+    whyTitle: 'Why Premium?',
+    whyDesc: 'Free EuroSalary covers country-level averages. Premium unlocks granular intelligence that drives hiring decisions, compensation planning, and EU regulatory compliance.',
+    features: [
+      { title: 'Salary Reports', desc: 'Downloadable PDF reports with salary distribution, seniority bands, top cities, tax-adjusted take-home, and EU peer comparison.', icon: 'description' },
+      { title: 'Employer Benchmarking', desc: 'Compare your internal salary bands against market rates. Role, city, and country benchmarks with pay equity insights.', icon: 'monitoring' },
+      { title: 'Recruiter API', desc: 'Machine-readable salary data via REST API. Real-time access to salary ranges, compare endpoints, and city-level data.', icon: 'api' },
+      { title: 'Transparency Toolkit', desc: 'EU Salary Transparency Directive compliance tools. Pay range recommendations, disclosure templates, and readiness scores.', icon: 'verified_user' },
+      { title: 'Salary Alerts', desc: 'Automated notifications when salary data changes for your tracked roles, countries, or cities.', icon: 'notifications_active' },
+      { title: 'Custom Reports', desc: 'Tailored compensation analysis for your industry, country mix, and role portfolio. Enterprise-grade insights.', icon: 'tune' },
+    ],
+    forEmployersTitle: 'For Employers & HR Teams',
+    forEmployersDesc: 'Benchmark your compensation against European market rates. Ensure compliance with the EU Pay Transparency Directive. Make data-driven hiring and retention decisions.',
+    forRecruitersTitle: 'For Recruiters & Staffing',
+    forRecruitersDesc: 'Access real-time salary ranges for any role in any EU market. Present verified market data to candidates and clients. Close offers faster with benchmark confidence.',
+    apiTitle: 'For Developers & Platforms',
+    apiDesc: 'Integrate EuroSalary data into your HR software, ATS, or compensation platform via our REST API. JSON responses with methodology version, confidence scores, and freshness timestamps.',
+    waitlistTitle: 'Join the Premium Waitlist',
+    waitlistDesc: 'Premium launches Q3 2026. Join the waitlist for early access and founding-member pricing.',
+    waitlistCTA: 'Join Waitlist',
+    emailPlaceholder: 'Your work email',
+    faq: [
+      { question: 'When does EuroSalary Premium launch?', answer: 'Premium is scheduled for Q3 2026. Waitlist members get early access and founding-member pricing.' },
+      { question: 'What data sources power Premium reports?', answer: 'The same Eurostat, OECD, and verified job posting data that powers our free platform, plus enhanced city-level datasets, seniority bands, and tax modeling.' },
+      { question: 'Is the API available during the waitlist period?', answer: 'We are onboarding select API beta partners. Join the waitlist and indicate API interest to be considered for early access.' },
+      { question: 'How does the Transparency Toolkit help with EU compliance?', answer: 'The toolkit provides country-specific compliance checklists, pay range recommendations based on market data, and readiness scoring against the EU Pay Transparency Directive requirements.' },
+      { question: 'What is the pricing model?', answer: 'Premium will offer tiered plans: Solo Recruiter, Startup HR, Scaleup, and Enterprise. Pricing is based on data access level, API quota, and user seats.' },
+    ],
+  },
+  fr: {
+    h1: 'Quelle intelligence salariale Premium offre EuroSalary ?',
+    metaTitle: 'Intelligence Salariale Premium | EuroSalary.eu',
+    metaDesc: 'Accédez aux rapports salariaux premium, tableaux de bord de benchmarking employeur, API recruteur et outils de conformité à la transparence. Pour les équipes RH et entreprises.',
+    home: 'Accueil',
+    breadcrumb: 'Premium',
+    introAnswer: 'EuroSalary Premium fournit une intelligence salariale approfondie comprenant des rapports téléchargeables, du benchmarking employeur, un accès API recruteur et des outils de conformité à la transparence salariale de l\'UE.',
+    tldr: [
+      'Rapports salariaux premium avec bandes de séniorité et comparaisons par ville',
+      'Tableaux de bord de benchmarking employeur et outils de conformité',
+      'API recruteur avec données salariales en temps réel sur tous les marchés de l\'UE',
+    ],
+    whyTitle: 'Pourquoi Premium ?',
+    whyDesc: 'Le EuroSalary gratuit couvre les moyennes nationales. Premium déverrouille une intelligence granulaire pour les décisions de recrutement et la conformité réglementaire.',
+    features: [
+      { title: 'Rapports salariaux', desc: 'Rapports PDF téléchargeables avec distribution salariale, bandes de séniorité, villes les mieux payées et comparaison européenne.', icon: 'description' },
+      { title: 'Benchmarking employeur', desc: 'Comparez vos bandes salariales internes aux taux du marché. Benchmarks par rôle, ville et pays.', icon: 'monitoring' },
+      { title: 'API recruteur', desc: 'Données salariales machine-readable via API REST. Accès en temps réel aux fourchettes salariales.', icon: 'api' },
+      { title: 'Kit transparence', desc: 'Outils de conformité à la Directive Transparence Salariale de l\'UE. Recommandations de fourchettes et scores de préparation.', icon: 'verified_user' },
+      { title: 'Alertes salariales', desc: 'Notifications automatiques quand les données salariales changent pour vos rôles et pays suivis.', icon: 'notifications_active' },
+      { title: 'Rapports personnalisés', desc: 'Analyses de rémunération sur mesure pour votre secteur et votre mix géographique.', icon: 'tune' },
+    ],
+    forEmployersTitle: 'Pour les Employeurs et Équipes RH',
+    forEmployersDesc: 'Benchmarkez votre rémunération contre les taux du marché européen. Assurez la conformité à la Directive Transparence Salariale.',
+    forRecruitersTitle: 'Pour les Recruteurs',
+    forRecruitersDesc: 'Accédez aux fourchettes salariales en temps réel pour tout rôle dans tout marché de l\'UE.',
+    apiTitle: 'Pour les Développeurs et Plateformes',
+    apiDesc: 'Intégrez les données EuroSalary dans votre logiciel RH ou ATS via notre API REST.',
+    waitlistTitle: 'Rejoignez la Liste d\'Attente Premium',
+    waitlistDesc: 'Premium lance au T3 2026. Rejoignez la liste d\'attente pour un accès anticipé.',
+    waitlistCTA: 'Rejoindre la liste',
+    emailPlaceholder: 'Votre email professionnel',
+    faq: [
+      { question: 'Quand EuroSalary Premium sera-t-il lancé ?', answer: 'Premium est prévu pour le T3 2026. Les membres de la liste d\'attente bénéficient d\'un accès anticipé.' },
+      { question: 'Quelles sources de données alimentent les rapports Premium ?', answer: 'Les mêmes données Eurostat, OECD et offres d\'emploi vérifiées, plus des jeux de données ville améliorés et des modèles fiscaux.' },
+      { question: 'L\'API est-elle disponible pendant la période d\'attente ?', answer: 'Nous intégrons des partenaires API bêta sélectionnés. Rejoignez la liste et indiquez votre intérêt API.' },
+      { question: 'Comment le kit transparence aide à la conformité UE ?', answer: 'Le kit fournit des checklists de conformité par pays, des recommandations de fourchettes salariales et un scoring de préparation.' },
+      { question: 'Quel est le modèle de tarification ?', answer: 'Premium proposera des plans par paliers : Recruteur Solo, Startup RH, Scaleup et Entreprise.' },
+    ],
+  },
+  de: {
+    h1: 'Welche Premium-Gehaltsintelligenz bietet EuroSalary?',
+    metaTitle: 'Premium Gehaltsintelligenz | EuroSalary.eu',
+    metaDesc: 'Premium europäische Gehaltsberichte, Arbeitgeber-Benchmarking, Recruiter-API und Transparenz-Compliance-Tools.',
+    home: 'Startseite',
+    breadcrumb: 'Premium',
+    introAnswer: 'EuroSalary Premium bietet tiefgehende Gehaltsintelligenz mit herunterladbaren Berichten, Arbeitgeber-Benchmarking, Recruiter-API-Zugang und EU-Gehaltstransparenz-Compliance-Tools.',
+    tldr: [
+      'Premium-Gehaltsberichte mit Senioritätsstufen und Stadtvergleichen',
+      'Arbeitgeber-Benchmarking-Dashboards und Compliance-Tools',
+      'Recruiter-API mit Echtzeit-Gehaltsdaten für alle EU-Märkte',
+    ],
+    whyTitle: 'Warum Premium?',
+    whyDesc: 'Das kostenlose EuroSalary deckt Länderdurchschnitte ab. Premium erschließt granulare Intelligenz für Einstellungsentscheidungen und regulatorische Compliance.',
+    features: [
+      { title: 'Gehaltsberichte', desc: 'Herunterladbare PDF-Berichte mit Gehaltsverteilung, Senioritätsstufen und EU-Vergleich.', icon: 'description' },
+      { title: 'Arbeitgeber-Benchmarking', desc: 'Vergleichen Sie Ihre internen Gehaltsbänder mit Marktpreisen.', icon: 'monitoring' },
+      { title: 'Recruiter-API', desc: 'Maschinenlesbare Gehaltsdaten über REST-API mit Echtzeitzugriff.', icon: 'api' },
+      { title: 'Transparenz-Toolkit', desc: 'EU-Gehaltstransparenz-Compliance-Tools mit länderspezifischen Checklisten.', icon: 'verified_user' },
+      { title: 'Gehaltsalarme', desc: 'Automatische Benachrichtigungen bei Gehaltsänderungen.', icon: 'notifications_active' },
+      { title: 'Individuelle Berichte', desc: 'Maßgeschneiderte Vergütungsanalysen für Ihre Branche.', icon: 'tune' },
+    ],
+    forEmployersTitle: 'Für Arbeitgeber & HR-Teams',
+    forEmployersDesc: 'Benchmarken Sie Ihre Vergütung gegen europäische Marktpreise.',
+    forRecruitersTitle: 'Für Recruiter & Personalvermittlung',
+    forRecruitersDesc: 'Echtzeit-Gehaltsspannen für jede Rolle in jedem EU-Markt.',
+    apiTitle: 'Für Entwickler & Plattformen',
+    apiDesc: 'Integrieren Sie EuroSalary-Daten in Ihre HR-Software über unsere REST-API.',
+    waitlistTitle: 'Premium-Warteliste beitreten',
+    waitlistDesc: 'Premium startet Q3 2026. Warteliste für Early Access und Gründerpreise.',
+    waitlistCTA: 'Warteliste beitreten',
+    emailPlaceholder: 'Ihre Geschäfts-E-Mail',
+    faq: [
+      { question: 'Wann startet EuroSalary Premium?', answer: 'Premium ist für Q3 2026 geplant. Wartelisten-Mitglieder erhalten Early Access.' },
+      { question: 'Welche Datenquellen nutzt Premium?', answer: 'Dieselben Eurostat- und OECD-Daten, plus erweiterte Stadtdaten und Steuermodelle.' },
+      { question: 'Ist die API während der Wartezeit verfügbar?', answer: 'Wir onboarden ausgewählte API-Beta-Partner.' },
+      { question: 'Wie hilft das Transparenz-Toolkit bei EU-Compliance?', answer: 'Das Toolkit bietet länderspezifische Compliance-Checklisten und Gehaltsempfehlungen.' },
+      { question: 'Wie ist das Preismodell?', answer: 'Premium bietet gestaffelte Pläne: Solo-Recruiter, Startup-HR, Scaleup und Enterprise.' },
+    ],
+  },
+  es: {
+    h1: '¿Qué inteligencia salarial Premium ofrece EuroSalary?',
+    metaTitle: 'Inteligencia Salarial Premium | EuroSalary.eu',
+    metaDesc: 'Accede a informes salariales premium, dashboards de benchmarking, API para reclutadores y herramientas de cumplimiento de transparencia.',
+    home: 'Inicio',
+    breadcrumb: 'Premium',
+    introAnswer: 'EuroSalary Premium proporciona inteligencia salarial profunda con informes descargables, benchmarking para empleadores, acceso API para reclutadores y herramientas de cumplimiento de transparencia salarial de la UE.',
+    tldr: [
+      'Informes salariales premium con bandas de antigüedad y comparaciones por ciudad',
+      'Dashboards de benchmarking para empleadores y herramientas de cumplimiento',
+      'API para reclutadores con datos salariales en tiempo real en todos los mercados de la UE',
+    ],
+    whyTitle: '¿Por qué Premium?',
+    whyDesc: 'EuroSalary gratuito cubre promedios nacionales. Premium desbloquea inteligencia granular para decisiones de contratación y cumplimiento regulatorio.',
+    features: [
+      { title: 'Informes salariales', desc: 'Informes PDF descargables con distribución salarial, bandas de antigüedad y comparación europea.', icon: 'description' },
+      { title: 'Benchmarking empleador', desc: 'Compare sus bandas salariales internas con las tasas del mercado.', icon: 'monitoring' },
+      { title: 'API reclutador', desc: 'Datos salariales machine-readable vía API REST con acceso en tiempo real.', icon: 'api' },
+      { title: 'Kit de transparencia', desc: 'Herramientas de cumplimiento de la Directiva de Transparencia Salarial de la UE.', icon: 'verified_user' },
+      { title: 'Alertas salariales', desc: 'Notificaciones automáticas cuando cambian los datos salariales de sus roles y países seguidos.', icon: 'notifications_active' },
+      { title: 'Informes personalizados', desc: 'Análisis de compensación a medida para su sector y mezcla geográfica.', icon: 'tune' },
+    ],
+    forEmployersTitle: 'Para Empleadores y Equipos de RRHH',
+    forEmployersDesc: 'Compare su compensación contra las tasas del mercado europeo.',
+    forRecruitersTitle: 'Para Reclutadores',
+    forRecruitersDesc: 'Acceda a rangos salariales en tiempo real para cualquier rol en cualquier mercado de la UE.',
+    apiTitle: 'Para Desarrolladores y Plataformas',
+    apiDesc: 'Integre datos de EuroSalary en su software de RRHH o ATS vía nuestra API REST.',
+    waitlistTitle: 'Únase a la Lista de Espera Premium',
+    waitlistDesc: 'Premium se lanza en Q3 2026. Únase para acceso anticipado y precios de miembro fundador.',
+    waitlistCTA: 'Unirse a la lista',
+    emailPlaceholder: 'Su email profesional',
+    faq: [
+      { question: '¿Cuándo se lanza EuroSalary Premium?', answer: 'Premium está programado para Q3 2026. Los miembros de la lista de espera obtienen acceso anticipado.' },
+      { question: '¿Qué fuentes de datos alimentan los informes Premium?', answer: 'Los mismos datos de Eurostat, OECD y ofertas verificadas, más datasets de ciudades mejorados y modelos fiscales.' },
+      { question: '¿Está la API disponible durante el período de espera?', answer: 'Estamos integrando socios API beta seleccionados.' },
+      { question: '¿Cómo ayuda el kit de transparencia con el cumplimiento de la UE?', answer: 'El kit proporciona checklists de cumplimiento por país y recomendaciones de rangos salariales.' },
+      { question: '¿Cuál es el modelo de precios?', answer: 'Premium ofrecerá planes escalonados: Reclutador Solo, Startup RRHH, Scaleup y Enterprise.' },
+    ],
+  },
+};
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+const c = fb(i18n, lang);
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: c.h1,
+    author: { '@type': 'Organization', name: 'EuroSalary.eu' },
+    datePublished: '2026-04-01',
+    dateModified: '2026-04-04',
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: c.faq.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  },
+];
+---
+
+<BaseLayout title={c.metaTitle} description={c.metaDesc} datePublished="2026-04-01" dateModified="2026-04-04" schema={pageSchema}>
+  <section class="premium-hero">
+    <div class="premium-hero__dots"></div>
+    <div class="container premium-hero__inner">
+      <nav class="premium-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{c.home}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span>{c.breadcrumb}</span>
+      </nav>
+      <div class="premium-hero__badge">
+        <span class="material-symbols-outlined">workspace_premium</span>
+        Premium Intelligence
+      </div>
+      <h1>{c.h1}</h1>
+      <p class="premium-hero__answer">{c.introAnswer}</p>
+    </div>
+  </section>
+
+  <article class="container premium-body">
+    <TLDRBox items={c.tldr} />
+
+    <section class="premium-section">
+      <h2>{c.whyTitle}</h2>
+      <p class="premium-section__desc">{c.whyDesc}</p>
+      <div class="premium-features">
+        {c.features.map((f) => (
+          <div class="premium-feature">
+            <span class="material-symbols-outlined premium-feature__icon">{f.icon}</span>
+            <h3>{f.title}</h3>
+            <p>{f.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="premium-section premium-audiences">
+      <div class="premium-audience">
+        <span class="material-symbols-outlined premium-audience__icon">business</span>
+        <h3>{c.forEmployersTitle}</h3>
+        <p>{c.forEmployersDesc}</p>
+      </div>
+      <div class="premium-audience">
+        <span class="material-symbols-outlined premium-audience__icon">person_search</span>
+        <h3>{c.forRecruitersTitle}</h3>
+        <p>{c.forRecruitersDesc}</p>
+      </div>
+      <div class="premium-audience">
+        <span class="material-symbols-outlined premium-audience__icon">code</span>
+        <h3>{c.apiTitle}</h3>
+        <p>{c.apiDesc}</p>
+      </div>
+    </section>
+
+    <section class="premium-section premium-waitlist">
+      <h2>{c.waitlistTitle}</h2>
+      <p>{c.waitlistDesc}</p>
+      <form class="premium-waitlist__form" id="waitlist-form">
+        <input type="email" placeholder={c.emailPlaceholder} required class="premium-waitlist__input" />
+        <button type="submit" class="premium-waitlist__btn">{c.waitlistCTA}</button>
+      </form>
+    </section>
+
+    <FAQSection items={c.faq} />
+
+    <section class="premium-section premium-methodology">
+      <p class="premium-methodology__link">
+        <span class="material-symbols-outlined">science</span>
+        <a href={`/${lang}/methodology/`}>{t('nav.methodology')}</a> — {fb({ en: 'Learn how we source, validate, and standardize European salary data.', fr: 'Découvrez comment nous sourçons et validons les données salariales.', de: 'Erfahren Sie, wie wir Gehaltsdaten beschaffen und validieren.', es: 'Conozca cómo obtenemos y validamos los datos salariales.' }, lang)}
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .premium-hero {
+    background: var(--color-primary-container, #0F1F3D);
+    color: white;
+    padding: var(--space-16) 0 var(--space-12);
+    position: relative;
+    overflow: hidden;
+  }
+  .premium-hero__dots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .premium-hero__inner { position: relative; z-index: 1; max-width: 720px; }
+  .premium-hero__breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: rgba(203, 213, 225, 0.6);
+    margin-bottom: var(--space-6);
+  }
+  .premium-hero__breadcrumbs a {
+    color: rgba(203, 213, 225, 0.6);
+    text-decoration: none;
+  }
+  .premium-hero__breadcrumbs a:hover { color: white; }
+  .premium-hero__breadcrumbs .material-symbols-outlined { font-size: 14px; }
+  .premium-hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(37, 99, 235, 0.2);
+    border: 1px solid rgba(37, 99, 235, 0.3);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #93c5fd;
+    margin-bottom: var(--space-4);
+  }
+  .premium-hero__badge .material-symbols-outlined { font-size: 14px; }
+  .premium-hero h1 {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: var(--space-4);
+  }
+  .premium-hero__answer {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: rgba(203, 213, 225, 0.85);
+  }
+
+  .premium-body { padding: var(--space-10) 0 var(--space-16); }
+  .premium-section { margin-top: var(--space-12); }
+  .premium-section h2 {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--color-primary-container, #0F1F3D);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-4);
+  }
+  .premium-section__desc { color: #45474e; margin-bottom: var(--space-8); }
+
+  .premium-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+  }
+  .premium-feature {
+    background: white;
+    border: 1px solid #e6e8ea;
+    border-left: 4px solid var(--color-secondary, #2563EB);
+    padding: var(--space-6);
+    border-radius: 4px;
+  }
+  .premium-feature__icon {
+    font-size: 24px;
+    color: var(--color-secondary, #2563EB);
+    margin-bottom: var(--space-2);
+  }
+  .premium-feature h3 {
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: var(--color-primary-container, #0F1F3D);
+    margin: var(--space-2) 0;
+  }
+  .premium-feature p {
+    font-size: 13px;
+    color: #75777e;
+    line-height: 1.6;
+  }
+
+  .premium-audiences {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+  }
+  .premium-audience {
+    background: var(--color-primary-container, #0F1F3D);
+    color: white;
+    padding: var(--space-8);
+    border-radius: 6px;
+  }
+  .premium-audience__icon {
+    font-size: 28px;
+    color: #60a5fa;
+    margin-bottom: var(--space-3);
+  }
+  .premium-audience h3 {
+    font-size: var(--text-base);
+    font-weight: 700;
+    margin-bottom: var(--space-2);
+  }
+  .premium-audience p {
+    font-size: 13px;
+    color: rgba(203, 213, 225, 0.8);
+    line-height: 1.6;
+  }
+
+  .premium-waitlist {
+    background: #f8fafc;
+    border: 1px solid #e6e8ea;
+    padding: var(--space-10);
+    border-radius: 8px;
+    text-align: center;
+  }
+  .premium-waitlist h2 { margin-bottom: var(--space-2); }
+  .premium-waitlist p { color: #45474e; margin-bottom: var(--space-6); }
+  .premium-waitlist__form {
+    display: flex;
+    gap: var(--space-3);
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .premium-waitlist__input {
+    flex: 1;
+    padding: 10px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: var(--text-sm);
+  }
+  .premium-waitlist__btn {
+    padding: 10px 24px;
+    background: var(--color-secondary, #2563EB);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .premium-waitlist__btn:hover { background: #1d4ed8; }
+
+  .premium-methodology__link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--text-sm);
+    color: #45474e;
+  }
+  .premium-methodology__link .material-symbols-outlined {
+    font-size: 18px;
+    color: var(--color-secondary, #2563EB);
+  }
+  .premium-methodology__link a {
+    color: var(--color-secondary, #2563EB);
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .premium-features { grid-template-columns: 1fr; }
+    .premium-audiences { grid-template-columns: 1fr; }
+    .premium-waitlist__form { flex-direction: column; }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('waitlist-form');
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = (form.querySelector('input[type="email"]') as HTMLInputElement)?.value;
+    if (!email) return;
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, language: document.documentElement.lang || 'en' }),
+      });
+      if (res.ok) {
+        form.innerHTML = '<p style="color:#059669;font-weight:600;">You\'re on the list! We\'ll notify you when Premium launches.</p>';
+      }
+    } catch (err) {}
+  });
+</script>

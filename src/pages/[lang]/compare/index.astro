@@ -1,0 +1,316 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import { jobSlugsByLang, countryFlags } from '../../../data/slugs';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+import { countryNames, jobNames, uiLabels } from '../../../i18n/translations';
+
+// countryNames imported from '../../../i18n/translations'
+
+// --------------- Country average salaries ---------------
+const countrySalaries: Record<string, number> = {
+  CH: 100000, LU: 72000, DK: 60000, IE: 58000, DE: 58000, NL: 56000,
+  AT: 55000, SE: 54000, BE: 50000, FR: 50000, FI: 48000, IT: 40000,
+  ES: 36000, PT: 30000, PL: 28000,
+};
+
+// --------------- Job multipliers ---------------
+const jobMultipliers: Record<string, number> = {
+  'software-engineer': 1.2, 'data-scientist': 1.15, 'doctor': 1.8, 'lawyer': 1.5,
+  'financial-analyst': 1.1, 'devops-engineer': 1.15, 'nurse': 0.7, 'teacher': 0.65,
+  'product-manager': 1.1, 'data-analyst': 0.95, 'ux-designer': 1.0, 'accountant': 0.85,
+  'pharmacist': 1.0, 'university-professor': 1.1, 'marketing-manager': 1.05,
+  'sales-manager': 1.1, 'hr-manager': 0.95, 'project-manager': 1.05,
+  'operations-manager': 1.0, 'mechanical-engineer': 1.0, 'civil-engineer': 0.95,
+};
+
+// jobNames imported from '../../../i18n/translations'
+
+// --------------- Featured comparisons ---------------
+interface FeaturedComparison {
+  job: string;
+  countries: string[];
+}
+
+const featuredComparisons: FeaturedComparison[] = [
+  { job: 'software-engineer', countries: ['DE', 'NL', 'FR', 'ES'] },
+  { job: 'nurse', countries: ['DE', 'FR', 'NL', 'BE'] },
+  { job: 'financial-analyst', countries: ['LU', 'CH', 'DE', 'FR'] },
+  { job: 'teacher', countries: ['DE', 'FR', 'ES', 'IT'] },
+];
+
+// --------------- Translated UI strings ---------------
+const h1Texts: Record<string, string> = {
+  en: 'Compare Salaries Across Europe',
+  fr: 'Comparer les salaires en Europe',
+  de: 'Gehälter in Europa vergleichen',
+  es: 'Comparar salarios en Europa',
+};
+
+const descTexts: Record<string, string> = {
+  en: 'Compare salaries for 21 job titles across 15 European countries. See how your profession pays in different nations.',
+  fr: 'Comparez les salaires pour 21 métiers dans 15 pays européens. Découvrez combien votre profession est payée dans chaque pays.',
+  de: 'Vergleichen Sie Gehälter für 21 Berufe in 15 europäischen Ländern. Sehen Sie, was Ihr Beruf in verschiedenen Ländern zahlt.',
+  es: 'Compare salarios de 21 profesiones en 15 países europeos. Vea cuánto paga su profesión en diferentes naciones.',
+};
+
+const tldrTexts: Record<string, string[]> = {
+  en: [
+    '21 job titles compared across 15 European countries',
+    'Switzerland and Luxembourg consistently top the salary charts',
+    'Tech roles like Software Engineer show the biggest cross-border gaps',
+  ],
+  fr: [
+    '21 métiers comparés dans 15 pays européens',
+    'La Suisse et le Luxembourg dominent les classements salariaux',
+    'Les métiers tech comme Ingénieur logiciel montrent les plus grands écarts',
+  ],
+  de: [
+    '21 Berufe verglichen in 15 europäischen Ländern',
+    'Schweiz und Luxemburg führen die Gehaltstabellen an',
+    'Tech-Berufe wie Softwareentwickler zeigen die größten Unterschiede',
+  ],
+  es: [
+    '21 profesiones comparadas en 15 países europeos',
+    'Suiza y Luxemburgo lideran los rankings salariales',
+    'Empleos tech como Ingeniero de software muestran las mayores diferencias',
+  ],
+};
+
+const featuredTitle: Record<string, string> = {
+  en: 'Featured Comparisons',
+  fr: 'Comparaisons en vedette',
+  de: 'Ausgewählte Vergleiche',
+  es: 'Comparaciones destacadas',
+};
+
+const compareByJobTitle: Record<string, string> = {
+  en: 'Compare by Job',
+  fr: 'Comparer par métier',
+  de: 'Nach Beruf vergleichen',
+  es: 'Comparar por empleo',
+};
+
+const midSalaryLabel: Record<string, string> = {
+  en: 'Mid-level salary',
+  fr: 'Salaire intermédiaire',
+  de: 'Gehalt Mittelstufe',
+  es: 'Salario intermedio',
+};
+
+const viewComparisonLabel: Record<string, string> = {
+  en: 'View full comparison',
+  fr: 'Voir la comparaison complète',
+  de: 'Vollständigen Vergleich ansehen',
+  es: 'Ver comparación completa',
+};
+
+// --------------- getStaticPaths ---------------
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+  }));
+}
+
+// --------------- Page setup ---------------
+const { lang } = Astro.params;
+const t = useTranslations(lang as any);
+
+function formatSalary(amount: number): string {
+  return new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(amount);
+}
+
+function getMidSalary(countryCode: string, jobKey: string): number {
+  const avg = countrySalaries[countryCode] || 40000;
+  const mult = jobMultipliers[jobKey] || 1.0;
+  return Math.round(avg * mult);
+}
+
+const allJobKeys = Object.keys(jobSlugsByLang.en);
+const jobSlugs = jobSlugsByLang[lang] || jobSlugsByLang.en;
+
+const pageTitle = fb(h1Texts, lang);
+const pageDescription = fb(descTexts, lang);
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: pageTitle,
+    description: pageDescription,
+    url: `https://eurosalary.eu/${lang}/compare/`,
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu' },
+  },
+];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  schema={pageSchema}
+>
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{fb(uiLabels.home, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{t('hero.compare.breadcrumb')}</span>
+      </nav>
+      <h1 class="page-hero__title">{t('hero.compare.title1')}<br/><span class="page-hero__accent">{t('hero.compare.title2')}</span></h1>
+      <p class="page-hero__desc">{pageDescription}</p>
+    </div>
+  </section>
+
+  <div class="container page-body">
+    <TLDRBox items={fb(tldrTexts, lang)} />
+
+    <!-- Featured comparisons -->
+    <section class="section">
+      <h2>{fb(featuredTitle, lang)}</h2>
+      <div class="featured-grid">
+        {featuredComparisons.map((comp) => {
+          const jobName = fb(jobNames[comp.job], lang) || comp.job;
+          const jobSlug = jobSlugs[comp.job] || comp.job;
+          return (
+            <div class="featured-card card">
+              <h3>{jobName}</h3>
+              <div class="featured-card__countries">
+                {comp.countries.map((code) => {
+                  const name = fb(countryNames[code], lang) || code;
+                  const flag = countryFlags[code];
+                  const salary = getMidSalary(code, comp.job);
+                  return (
+                    <div class="featured-card__row">
+                      <span class="featured-card__country">{flag} {name}</span>
+                      <span class="featured-card__salary">{formatSalary(salary)}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <div class="featured-card__note">{fb(midSalaryLabel, lang)}</div>
+              <a href={`/${lang}/compare/${jobSlug}/`} class="btn btn--primary">
+                {fb(viewComparisonLabel, lang)} &rarr;
+              </a>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+
+    <!-- All jobs as pills -->
+    <section class="section">
+      <h2>{fb(compareByJobTitle, lang)}</h2>
+      <div class="jobs-pills">
+        {allJobKeys.map((jobKey) => {
+          const displayName = fb(jobNames[jobKey], lang) || jobKey;
+          const slug = jobSlugs[jobKey] || jobKey;
+          return (
+            <a href={`/${lang}/compare/${slug}/`} class="pill">{displayName}</a>
+          );
+        })}
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-body { padding: 2.5rem 0 4rem; }
+  .page-body h2 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em;
+    color: #0F1F3D; margin-top: 2.5rem; margin-bottom: 1rem;
+  }
+
+  .featured-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+  }
+
+  .featured-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .featured-card h3 {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: var(--weight-semibold);
+  }
+
+  .featured-card__countries {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .featured-card__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-1) 0;
+    border-bottom: 1px solid var(--color-gray-100);
+  }
+
+  .featured-card__row:last-child {
+    border-bottom: none;
+  }
+
+  .featured-card__country {
+    font-size: var(--text-sm);
+    color: var(--color-gray-700);
+  }
+
+  .featured-card__salary {
+    font-weight: var(--weight-semibold);
+    color: var(--color-blue-600);
+  }
+
+  .featured-card__note {
+    font-size: var(--text-xs);
+    color: var(--color-gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .featured-card .btn {
+    margin-top: auto;
+    text-align: center;
+  }
+
+  .jobs-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+
+  .pill {
+    display: inline-block;
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-gray-50);
+    border: 1px solid var(--color-gray-200);
+    border-radius: 999px;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--color-gray-700);
+    text-decoration: none;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .pill:hover {
+    background: var(--color-blue-50);
+    border-color: var(--color-blue-300);
+    color: var(--color-blue-700);
+  }
+
+  @media (max-width: 768px) {
+    .featured-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

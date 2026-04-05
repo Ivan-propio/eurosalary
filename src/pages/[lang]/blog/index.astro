@@ -1,0 +1,233 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+import { blogPosts } from '../../../data/blog-posts';
+
+// --------------- Translated UI strings ---------------
+const h1Texts: Record<string, string> = {
+  en: 'EuroSalary Blog',
+  fr: 'Blog EuroSalary',
+  de: 'EuroSalary Blog',
+  es: 'Blog EuroSalary',
+};
+
+const descTexts: Record<string, string> = {
+  en: 'Salary insights, career guides, and European labour market analysis. Data-driven articles to help you understand compensation across Europe.',
+  fr: 'Analyses salariales, guides de carriere et etudes du marche du travail europeen. Des articles fondes sur les donnees.',
+  de: 'Gehaltsanalysen, Karriereleitfaden und europaische Arbeitsmarktanalysen. Datenbasierte Artikel zum Verstandnis von Vergutungen in Europa.',
+  es: 'Analisis salariales, guias de carrera y estudios del mercado laboral europeo. Articulos basados en datos para entender la compensacion en Europa.',
+};
+
+const readMoreLabel: Record<string, string> = {
+  en: 'Read more',
+  fr: 'Lire la suite',
+  de: 'Weiterlesen',
+  es: 'Leer mas',
+};
+
+const publishedLabel: Record<string, string> = {
+  en: 'Published',
+  fr: 'Publie le',
+  de: 'Veroffentlicht',
+  es: 'Publicado',
+};
+
+// --------------- getStaticPaths ---------------
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+  }));
+}
+
+// --------------- Page setup ---------------
+const { lang } = Astro.params;
+const t = useTranslations(lang as any);
+
+const pageTitle = fb(h1Texts, lang);
+const pageDescription = fb(descTexts, lang);
+
+// Sort posts by date descending
+const sortedPosts = [...blogPosts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+function formatDate(dateStr: string, locale: string): string {
+  return new Date(dateStr).toLocaleDateString(locale === 'en' ? 'en-GB' : locale, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: pageTitle,
+    description: pageDescription,
+    url: `https://eurosalary.eu/${lang}/blog/`,
+    hasPart: sortedPosts.map((post) => ({
+      '@type': 'Article',
+      headline: fb(post.title, lang),
+      url: `https://eurosalary.eu/${lang}/blog/${fb(post.slug, lang)}/`,
+      datePublished: post.date,
+      image: `https://eurosalary.eu${post.image}`,
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  schema={pageSchema}
+>
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{fb({ en: 'Home', fr: 'Accueil', de: 'Startseite', es: 'Inicio' }, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">Blog</span>
+      </nav>
+      <h1 class="page-hero__title">Salary Pulse<br/><span class="page-hero__accent">{t('hero.blog.title2')}</span></h1>
+      <p class="page-hero__desc">{pageDescription}</p>
+    </div>
+  </section>
+
+  <div class="container page-body">
+    <section class="section">
+      <div class="blog-grid">
+        {sortedPosts.map((post) => (
+          <a href={`/${lang}/blog/${fb(post.slug, lang)}/`} class="blog-card card">
+            <div class="blog-card__image-wrap">
+              <img
+                src={post.image}
+                alt={post.imageAlt}
+                loading="lazy"
+                width="600"
+                height="340"
+              />
+            </div>
+            <div class="blog-card__body">
+              <span class="blog-card__date">
+                {fb(publishedLabel, lang)} {formatDate(post.date, lang)}
+              </span>
+              <h2 class="blog-card__title">{fb(post.title, lang)}</h2>
+              <p class="blog-card__excerpt">{fb(post.excerpt, lang)}</p>
+              <div class="blog-card__tags">
+                {post.tags.map((tag) => (
+                  <span class="blog-card__tag">{tag}</span>
+                ))}
+              </div>
+              <span class="blog-card__cta">{fb(readMoreLabel, lang)} &rarr;</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-body { padding: 2.5rem 0 4rem; }
+  .page-body h2 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em;
+    color: #0F1F3D; margin-top: 2.5rem; margin-bottom: 1rem;
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+    margin-top: var(--space-4);
+  }
+
+  .blog-card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .blog-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .blog-card__image-wrap {
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background: var(--color-gray-100);
+  }
+
+  .blog-card__image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .blog-card__body {
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    flex: 1;
+    border-left: 4px solid var(--color-secondary, #0051d5);
+  }
+
+  .blog-card__date {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-gray-500);
+    font-weight: var(--weight-medium);
+  }
+
+  .blog-card__title {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    line-height: 1.3;
+    margin: 0;
+  }
+
+  .blog-card__excerpt {
+    font-size: var(--text-sm);
+    color: var(--color-gray-600);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .blog-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  .blog-card__tag {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 2px 8px;
+    background: var(--color-gray-100);
+    color: var(--color-gray-600);
+    border-radius: 2px;
+  }
+
+  .blog-card__cta {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--color-blue-600);
+    margin-top: auto;
+  }
+
+  @media (max-width: 768px) {
+    .blog-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

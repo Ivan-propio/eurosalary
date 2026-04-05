@@ -1,0 +1,567 @@
+---
+import { countryNames } from '../i18n/translations';
+import { fb } from '../i18n/utils';
+import { countrySlugsByLang } from '../data/slugs';
+
+interface Props {
+  lang: string;
+}
+const { lang } = Astro.props;
+
+// Country salary data keyed by ISO 3166-1 numeric code (used by world-atlas TopoJSON)
+// Names and slugs are sourced from centralized i18n data
+const countryData: Record<string, {
+  code: string;
+  avg: number;
+  lat: number;
+  lng: number;
+}> = {
+  '276': { code: 'DE', avg: 58000, lat: 51.2, lng: 10.5 },
+  '250': { code: 'FR', avg: 50000, lat: 46.6, lng: 2.2 },
+  '724': { code: 'ES', avg: 36000, lat: 40.5, lng: -3.7 },
+  '528': { code: 'NL', avg: 56000, lat: 52.5, lng: 5.3 },
+  '056': { code: 'BE', avg: 50000, lat: 50.5, lng: 4.4 },
+  '380': { code: 'IT', avg: 40000, lat: 41.9, lng: 12.6 },
+  '620': { code: 'PT', avg: 30000, lat: 39.4, lng: -8.2 },
+  '616': { code: 'PL', avg: 28000, lat: 51.9, lng: 19.1 },
+  '752': { code: 'SE', avg: 54000, lat: 60.1, lng: 18.6 },
+  '040': { code: 'AT', avg: 55000, lat: 47.5, lng: 14.6 },
+  '756': { code: 'CH', avg: 100000, lat: 46.8, lng: 8.2 },
+  '442': { code: 'LU', avg: 72000, lat: 49.8, lng: 6.1 },
+  '372': { code: 'IE', avg: 58000, lat: 53.1, lng: -8.0 },
+  '208': { code: 'DK', avg: 60000, lat: 56.3, lng: 9.5 },
+  '246': { code: 'FI', avg: 48000, lat: 61.9, lng: 25.7 },
+};
+
+// European ISO numeric codes for background rendering
+const europeanIds = [
+  '008','040','056','070','100','191','196','203','208','233','246','250',
+  '276','300','348','352','372','380','428','440','442','498','499','528',
+  '578','616','620','642','688','703','705','724','752','756','804','807','826',
+];
+
+const titlesByLang: Record<string, string> = {
+  en: 'Average Salaries Across Europe',
+  fr: 'Salaires moyens en Europe',
+  de: 'Durchschnittsgeh\u00e4lter in Europa',
+  es: 'Salarios promedio en Europa',
+};
+
+const subtitlesByLang: Record<string, string> = {
+  en: 'Click any country to explore detailed salary data',
+  fr: 'Cliquez sur un pays pour explorer les donn\u00e9es salariales',
+  de: 'Klicken Sie auf ein Land f\u00fcr detaillierte Gehaltsdaten',
+  es: 'Haz clic en un pa\u00eds para explorar datos salariales detallados',
+};
+
+const i18n: Record<string, Record<string, string>> = {
+  en: { avgLabel: 'Avg. salary', explore: 'Click to explore', loading: 'Loading interactive map...', error: 'Failed to load map. Please refresh.' },
+  fr: { avgLabel: 'Salaire moy.', explore: 'Cliquez pour explorer', loading: 'Chargement de la carte...', error: '\u00c9chec du chargement. Actualisez la page.' },
+  de: { avgLabel: 'Durchschn.', explore: 'Klicken zum Erkunden', loading: 'Karte wird geladen...', error: 'Laden fehlgeschlagen. Seite neu laden.' },
+  es: { avgLabel: 'Salario prom.', explore: 'Clic para explorar', loading: 'Cargando mapa interactivo...', error: 'Error al cargar. Recarga la p\u00e1gina.' },
+};
+
+const t = i18n[lang] || i18n.en;
+const title = titlesByLang[lang] || titlesByLang.en;
+const subtitle = subtitlesByLang[lang] || subtitlesByLang.en;
+// Helpers to resolve name/slug from centralized data
+const getName = (code: string) => fb(countryNames[code], lang);
+const getSlug = (code: string) => (countrySlugsByLang[lang] || countrySlugsByLang.en)[code] || countrySlugsByLang.en[code];
+
+const fmt = (n: number) => `\u20ac${Math.round(n / 1000)}K`;
+
+// Client config
+const mapConfig = {
+  lang,
+  t,
+  europeanIds,
+  countries: Object.fromEntries(
+    Object.entries(countryData).map(([id, d]) => [
+      id,
+      {
+        code: d.code,
+        avg: d.avg,
+        name: getName(d.code),
+        slug: getSlug(d.code),
+        lat: d.lat,
+        lng: d.lng,
+      },
+    ])
+  ),
+};
+---
+
+<section class="section" id="europe-map">
+  <div class="container">
+    <h2 class="map-title">{title}</h2>
+    <p class="map-subtitle">{subtitle}</p>
+
+    <div class="salary-map-wrapper">
+      <div id="salary-map" class="salary-map" role="application" aria-label={title}>
+        <div class="map-loading" aria-live="polite">
+          <div class="map-loading-spinner"></div>
+          <span>{t.loading}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="europe-map-legend">
+      <span class="legend-label">{fmt(25000)}</span>
+      <div class="legend-bar"></div>
+      <span class="legend-label">{fmt(105000)}</span>
+    </div>
+
+    <!-- SEO: crawlable country links (hidden visually, indexed by search engines) -->
+    <nav class="map-seo-links" aria-label="European salary data by country">
+      {Object.values(countryData).map((d) => (
+        <a href={`/${lang}/country/${getSlug(d.code)}/`}>
+          {getName(d.code)} — {fmt(d.avg)} average salary
+        </a>
+      ))}
+    </nav>
+    <noscript>
+      <div class="map-noscript">
+        <h3>European Salary Data</h3>
+        <ul>
+          {Object.values(countryData).map((d) => (
+            <li>
+              <a href={`/${lang}/country/${getSlug(d.code)}/`}>
+                {getName(d.code)}: {fmt(d.avg)}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </noscript>
+  </div>
+</section>
+
+<script id="salary-map-data" type="application/json" set:html={JSON.stringify(mapConfig)} />
+
+<script>
+  function loadScript(src: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
+      const s = document.createElement('script');
+      s.src = src;
+      s.onload = () => resolve();
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  function loadCSS(href: string): void {
+    if (document.querySelector(`link[href="${href}"]`)) return;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    document.head.appendChild(link);
+  }
+
+  function getColor(avg: number): string {
+    if (avg >= 90000) return '#b91c1c';
+    if (avg >= 65000) return '#dc2626';
+    if (avg >= 54000) return '#7c3aed';
+    if (avg >= 45000) return '#2563eb';
+    if (avg >= 35000) return '#60a5fa';
+    return '#93c5fd';
+  }
+
+  async function initSalaryMap() {
+    const dataEl = document.getElementById('salary-map-data');
+    if (!dataEl?.textContent) return;
+    const config = JSON.parse(dataEl.textContent);
+    const mapEl = document.getElementById('salary-map');
+    if (!mapEl) return;
+
+    try {
+      // Load dependencies
+      loadCSS('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+      await loadScript('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js');
+      await loadScript('https://unpkg.com/topojson-client@3/dist/topojson-client.min.js');
+
+      const L = (window as any).L;
+      const topojson = (window as any).topojson;
+
+      // Create map
+      const map = L.map('salary-map', {
+        center: [50, 10],
+        zoom: 4,
+        minZoom: 3,
+        maxZoom: 7,
+        zoomControl: true,
+        scrollWheelZoom: false,
+        attributionControl: true,
+        maxBounds: [
+          [25, -30],
+          [75, 50],
+        ],
+      });
+
+      // CartoDB Positron tiles (clean, light, no labels)
+      L.tileLayer(
+        'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+          subdomains: 'abcd',
+          maxZoom: 20,
+        }
+      ).addTo(map);
+
+      // Fetch world boundaries
+      const res = await fetch(
+        'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json'
+      );
+      const world = await res.json();
+      const allCountries = topojson.feature(world, world.objects.countries);
+
+      const europeanSet = new Set(config.europeanIds);
+
+      // GeoJSON layer
+      const geojsonLayer = L.geoJSON(allCountries, {
+        filter: (feature: any) => europeanSet.has(feature.id),
+        style: (feature: any) => {
+          const info = config.countries[feature.id];
+          if (info) {
+            return {
+              fillColor: getColor(info.avg),
+              weight: 2,
+              opacity: 1,
+              color: 'white',
+              fillOpacity: 0.75,
+            };
+          }
+          return {
+            fillColor: '#e5e7eb',
+            weight: 1,
+            opacity: 0.5,
+            color: '#d1d5db',
+            fillOpacity: 0.35,
+          };
+        },
+        onEachFeature: (feature: any, layer: any) => {
+          const info = config.countries[feature.id];
+          if (!info) return;
+
+          // Tooltip
+          layer.bindTooltip(
+            `<div class="salary-tt">
+              <strong>${info.name}</strong><br/>
+              ${config.t.avgLabel}: \u20ac${(info.avg / 1000).toFixed(0)}K<br/>
+              <small>${config.t.explore} \u2192</small>
+            </div>`,
+            {
+              sticky: true,
+              className: 'salary-map-tooltip',
+              direction: 'top',
+              offset: [0, -10],
+            }
+          );
+
+          // Hover
+          layer.on('mouseover', function (this: any) {
+            this.setStyle({
+              weight: 3,
+              color: '#1e293b',
+              fillOpacity: 0.9,
+            });
+            this.bringToFront();
+          });
+          layer.on('mouseout', function (this: any) {
+            geojsonLayer.resetStyle(this);
+          });
+
+          // Click navigates to country page
+          layer.on('click', function () {
+            window.location.href = `/${config.lang}/country/${info.slug}/`;
+          });
+        },
+      }).addTo(map);
+
+      // Set pointer cursor on salary countries
+      geojsonLayer.eachLayer((layer: any) => {
+        const feature = layer.feature;
+        if (feature && config.countries[feature.id]) {
+          const el = layer.getElement?.();
+          if (el) el.style.cursor = 'pointer';
+        }
+      });
+
+      // Country labels (code + salary) as DivIcon markers
+      Object.entries(config.countries).forEach(([_id, info]: [string, any]) => {
+        L.marker([info.lat, info.lng], {
+          icon: L.divIcon({
+            className: 'country-map-label',
+            html: `<span class="cml-code">${info.code}</span><span class="cml-salary">\u20ac${Math.round(info.avg / 1000)}K</span>`,
+            iconSize: [54, 36],
+            iconAnchor: [27, 18],
+          }),
+          interactive: false,
+        }).addTo(map);
+      });
+
+      // Fit to Europe
+      map.fitBounds(
+        [
+          [35, -12],
+          [65, 35],
+        ],
+        { padding: [20, 20] }
+      );
+
+      // Enable scroll zoom only after user clicks map
+      map.on('click', () => map.scrollWheelZoom.enable());
+      map.getContainer().addEventListener('mouseleave', () =>
+        map.scrollWheelZoom.disable()
+      );
+
+      // Remove loading
+      mapEl.querySelector('.map-loading')?.remove();
+    } catch (err) {
+      console.error('Salary map error:', err);
+      const loading = mapEl.querySelector('.map-loading');
+      if (loading) {
+        loading.innerHTML = `<p>${config.t.error}</p>`;
+      }
+    }
+  }
+
+  // Lazy-load: init when map scrolls into view
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting) {
+        initSalaryMap();
+        observer.disconnect();
+      }
+    },
+    { rootMargin: '300px' }
+  );
+  const target = document.getElementById('salary-map');
+  if (target) observer.observe(target);
+</script>
+
+<style>
+  .map-title {
+    text-align: center;
+    margin-bottom: var(--space-2);
+  }
+
+  .map-subtitle {
+    text-align: center;
+    color: var(--color-gray-500);
+    margin-bottom: var(--space-6);
+    font-size: var(--text-sm);
+  }
+
+  .salary-map-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .salary-map {
+    height: 520px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    position: relative;
+  }
+
+  .map-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: #64748b;
+    font-size: 14px;
+    z-index: 1000;
+    background: #f1f5f9;
+  }
+
+  .map-loading-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .europe-map-legend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+  }
+
+  .legend-bar {
+    width: 220px;
+    height: 10px;
+    border-radius: 5px;
+    background: linear-gradient(
+      to right,
+      #93c5fd,
+      #60a5fa,
+      #2563eb,
+      #7c3aed,
+      #dc2626,
+      #b91c1c
+    );
+  }
+
+  .legend-label {
+    font-size: var(--text-xs);
+    color: var(--color-gray-500);
+    font-weight: var(--weight-semibold);
+  }
+
+  /* SEO links: visible to crawlers, hidden visually */
+  .map-seo-links {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .map-seo-links a {
+    display: block;
+  }
+
+  .map-noscript {
+    padding: var(--space-6);
+    background: var(--color-gray-50);
+    border-radius: 12px;
+    margin-top: var(--space-4);
+  }
+
+  .map-noscript ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-2);
+  }
+
+  .map-noscript a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+  .map-noscript a:hover {
+    text-decoration: underline;
+  }
+
+  /* Leaflet tooltip overrides */
+  :global(.salary-map-tooltip) {
+    background: white !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    padding: 10px 14px !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+    font-family: system-ui, -apple-system, sans-serif !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+  }
+
+  :global(.salary-map-tooltip::before) {
+    display: none !important;
+  }
+
+  :global(.salary-tt strong) {
+    font-size: 15px;
+    color: #0f172a;
+  }
+
+  :global(.salary-tt small) {
+    color: #3b82f6;
+    font-weight: 500;
+  }
+
+  /* Country label markers */
+  :global(.country-map-label) {
+    background: none !important;
+    border: none !important;
+    text-align: center;
+    pointer-events: none !important;
+  }
+
+  :global(.cml-code) {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    color: #0f172a;
+    text-shadow: 0 0 4px white, 0 0 4px white, 0 0 6px white, 0 0 6px white;
+    line-height: 1.3;
+    letter-spacing: 0.02em;
+  }
+
+  :global(.cml-salary) {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    color: #334155;
+    text-shadow: 0 0 3px white, 0 0 3px white, 0 0 5px white;
+    line-height: 1.3;
+  }
+
+  /* Leaflet controls override */
+  :global(.salary-map .leaflet-control-zoom) {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  :global(.salary-map .leaflet-control-zoom a) {
+    color: #334155 !important;
+    width: 32px !important;
+    height: 32px !important;
+    line-height: 32px !important;
+    font-size: 16px !important;
+  }
+
+  :global(.salary-map .leaflet-control-zoom a:hover) {
+    background: #f1f5f9 !important;
+  }
+
+  :global(.salary-map .leaflet-control-attribution) {
+    font-size: 10px !important;
+    background: rgba(255, 255, 255, 0.7) !important;
+    border-radius: 4px 0 0 0;
+  }
+
+  @media (max-width: 768px) {
+    .salary-map {
+      height: 400px;
+      border-radius: 8px;
+    }
+
+    :global(.cml-code) {
+      font-size: 9px;
+    }
+
+    :global(.cml-salary) {
+      font-size: 8px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .salary-map {
+      height: 320px;
+    }
+  }
+</style>

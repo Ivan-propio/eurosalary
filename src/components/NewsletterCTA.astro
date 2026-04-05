@@ -1,0 +1,205 @@
+---
+import { fb } from '../i18n/utils';
+
+interface Props {
+  lang: string;
+  variant?: 'inline' | 'banner' | 'sidebar';
+}
+
+const { lang, variant = 'inline' } = Astro.props;
+
+const texts: Record<string, Record<string, string>> = {
+  headline: { en: 'Get European Salary Insights Every Week', fr: 'Recevez les tendances salariales chaque semaine', de: 'Wöchentliche Gehaltseinblicke erhalten', es: 'Reciba información salarial cada semana' },
+  desc: { en: 'Join 12,000+ professionals who receive Salary Pulse Europe — data-driven salary trends, country spotlights, and career insights delivered every Tuesday.', fr: 'Rejoignez 12 000+ professionnels qui reçoivent Salary Pulse Europe — tendances salariales, analyses par pays et conseils carrière chaque mardi.', de: 'Schließen Sie sich 12.000+ Fachleuten an, die Salary Pulse Europe erhalten — datenbasierte Gehaltstrends, Länder-Spotlights und Karriere-Einblicke jeden Dienstag.', es: 'Únase a 12.000+ profesionales que reciben Salary Pulse Europe — tendencias salariales basadas en datos, análisis por país y consejos de carrera cada martes.' },
+  placeholder: { en: 'Enter your email', fr: 'Votre adresse email', de: 'Ihre E-Mail-Adresse', es: 'Su correo electrónico' },
+  button: { en: 'Subscribe Free', fr: 'S\'abonner gratuitement', de: 'Kostenlos abonnieren', es: 'Suscribirse gratis' },
+  privacy: { en: 'No spam, ever. Unsubscribe anytime.', fr: 'Jamais de spam. Désabonnement à tout moment.', de: 'Kein Spam, niemals. Jederzeit abmelden.', es: 'Sin spam, nunca. Cancele cuando quiera.' },
+  success: { en: 'Welcome! Check your inbox for a confirmation.', fr: 'Bienvenue ! Vérifiez votre boîte de réception.', de: 'Willkommen! Überprüfen Sie Ihren Posteingang.', es: '¡Bienvenido! Revise su bandeja de entrada.' },
+  error: { en: 'Something went wrong. Please try again.', fr: 'Une erreur est survenue. Veuillez réessayer.', de: 'Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.', es: 'Algo salió mal. Inténtelo de nuevo.' },
+  already: { en: 'You\'re already subscribed!', fr: 'Vous êtes déjà abonné !', de: 'Sie sind bereits angemeldet!', es: '¡Ya está suscrito!' },
+};
+
+const cid = `nl-${variant}-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<div class={`newsletter-cta newsletter-cta--${variant}`} id={cid}>
+  <div class="newsletter-cta__content">
+    <h3 class="newsletter-cta__headline">{fb(texts.headline, lang)}</h3>
+    <p class="newsletter-cta__desc">{fb(texts.desc, lang)}</p>
+  </div>
+  <form class="newsletter-cta__form" data-lang={lang}>
+    <div class="newsletter-cta__input-wrap">
+      <input
+        type="email"
+        name="email"
+        placeholder={fb(texts.placeholder, lang)}
+        required
+        autocomplete="email"
+        class="newsletter-cta__input"
+      />
+      <button type="submit" class="newsletter-cta__btn">
+        <span class="newsletter-cta__btn-text">{fb(texts.button, lang)}</span>
+        <span class="newsletter-cta__btn-loading" style="display:none;">
+          <span class="material-symbols-outlined" style="font-size:16px;animation:spin 1s linear infinite;">progress_activity</span>
+        </span>
+      </button>
+    </div>
+    <p class="newsletter-cta__privacy">{fb(texts.privacy, lang)}</p>
+    <div class="newsletter-cta__msg" style="display:none;"
+      data-success={fb(texts.success, lang)}
+      data-error={fb(texts.error, lang)}
+      data-already={fb(texts.already, lang)}
+    ></div>
+  </form>
+</div>
+
+<script>
+  document.querySelectorAll('.newsletter-cta__form').forEach((form) => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.target as HTMLFormElement;
+      const btn = f.querySelector('.newsletter-cta__btn') as HTMLButtonElement;
+      const btnText = f.querySelector('.newsletter-cta__btn-text') as HTMLSpanElement;
+      const btnLoading = f.querySelector('.newsletter-cta__btn-loading') as HTMLSpanElement;
+      const msgEl = f.querySelector('.newsletter-cta__msg') as HTMLDivElement;
+      const emailInput = f.querySelector('input[name="email"]') as HTMLInputElement;
+      const lang = f.dataset.lang || 'en';
+
+      btn.disabled = true;
+      btnText.style.display = 'none';
+      btnLoading.style.display = 'inline-flex';
+
+      try {
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: emailInput.value, language: lang }),
+        });
+
+        const data = await res.json();
+        msgEl.style.display = 'block';
+
+        if (res.ok) {
+          msgEl.textContent = msgEl.dataset.success || 'Success!';
+          msgEl.className = 'newsletter-cta__msg newsletter-cta__msg--success';
+          emailInput.value = '';
+        } else if (data.error === 'already_subscribed') {
+          msgEl.textContent = msgEl.dataset.already || 'Already subscribed';
+          msgEl.className = 'newsletter-cta__msg newsletter-cta__msg--info';
+        } else {
+          throw new Error(data.error);
+        }
+      } catch {
+        msgEl.style.display = 'block';
+        msgEl.textContent = msgEl.dataset.error || 'Error';
+        msgEl.className = 'newsletter-cta__msg newsletter-cta__msg--error';
+      } finally {
+        btn.disabled = false;
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+      }
+    });
+  });
+</script>
+
+<style>
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .newsletter-cta {
+    background: linear-gradient(135deg, rgba(15, 31, 61, 0.95), rgba(37, 99, 235, 0.2));
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    border-radius: 12px;
+    padding: var(--space-8);
+  }
+  .newsletter-cta--banner {
+    border-radius: 0;
+    padding: var(--space-8) var(--space-6);
+  }
+  .newsletter-cta--sidebar {
+    padding: var(--space-6);
+  }
+  .newsletter-cta__headline {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-white);
+    margin: 0 0 var(--space-2);
+  }
+  .newsletter-cta__desc {
+    font-size: var(--text-sm);
+    color: rgba(255, 255, 255, 0.7);
+    line-height: var(--leading-relaxed);
+    margin: 0 0 var(--space-5);
+  }
+  .newsletter-cta__input-wrap {
+    display: flex;
+    gap: var(--space-2);
+  }
+  .newsletter-cta__input {
+    flex: 1;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    color: var(--color-white);
+    font-size: var(--text-sm);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .newsletter-cta__input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+  .newsletter-cta__input:focus {
+    border-color: var(--color-secondary);
+  }
+  .newsletter-cta__btn {
+    padding: 10px 20px;
+    background: var(--color-secondary, #2563EB);
+    color: var(--color-white);
+    font-weight: var(--weight-semibold);
+    font-size: var(--text-sm);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+    display: flex;
+    align-items: center;
+  }
+  .newsletter-cta__btn:hover:not(:disabled) {
+    background: #1d4ed8;
+  }
+  .newsletter-cta__btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  .newsletter-cta__privacy {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.35);
+    margin: var(--space-2) 0 0;
+  }
+  .newsletter-cta__msg {
+    font-size: var(--text-sm);
+    padding: var(--space-2) var(--space-3);
+    border-radius: 4px;
+    margin-top: var(--space-3);
+  }
+  .newsletter-cta__msg--success {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+  }
+  .newsletter-cta__msg--error {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+  }
+  .newsletter-cta__msg--info {
+    background: rgba(37, 99, 235, 0.15);
+    color: #60a5fa;
+  }
+
+  @media (max-width: 480px) {
+    .newsletter-cta__input-wrap {
+      flex-direction: column;
+    }
+  }
+</style>

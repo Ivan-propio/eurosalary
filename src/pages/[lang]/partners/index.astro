@@ -1,0 +1,480 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+
+// --------------- i18n strings ---------------
+const i18n: Record<string, {
+  h1: string;
+  metaTitle: string;
+  metaDesc: string;
+  home: string;
+  breadcrumb: string;
+  introAnswer: string;
+  tldr: string[];
+  heroSubtitle: string;
+  partnerTypes: { title: string; desc: string; icon: string; benefits: string[] }[];
+  affiliateTitle: string;
+  affiliateDesc: string;
+  affiliateSteps: { step: string; desc: string }[];
+  statsTitle: string;
+  stats: { value: string; label: string }[];
+  contactTitle: string;
+  contactDesc: string;
+  formLabels: { name: string; email: string; company: string; website: string; type: string; message: string; submit: string };
+  partnerTypeOptions: string[];
+  faq: { question: string; answer: string }[];
+}> = {
+  en: {
+    h1: 'How Can You Partner with EuroSalary to Grow Your Business?',
+    metaTitle: 'Partner Program: Affiliate, Data & Integration Partners | EuroSalary.eu',
+    metaDesc: 'Join the EuroSalary partner program. Earn 25% recurring commissions as an affiliate, integrate our salary API, or contribute data to Europe\'s salary platform.',
+    home: 'Home',
+    breadcrumb: 'Partners',
+    introAnswer: 'EuroSalary\'s partner program lets HR platforms, consultancies, job boards, and content creators earn recurring revenue, access premium data, and co-create Europe\'s most comprehensive salary intelligence platform.',
+    tldr: [
+      'Earn 25% recurring commission on every referred subscription with our affiliate program',
+      'Integrate EuroSalary data into your platform via our partner API with priority support',
+      'Data partners get free premium access in exchange for anonymised salary contributions',
+    ],
+    heroSubtitle: 'Whether you run an HR platform, publish career content, or consult on compensation strategy, there is a EuroSalary partnership model that creates value for your business and your audience.',
+    partnerTypes: [
+      {
+        title: 'Affiliate Partners',
+        desc: 'Recommend EuroSalary to your audience and earn 25% recurring commission on every subscription. Perfect for HR bloggers, career coaches, compensation consultants, and job boards.',
+        icon: 'payments',
+        benefits: ['25% recurring monthly commission', '90-day cookie attribution window', 'Custom landing pages and tracking links', 'Monthly performance dashboard', 'Dedicated affiliate manager'],
+      },
+      {
+        title: 'Integration Partners',
+        desc: 'Embed EuroSalary salary data directly into your HR platform, ATS, or HRIS. Our partner API includes priority support, custom endpoints, and co-marketing opportunities.',
+        icon: 'hub',
+        benefits: ['Priority API access with elevated rate limits', 'Custom endpoint development', 'Co-branded documentation', 'Joint press releases and case studies', 'Revenue share on referred enterprise deals'],
+      },
+      {
+        title: 'Data Partners',
+        desc: 'Contribute anonymised salary data from your platform or research and receive free premium access. Ideal for job boards, recruitment agencies, and academic institutions.',
+        icon: 'database',
+        benefits: ['Free Premium account (worth \u20ac49/mo)', 'Named attribution in methodology page', 'Early access to new datasets', 'Quarterly data quality reports', 'Co-authored research publications'],
+      },
+      {
+        title: 'Content Partners',
+        desc: 'Collaborate on salary guides, market reports, and thought leadership. We provide the data; you provide the audience and expertise. Perfect for industry publications and research firms.',
+        icon: 'edit_note',
+        benefits: ['Exclusive data for original content', 'Co-branded salary reports', 'Guest posting opportunities', 'Social media cross-promotion', 'Early access to trend data'],
+      },
+    ],
+    affiliateTitle: 'How the Affiliate Program Works',
+    affiliateDesc: 'Start earning in three simple steps. No minimum traffic requirements, no approval delays.',
+    affiliateSteps: [
+      { step: 'Sign Up', desc: 'Complete the partner application form below. You will receive your unique tracking link and affiliate dashboard access within 24 hours.' },
+      { step: 'Share', desc: 'Promote EuroSalary through your website, newsletter, social media, or client recommendations. Use our pre-built banners, widgets, and landing pages.' },
+      { step: 'Earn', desc: 'Earn 25% of every subscription payment for the lifetime of the customer. Commissions are paid monthly via bank transfer or PayPal, with a minimum payout of 50.' },
+    ],
+    statsTitle: 'Partner Program in Numbers',
+    stats: [
+      { value: '25%', label: 'Recurring Commission' },
+      { value: '90 days', label: 'Cookie Duration' },
+      { value: '\u20ac50', label: 'Minimum Payout' },
+      { value: '24h', label: 'Approval Time' },
+    ],
+    contactTitle: 'Apply to Become a Partner',
+    contactDesc: 'Tell us about your organisation and how you would like to collaborate. We review applications within 24 hours.',
+    formLabels: { name: 'Full Name', email: 'Work Email', company: 'Company / Website', website: 'Website URL', type: 'Partnership Type', message: 'How would you like to collaborate?', submit: 'Submit Application' },
+    partnerTypeOptions: ['Affiliate Partner', 'Integration Partner', 'Data Partner', 'Content Partner'],
+    faq: [
+      { question: 'How much can I earn as an affiliate partner?', answer: 'Affiliate partners earn 25% recurring commission on every subscription they refer. With our Premium plan at \u20ac49/month, that is \u20ac12.25 per customer per month for the lifetime of the subscription. Top affiliates earn over \u20ac2,000/month from recurring commissions alone.' },
+      { question: 'Is there a minimum traffic requirement to join?', answer: 'No. We welcome partners of all sizes, from individual career coaches to large HR platforms. The only requirement is that your audience or client base has an interest in European salary data or compensation management.' },
+      { question: 'How does the data partnership work?', answer: 'Data partners contribute anonymised salary data (no personally identifiable information) from their platforms. In return, they receive free Premium access, attribution on our methodology page, and early access to new datasets. We handle all anonymisation and aggregation.' },
+      { question: 'What integration support do you provide?', answer: 'Integration partners receive a dedicated API key with elevated rate limits, priority technical support, custom endpoint development, and access to our staging environment. We also provide co-branded API documentation and joint go-to-market support.' },
+      { question: 'How and when are commissions paid?', answer: 'Commissions are calculated on the 1st of each month and paid by the 15th. We support bank transfers (SEPA for EU partners) and PayPal. The minimum payout threshold is \u20ac50. You can track your earnings in real-time through your affiliate dashboard.' },
+      { question: 'Can I combine multiple partnership types?', answer: 'Absolutely. Many of our most successful partners operate as both affiliate and content partners, or as data and integration partners simultaneously. Each partnership type has its own benefits, and they stack.' },
+    ],
+  },
+  fr: {
+    h1: 'Comment devenir partenaire d\'EuroSalary et developper votre activite ?',
+    metaTitle: 'Programme partenaires : affiliation, donnees & integration | EuroSalary.eu',
+    metaDesc: 'Rejoignez le programme partenaires EuroSalary. Gagnez 25% de commissions recurrentes, integrez notre API salariale ou contribuez des donnees a la plateforme.',
+    home: 'Accueil',
+    breadcrumb: 'Partenaires',
+    introAnswer: 'Le programme partenaires d\'EuroSalary permet aux plateformes RH, cabinets de conseil, sites d\'emploi et createurs de contenu de generer des revenus recurrents, d\'acceder a des donnees premium et de co-creer la plateforme d\'intelligence salariale la plus complete d\'Europe.',
+    tldr: [
+      'Gagnez 25% de commission recurrente sur chaque abonnement refere avec notre programme d\'affiliation',
+      'Integrez les donnees EuroSalary dans votre plateforme via notre API partenaire avec support prioritaire',
+      'Les partenaires donnees recoivent un acces premium gratuit en echange de contributions salariales anonymisees',
+    ],
+    heroSubtitle: 'Que vous geriez une plateforme RH, publiiez du contenu carriere ou conseilliez en strategie de remuneration, il existe un modele de partenariat EuroSalary qui cree de la valeur pour votre entreprise.',
+    partnerTypes: [
+      {
+        title: 'Partenaires affilies',
+        desc: 'Recommandez EuroSalary a votre audience et gagnez 25% de commission recurrente sur chaque abonnement. Ideal pour les blogueurs RH, coaches carriere, consultants en remuneration et sites d\'emploi.',
+        icon: 'payments',
+        benefits: ['25% de commission mensuelle recurrente', 'Fenetre d\'attribution cookie de 90 jours', 'Pages d\'atterrissage et liens de suivi personnalises', 'Tableau de bord de performance mensuel', 'Gestionnaire d\'affiliation dedie'],
+      },
+      {
+        title: 'Partenaires integration',
+        desc: 'Integrez les donnees salariales EuroSalary directement dans votre plateforme RH, ATS ou SIRH. Notre API partenaire inclut un support prioritaire et des opportunites de co-marketing.',
+        icon: 'hub',
+        benefits: ['Acces API prioritaire avec limites elevees', 'Developpement d\'endpoints personnalises', 'Documentation co-marquee', 'Communiques de presse et etudes de cas conjoints', 'Partage de revenus sur les deals entreprise referes'],
+      },
+      {
+        title: 'Partenaires donnees',
+        desc: 'Contribuez des donnees salariales anonymisees depuis votre plateforme ou recherche et recevez un acces premium gratuit. Ideal pour les sites d\'emploi, agences de recrutement et institutions academiques.',
+        icon: 'database',
+        benefits: ['Compte Premium gratuit (valeur 49\u20ac/mois)', 'Attribution nommee dans la page methodologie', 'Acces anticipe aux nouveaux jeux de donnees', 'Rapports trimestriels de qualite des donnees', 'Publications de recherche co-autorees'],
+      },
+      {
+        title: 'Partenaires contenu',
+        desc: 'Collaborez sur des guides salariaux, rapports de marche et leadership editorial. Nous fournissons les donnees ; vous apportez l\'audience et l\'expertise.',
+        icon: 'edit_note',
+        benefits: ['Donnees exclusives pour contenu original', 'Rapports salariaux co-marques', 'Opportunites de publication invitee', 'Cross-promotion sur les reseaux sociaux', 'Acces anticipe aux donnees de tendances'],
+      },
+    ],
+    affiliateTitle: 'Comment fonctionne le programme d\'affiliation',
+    affiliateDesc: 'Commencez a gagner en trois etapes simples. Aucun trafic minimum requis, aucun delai d\'approbation.',
+    affiliateSteps: [
+      { step: 'Inscription', desc: 'Remplissez le formulaire de candidature ci-dessous. Vous recevrez votre lien de suivi unique et l\'acces au tableau de bord affiliee sous 24 heures.' },
+      { step: 'Partager', desc: 'Promouvez EuroSalary via votre site web, newsletter, reseaux sociaux ou recommandations clients. Utilisez nos bannieres, widgets et pages d\'atterrissage pre-construits.' },
+      { step: 'Gagner', desc: 'Gagnez 25% de chaque paiement d\'abonnement pour la duree de vie du client. Les commissions sont payees mensuellement par virement bancaire ou PayPal, avec un minimum de 50\u20ac.' },
+    ],
+    statsTitle: 'Le programme partenaires en chiffres',
+    stats: [
+      { value: '25%', label: 'Commission recurrente' },
+      { value: '90 jours', label: 'Duree du cookie' },
+      { value: '50\u20ac', label: 'Paiement minimum' },
+      { value: '24h', label: 'Delai d\'approbation' },
+    ],
+    contactTitle: 'Postuler pour devenir partenaire',
+    contactDesc: 'Parlez-nous de votre organisation et de la facon dont vous souhaitez collaborer. Nous examinons les candidatures sous 24 heures.',
+    formLabels: { name: 'Nom complet', email: 'Email professionnel', company: 'Entreprise / Site web', website: 'URL du site', type: 'Type de partenariat', message: 'Comment souhaitez-vous collaborer ?', submit: 'Envoyer la candidature' },
+    partnerTypeOptions: ['Partenaire affilie', 'Partenaire integration', 'Partenaire donnees', 'Partenaire contenu'],
+    faq: [
+      { question: 'Combien puis-je gagner en tant que partenaire affilie ?', answer: 'Les partenaires affilies gagnent 25% de commission recurrente sur chaque abonnement refere. Avec notre plan Premium a 49\u20ac/mois, cela represente 12,25\u20ac par client par mois pour la duree de vie de l\'abonnement. Les meilleurs affilies gagnent plus de 2 000\u20ac/mois en commissions recurrentes.' },
+      { question: 'Y a-t-il un trafic minimum requis pour rejoindre le programme ?', answer: 'Non. Nous accueillons les partenaires de toutes tailles, des coaches carriere individuels aux grandes plateformes RH. La seule condition est que votre audience ou base clients s\'interesse aux donnees salariales europeennes.' },
+      { question: 'Comment fonctionne le partenariat donnees ?', answer: 'Les partenaires donnees contribuent des donnees salariales anonymisees (aucune information personnellement identifiable) depuis leurs plateformes. En retour, ils recoivent un acces Premium gratuit, une attribution sur notre page methodologie et un acces anticipe aux nouveaux jeux de donnees.' },
+      { question: 'Quel support d\'integration fournissez-vous ?', answer: 'Les partenaires integration recoivent une cle API dediee avec des limites elevees, un support technique prioritaire, le developpement d\'endpoints personnalises et l\'acces a notre environnement de staging.' },
+      { question: 'Comment et quand les commissions sont-elles payees ?', answer: 'Les commissions sont calculees le 1er de chaque mois et payees avant le 15. Nous supportons les virements bancaires (SEPA pour les partenaires UE) et PayPal. Le seuil minimum de paiement est de 50\u20ac.' },
+      { question: 'Puis-je combiner plusieurs types de partenariat ?', answer: 'Absolument. Beaucoup de nos partenaires les plus performants operent a la fois comme affilies et partenaires contenu, ou comme partenaires donnees et integration simultanement. Chaque type de partenariat a ses propres avantages, et ils se cumulent.' },
+    ],
+  },
+  de: {
+    h1: 'Wie konnen Sie mit EuroSalary zusammenarbeiten und Ihr Geschaft ausbauen?',
+    metaTitle: 'Partnerprogramm: Affiliate, Daten & Integration | EuroSalary.eu',
+    metaDesc: 'Treten Sie dem EuroSalary-Partnerprogramm bei. Verdienen Sie 25% wiederkehrende Provisionen als Affiliate, integrieren Sie unsere Gehalts-API oder steuern Sie Daten bei.',
+    home: 'Startseite',
+    breadcrumb: 'Partner',
+    introAnswer: 'Das EuroSalary-Partnerprogramm ermoglicht HR-Plattformen, Beratungen, Jobborsen und Content-Erstellern wiederkehrende Einnahmen, Premium-Datenzugang und die Mitgestaltung der umfassendsten Gehaltsdatenplattform Europas.',
+    tldr: [
+      'Verdienen Sie 25% wiederkehrende Provision auf jedes vermittelte Abonnement mit unserem Affiliate-Programm',
+      'Integrieren Sie EuroSalary-Daten in Ihre Plattform uber unsere Partner-API mit prioritarem Support',
+      'Datenpartner erhalten kostenlosen Premium-Zugang im Austausch fur anonymisierte Gehaltsbeitrage',
+    ],
+    heroSubtitle: 'Ob Sie eine HR-Plattform betreiben, Karriere-Inhalte veroffentlichen oder zur Vergutungsstrategie beraten — es gibt ein EuroSalary-Partnermodell, das Mehrwert fur Ihr Geschaft schafft.',
+    partnerTypes: [
+      {
+        title: 'Affiliate-Partner',
+        desc: 'Empfehlen Sie EuroSalary Ihrem Publikum und verdienen Sie 25% wiederkehrende Provision auf jedes Abonnement. Ideal fur HR-Blogger, Karriere-Coaches, Vergutungsberater und Jobborsen.',
+        icon: 'payments',
+        benefits: ['25% monatlich wiederkehrende Provision', '90-Tage-Cookie-Attributionsfenster', 'Individuelle Landing Pages und Tracking-Links', 'Monatliches Performance-Dashboard', 'Dedizierter Affiliate-Manager'],
+      },
+      {
+        title: 'Integrationspartner',
+        desc: 'Binden Sie EuroSalary-Gehaltsdaten direkt in Ihre HR-Plattform, ATS oder HRIS ein. Unsere Partner-API umfasst prioritaren Support und Co-Marketing-Moglichkeiten.',
+        icon: 'hub',
+        benefits: ['Prioritarer API-Zugang mit erhohten Rate-Limits', 'Entwicklung individueller Endpoints', 'Co-gebrandete Dokumentation', 'Gemeinsame Pressemitteilungen und Fallstudien', 'Umsatzbeteiligung an vermittelten Enterprise-Deals'],
+      },
+      {
+        title: 'Datenpartner',
+        desc: 'Steuern Sie anonymisierte Gehaltsdaten von Ihrer Plattform oder Forschung bei und erhalten Sie kostenlosen Premium-Zugang. Ideal fur Jobborsen, Personalagenturen und akademische Einrichtungen.',
+        icon: 'database',
+        benefits: ['Kostenloses Premium-Konto (Wert 49\u20ac/Monat)', 'Namentliche Nennung auf der Methodik-Seite', 'Fruhzeitiger Zugang zu neuen Datensatzen', 'Vierteljahrliche Datenqualitatsberichte', 'Gemeinsame Forschungspublikationen'],
+      },
+      {
+        title: 'Content-Partner',
+        desc: 'Arbeiten Sie an Gehaltsguides, Marktberichten und Thought Leadership zusammen. Wir liefern die Daten; Sie bringen Publikum und Expertise.',
+        icon: 'edit_note',
+        benefits: ['Exklusive Daten fur originale Inhalte', 'Co-gebrandete Gehaltsberichte', 'Gastbeitragsmoglichkeiten', 'Social-Media-Cross-Promotion', 'Fruhzeitiger Zugang zu Trenddaten'],
+      },
+    ],
+    affiliateTitle: 'So funktioniert das Affiliate-Programm',
+    affiliateDesc: 'Starten Sie in drei einfachen Schritten. Keine Mindest-Traffic-Anforderungen, keine Verzogerungen bei der Genehmigung.',
+    affiliateSteps: [
+      { step: 'Anmelden', desc: 'Fullen Sie das Partnerantragsformular unten aus. Sie erhalten Ihren individuellen Tracking-Link und Zugang zum Affiliate-Dashboard innerhalb von 24 Stunden.' },
+      { step: 'Teilen', desc: 'Bewerben Sie EuroSalary uber Ihre Website, Ihren Newsletter, Social Media oder Kundenempfehlungen. Nutzen Sie unsere vorgefertigten Banner, Widgets und Landing Pages.' },
+      { step: 'Verdienen', desc: 'Verdienen Sie 25% jeder Abonnementzahlung fur die gesamte Kundenlebensdauer. Provisionen werden monatlich per Bankuberweisung oder PayPal ausgezahlt, ab einem Mindestbetrag von 50\u20ac.' },
+    ],
+    statsTitle: 'Partnerprogramm in Zahlen',
+    stats: [
+      { value: '25%', label: 'Wiederkehrende Provision' },
+      { value: '90 Tage', label: 'Cookie-Dauer' },
+      { value: '50\u20ac', label: 'Mindestauszahlung' },
+      { value: '24h', label: 'Genehmigungszeit' },
+    ],
+    contactTitle: 'Partner werden — Jetzt bewerben',
+    contactDesc: 'Erzahlen Sie uns von Ihrer Organisation und wie Sie zusammenarbeiten mochten. Wir prufen Bewerbungen innerhalb von 24 Stunden.',
+    formLabels: { name: 'Vollstandiger Name', email: 'Geschaftliche E-Mail', company: 'Unternehmen / Website', website: 'Website-URL', type: 'Partnerschaftstyp', message: 'Wie mochten Sie zusammenarbeiten?', submit: 'Bewerbung einreichen' },
+    partnerTypeOptions: ['Affiliate-Partner', 'Integrationspartner', 'Datenpartner', 'Content-Partner'],
+    faq: [
+      { question: 'Wie viel kann ich als Affiliate-Partner verdienen?', answer: 'Affiliate-Partner verdienen 25% wiederkehrende Provision auf jedes vermittelte Abonnement. Bei unserem Premium-Plan zu 49\u20ac/Monat sind das 12,25\u20ac pro Kunde pro Monat fur die gesamte Abonnementdauer. Top-Affiliates verdienen uber 2.000\u20ac/Monat an wiederkehrenden Provisionen.' },
+      { question: 'Gibt es eine Mindest-Traffic-Anforderung?', answer: 'Nein. Wir heissen Partner jeder Grosse willkommen, von einzelnen Karriere-Coaches bis zu grossen HR-Plattformen. Die einzige Voraussetzung ist, dass Ihr Publikum Interesse an europaischen Gehaltsdaten hat.' },
+      { question: 'Wie funktioniert die Datenpartnerschaft?', answer: 'Datenpartner steuern anonymisierte Gehaltsdaten (keine personenbezogenen Daten) von ihren Plattformen bei. Im Gegenzug erhalten sie kostenlosen Premium-Zugang, Nennung auf unserer Methodik-Seite und fruhzeitigen Zugang zu neuen Datensatzen.' },
+      { question: 'Welchen Integrationsupport bieten Sie?', answer: 'Integrationspartner erhalten einen dedizierten API-Schlussel mit erhohten Rate-Limits, prioritaren technischen Support, Entwicklung individueller Endpoints und Zugang zu unserer Staging-Umgebung.' },
+      { question: 'Wie und wann werden Provisionen ausgezahlt?', answer: 'Provisionen werden am 1. jedes Monats berechnet und bis zum 15. ausgezahlt. Wir unterstutzen Bankuberweisungen (SEPA fur EU-Partner) und PayPal. Der Mindest-Auszahlungsbetrag betragt 50\u20ac.' },
+      { question: 'Kann ich mehrere Partnerschaftstypen kombinieren?', answer: 'Auf jeden Fall. Viele unserer erfolgreichsten Partner sind gleichzeitig Affiliate- und Content-Partner oder Daten- und Integrationspartner. Die Vorteile jedes Partnerschaftstyps summieren sich.' },
+    ],
+  },
+  es: {
+    h1: 'Como puede asociarse con EuroSalary para hacer crecer su negocio?',
+    metaTitle: 'Programa de socios: afiliados, datos e integracion | EuroSalary.eu',
+    metaDesc: 'Unase al programa de socios de EuroSalary. Gane 25% de comisiones recurrentes como afiliado, integre nuestra API salarial o contribuya datos a la plataforma.',
+    home: 'Inicio',
+    breadcrumb: 'Socios',
+    introAnswer: 'El programa de socios de EuroSalary permite a plataformas de RRHH, consultorias, portales de empleo y creadores de contenido generar ingresos recurrentes, acceder a datos premium y co-crear la plataforma de inteligencia salarial mas completa de Europa.',
+    tldr: [
+      'Gane 25% de comision recurrente en cada suscripcion referida con nuestro programa de afiliados',
+      'Integre datos de EuroSalary en su plataforma via nuestra API de socios con soporte prioritario',
+      'Los socios de datos reciben acceso premium gratuito a cambio de contribuciones salariales anonimizadas',
+    ],
+    heroSubtitle: 'Ya sea que gestione una plataforma de RRHH, publique contenido de carrera o asesore en estrategia de compensacion, existe un modelo de asociacion EuroSalary que crea valor para su negocio.',
+    partnerTypes: [
+      {
+        title: 'Socios afiliados',
+        desc: 'Recomiende EuroSalary a su audiencia y gane 25% de comision recurrente en cada suscripcion. Ideal para bloggers de RRHH, coaches de carrera, consultores de compensacion y portales de empleo.',
+        icon: 'payments',
+        benefits: ['25% de comision mensual recurrente', 'Ventana de atribucion de cookie de 90 dias', 'Paginas de destino y enlaces de seguimiento personalizados', 'Panel de rendimiento mensual', 'Gestor de afiliados dedicado'],
+      },
+      {
+        title: 'Socios de integracion',
+        desc: 'Integre datos salariales de EuroSalary directamente en su plataforma de RRHH, ATS o HRIS. Nuestra API de socios incluye soporte prioritario y oportunidades de co-marketing.',
+        icon: 'hub',
+        benefits: ['Acceso API prioritario con limites elevados', 'Desarrollo de endpoints personalizados', 'Documentacion co-marcada', 'Comunicados de prensa y casos de estudio conjuntos', 'Reparto de ingresos en acuerdos enterprise referidos'],
+      },
+      {
+        title: 'Socios de datos',
+        desc: 'Contribuya datos salariales anonimizados desde su plataforma o investigacion y reciba acceso premium gratuito. Ideal para portales de empleo, agencias de reclutamiento e instituciones academicas.',
+        icon: 'database',
+        benefits: ['Cuenta Premium gratuita (valor 49\u20ac/mes)', 'Atribucion nombrada en la pagina de metodologia', 'Acceso anticipado a nuevos conjuntos de datos', 'Informes trimestrales de calidad de datos', 'Publicaciones de investigacion co-autoradas'],
+      },
+      {
+        title: 'Socios de contenido',
+        desc: 'Colabore en guias salariales, informes de mercado y liderazgo intelectual. Nosotros proporcionamos los datos; usted aporta la audiencia y la experiencia.',
+        icon: 'edit_note',
+        benefits: ['Datos exclusivos para contenido original', 'Informes salariales co-marcados', 'Oportunidades de publicacion invitada', 'Cross-promocion en redes sociales', 'Acceso anticipado a datos de tendencias'],
+      },
+    ],
+    affiliateTitle: 'Como funciona el programa de afiliados',
+    affiliateDesc: 'Comience a ganar en tres simples pasos. Sin requisitos minimos de trafico, sin demoras en la aprobacion.',
+    affiliateSteps: [
+      { step: 'Registrarse', desc: 'Complete el formulario de solicitud de socio a continuacion. Recibira su enlace de seguimiento unico y acceso al panel de afiliados en 24 horas.' },
+      { step: 'Compartir', desc: 'Promueva EuroSalary a traves de su sitio web, newsletter, redes sociales o recomendaciones a clientes. Use nuestros banners, widgets y paginas de destino preconstruidos.' },
+      { step: 'Ganar', desc: 'Gane 25% de cada pago de suscripcion durante toda la vida del cliente. Las comisiones se pagan mensualmente por transferencia bancaria o PayPal, con un minimo de 50\u20ac.' },
+    ],
+    statsTitle: 'Programa de socios en numeros',
+    stats: [
+      { value: '25%', label: 'Comision recurrente' },
+      { value: '90 dias', label: 'Duracion del cookie' },
+      { value: '50\u20ac', label: 'Pago minimo' },
+      { value: '24h', label: 'Tiempo de aprobacion' },
+    ],
+    contactTitle: 'Solicitar ser socio',
+    contactDesc: 'Cuentenos sobre su organizacion y como le gustaria colaborar. Revisamos solicitudes en 24 horas.',
+    formLabels: { name: 'Nombre completo', email: 'Email profesional', company: 'Empresa / Sitio web', website: 'URL del sitio', type: 'Tipo de asociacion', message: 'Como le gustaria colaborar?', submit: 'Enviar solicitud' },
+    partnerTypeOptions: ['Socio afiliado', 'Socio de integracion', 'Socio de datos', 'Socio de contenido'],
+    faq: [
+      { question: 'Cuanto puedo ganar como socio afiliado?', answer: 'Los socios afiliados ganan 25% de comision recurrente en cada suscripcion referida. Con nuestro plan Premium a 49\u20ac/mes, eso son 12,25\u20ac por cliente por mes durante toda la vida de la suscripcion. Los mejores afiliados ganan mas de 2.000\u20ac/mes en comisiones recurrentes.' },
+      { question: 'Hay un requisito minimo de trafico para unirse?', answer: 'No. Aceptamos socios de todos los tamanos, desde coaches de carrera individuales hasta grandes plataformas de RRHH. El unico requisito es que su audiencia tenga interes en datos salariales europeos.' },
+      { question: 'Como funciona la asociacion de datos?', answer: 'Los socios de datos contribuyen datos salariales anonimizados (sin informacion de identificacion personal) desde sus plataformas. A cambio, reciben acceso Premium gratuito, atribucion en nuestra pagina de metodologia y acceso anticipado a nuevos conjuntos de datos.' },
+      { question: 'Que soporte de integracion proporcionan?', answer: 'Los socios de integracion reciben una clave API dedicada con limites elevados, soporte tecnico prioritario, desarrollo de endpoints personalizados y acceso a nuestro entorno de staging.' },
+      { question: 'Como y cuando se pagan las comisiones?', answer: 'Las comisiones se calculan el 1 de cada mes y se pagan antes del 15. Admitimos transferencias bancarias (SEPA para socios UE) y PayPal. El umbral minimo de pago es de 50\u20ac.' },
+      { question: 'Puedo combinar varios tipos de asociacion?', answer: 'Por supuesto. Muchos de nuestros socios mas exitosos operan como afiliados y socios de contenido simultaneamente, o como socios de datos e integracion. Los beneficios de cada tipo se acumulan.' },
+    ],
+  },
+};
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+const t = fb(i18n, lang);
+const countryFlags: Record<string, string> = {
+  DE: '\ud83c\udde9\ud83c\uddea', FR: '\ud83c\uddeb\ud83c\uddf7', ES: '\ud83c\uddea\ud83c\uddf8', NL: '\ud83c\uddf3\ud83c\uddf1', BE: '\ud83c\udde7\ud83c\uddea',
+  IT: '\ud83c\uddee\ud83c\uddf9', PT: '\ud83c\uddf5\ud83c\uddf9', PL: '\ud83c\uddf5\ud83c\uddf1', SE: '\ud83c\uddf8\ud83c\uddea', AT: '\ud83c\udde6\ud83c\uddf9',
+  CH: '\ud83c\udde8\ud83c\udded', LU: '\ud83c\uddf1\ud83c\uddfa', IE: '\ud83c\uddee\ud83c\uddea', DK: '\ud83c\udde9\ud83c\uddf0', FI: '\ud83c\uddeb\ud83c\uddee',
+};
+---
+<BaseLayout title={t.metaTitle} description={t.metaDesc} lang={lang}>
+
+  <!-- Breadcrumbs -->
+  <nav class="max-w-5xl mx-auto px-4 pt-6 text-sm text-slate-400" aria-label="Breadcrumb">
+    <ol class="flex items-center gap-2">
+      <li><a href={`/${lang}/`} class="hover:text-blue-400 transition-colors">{t.home}</a></li>
+      <li class="text-slate-600">/</li>
+      <li class="text-slate-300">{t.breadcrumb}</li>
+    </ol>
+  </nav>
+
+  <!-- Hero -->
+  <section class="max-w-5xl mx-auto px-4 py-12 text-center">
+    <h1 class="text-3xl md:text-4xl font-bold text-white mb-4 font-['Public_Sans']">{t.h1}</h1>
+    <p class="text-lg text-slate-300 max-w-3xl mx-auto mb-6">{t.introAnswer}</p>
+    <p class="text-slate-400 max-w-2xl mx-auto">{t.heroSubtitle}</p>
+  </section>
+
+  <!-- TL;DR -->
+  <TLDRBox items={t.tldr} lang={lang} />
+
+  <!-- Partner Types -->
+  <section class="max-w-5xl mx-auto px-4 py-12">
+    <div class="grid md:grid-cols-2 gap-8">
+      {t.partnerTypes.map((pt) => (
+        <div class="bg-[#162A4A] border border-slate-700/50 rounded-xl p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="material-symbols-outlined text-blue-400 text-3xl">{pt.icon}</span>
+            <h2 class="text-xl font-bold text-white font-['Public_Sans']">{pt.title}</h2>
+          </div>
+          <p class="text-slate-300 mb-4">{pt.desc}</p>
+          <ul class="space-y-2">
+            {pt.benefits.map((b) => (
+              <li class="flex items-start gap-2 text-sm text-slate-400">
+                <span class="material-symbols-outlined text-green-400 text-base mt-0.5">check_circle</span>
+                <span>{b}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Affiliate How It Works -->
+  <section class="max-w-5xl mx-auto px-4 py-12">
+    <h2 class="text-2xl font-bold text-white text-center mb-2 font-['Public_Sans']">{t.affiliateTitle}</h2>
+    <p class="text-slate-400 text-center mb-10 max-w-2xl mx-auto">{t.affiliateDesc}</p>
+    <div class="grid md:grid-cols-3 gap-8">
+      {t.affiliateSteps.map((s, i) => (
+        <div class="text-center">
+          <div class="w-14 h-14 rounded-full bg-blue-600 text-white text-xl font-bold flex items-center justify-center mx-auto mb-4">{i + 1}</div>
+          <h3 class="text-lg font-bold text-white mb-2">{s.step}</h3>
+          <p class="text-slate-400 text-sm">{s.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="max-w-5xl mx-auto px-4 py-12">
+    <h2 class="text-2xl font-bold text-white text-center mb-8 font-['Public_Sans']">{t.statsTitle}</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      {t.stats.map((s) => (
+        <div class="bg-[#162A4A] border border-slate-700/50 rounded-xl p-6 text-center">
+          <div class="text-3xl font-bold text-blue-400 mb-1">{s.value}</div>
+          <div class="text-sm text-slate-400">{s.label}</div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Partner Application Form -->
+  <section class="max-w-3xl mx-auto px-4 py-12" id="apply">
+    <h2 class="text-2xl font-bold text-white text-center mb-2 font-['Public_Sans']">{t.contactTitle}</h2>
+    <p class="text-slate-400 text-center mb-8">{t.contactDesc}</p>
+    <form id="partner-form" class="bg-[#162A4A] border border-slate-700/50 rounded-xl p-8 space-y-6">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">{t.formLabels.name}</label>
+          <input type="text" name="name" required class="w-full bg-[#0F1F3D] border border-slate-600 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
+        </div>
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">{t.formLabels.email}</label>
+          <input type="email" name="email" required class="w-full bg-[#0F1F3D] border border-slate-600 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
+        </div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">{t.formLabels.company}</label>
+          <input type="text" name="company" required class="w-full bg-[#0F1F3D] border border-slate-600 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
+        </div>
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">{t.formLabels.website}</label>
+          <input type="url" name="website" class="w-full bg-[#0F1F3D] border border-slate-600 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-400 mb-1">{t.formLabels.type}</label>
+        <select name="type" required class="w-full bg-[#0F1F3D] border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:border-blue-500 focus:outline-none">
+          <option value="" disabled selected>—</option>
+          {t.partnerTypeOptions.map((opt) => (
+            <option value={opt}>{opt}</option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm text-slate-400 mb-1">{t.formLabels.message}</label>
+        <textarea name="message" rows="4" class="w-full bg-[#0F1F3D] border border-slate-600 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none resize-none"></textarea>
+      </div>
+      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors">
+        {t.formLabels.submit}
+      </button>
+      <div id="form-status" class="text-center text-sm hidden"></div>
+    </form>
+  </section>
+
+  <!-- FAQ -->
+  <FAQSection items={t.faq} lang={lang} />
+
+  <!-- Schema Markup -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": t.h1,
+    "description": t.metaDesc,
+    "dateModified": "2026-04-05",
+    "publisher": { "@type": "Organization", "name": "EuroSalary.eu" },
+  })} />
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": t.faq.map((f) => ({
+      "@type": "Question",
+      "name": f.question,
+      "acceptedAnswer": { "@type": "Answer", "text": f.answer },
+    })),
+  })} />
+
+  <!-- hreflang -->
+  {Object.keys(languages).map((l) => (
+    <link slot="head" rel="alternate" hreflang={l} href={`https://eurosalary.eu/${l}/partners/`} />
+  ))}
+
+  <!-- Form Script -->
+  <script>
+    const form = document.getElementById('partner-form') as HTMLFormElement;
+    const status = document.getElementById('form-status') as HTMLElement;
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form));
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...data, source: 'partner-application' }),
+        });
+        if (res.ok) {
+          status.textContent = 'Application submitted! We will be in touch within 24 hours.';
+          status.className = 'text-center text-sm text-green-400';
+          form.reset();
+        } else {
+          status.textContent = 'Something went wrong. Please try again.';
+          status.className = 'text-center text-sm text-red-400';
+        }
+      } catch {
+        status.textContent = 'Network error. Please try again.';
+        status.className = 'text-center text-sm text-red-400';
+      }
+    });
+  </script>
+
+</BaseLayout>

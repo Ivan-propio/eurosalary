@@ -1,0 +1,977 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { countrySlugsByLang, countryFlags } from '../../../data/slugs';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+import { countryNames, uiLabels } from '../../../i18n/translations';
+
+// --------------- Minimum wage data (2026, hardcoded) ---------------
+const minWageData: Record<string, { hourly: number | null; monthly: number | null; annual: number | null; note: string; lastUpdate: string; increases: string[]; hasMinWage: boolean }> = {
+  DE: { hourly: 12.82, monthly: 2220, annual: 26640, note: 'Federal statutory minimum', lastUpdate: 'Jan 2026', increases: ['2015: €8.50', '2019: €9.19', '2022: €12.00', '2024: €12.41', '2026: €12.82'], hasMinWage: true },
+  FR: { hourly: 11.65, monthly: 1767, annual: 21204, note: 'SMIC (Salaire Minimum Interprofessionnel de Croissance)', lastUpdate: 'Jan 2026', increases: ['2019: €10.03', '2022: €10.57', '2024: €11.27', '2026: €11.65'], hasMinWage: true },
+  ES: { hourly: 8.45, monthly: 1323, annual: 15876, note: 'SMI (Salario Mínimo Interprofesional)', lastUpdate: 'Jan 2026', increases: ['2019: €5.45', '2022: €6.88', '2024: €7.81', '2026: €8.45'], hasMinWage: true },
+  NL: { hourly: 13.27, monthly: 2300, annual: 27600, note: 'Wettelijk minimumloon', lastUpdate: 'Jan 2026', increases: ['2022: €10.14', '2024: €13.27'], hasMinWage: true },
+  BE: { hourly: 12.10, monthly: 2030, annual: 24360, note: 'RMMMG via collective agreements', lastUpdate: 'Jan 2026', increases: ['2022: €10.10', '2024: €11.50', '2026: €12.10'], hasMinWage: true },
+  IT: { hourly: null, monthly: null, annual: null, note: 'No statutory minimum wage — sector collective agreements (CCNL) set wages', lastUpdate: 'N/A', increases: [], hasMinWage: false },
+  PT: { hourly: 5.27, monthly: 870, annual: 12180, note: 'Retribuição Mínima Mensal Garantida (RMMG)', lastUpdate: 'Jan 2026', increases: ['2019: €3.61', '2022: €4.25', '2024: €4.73', '2026: €5.27'], hasMinWage: true },
+  PL: { hourly: 5.10, monthly: 890, annual: 10680, note: 'Płaca minimalna (converted to EUR)', lastUpdate: 'Jan 2026', increases: ['2022: €3.61', '2024: €4.18', '2026: €5.10'], hasMinWage: true },
+  SE: { hourly: null, monthly: null, annual: null, note: 'No statutory minimum — collective agreements cover ~90% of workers', lastUpdate: 'N/A', increases: [], hasMinWage: false },
+  AT: { hourly: 10.90, monthly: 1890, annual: 22680, note: 'Collective agreement minimum (no federal statute)', lastUpdate: 'Jan 2026', increases: ['2022: €9.50', '2024: €10.50', '2026: €10.90'], hasMinWage: true },
+  CH: { hourly: null, monthly: null, annual: null, note: 'No federal minimum — Geneva, Neuchâtel, Jura, Basel-Stadt, Ticino have cantonal minimums', lastUpdate: 'Varies', increases: [], hasMinWage: false },
+  LU: { hourly: 14.86, monthly: 2571, annual: 30852, note: 'Salaire Social Minimum (SSM) — highest in EU', lastUpdate: 'Jan 2026', increases: ['2019: €11.97', '2022: €13.05', '2024: €14.10', '2026: €14.86'], hasMinWage: true },
+  IE: { hourly: 12.70, monthly: 2200, annual: 26400, note: 'National Minimum Wage', lastUpdate: 'Jan 2026', increases: ['2019: €9.80', '2022: €10.50', '2024: €12.70'], hasMinWage: true },
+  DK: { hourly: null, monthly: null, annual: null, note: 'No statutory minimum — collective agreements (overenskomster)', lastUpdate: 'N/A', increases: [], hasMinWage: false },
+  FI: { hourly: null, monthly: null, annual: null, note: 'No statutory minimum — collective agreements (TES)', lastUpdate: 'N/A', increases: [], hasMinWage: false },
+};
+
+// --------------- Translated UI strings ---------------
+const h1Templates: Record<string, string> = {
+  en: 'What Is the Minimum Wage in {country} in 2026?',
+  fr: 'Quel est le salaire minimum en {country} en 2026 ?',
+  de: 'Wie hoch ist der Mindestlohn in {country} 2026?',
+  es: '¿Cuál es el salario mínimo en {country} en 2026?',
+};
+
+const introTemplatesStatutory: Record<string, string> = {
+  en: 'The minimum wage in {country} in 2026 is {hourly} per hour, {monthly} per month, and {annual} per year before taxes. {note}.',
+  fr: 'Le salaire minimum en {country} en 2026 est de {hourly} de l\'heure, {monthly} par mois et {annual} par an avant impôts. {note}.',
+  de: 'Der Mindestlohn in {country} beträgt 2026 {hourly} pro Stunde, {monthly} pro Monat und {annual} pro Jahr brutto. {note}.',
+  es: 'El salario mínimo en {country} en 2026 es de {hourly} por hora, {monthly} al mes y {annual} al año antes de impuestos. {note}.',
+};
+
+const introTemplatesNoStatutory: Record<string, string> = {
+  en: '{country} does not have a statutory minimum wage in 2026. {note}. Instead, minimum pay is determined through collective bargaining agreements negotiated between employers and trade unions.',
+  fr: '{country} n\'a pas de salaire minimum légal en 2026. {note}. La rémunération minimale est plutôt déterminée par des conventions collectives négociées entre employeurs et syndicats.',
+  de: '{country} hat 2026 keinen gesetzlichen Mindestlohn. {note}. Stattdessen wird die Mindestvergütung durch Tarifverträge zwischen Arbeitgebern und Gewerkschaften festgelegt.',
+  es: '{country} no tiene un salario mínimo legal en 2026. {note}. En su lugar, la remuneración mínima se determina mediante convenios colectivos negociados entre empleadores y sindicatos.',
+};
+
+const sectionTitles: Record<string, Record<string, string>> = {
+  en: { keyFacts: 'Key Facts', history: 'Historical Minimum Wage Increases', collectiveSystem: 'How the Collective Agreement System Works', ranking: 'EU Minimum Wage Ranking', links: 'Related Pages' },
+  fr: { keyFacts: 'Chiffres clés', history: 'Historique des augmentations du salaire minimum', collectiveSystem: 'Comment fonctionne le système de conventions collectives', ranking: 'Classement des salaires minimums en UE', links: 'Pages associées' },
+  de: { keyFacts: 'Eckdaten', history: 'Historische Mindestlohnerhöhungen', collectiveSystem: 'Wie das Tarifvertragssystem funktioniert', ranking: 'EU-Mindestlohn-Ranking', links: 'Verwandte Seiten' },
+  es: { keyFacts: 'Datos clave', history: 'Historial de aumentos del salario mínimo', collectiveSystem: 'Cómo funciona el sistema de convenios colectivos', ranking: 'Ranking del salario mínimo en la UE', links: 'Páginas relacionadas' },
+};
+
+const collectiveExplanations: Record<string, Record<string, string>> = {
+  IT: {
+    en: 'Italy relies on sector-based national collective agreements (Contratti Collettivi Nazionali di Lavoro, or CCNL) to set minimum pay. These agreements are negotiated between employer associations and trade unions for each industry sector. Over 900 CCNLs exist, covering approximately 97% of workers. While there have been debates about introducing a statutory minimum, Italy has maintained its collective bargaining model, which the EU Minimum Wage Directive (2022/2041) also recognizes as a valid approach.',
+    fr: 'L\'Italie s\'appuie sur des conventions collectives nationales sectorielles (CCNL) pour fixer les salaires minimums. Ces accords sont négociés entre les organisations patronales et les syndicats pour chaque secteur. Plus de 900 CCNL existent, couvrant environ 97% des travailleurs.',
+    de: 'Italien setzt auf branchenbezogene nationale Tarifverträge (CCNL) zur Festlegung der Mindestlöhne. Diese Vereinbarungen werden zwischen Arbeitgeberverbänden und Gewerkschaften für jeden Wirtschaftssektor ausgehandelt. Über 900 CCNLs existieren und decken ca. 97% der Arbeitnehmer ab.',
+    es: 'Italia se basa en convenios colectivos nacionales sectoriales (CCNL) para establecer los salarios mínimos. Estos acuerdos se negocian entre las asociaciones de empleadores y los sindicatos para cada sector industrial. Existen más de 900 CCNL, que cubren aproximadamente el 97% de los trabajadores.',
+  },
+  SE: {
+    en: 'Sweden uses a collective bargaining model where trade unions and employer organizations negotiate wages sector by sector. Approximately 90% of Swedish workers are covered by collective agreements. The system consistently delivers higher effective minimum wages than most statutory minimums in Europe. The average collectively agreed minimum is typically between €2,000-€2,500 per month depending on the sector.',
+    fr: 'La Suède utilise un modèle de négociation collective où les syndicats et les organisations patronales négocient les salaires secteur par secteur. Environ 90% des travailleurs suédois sont couverts par des conventions collectives.',
+    de: 'Schweden verwendet ein Tarifvertragssystem, bei dem Gewerkschaften und Arbeitgeberverbände branchenweise Löhne aushandeln. Etwa 90% der schwedischen Arbeitnehmer sind durch Tarifverträge abgedeckt.',
+    es: 'Suecia utiliza un modelo de negociación colectiva donde los sindicatos y las organizaciones de empleadores negocian salarios sector por sector. Aproximadamente el 90% de los trabajadores suecos están cubiertos por convenios colectivos.',
+  },
+  CH: {
+    en: 'Switzerland has no federal minimum wage, but several cantons have introduced their own. Geneva (CHF 24.32/hr), Neuchâtel (CHF 21.09/hr), Jura (CHF 21.40/hr), Basel-Stadt (CHF 21.00/hr), and Ticino (CHF 19.75/hr) all have cantonal minimums. The rest of the country relies on collective labor agreements (Gesamtarbeitsverträge) and individual negotiations. A 2014 national referendum rejected a federal minimum of CHF 22/hr.',
+    fr: 'La Suisse n\'a pas de salaire minimum fédéral, mais plusieurs cantons ont introduit le leur. Genève (24,32 CHF/h), Neuchâtel (21,09 CHF/h), Jura (21,40 CHF/h), Bâle-Ville (21,00 CHF/h) et le Tessin (19,75 CHF/h) ont tous des minimums cantonaux.',
+    de: 'Die Schweiz hat keinen bundesweiten Mindestlohn, aber mehrere Kantone haben eigene eingeführt. Genf (CHF 24.32/Std.), Neuenburg (CHF 21.09/Std.), Jura (CHF 21.40/Std.), Basel-Stadt (CHF 21.00/Std.) und Tessin (CHF 19.75/Std.) haben alle kantonale Mindestlöhne.',
+    es: 'Suiza no tiene un salario mínimo federal, pero varios cantones han introducido el suyo. Ginebra (24,32 CHF/h), Neuchâtel (21,09 CHF/h), Jura (21,40 CHF/h), Basilea-Ciudad (21,00 CHF/h) y Tesino (19,75 CHF/h) tienen todos mínimos cantonales.',
+  },
+  DK: {
+    en: 'Denmark operates under a collective bargaining system known as "overenskomster". Trade unions and employer organizations negotiate sector-specific agreements that cover approximately 84% of the workforce. The Danish model is widely regarded as successful, typically resulting in effective minimum wages between €2,500-€3,000 per month. The EU Minimum Wage Directive explicitly recognizes this model as a valid alternative to a statutory minimum.',
+    fr: 'Le Danemark fonctionne selon un système de négociation collective appelé « overenskomster ». Les syndicats et les organisations patronales négocient des accords sectoriels couvrant environ 84% de la main-d\'œuvre.',
+    de: 'Dänemark arbeitet mit einem Tarifvertragssystem namens „Overenskomster". Gewerkschaften und Arbeitgeberverbände verhandeln branchenspezifische Vereinbarungen, die etwa 84% der Arbeitskräfte abdecken.',
+    es: 'Dinamarca opera bajo un sistema de negociación colectiva conocido como "overenskomster". Los sindicatos y las organizaciones de empleadores negocian acuerdos sectoriales que cubren aproximadamente el 84% de la fuerza laboral.',
+  },
+  FI: {
+    en: 'Finland uses a system of generally applicable collective agreements (yleissitovat työehtosopimukset, or TES). These agreements are negotiated between trade unions and employer organizations and, once declared generally applicable by the Ministry of Social Affairs, they set binding minimum terms for all workers in that sector — even those not in a union. Around 89% of workers are covered. Effective minimums typically range from €1,800-€2,300 per month.',
+    fr: 'La Finlande utilise un système de conventions collectives d\'application générale (TES). Ces accords sont négociés entre syndicats et organisations patronales et, une fois déclarés d\'application générale, fixent des conditions minimales contraignantes pour tous les travailleurs du secteur.',
+    de: 'Finnland verwendet ein System allgemeinverbindlicher Tarifverträge (TES). Diese Vereinbarungen werden zwischen Gewerkschaften und Arbeitgeberverbänden ausgehandelt und setzen, sobald sie für allgemeinverbindlich erklärt werden, verbindliche Mindestbedingungen für alle Arbeitnehmer der Branche.',
+    es: 'Finlandia utiliza un sistema de convenios colectivos de aplicación general (TES). Estos acuerdos se negocian entre sindicatos y organizaciones de empleadores y, una vez declarados de aplicación general, establecen condiciones mínimas vinculantes para todos los trabajadores del sector.',
+  },
+};
+
+const linkLabels: Record<string, Record<string, string>> = {
+  en: { countryPage: 'Salaries in {country}', comparePage: 'Compare salaries across Europe' },
+  fr: { countryPage: 'Salaires en {country}', comparePage: 'Comparer les salaires en Europe' },
+  de: { countryPage: 'Gehälter in {country}', comparePage: 'Gehälter in Europa vergleichen' },
+  es: { countryPage: 'Salarios en {country}', comparePage: 'Comparar salarios en Europa' },
+};
+
+
+// --------------- FAQ templates ---------------
+const faqTemplatesStatutory: Record<string, Array<{ q: string; a: string }>> = {
+  en: [
+    { q: 'What is the minimum wage in {country} in 2026?', a: 'The minimum wage in {country} is {hourly}/hour, {monthly}/month, and {annual}/year gross in 2026. {note}.' },
+    { q: 'How much is the minimum wage per hour in {country}?', a: 'The hourly minimum wage in {country} is {hourly} as of {lastUpdate}. This is the gross statutory minimum before taxes and social contributions.' },
+    { q: 'What is the annual minimum wage in {country}?', a: 'The annual gross minimum wage in {country} is {annual} (12 months x {monthly}). After taxes and social contributions (estimated at ~25%), the net take-home is approximately {netAnnual}.' },
+    { q: 'How has the minimum wage in {country} changed over the years?', a: 'The minimum wage in {country} has seen steady increases. The most recent increase was in {lastUpdate}, bringing the hourly rate to {hourly}. See the historical timeline above for the full progression.' },
+    { q: 'How does {country}\'s minimum wage compare to other EU countries?', a: 'At {monthly}/month, {country}\'s minimum wage ranks {rankText} in Europe. Luxembourg has the highest statutory minimum at €2,571/month, while Poland has one of the lowest at €890/month.' },
+  ],
+  fr: [
+    { q: 'Quel est le salaire minimum en {country} en 2026 ?', a: 'Le salaire minimum en {country} est de {hourly}/heure, {monthly}/mois et {annual}/an brut en 2026. {note}.' },
+    { q: 'Combien est le salaire minimum horaire en {country} ?', a: 'Le salaire minimum horaire en {country} est de {hourly} depuis {lastUpdate}. Il s\'agit du minimum brut légal avant impôts et cotisations sociales.' },
+    { q: 'Quel est le salaire minimum annuel en {country} ?', a: 'Le salaire minimum brut annuel en {country} est de {annual} (12 mois x {monthly}). Après impôts et cotisations (~25%), le net est d\'environ {netAnnual}.' },
+    { q: 'Comment le salaire minimum en {country} a-t-il évolué ?', a: 'Le salaire minimum en {country} a connu des augmentations régulières. La dernière augmentation date de {lastUpdate}, portant le taux horaire à {hourly}.' },
+    { q: 'Comment le salaire minimum de {country} se compare-t-il aux autres pays de l\'UE ?', a: 'À {monthly}/mois, le salaire minimum de {country} se classe {rankText} en Europe. Le Luxembourg a le plus élevé à 2 571 €/mois, tandis que la Pologne a l\'un des plus bas à 890 €/mois.' },
+  ],
+  de: [
+    { q: 'Wie hoch ist der Mindestlohn in {country} 2026?', a: 'Der Mindestlohn in {country} beträgt {hourly}/Stunde, {monthly}/Monat und {annual}/Jahr brutto in 2026. {note}.' },
+    { q: 'Wie viel beträgt der Mindestlohn pro Stunde in {country}?', a: 'Der stündliche Mindestlohn in {country} beträgt {hourly} seit {lastUpdate}. Dies ist der gesetzliche Bruttomindestlohn vor Steuern und Sozialabgaben.' },
+    { q: 'Wie hoch ist der jährliche Mindestlohn in {country}?', a: 'Der jährliche Bruttomindestlohn in {country} beträgt {annual} (12 Monate x {monthly}). Nach Steuern und Abgaben (~25%) beträgt der Nettobetrag ca. {netAnnual}.' },
+    { q: 'Wie hat sich der Mindestlohn in {country} entwickelt?', a: 'Der Mindestlohn in {country} wurde regelmäßig erhöht. Die letzte Erhöhung erfolgte im {lastUpdate} auf {hourly} pro Stunde.' },
+    { q: 'Wie schneidet der Mindestlohn in {country} im EU-Vergleich ab?', a: 'Mit {monthly}/Monat liegt der Mindestlohn in {country} {rankText} in Europa. Luxemburg hat den höchsten mit 2.571 €/Monat, während Polen einen der niedrigsten mit 890 €/Monat hat.' },
+  ],
+  es: [
+    { q: '¿Cuál es el salario mínimo en {country} en 2026?', a: 'El salario mínimo en {country} es de {hourly}/hora, {monthly}/mes y {annual}/año bruto en 2026. {note}.' },
+    { q: '¿Cuánto es el salario mínimo por hora en {country}?', a: 'El salario mínimo por hora en {country} es de {hourly} desde {lastUpdate}. Este es el mínimo bruto legal antes de impuestos y contribuciones sociales.' },
+    { q: '¿Cuál es el salario mínimo anual en {country}?', a: 'El salario mínimo bruto anual en {country} es de {annual} (12 meses x {monthly}). Después de impuestos y contribuciones (~25%), el neto es de aproximadamente {netAnnual}.' },
+    { q: '¿Cómo ha evolucionado el salario mínimo en {country}?', a: 'El salario mínimo en {country} ha experimentado aumentos constantes. El último aumento fue en {lastUpdate}, llevando la tarifa horaria a {hourly}.' },
+    { q: '¿Cómo se compara el salario mínimo de {country} con otros países de la UE?', a: 'Con {monthly}/mes, el salario mínimo de {country} se sitúa {rankText} en Europa. Luxemburgo tiene el más alto con 2.571 €/mes, mientras que Polonia tiene uno de los más bajos con 890 €/mes.' },
+  ],
+};
+
+const faqTemplatesNoStatutory: Record<string, Array<{ q: string; a: string }>> = {
+  en: [
+    { q: 'Does {country} have a minimum wage in 2026?', a: 'No, {country} does not have a statutory minimum wage. {note}. Minimum pay levels are set through collective bargaining agreements between employers and trade unions.' },
+    { q: 'How are wages determined in {country} without a minimum wage?', a: 'In {country}, wages are determined through collective agreements negotiated between trade unions and employer associations. These sector-specific agreements set minimum pay levels for each industry and are often legally binding.' },
+    { q: 'What is the typical minimum pay in {country}?', a: 'While there is no legal minimum, most collective agreements in {country} set effective minimum wages that are often higher than statutory minimums in other EU countries, typically ranging from €1,500 to €2,500/month depending on the sector.' },
+    { q: 'Will {country} introduce a statutory minimum wage?', a: 'The EU Minimum Wage Directive (2022/2041) requires member states to promote adequate wages. However, {country} has maintained its collective bargaining model, which the directive also recognizes as a valid approach when it covers at least 80% of workers.' },
+    { q: 'How does {country} compare to EU countries with statutory minimums?', a: 'Despite having no statutory minimum, workers in {country} generally earn higher minimum pay through collective agreements than workers in many countries with legal minimums. The effective minimum typically exceeds €2,000/month in most sectors.' },
+  ],
+  fr: [
+    { q: '{country} a-t-il un salaire minimum en 2026 ?', a: 'Non, {country} n\'a pas de salaire minimum légal. {note}. Les niveaux de rémunération minimale sont fixés par des conventions collectives entre employeurs et syndicats.' },
+    { q: 'Comment les salaires sont-ils déterminés en {country} ?', a: 'En {country}, les salaires sont déterminés par des conventions collectives négociées entre syndicats et organisations patronales. Ces accords sectoriels fixent les niveaux de rémunération minimale pour chaque industrie.' },
+    { q: 'Quelle est la rémunération minimale typique en {country} ?', a: 'Bien qu\'il n\'y ait pas de minimum légal, la plupart des conventions collectives en {country} fixent des salaires minimums effectifs souvent supérieurs aux minimums légaux d\'autres pays européens, généralement entre 1 500 et 2 500 €/mois.' },
+    { q: '{country} va-t-il introduire un salaire minimum légal ?', a: 'La directive européenne sur le salaire minimum (2022/2041) exige des États membres de promouvoir des salaires adéquats. Cependant, {country} a maintenu son modèle de négociation collective, reconnu comme approche valide.' },
+    { q: 'Comment {country} se compare-t-il aux pays de l\'UE avec un minimum légal ?', a: 'Malgré l\'absence de minimum légal, les travailleurs en {country} gagnent généralement un salaire minimum plus élevé grâce aux conventions collectives que dans de nombreux pays avec des minimums légaux.' },
+  ],
+  de: [
+    { q: 'Hat {country} einen Mindestlohn 2026?', a: 'Nein, {country} hat keinen gesetzlichen Mindestlohn. {note}. Mindestlöhne werden durch Tarifverträge zwischen Arbeitgebern und Gewerkschaften festgelegt.' },
+    { q: 'Wie werden Löhne in {country} bestimmt?', a: 'In {country} werden Löhne durch Tarifverträge bestimmt, die zwischen Gewerkschaften und Arbeitgeberverbänden ausgehandelt werden. Diese branchenspezifischen Vereinbarungen legen Mindestlohnniveaus fest.' },
+    { q: 'Wie hoch ist die typische Mindestvergütung in {country}?', a: 'Obwohl es keinen gesetzlichen Mindestlohn gibt, setzen die meisten Tarifverträge in {country} effektive Mindestlöhne fest, die oft höher sind als gesetzliche Mindestlöhne in anderen EU-Ländern, typischerweise zwischen 1.500 und 2.500 €/Monat.' },
+    { q: 'Wird {country} einen gesetzlichen Mindestlohn einführen?', a: 'Die EU-Mindestlohnrichtlinie (2022/2041) verlangt von den Mitgliedstaaten, angemessene Löhne zu fördern. {country} hat jedoch sein Tarifverhandlungsmodell beibehalten, das die Richtlinie als gültigen Ansatz anerkennt.' },
+    { q: 'Wie schneidet {country} im Vergleich zu EU-Ländern mit Mindestlohn ab?', a: 'Trotz fehlendem gesetzlichen Mindestlohn verdienen Arbeitnehmer in {country} durch Tarifverträge in der Regel höhere Mindestlöhne als Arbeitnehmer in vielen Ländern mit gesetzlichen Mindestlöhnen.' },
+  ],
+  es: [
+    { q: '¿Tiene {country} un salario mínimo en 2026?', a: 'No, {country} no tiene un salario mínimo legal. {note}. Los niveles de remuneración mínima se establecen mediante convenios colectivos entre empleadores y sindicatos.' },
+    { q: '¿Cómo se determinan los salarios en {country}?', a: 'En {country}, los salarios se determinan mediante convenios colectivos negociados entre sindicatos y organizaciones patronales. Estos acuerdos sectoriales establecen niveles de remuneración mínima para cada industria.' },
+    { q: '¿Cuál es la remuneración mínima típica en {country}?', a: 'Aunque no existe un mínimo legal, la mayoría de los convenios colectivos en {country} fijan salarios mínimos efectivos que a menudo superan los mínimos legales de otros países europeos, generalmente entre 1.500 y 2.500 €/mes.' },
+    { q: '¿Introducirá {country} un salario mínimo legal?', a: 'La Directiva europea sobre salarios mínimos (2022/2041) exige a los Estados miembros promover salarios adecuados. Sin embargo, {country} ha mantenido su modelo de negociación colectiva, reconocido como enfoque válido.' },
+    { q: '¿Cómo se compara {country} con los países de la UE con salario mínimo?', a: 'A pesar de no tener un mínimo legal, los trabajadores en {country} generalmente ganan salarios mínimos más altos a través de convenios colectivos que los trabajadores en muchos países con mínimos legales.' },
+  ],
+};
+
+// --------------- EU ranking data (sorted by monthly, desc) ---------------
+const euRanking: Array<{ code: string; monthly: number | null }> = [
+  { code: 'LU', monthly: 2571 },
+  { code: 'NL', monthly: 2300 },
+  { code: 'DE', monthly: 2220 },
+  { code: 'IE', monthly: 2200 },
+  { code: 'BE', monthly: 2030 },
+  { code: 'AT', monthly: 1890 },
+  { code: 'FR', monthly: 1767 },
+  { code: 'ES', monthly: 1323 },
+  { code: 'PL', monthly: 890 },
+  { code: 'PT', monthly: 870 },
+];
+
+const rankingTitleByLang: Record<string, string> = {
+  en: 'among EU countries with a statutory minimum',
+  fr: 'parmi les pays de l\'UE avec un minimum légal',
+  de: 'unter den EU-Ländern mit gesetzlichem Mindestlohn',
+  es: 'entre los países de la UE con mínimo legal',
+};
+
+// --------------- getStaticPaths ---------------
+export function getStaticPaths() {
+  const paths: Array<{ params: { lang: string; country: string }; props: { countryCode: string; lang: string } }> = [];
+  for (const lang of Object.keys(languages)) {
+    const slugs = countrySlugsByLang[lang];
+    for (const [code, slug] of Object.entries(slugs)) {
+      paths.push({
+        params: { lang, country: slug },
+        props: { countryCode: code, lang },
+      });
+    }
+  }
+  return paths;
+}
+
+// --------------- Page props ---------------
+const { countryCode, lang } = Astro.props;
+const t = useTranslations(lang as any);
+const data = minWageData[countryCode]!;
+const countryName = fb(countryNames[countryCode], lang);
+const countrySlug = countrySlugsByLang[lang][countryCode];
+const flag = countryFlags[countryCode];
+const titles = fb(sectionTitles, lang);
+
+function formatEur(amount: number): string {
+  return new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(amount);
+}
+
+function formatEurHourly(amount: number): string {
+  return new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount);
+}
+
+// Computed values
+const netMonthly = data.monthly ? Math.round(data.monthly * 0.75) : 0;
+const netAnnual = data.annual ? Math.round(data.annual * 0.75) : 0;
+
+// Ranking position
+const rankIndex = euRanking.findIndex(r => r.code === countryCode);
+const rankPosition = rankIndex >= 0 ? rankIndex + 1 : null;
+const rankTextTemplates: Record<string, Record<string, string>> = {
+  en: { high: 'among the highest', mid: 'in the middle', low: 'among the lowest' },
+  fr: { high: 'parmi les plus élevés', mid: 'au milieu', low: 'parmi les plus bas' },
+  de: { high: 'unter den höchsten', mid: 'im Mittelfeld', low: 'unter den niedrigsten' },
+  es: { high: 'entre los más altos', mid: 'en la mitad', low: 'entre los más bajos' },
+};
+let rankText = '';
+if (rankPosition !== null) {
+  const rt = fb(rankTextTemplates, lang);
+  if (rankPosition <= 3) rankText = rt.high;
+  else if (rankPosition <= 7) rankText = rt.mid;
+  else rankText = rt.low;
+}
+
+const h1 = fb(h1Templates, lang).replace('{country}', countryName);
+
+// Intro paragraph
+let introText: string;
+if (data.hasMinWage && data.monthly && data.hourly && data.annual) {
+  introText = fb(introTemplatesStatutory, lang)
+    .replace(/{country}/g, countryName)
+    .replace(/{hourly}/g, formatEurHourly(data.hourly))
+    .replace(/{monthly}/g, formatEur(data.monthly))
+    .replace(/{annual}/g, formatEur(data.annual))
+    .replace(/{note}/g, data.note);
+} else {
+  introText = fb(introTemplatesNoStatutory, lang)
+    .replace(/{country}/g, countryName)
+    .replace(/{note}/g, data.note);
+}
+
+// TL;DR items
+const tldrItems: string[] = data.hasMinWage && data.hourly && data.monthly && data.annual
+  ? [
+      `${fb({ en: 'Hourly rate', fr: 'Taux horaire', de: 'Stundensatz', es: 'Tarifa por hora' }, lang)}: ${formatEurHourly(data.hourly)} (${data.lastUpdate})`,
+      `${fb({ en: 'Monthly / Annual', fr: 'Mensuel / Annuel', de: 'Monatlich / Jährlich', es: 'Mensual / Anual' }, lang)}: ${formatEur(data.monthly)} / ${formatEur(data.annual)} ${fb({ en: 'gross', fr: 'brut', de: 'brutto', es: 'bruto' }, lang)}`,
+      `${data.note}`,
+    ]
+  : [
+      `${fb({ en: 'No statutory minimum wage', fr: 'Pas de salaire minimum légal', de: 'Kein gesetzlicher Mindestlohn', es: 'Sin salario mínimo legal' }, lang)}`,
+      `${data.note}`,
+      `${fb({ en: 'Wages set through collective bargaining agreements', fr: 'Salaires fixés par conventions collectives', de: 'Löhne durch Tarifverträge festgelegt', es: 'Salarios fijados por convenios colectivos' }, lang)}`,
+    ];
+
+// FAQ items
+const faqRaw = data.hasMinWage
+  ? fb(faqTemplatesStatutory, lang)
+  : fb(faqTemplatesNoStatutory, lang);
+
+const faqItems = faqRaw.map((item) => ({
+  question: item.q.replace(/{country}/g, countryName),
+  answer: item.a
+    .replace(/{country}/g, countryName)
+    .replace(/{hourly}/g, data.hourly ? formatEurHourly(data.hourly) : '')
+    .replace(/{monthly}/g, data.monthly ? formatEur(data.monthly) : '')
+    .replace(/{annual}/g, data.annual ? formatEur(data.annual) : '')
+    .replace(/{netMonthly}/g, netMonthly ? formatEur(netMonthly) : '')
+    .replace(/{netAnnual}/g, netAnnual ? formatEur(netAnnual) : '')
+    .replace(/{lastUpdate}/g, data.lastUpdate)
+    .replace(/{note}/g, data.note)
+    .replace(/{rankText}/g, rankText),
+}));
+
+// Link labels
+const links = fb(linkLabels, lang);
+
+// SEO
+const pageTitle = `${h1} | EuroSalary.eu`;
+const pageDescriptions: Record<string, string> = {
+  en: data.hasMinWage
+    ? `Minimum wage in ${countryName} 2026: ${formatEurHourly(data.hourly!)} per hour, ${formatEur(data.monthly!)} per month. Historical increases, EU ranking, and after-tax estimates.`
+    : `${countryName} has no statutory minimum wage in 2026. Learn how collective agreements determine pay levels and how it compares to other EU countries.`,
+  fr: data.hasMinWage
+    ? `Salaire minimum en ${countryName} 2026 : ${formatEurHourly(data.hourly!)} de l'heure, ${formatEur(data.monthly!)} par mois. Historique, classement UE et estimation nette.`
+    : `${countryName} n'a pas de salaire minimum légal en 2026. Découvrez comment les conventions collectives déterminent les niveaux de rémunération.`,
+  de: data.hasMinWage
+    ? `Mindestlohn in ${countryName} 2026: ${formatEurHourly(data.hourly!)} pro Stunde, ${formatEur(data.monthly!)} pro Monat. Historische Entwicklung, EU-Ranking und Nettoschätzung.`
+    : `${countryName} hat 2026 keinen gesetzlichen Mindestlohn. Erfahren Sie, wie Tarifverträge die Lohnniveaus bestimmen.`,
+  es: data.hasMinWage
+    ? `Salario mínimo en ${countryName} 2026: ${formatEurHourly(data.hourly!)} por hora, ${formatEur(data.monthly!)} al mes. Historial, ranking UE y estimación neta.`
+    : `${countryName} no tiene salario mínimo legal en 2026. Descubra cómo la negociación colectiva determina los niveles salariales.`,
+};
+const pageDescription = fb(pageDescriptions, lang);
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: h1,
+    author: { '@type': 'Organization', name: 'EuroSalary.eu' },
+    datePublished: '2026-01-15',
+    dateModified: '2026-04-04',
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+  },
+];
+
+// Collective explanation for no-min-wage countries
+const collectiveExplanation = !data.hasMinWage && collectiveExplanations[countryCode]
+  ? fb(collectiveExplanations[countryCode], lang)
+  : '';
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  datePublished="2026-01-15"
+  dateModified="2026-04-04"
+  schema={pageSchema}
+>
+  <!-- Hero -->
+  <section class="mw-hero">
+    <div class="mw-hero__bg-icon">
+      <span class="material-symbols-outlined">gavel</span>
+    </div>
+    <div class="container mw-hero__inner">
+      <nav class="mw-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{fb(uiLabels.home, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span>{fb(uiLabels.minimumWage, lang)}</span>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="mw-hero__breadcrumbs-current">{countryName}</span>
+      </nav>
+
+      <div class="mw-hero__grid">
+        <div class="mw-hero__content">
+          <div class="mw-hero__badge">
+            <span class="mw-hero__flag">{flag}</span>
+            <span class="mw-hero__badge-text">{fb(uiLabels.minimumWage, lang)} 2026</span>
+          </div>
+          <h1 class="mw-hero__title">{h1}</h1>
+          <p class="mw-hero__desc">{introText}</p>
+        </div>
+
+        <div class="mw-hero__stats">
+          {data.hasMinWage && data.hourly && data.monthly && data.annual ? (
+            <>
+              <div class="mw-hero__stat-card">
+                <span class="mw-hero__stat-label">{fb({ en: 'Hourly Rate', fr: 'Taux horaire', de: 'Stundenlohn', es: 'Tarifa por hora' }, lang)}</span>
+                <div class="mw-hero__stat-value">{formatEurHourly(data.hourly)}</div>
+                <span class="mw-hero__stat-note">{fb({ en: 'per hour', fr: 'de l\'heure', de: 'pro Stunde', es: 'por hora' }, lang)}</span>
+              </div>
+              <div class="mw-hero__stat-card">
+                <span class="mw-hero__stat-label">{fb({ en: 'Monthly Gross', fr: 'Mensuel brut', de: 'Monatsbrutto', es: 'Mensual bruto' }, lang)}</span>
+                <div class="mw-hero__stat-value">{formatEur(data.monthly)}</div>
+                <span class="mw-hero__stat-note">{fb({ en: 'per month', fr: 'par mois', de: 'pro Monat', es: 'al mes' }, lang)}</span>
+              </div>
+              <div class="mw-hero__stat-card">
+                <span class="mw-hero__stat-label">{fb({ en: 'Annual Gross', fr: 'Annuel brut', de: 'Jahresbrutto', es: 'Anual bruto' }, lang)}</span>
+                <div class="mw-hero__stat-value">{formatEur(data.annual)}</div>
+                <span class="mw-hero__stat-note">{fb({ en: 'per year', fr: 'par an', de: 'pro Jahr', es: 'al año' }, lang)}</span>
+              </div>
+            </>
+          ) : (
+            <div class="mw-hero__stat-card mw-hero__stat-card--wide">
+              <span class="mw-hero__stat-label">{fb({ en: 'No Statutory Minimum Wage', fr: 'Pas de salaire minimum légal', de: 'Kein gesetzlicher Mindestlohn', es: 'Sin salario mínimo legal' }, lang)}</span>
+              <div class="mw-hero__stat-value mw-hero__stat-na">N/A</div>
+              <span class="mw-hero__stat-note">{data.note}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <article class="container mw-body">
+    <!-- TL;DR -->
+    <TLDRBox items={tldrItems} />
+
+    {data.hasMinWage && data.hourly && data.monthly && data.annual ? (
+      <>
+        <!-- Key Facts Card -->
+        <section class="mw-section">
+          <h2 class="mw-section__title">{titles.keyFacts}</h2>
+          <div class="mw-facts-grid">
+            <div class="mw-fact-card">
+              <span class="material-symbols-outlined mw-fact-card__icon">schedule</span>
+              <div class="mw-fact-card__label">{fb({ en: 'Hourly', fr: 'Horaire', de: 'Stündlich', es: 'Por hora' }, lang)}</div>
+              <div class="mw-fact-card__value">{formatEurHourly(data.hourly)}</div>
+            </div>
+            <div class="mw-fact-card">
+              <span class="material-symbols-outlined mw-fact-card__icon">calendar_month</span>
+              <div class="mw-fact-card__label">{fb({ en: 'Monthly', fr: 'Mensuel', de: 'Monatlich', es: 'Mensual' }, lang)}</div>
+              <div class="mw-fact-card__value">{formatEur(data.monthly)}</div>
+            </div>
+            <div class="mw-fact-card">
+              <span class="material-symbols-outlined mw-fact-card__icon">event</span>
+              <div class="mw-fact-card__label">{fb({ en: 'Annual', fr: 'Annuel', de: 'Jährlich', es: 'Anual' }, lang)}</div>
+              <div class="mw-fact-card__value">{formatEur(data.annual)}</div>
+            </div>
+            <div class="mw-fact-card">
+              <span class="material-symbols-outlined mw-fact-card__icon">update</span>
+              <div class="mw-fact-card__label">{fb({ en: 'Last Update', fr: 'Dernière mise à jour', de: 'Letzte Aktualisierung', es: 'Última actualización' }, lang)}</div>
+              <div class="mw-fact-card__value mw-fact-card__value--sm">{data.lastUpdate}</div>
+            </div>
+            <div class="mw-fact-card">
+              <span class="material-symbols-outlined mw-fact-card__icon">account_balance_wallet</span>
+              <div class="mw-fact-card__label">{fb({ en: 'Net Monthly (est.)', fr: 'Net mensuel (est.)', de: 'Netto monatl. (gesch.)', es: 'Neto mensual (est.)' }, lang)}</div>
+              <div class="mw-fact-card__value">~{formatEur(netMonthly)}</div>
+            </div>
+            <div class="mw-fact-card">
+              <span class="material-symbols-outlined mw-fact-card__icon">savings</span>
+              <div class="mw-fact-card__label">{fb({ en: 'Net Annual (est.)', fr: 'Net annuel (est.)', de: 'Netto jährl. (gesch.)', es: 'Neto anual (est.)' }, lang)}</div>
+              <div class="mw-fact-card__value">~{formatEur(netAnnual)}</div>
+            </div>
+          </div>
+          <p class="mw-disclaimer">{fb({ en: 'Net estimates assume ~25% effective tax and social contribution rate. Actual amounts vary by personal situation.', fr: 'Les estimations nettes supposent un taux effectif de ~25% d\'impôts et cotisations. Les montants réels varient selon la situation personnelle.', de: 'Nettoschätzungen basieren auf einem effektiven Steuer- und Abgabensatz von ~25%. Tatsächliche Beträge variieren je nach persönlicher Situation.', es: 'Las estimaciones netas asumen una tasa efectiva de ~25% de impuestos y contribuciones. Los montos reales varían según la situación personal.' }, lang)}</p>
+        </section>
+
+        <!-- Historical Increases Timeline -->
+        {data.increases.length > 0 && (
+          <section class="mw-section">
+            <h2 class="mw-section__title">{titles.history}</h2>
+            <div class="mw-timeline">
+              {data.increases.map((inc, i) => {
+                const [year, value] = inc.split(': ');
+                const isLatest = i === data.increases.length - 1;
+                return (
+                  <div class={`mw-timeline__item ${isLatest ? 'mw-timeline__item--current' : ''}`}>
+                    <div class="mw-timeline__dot"></div>
+                    <div class="mw-timeline__content">
+                      <span class="mw-timeline__year">{year}</span>
+                      <span class="mw-timeline__value">{value}{fb({ en: '/hour', fr: '/heure', de: '/Stunde', es: '/hora' }, lang)}</span>
+                      {isLatest && <span class="mw-timeline__badge">{fb({ en: 'Current', fr: 'Actuel', de: 'Aktuell', es: 'Actual' }, lang)}</span>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        <!-- EU Ranking Comparison -->
+        <section class="mw-section">
+          <h2 class="mw-section__title">{titles.ranking}</h2>
+          <p class="mw-text">{fb({ en: `At ${formatEur(data.monthly)}/month, ${countryName}'s minimum wage ranks #${rankPosition} ${fb(rankingTitleByLang, lang)}.`, fr: `À ${formatEur(data.monthly)}/mois, le salaire minimum de ${countryName} se classe #${rankPosition} ${fb(rankingTitleByLang, lang)}.`, de: `Mit ${formatEur(data.monthly)}/Monat liegt der Mindestlohn in ${countryName} auf Platz ${rankPosition} ${fb(rankingTitleByLang, lang)}.`, es: `Con ${formatEur(data.monthly)}/mes, el salario mínimo de ${countryName} ocupa el puesto #${rankPosition} ${fb(rankingTitleByLang, lang)}.` }, lang)}</p>
+          <div class="mw-ranking">
+            {euRanking.map((r) => {
+              const isActive = r.code === countryCode;
+              const rName = fb(countryNames[r.code], lang);
+              const rFlag = countryFlags[r.code];
+              const barWidth = r.monthly ? Math.round((r.monthly / 2571) * 100) : 0;
+              return (
+                <div class={`mw-ranking__row ${isActive ? 'mw-ranking__row--active' : ''}`}>
+                  <div class="mw-ranking__country">
+                    <span class="mw-ranking__flag">{rFlag}</span>
+                    <span class="mw-ranking__name">{rName}</span>
+                  </div>
+                  <div class="mw-ranking__bar-wrap">
+                    <div class="mw-ranking__bar" style={`width: ${barWidth}%`}></div>
+                  </div>
+                  <div class="mw-ranking__amount">{r.monthly ? formatEur(r.monthly) : 'N/A'}</div>
+                </div>
+              );
+            })}
+          </div>
+          <p class="mw-ranking__note">{fb({ en: 'Countries without a statutory minimum (Italy, Sweden, Denmark, Finland, Switzerland) are not included.', fr: 'Les pays sans minimum légal (Italie, Suède, Danemark, Finlande, Suisse) ne sont pas inclus.', de: 'Länder ohne gesetzlichen Mindestlohn (Italien, Schweden, Dänemark, Finnland, Schweiz) sind nicht enthalten.', es: 'Los países sin mínimo legal (Italia, Suecia, Dinamarca, Finlandia, Suiza) no están incluidos.' }, lang)}</p>
+        </section>
+      </>
+    ) : (
+      <>
+        <!-- Collective Agreement System Explanation -->
+        <section class="mw-section">
+          <h2 class="mw-section__title">{titles.collectiveSystem}</h2>
+          <div class="mw-collective-box">
+            <span class="material-symbols-outlined mw-collective-box__icon">groups</span>
+            <div class="mw-collective-box__content">
+              <p class="mw-text">{collectiveExplanation}</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- EU Ranking Comparison (for context) -->
+        <section class="mw-section">
+          <h2 class="mw-section__title">{titles.ranking}</h2>
+          <p class="mw-text">{fb({ en: `While ${countryName} does not have a statutory minimum wage, here is how EU countries with statutory minimums compare. Collective bargaining in ${countryName} typically results in higher effective minimums than most of these countries.`, fr: `Bien que ${countryName} n'ait pas de minimum légal, voici comment se comparent les pays de l'UE avec un minimum légal. La négociation collective en ${countryName} résulte généralement en des minimums effectifs plus élevés.`, de: `Obwohl ${countryName} keinen gesetzlichen Mindestlohn hat, zeigt diese Übersicht die EU-Länder mit gesetzlichem Mindestlohn. Tarifverhandlungen in ${countryName} führen in der Regel zu höheren effektiven Mindestlöhnen.`, es: `Aunque ${countryName} no tiene un salario mínimo legal, así se comparan los países de la UE con mínimos legales. La negociación colectiva en ${countryName} normalmente resulta en mínimos efectivos más altos.` }, lang)}</p>
+          <div class="mw-ranking">
+            {euRanking.map((r) => {
+              const rName = fb(countryNames[r.code], lang);
+              const rFlag = countryFlags[r.code];
+              const barWidth = r.monthly ? Math.round((r.monthly / 2571) * 100) : 0;
+              return (
+                <div class="mw-ranking__row">
+                  <div class="mw-ranking__country">
+                    <span class="mw-ranking__flag">{rFlag}</span>
+                    <span class="mw-ranking__name">{rName}</span>
+                  </div>
+                  <div class="mw-ranking__bar-wrap">
+                    <div class="mw-ranking__bar" style={`width: ${barWidth}%`}></div>
+                  </div>
+                  <div class="mw-ranking__amount">{r.monthly ? formatEur(r.monthly) : 'N/A'}</div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      </>
+    )}
+
+    <!-- Internal links -->
+    <section class="mw-section">
+      <h2 class="mw-section__title">{titles.links}</h2>
+      <div class="mw-links-grid">
+        <a href={`/${lang}/country/${countrySlug}/`} class="mw-link-card">
+          <span class="material-symbols-outlined">flag</span>
+          <span>{links.countryPage.replace('{country}', countryName)}</span>
+          <span class="material-symbols-outlined mw-link-card__arrow">chevron_right</span>
+        </a>
+        <a href={`/${lang}/compare/software-engineer/`} class="mw-link-card">
+          <span class="material-symbols-outlined">compare_arrows</span>
+          <span>{links.comparePage}</span>
+          <span class="material-symbols-outlined mw-link-card__arrow">chevron_right</span>
+        </a>
+      </div>
+    </section>
+
+    <FAQSection items={faqItems} />
+  </article>
+</BaseLayout>
+
+<style>
+  /* =========== Hero =========== */
+  .mw-hero {
+    background: var(--color-primary-container, #0F1F3D);
+    color: white;
+    padding: var(--space-10) 0 var(--space-12);
+    position: relative;
+    overflow: hidden;
+  }
+  .mw-hero__bg-icon {
+    position: absolute;
+    right: -40px;
+    top: -40px;
+    opacity: 0.04;
+    font-size: 280px;
+    pointer-events: none;
+  }
+  .mw-hero__bg-icon .material-symbols-outlined {
+    font-size: inherit;
+  }
+  .mw-hero__inner {
+    position: relative;
+    z-index: 1;
+  }
+  .mw-hero__breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: var(--space-6);
+  }
+  .mw-hero__breadcrumbs a {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+  }
+  .mw-hero__breadcrumbs a:hover {
+    color: white;
+  }
+  .mw-hero__breadcrumbs .material-symbols-outlined {
+    font-size: 14px;
+  }
+  .mw-hero__breadcrumbs-current {
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .mw-hero__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-10);
+    align-items: start;
+  }
+  .mw-hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: rgba(255, 255, 255, 0.08);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: var(--space-4);
+  }
+  .mw-hero__flag {
+    font-size: 18px;
+  }
+  .mw-hero__badge-text {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  .mw-hero__title {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-4);
+  }
+  .mw-hero__desc {
+    font-size: var(--text-base, 1rem);
+    line-height: var(--leading-relaxed, 1.625);
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 540px;
+  }
+  .mw-hero__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3);
+  }
+  .mw-hero__stat-card {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: var(--space-5);
+    text-align: center;
+  }
+  .mw-hero__stat-card--wide {
+    grid-column: 1 / -1;
+  }
+  .mw-hero__stat-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: var(--space-2);
+  }
+  .mw-hero__stat-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #4ade80;
+  }
+  .mw-hero__stat-na {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 2rem;
+  }
+  .mw-hero__stat-note {
+    display: block;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
+    margin-top: 2px;
+  }
+
+  /* =========== Body =========== */
+  .mw-body {
+    padding: var(--space-10) 0 var(--space-16);
+  }
+  .mw-section {
+    margin-top: var(--space-12);
+  }
+  .mw-section__title {
+    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--color-primary-container, #0F1F3D);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-6);
+  }
+  .mw-text {
+    font-size: var(--text-base, 1rem);
+    line-height: var(--leading-relaxed, 1.625);
+    color: var(--color-on-surface, #1a1c1e);
+    margin-bottom: var(--space-4);
+  }
+  .mw-disclaimer {
+    font-size: 12px;
+    color: #75777e;
+    margin-top: var(--space-4);
+    font-style: italic;
+  }
+
+  /* =========== Key Facts Grid =========== */
+  .mw-facts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+  .mw-fact-card {
+    background: white;
+    border: 1px solid var(--color-gray-100, #e6e8ea);
+    padding: var(--space-6);
+    border-radius: 8px;
+    text-align: center;
+  }
+  .mw-fact-card__icon {
+    font-size: 22px;
+    color: var(--color-secondary, #0051d5);
+    margin-bottom: var(--space-2);
+  }
+  .mw-fact-card__label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #75777e;
+    margin-bottom: var(--space-2);
+  }
+  .mw-fact-card__value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-primary-container, #0F1F3D);
+    letter-spacing: -0.02em;
+  }
+  .mw-fact-card__value--sm {
+    font-size: 1.1rem;
+  }
+
+  /* =========== Timeline =========== */
+  .mw-timeline {
+    position: relative;
+    padding-left: var(--space-8);
+  }
+  .mw-timeline::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--color-gray-100, #e6e8ea);
+  }
+  .mw-timeline__item {
+    position: relative;
+    padding: var(--space-3) 0;
+    display: flex;
+    align-items: center;
+  }
+  .mw-timeline__dot {
+    position: absolute;
+    left: calc(-1 * var(--space-8) + 6px);
+    width: 12px;
+    height: 12px;
+    background: var(--color-gray-100, #e6e8ea);
+    border-radius: 50%;
+    border: 2px solid white;
+    z-index: 1;
+  }
+  .mw-timeline__item--current .mw-timeline__dot {
+    background: #22c55e;
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);
+  }
+  .mw-timeline__content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+  .mw-timeline__year {
+    font-size: var(--text-sm, 0.875rem);
+    font-weight: 700;
+    color: var(--color-primary-container, #0F1F3D);
+    min-width: 50px;
+  }
+  .mw-timeline__value {
+    font-size: var(--text-base, 1rem);
+    font-weight: 600;
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.08);
+    padding: 2px 10px;
+    border-radius: 4px;
+  }
+  .mw-timeline__item--current .mw-timeline__value {
+    background: rgba(34, 197, 94, 0.15);
+    font-weight: 800;
+  }
+  .mw-timeline__badge {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: white;
+    background: #22c55e;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  /* =========== EU Ranking =========== */
+  .mw-ranking {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+  .mw-ranking__row {
+    display: grid;
+    grid-template-columns: 140px 1fr 80px;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    border-radius: 4px;
+    transition: background 0.15s;
+  }
+  .mw-ranking__row:hover {
+    background: #f8f9fb;
+  }
+  .mw-ranking__row--active {
+    background: rgba(34, 197, 94, 0.06);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    border-radius: 6px;
+  }
+  .mw-ranking__row--active:hover {
+    background: rgba(34, 197, 94, 0.1);
+  }
+  .mw-ranking__country {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .mw-ranking__flag {
+    font-size: 18px;
+  }
+  .mw-ranking__name {
+    font-size: var(--text-sm, 0.875rem);
+    font-weight: 600;
+    color: var(--color-primary-container, #0F1F3D);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mw-ranking__bar-wrap {
+    height: 10px;
+    background: var(--color-gray-100, #e6e8ea);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .mw-ranking__bar {
+    height: 100%;
+    background: var(--color-secondary, #0051d5);
+    border-radius: 5px;
+    transition: width 0.3s ease;
+  }
+  .mw-ranking__row--active .mw-ranking__bar {
+    background: #22c55e;
+  }
+  .mw-ranking__amount {
+    font-size: var(--text-sm, 0.875rem);
+    font-weight: 700;
+    color: var(--color-primary-container, #0F1F3D);
+    text-align: right;
+  }
+  .mw-ranking__row--active .mw-ranking__amount {
+    color: #16a34a;
+  }
+  .mw-ranking__note {
+    font-size: 12px;
+    color: #75777e;
+    margin-top: var(--space-4);
+    font-style: italic;
+  }
+
+  /* =========== Collective Agreement Box =========== */
+  .mw-collective-box {
+    background: #f8f9fb;
+    border: 1px solid var(--color-gray-100, #e6e8ea);
+    border-left: 4px solid var(--color-secondary, #0051d5);
+    padding: var(--space-6) var(--space-8);
+    border-radius: 4px;
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+  }
+  .mw-collective-box__icon {
+    font-size: 28px;
+    color: var(--color-secondary, #0051d5);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .mw-collective-box__content .mw-text {
+    margin-bottom: 0;
+  }
+
+  /* =========== Links Grid =========== */
+  .mw-links-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+  .mw-link-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    background: white;
+    border: 1px solid var(--color-gray-100, #e6e8ea);
+    border-left: 4px solid var(--color-secondary, #0051d5);
+    padding: var(--space-4) var(--space-5);
+    border-radius: 4px;
+    text-decoration: none;
+    color: var(--color-primary-container, #0F1F3D);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    transition: box-shadow 0.15s, background 0.15s;
+  }
+  .mw-link-card:hover {
+    background: #f7f9fb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+  .mw-link-card .material-symbols-outlined:first-child {
+    font-size: 20px;
+    color: var(--color-secondary, #0051d5);
+  }
+  .mw-link-card__arrow {
+    margin-left: auto;
+    font-size: 18px;
+    color: #75777e;
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+  }
+  .mw-link-card:hover .mw-link-card__arrow {
+    opacity: 1;
+    transform: translateX(2px);
+  }
+
+  /* =========== Responsive =========== */
+  @media (max-width: 900px) {
+    .mw-hero__grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+    .mw-hero__stats {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (max-width: 768px) {
+    .mw-hero__title {
+      font-size: 1.75rem;
+    }
+    .mw-hero__stats {
+      grid-template-columns: 1fr 1fr;
+    }
+    .mw-facts-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .mw-links-grid {
+      grid-template-columns: 1fr;
+    }
+    .mw-ranking__row {
+      grid-template-columns: 110px 1fr 70px;
+    }
+  }
+  @media (max-width: 480px) {
+    .mw-hero__stats {
+      grid-template-columns: 1fr;
+    }
+    .mw-facts-grid {
+      grid-template-columns: 1fr;
+    }
+    .mw-ranking__row {
+      grid-template-columns: 90px 1fr 60px;
+      font-size: 13px;
+    }
+    .mw-ranking__name {
+      font-size: 12px;
+    }
+  }
+</style>

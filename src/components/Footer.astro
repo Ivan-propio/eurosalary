@@ -1,50 +1,77 @@
 ---
-import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import { getLangFromUrl, useTranslations, getAlternateLinks } from '../i18n/utils';
+import { languages, type Lang } from '../i18n/ui';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
+const alternates = getAlternateLinks(Astro.url.pathname);
+
+const langLabels: Record<string, string> = {
+  en: 'English', fr: 'Français', de: 'Deutsch', es: 'Español',
+  it: 'Italiano', pt: 'Português', nl: 'Nederlands', pl: 'Polski',
+  ro: 'Română', cs: 'Čeština', sv: 'Svenska', da: 'Dansk',
+  fi: 'Suomi', el: 'Ελληνικά', hu: 'Magyar', sk: 'Slovenčina',
+  bg: 'Български', hr: 'Hrvatski', sl: 'Slovenščina', lt: 'Lietuvių',
+  lv: 'Latviešu', et: 'Eesti', mt: 'Malti', ga: 'Gaeilge',
+};
+
+const langOrder = ['en','fr','de','es','it','pt','nl','pl','ro','cs','sv','da','fi','el','hu','sk','bg','hr','sl','lt','lv','et','mt','ga'];
+const sortedAlternates = langOrder
+  .map((code) => alternates.find((a) => a.lang === code))
+  .filter(Boolean) as { lang: Lang; href: string }[];
 ---
 
 <footer class="footer">
   <div class="footer__grid">
     <div>
-      <div class="footer__brand">Euro<span>Salary</span></div>
+      <a href={`/${lang}/`} class="footer__brand" aria-label="EuroSalary.eu">
+        Euro<span>Salary</span><small>.eu</small>
+      </a>
       <p class="footer__desc">
-        The definitive European salary comparison platform. Powered by Eurostat, verified job postings, and anonymous reports.
+        The Institutional Ledger of European Compensation. Providing high-fidelity salary benchmarks and macroeconomic insights for professionals across 27 EU member states.
       </p>
     </div>
 
     <div>
-      <div class="footer__heading">Platform</div>
+      <div class="footer__heading">Methodology</div>
       <ul class="footer__links">
-        <li><a href={`/${lang}/`}>{t('nav.compare')}</a></li>
-        <li><a href={`/${lang}/`}>{t('nav.countries')}</a></li>
-        <li><a href={`/${lang}/`}>{t('nav.sectors')}</a></li>
-        <li><a href={`/${lang}/`}>{t('nav.calculator')}</a></li>
+        <li><a href={`/${lang}/methodology/`}>{t('nav.methodology')}</a></li>
+        <li><a href={`/${lang}/data-sources/`}>{t('nav.dataSources')}</a></li>
+        <li><a href={`/${lang}/sectors/`}>{t('nav.sectors')}</a></li>
       </ul>
     </div>
 
     <div>
-      <div class="footer__heading">Resources</div>
+      <div class="footer__heading">Transparency</div>
       <ul class="footer__links">
-        <li><a href={`/${lang}/`}>{t('nav.blog')}</a></li>
-        <li><a href={`/${lang}/`}>{t('nav.newsletter')}</a></li>
-        <li><a href={`/${lang}/`}>{t('nav.methodology')}</a></li>
-        <li><a href={`/${lang}/`}>{t('nav.dataSources')}</a></li>
+        <li><a href={`/${lang}/privacy/`}>{t('footer.privacy')}</a></li>
+        <li><a href={`/${lang}/about/`}>{t('footer.about')}</a></li>
+        <li><a href="mailto:hello@eurosalary.eu">{t('footer.feedback')}</a></li>
       </ul>
     </div>
 
     <div>
-      <div class="footer__heading">Legal</div>
+      <div class="footer__heading">Explore</div>
       <ul class="footer__links">
-        <li><a href={`/${lang}/`}>{t('footer.about')}</a></li>
-        <li><a href={`/${lang}/`}>{t('footer.privacy')}</a></li>
-        <li><a href="mailto:feedback@eurosalary.eu">{t('footer.feedback')}</a></li>
+        <li><a href={`/${lang}/countries/`}>{t('nav.countries')}</a></li>
+        <li><a href={`/${lang}/compare/`}>{t('nav.compare')}</a></li>
+        <li><a href={`/${lang}/calculator/`}>{t('nav.calculator')}</a></li>
+        <li><a href={`/${lang}/blog/`}>{t('nav.blog')}</a></li>
       </ul>
     </div>
   </div>
 
   <div class="footer__bottom">
-    {t('footer.copyright')}
+    <div class="footer__langs">
+      <select class="footer__lang-select" aria-label="Language" onchange="localStorage.setItem('eurosalary-lang',this.options[this.selectedIndex].dataset.lang);window.location.href=this.value">
+        {sortedAlternates.map((alt) => (
+          <option value={alt.href} selected={alt.lang === lang} data-lang={alt.lang}>
+            {languages[alt.lang]} — {langLabels[alt.lang]}
+          </option>
+        ))}
+      </select>
+      <span>&copy; 2026 EuroSalary.eu</span>
+    </div>
+    <span class="footer__tagline">Precision. Integrity. Sovereignty.</span>
   </div>
 </footer>

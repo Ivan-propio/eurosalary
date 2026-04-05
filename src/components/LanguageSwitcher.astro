@@ -4,33 +4,202 @@ import { getAlternateLinks, getLangFromUrl } from '../i18n/utils';
 
 const currentLang = getLangFromUrl(Astro.url);
 const alternates = getAlternateLinks(Astro.url.pathname);
+
+const langLabels: Record<string, string> = {
+  en: 'English', fr: 'Français', de: 'Deutsch', es: 'Español',
+  it: 'Italiano', pt: 'Português', nl: 'Nederlands', pl: 'Polski',
+  ro: 'Română', cs: 'Čeština', sv: 'Svenska', da: 'Dansk',
+  fi: 'Suomi', el: 'Ελληνικά', hu: 'Magyar', sk: 'Slovenčina',
+  bg: 'Български', hr: 'Hrvatski', sl: 'Slovenščina', lt: 'Lietuvių',
+  lv: 'Latviešu', et: 'Eesti', mt: 'Malti', ga: 'Gaeilge',
+};
+
+// Top traffic languages first, then alphabetical by native name
+const langOrder: string[] = [
+  'en','fr','de','es','it','pt','nl','pl','ro','cs',
+  'sv','da','fi','el','hu','sk','bg','hr','sl','lt','lv','et','mt','ga',
+];
+
+const sortedAlternates = langOrder
+  .map((code) => alternates.find((a) => a.lang === code))
+  .filter(Boolean) as { lang: Lang; href: string }[];
 ---
 
-<nav class="lang-switcher" aria-label="Language switcher">
-  {alternates.map((alt, i) => (
-    <>
-      {i > 0 && <span class="lang-switcher__sep">/</span>}
-      <a
-        href={alt.href}
-        class:list={['lang-switcher__link', { 'lang-switcher__link--active': alt.lang === currentLang }]}
-        hreflang={alt.lang}
-        data-lang={alt.lang}
-      >
-        {languages[alt.lang]}
-      </a>
-    </>
-  ))}
-</nav>
+<div class="lang-switcher" id="lang-switcher">
+  <button class="lang-switcher__trigger" id="lang-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Language">
+    <span class="lang-switcher__code">{languages[currentLang]}</span>
+    <svg class="lang-switcher__chevron" width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="lang-switcher__dropdown" id="lang-dropdown" role="listbox" aria-label="Select language">
+    <input class="lang-switcher__search" type="text" placeholder="Search..." aria-label="Search languages" id="lang-search" autocomplete="off" />
+    <div class="lang-switcher__list" id="lang-list">
+      {sortedAlternates.map((alt) => (
+        <a
+          href={alt.href}
+          class={`lang-switcher__option ${alt.lang === currentLang ? 'lang-switcher__option--active' : ''}`}
+          role="option"
+          aria-selected={alt.lang === currentLang ? 'true' : 'false'}
+          data-lang={alt.lang}
+          data-name={langLabels[alt.lang]?.toLowerCase() || ''}
+        >
+          <span class="lang-switcher__option-code">{languages[alt.lang]}</span>
+          <span class="lang-switcher__option-name">{langLabels[alt.lang]}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</div>
 
 <script>
-  // Persist language preference
   document.addEventListener('DOMContentLoaded', () => {
-    const links = document.querySelectorAll('.lang-switcher__link');
-    links.forEach((link) => {
-      link.addEventListener('click', () => {
-        const lang = (link as HTMLAnchorElement).dataset.lang;
-        if (lang) localStorage.setItem('eurosalary-lang', lang);
+    document.querySelectorAll('.lang-switcher').forEach((switcher) => {
+      const trigger = switcher.querySelector('.lang-switcher__trigger') as HTMLButtonElement;
+      const dropdown = switcher.querySelector('.lang-switcher__dropdown') as HTMLElement;
+      const search = switcher.querySelector('.lang-switcher__search') as HTMLInputElement;
+      const options = switcher.querySelectorAll('.lang-switcher__option') as NodeListOf<HTMLAnchorElement>;
+
+      if (!trigger || !dropdown) return;
+
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const open = dropdown.classList.toggle('lang-switcher__dropdown--open');
+        trigger.setAttribute('aria-expanded', String(open));
+        if (open && search) { search.value = ''; filterOptions(''); search.focus(); }
+      });
+
+      if (search) {
+        search.addEventListener('input', () => filterOptions(search.value.toLowerCase()));
+        search.addEventListener('click', (e) => e.stopPropagation());
+      }
+
+      function filterOptions(query: string) {
+        options.forEach((opt) => {
+          const code = opt.dataset.lang || '';
+          const name = opt.dataset.name || '';
+          opt.style.display = (!query || code.includes(query) || name.includes(query)) ? '' : 'none';
+        });
+      }
+
+      options.forEach((opt) => {
+        opt.addEventListener('click', () => {
+          const match = opt.href.match(/^.*?\/([a-z]{2})\//);
+          if (match) localStorage.setItem('eurosalary-lang', match[1]);
+        });
+      });
+
+      document.addEventListener('click', () => {
+        dropdown.classList.remove('lang-switcher__dropdown--open');
+        trigger.setAttribute('aria-expanded', 'false');
       });
     });
   });
 </script>
+
+<style>
+  .lang-switcher {
+    position: relative;
+  }
+  .lang-switcher__trigger {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: rgba(203, 213, 225, 0.9);
+    font-size: 11px;
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.15em;
+    transition: all 0.15s ease;
+  }
+  .lang-switcher__trigger:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    color: var(--color-white);
+  }
+  .lang-switcher__chevron {
+    transition: transform 0.15s ease;
+  }
+  [aria-expanded="true"] .lang-switcher__chevron {
+    transform: rotate(180deg);
+  }
+  .lang-switcher__dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 200px;
+    max-height: 360px;
+    background: rgba(15, 31, 61, 0.98);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    z-index: 100;
+    overflow: hidden;
+    flex-direction: column;
+  }
+  .lang-switcher__dropdown--open {
+    display: flex;
+  }
+  .lang-switcher__search {
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--color-white);
+    font-size: 12px;
+    outline: none;
+  }
+  .lang-switcher__search::placeholder {
+    color: rgba(203, 213, 225, 0.5);
+  }
+  .lang-switcher__list {
+    overflow-y: auto;
+    max-height: 300px;
+    padding: 4px 0;
+  }
+  .lang-switcher__option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    color: rgba(203, 213, 225, 0.8);
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.1s ease;
+    cursor: pointer;
+  }
+  .lang-switcher__option:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--color-white);
+  }
+  .lang-switcher__option--active {
+    background: rgba(37, 99, 235, 0.15);
+    color: var(--color-white);
+  }
+  .lang-switcher__option-code {
+    font-size: 11px;
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.1em;
+    min-width: 24px;
+    color: rgba(203, 213, 225, 0.5);
+  }
+  .lang-switcher__option--active .lang-switcher__option-code {
+    color: #60a5fa;
+  }
+  .lang-switcher__option-name {
+    flex: 1;
+  }
+  .lang-switcher__list::-webkit-scrollbar {
+    width: 4px;
+  }
+  .lang-switcher__list::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .lang-switcher__list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+  }
+</style>

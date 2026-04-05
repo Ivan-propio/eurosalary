@@ -1,0 +1,319 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TLDRBox from '../../components/TLDRBox.astro';
+import FAQSection from '../../components/FAQSection.astro';
+import { languages } from '../../i18n/ui';
+import { fb, useTranslations } from '../../i18n/utils';
+
+// --------------- i18n strings ---------------
+const i18n: Record<string, {
+  h1: string;
+  metaTitle: string;
+  metaDesc: string;
+  home: string;
+  breadcrumb: string;
+  lastUpdated: string;
+  controllerTitle: string;
+  controllerBody: string;
+  collectTitle: string;
+  collectBody: string;
+  notCollectTitle: string;
+  notCollectBody: string;
+  thirdPartyTitle: string;
+  thirdPartyBody: string;
+  rightsTitle: string;
+  rightsBody: string;
+  contactTitle: string;
+  contactBody: string;
+  cookieTitle: string;
+  cookieBody: string;
+  tldr: string[];
+  faq: Array<{ question: string; answer: string }>;
+}> = {
+  en: {
+    h1: 'Privacy Policy',
+    metaTitle: 'Privacy Policy | EuroSalary.eu',
+    metaDesc: 'EuroSalary.eu privacy policy. We use Plausible Analytics (no cookies), store no personal data from salary lookups, and comply fully with GDPR. Read our transparent data practices.',
+    home: 'Home',
+    breadcrumb: 'Privacy Policy',
+    lastUpdated: 'Last updated: April 2026',
+    controllerTitle: 'Data Controller',
+    controllerBody: 'The data controller for this website is EuroSalary.eu, based in Luxembourg. We are committed to protecting your privacy and processing any personal data in accordance with the General Data Protection Regulation (GDPR) and applicable Luxembourg data protection law. As a Luxembourg-based service, we fall under the supervision of the Commission Nationale pour la Protection des Donn\u00e9es (CNPD).',
+    collectTitle: 'Data We Collect',
+    collectBody: 'We keep data collection to an absolute minimum. If you subscribe to our newsletter, we store your email address, which is processed by Resend, our email delivery partner. If you submit an anonymous salary report through our contribution form, the submission contains only job title, country, salary range, and years of experience \u2014 no personally identifiable information (PII) is collected or stored. Salary submissions are stored in Supabase (Frankfurt, EU region). For website analytics, we use Plausible Analytics, a privacy-focused, cookieless analytics tool that collects no personal data. Plausible does not use cookies, does not track users across sites, and is fully GDPR compliant without requiring a consent banner.',
+    notCollectTitle: 'Data We Do NOT Collect',
+    notCollectBody: 'We want to be explicit about what we do not collect. We do not collect your name, government-issued identification numbers, exact physical location, or IP addresses for analytics purposes. Plausible Analytics processes pageview data without storing visitor IP addresses. We do not build user profiles, we do not run retargeting campaigns, and we do not sell or share any data with advertisers. Salary submissions are fully anonymous by design \u2014 there is no account system, no login requirement, and no way to trace a submission back to an individual.',
+    thirdPartyTitle: 'Third-Party Services',
+    thirdPartyBody: 'We work with a carefully selected set of third-party services, all chosen for their privacy practices and EU compliance. Plausible Analytics provides cookieless, GDPR-compliant website analytics with all data processed in the EU. Resend handles newsletter email delivery and acts as an EU data processor. Supabase hosts our database in the Frankfurt (EU) region with encryption at rest and in transit. Cloudflare Pages serves our static website via its global CDN, providing performance and DDoS protection. None of these services place tracking cookies on your device or collect personal data beyond what is strictly necessary for their function.',
+    rightsTitle: 'Your Rights Under GDPR',
+    rightsBody: 'Under the General Data Protection Regulation, you have the right to access any personal data we hold about you, the right to rectification of inaccurate data, the right to erasure (the right to be forgotten), the right to data portability, the right to restrict processing, and the right to object to processing. If you have subscribed to our newsletter and wish to exercise any of these rights, please contact us at the email address below. You also have the right to lodge a complaint with your national supervisory authority or with the CNPD in Luxembourg if you believe your data protection rights have been violated.',
+    contactTitle: 'Contact',
+    contactBody: 'For any privacy-related questions, data access requests, or to exercise your GDPR rights, please contact us at:',
+    cookieTitle: 'Cookie Policy',
+    cookieBody: 'EuroSalary.eu does not use cookies. Our analytics provider, Plausible Analytics, is entirely cookieless and does not store any information on your device. Because we place no cookies, no cookie consent banner is needed. If this changes in the future, we will update this policy and implement appropriate consent mechanisms before any cookies are deployed.',
+    tldr: [
+      'No cookies — we use Cloudflare Analytics (cookieless)',
+      'Zero personal data collected from salary lookups',
+      'GDPR compliant, Luxembourg-supervised by CNPD',
+    ],
+    faq: [
+      { question: 'Does EuroSalary use cookies?', answer: 'No. EuroSalary uses Cloudflare Web Analytics, which is completely cookieless. No tracking cookies, no session cookies, and no consent banner is needed because nothing is stored on your device.' },
+      { question: 'What personal data does EuroSalary collect?', answer: 'Almost none. If you subscribe to our newsletter, we store your email address. Salary submissions are fully anonymous — they contain only job title, country, salary range, and experience level. We never collect names, IP addresses, or government IDs.' },
+      { question: 'How can I delete my data from EuroSalary?', answer: 'Email us at hello@eurosalary.eu with your request. If you subscribed to the newsletter, we will delete your email address. Salary submissions are anonymous and cannot be traced back to individuals, so there is nothing to delete.' },
+      { question: 'Where is EuroSalary data stored?', answer: 'Our database is hosted on Supabase in Frankfurt, Germany (EU region) with encryption at rest and in transit. Our website is served through Cloudflare Pages with EU data processing. All infrastructure is EU-based.' },
+      { question: 'Is EuroSalary GDPR compliant?', answer: 'Yes. EuroSalary is based in Luxembourg and falls under the supervision of the Commission Nationale pour la Protection des Données (CNPD). We use cookieless analytics, collect minimal data, and fully respect all GDPR rights including access, rectification, erasure, and data portability.' },
+    ],
+  },
+  fr: {
+    h1: 'Politique de confidentialit\u00e9',
+    metaTitle: 'Politique de confidentialit\u00e9 | EuroSalary.eu',
+    metaDesc: 'Politique de confidentialit\u00e9 d\u2019EuroSalary.eu. Nous utilisons Plausible Analytics (sans cookies), ne stockons aucune donn\u00e9e personnelle lors des recherches salariales et respectons pleinement le RGPD.',
+    home: 'Accueil',
+    breadcrumb: 'Confidentialit\u00e9',
+    lastUpdated: 'Derni\u00e8re mise \u00e0 jour\u00a0: avril 2026',
+    controllerTitle: 'Responsable du traitement',
+    controllerBody: 'Le responsable du traitement de ce site web est EuroSalary.eu, bas\u00e9 au Luxembourg. Nous nous engageons \u00e0 prot\u00e9ger votre vie priv\u00e9e et \u00e0 traiter toute donn\u00e9e personnelle conform\u00e9ment au R\u00e8glement G\u00e9n\u00e9ral sur la Protection des Donn\u00e9es (RGPD) et \u00e0 la l\u00e9gislation luxembourgeoise applicable. En tant que service bas\u00e9 au Luxembourg, nous relevons de la supervision de la Commission Nationale pour la Protection des Donn\u00e9es (CNPD).',
+    collectTitle: 'Donn\u00e9es que nous collectons',
+    collectBody: 'Nous r\u00e9duisons la collecte de donn\u00e9es au strict minimum. Si vous vous abonnez \u00e0 notre newsletter, nous stockons votre adresse e-mail, trait\u00e9e par Resend, notre partenaire d\u2019envoi d\u2019e-mails. Si vous soumettez un rapport salarial anonyme via notre formulaire de contribution, la soumission ne contient que l\u2019intitul\u00e9 du poste, le pays, la fourchette salariale et les ann\u00e9es d\u2019exp\u00e9rience \u2014 aucune donn\u00e9e personnelle identifiable (DPI) n\u2019est collect\u00e9e ni stock\u00e9e. Les soumissions salariales sont stock\u00e9es dans Supabase (Francfort, r\u00e9gion UE). Pour les analyses du site, nous utilisons Plausible Analytics, un outil d\u2019analyse respectueux de la vie priv\u00e9e et sans cookies qui ne collecte aucune donn\u00e9e personnelle. Plausible n\u2019utilise pas de cookies, ne suit pas les utilisateurs entre les sites et est enti\u00e8rement conforme au RGPD sans n\u00e9cessiter de banni\u00e8re de consentement.',
+    notCollectTitle: 'Donn\u00e9es que nous ne collectons PAS',
+    notCollectBody: 'Nous souhaitons \u00eatre explicites sur ce que nous ne collectons pas. Nous ne collectons ni votre nom, ni vos num\u00e9ros d\u2019identification gouvernementaux, ni votre localisation exacte, ni vos adresses IP \u00e0 des fins d\u2019analyse. Plausible Analytics traite les donn\u00e9es de pages vues sans stocker les adresses IP des visiteurs. Nous ne cr\u00e9ons pas de profils utilisateurs, nous ne menons pas de campagnes de reciblage et nous ne vendons ni ne partageons aucune donn\u00e9e avec des annonceurs. Les soumissions salariales sont enti\u00e8rement anonymes par conception \u2014 il n\u2019y a pas de syst\u00e8me de compte, pas de connexion requise et aucun moyen de remonter une soumission \u00e0 un individu.',
+    thirdPartyTitle: 'Services tiers',
+    thirdPartyBody: 'Nous travaillons avec un ensemble soigneusement s\u00e9lectionn\u00e9 de services tiers, tous choisis pour leurs pratiques de confidentialit\u00e9 et leur conformit\u00e9 europ\u00e9enne. Plausible Analytics fournit des analyses web sans cookies et conformes au RGPD, avec toutes les donn\u00e9es trait\u00e9es dans l\u2019UE. Resend g\u00e8re l\u2019envoi des e-mails de newsletter et agit en tant que sous-traitant UE. Supabase h\u00e9berge notre base de donn\u00e9es dans la r\u00e9gion de Francfort (UE) avec chiffrement au repos et en transit. Cloudflare Pages sert notre site statique via son CDN mondial, assurant performance et protection DDoS. Aucun de ces services ne place de cookies de suivi sur votre appareil ni ne collecte de donn\u00e9es personnelles au-del\u00e0 de ce qui est strictement n\u00e9cessaire.',
+    rightsTitle: 'Vos droits en vertu du RGPD',
+    rightsBody: 'En vertu du R\u00e8glement G\u00e9n\u00e9ral sur la Protection des Donn\u00e9es, vous disposez du droit d\u2019acc\u00e8s aux donn\u00e9es personnelles que nous d\u00e9tenons, du droit de rectification des donn\u00e9es inexactes, du droit \u00e0 l\u2019effacement (droit \u00e0 l\u2019oubli), du droit \u00e0 la portabilit\u00e9 des donn\u00e9es, du droit de limiter le traitement et du droit de vous opposer au traitement. Si vous \u00eates abonn\u00e9 \u00e0 notre newsletter et souhaitez exercer l\u2019un de ces droits, veuillez nous contacter \u00e0 l\u2019adresse ci-dessous. Vous avez \u00e9galement le droit de d\u00e9poser une r\u00e9clamation aupr\u00e8s de votre autorit\u00e9 de contr\u00f4le nationale ou aupr\u00e8s de la CNPD au Luxembourg si vous estimez que vos droits en mati\u00e8re de protection des donn\u00e9es ont \u00e9t\u00e9 viol\u00e9s.',
+    contactTitle: 'Contact',
+    contactBody: 'Pour toute question relative \u00e0 la confidentialit\u00e9, demande d\u2019acc\u00e8s aux donn\u00e9es ou exercice de vos droits RGPD, veuillez nous contacter \u00e0\u00a0:',
+    cookieTitle: 'Politique de cookies',
+    cookieBody: 'EuroSalary.eu n\u2019utilise pas de cookies. Notre fournisseur d\u2019analyses, Plausible Analytics, est enti\u00e8rement sans cookies et ne stocke aucune information sur votre appareil. Puisque nous ne pla\u00e7ons aucun cookie, aucune banni\u00e8re de consentement n\u2019est n\u00e9cessaire. Si cela devait changer, nous mettrons \u00e0 jour cette politique et mettrons en place des m\u00e9canismes de consentement appropri\u00e9s avant tout d\u00e9ploiement de cookies.',
+    tldr: [
+      'Aucun cookie — analytics Cloudflare sans cookie',
+      'Aucune donn\u00e9e personnelle collect\u00e9e lors des recherches',
+      'Conforme au RGPD, supervis\u00e9 par la CNPD au Luxembourg',
+    ],
+    faq: [
+      { question: 'EuroSalary utilise-t-il des cookies\u00a0?', answer: 'Non. EuroSalary utilise Cloudflare Web Analytics, qui fonctionne enti\u00e8rement sans cookies. Aucun cookie de suivi, aucun cookie de session, et aucune banni\u00e8re de consentement n\u2019est n\u00e9cessaire car rien n\u2019est stock\u00e9 sur votre appareil.' },
+      { question: 'Quelles donn\u00e9es personnelles EuroSalary collecte-t-il\u00a0?', answer: 'Pratiquement aucune. Si vous vous abonnez \u00e0 notre newsletter, nous stockons votre adresse e-mail. Les soumissions salariales sont enti\u00e8rement anonymes \u2014 elles contiennent uniquement l\u2019intitul\u00e9 du poste, le pays, la fourchette salariale et le niveau d\u2019exp\u00e9rience. Nous ne collectons jamais de noms, d\u2019adresses IP ou de num\u00e9ros d\u2019identification.' },
+      { question: 'Comment supprimer mes donn\u00e9es d\u2019EuroSalary\u00a0?', answer: 'Envoyez-nous un e-mail \u00e0 hello@eurosalary.eu avec votre demande. Si vous \u00eates abonn\u00e9 \u00e0 la newsletter, nous supprimerons votre adresse e-mail. Les soumissions salariales sont anonymes et ne peuvent pas \u00eatre reli\u00e9es \u00e0 des individus, il n\u2019y a donc rien \u00e0 supprimer.' },
+      { question: 'O\u00f9 les donn\u00e9es d\u2019EuroSalary sont-elles stock\u00e9es\u00a0?', answer: 'Notre base de donn\u00e9es est h\u00e9berg\u00e9e sur Supabase \u00e0 Francfort, en Allemagne (r\u00e9gion UE) avec chiffrement au repos et en transit. Notre site est servi via Cloudflare Pages avec traitement des donn\u00e9es dans l\u2019UE. Toute l\u2019infrastructure est bas\u00e9e dans l\u2019UE.' },
+      { question: 'EuroSalary est-il conforme au RGPD\u00a0?', answer: 'Oui. EuroSalary est bas\u00e9 au Luxembourg et rel\u00e8ve de la supervision de la Commission Nationale pour la Protection des Donn\u00e9es (CNPD). Nous utilisons des analyses sans cookies, collectons un minimum de donn\u00e9es et respectons pleinement tous les droits du RGPD, y compris l\u2019acc\u00e8s, la rectification, l\u2019effacement et la portabilit\u00e9 des donn\u00e9es.' },
+    ],
+  },
+  de: {
+    h1: 'Datenschutzerkl\u00e4rung',
+    metaTitle: 'Datenschutzerkl\u00e4rung | EuroSalary.eu',
+    metaDesc: 'Datenschutzerkl\u00e4rung von EuroSalary.eu. Wir verwenden Plausible Analytics (ohne Cookies), speichern keine personenbezogenen Daten bei Gehaltsabfragen und sind vollst\u00e4ndig DSGVO-konform.',
+    home: 'Startseite',
+    breadcrumb: 'Datenschutz',
+    lastUpdated: 'Letzte Aktualisierung: April 2026',
+    controllerTitle: 'Verantwortlicher',
+    controllerBody: 'Der Verantwortliche f\u00fcr diese Website ist EuroSalary.eu mit Sitz in Luxemburg. Wir verpflichten uns, Ihre Privatsph\u00e4re zu sch\u00fctzen und personenbezogene Daten gem\u00e4\u00df der Datenschutz-Grundverordnung (DSGVO) und dem anwendbaren luxemburgischen Datenschutzrecht zu verarbeiten. Als luxemburgischer Dienst unterliegen wir der Aufsicht der Commission Nationale pour la Protection des Donn\u00e9es (CNPD).',
+    collectTitle: 'Daten, die wir erheben',
+    collectBody: 'Wir beschr\u00e4nken die Datenerhebung auf ein absolutes Minimum. Wenn Sie unseren Newsletter abonnieren, speichern wir Ihre E-Mail-Adresse, die von Resend, unserem E-Mail-Versandpartner, verarbeitet wird. Wenn Sie einen anonymen Gehaltsbericht \u00fcber unser Beitragsformular einreichen, enth\u00e4lt die Einreichung nur Berufsbezeichnung, Land, Gehaltsspanne und Berufserfahrung \u2014 es werden keine personenbezogenen Daten (PII) erhoben oder gespeichert. Gehaltseinreichungen werden in Supabase (Frankfurt, EU-Region) gespeichert. F\u00fcr die Website-Analyse verwenden wir Plausible Analytics, ein datenschutzorientiertes, cookieloses Analysetool, das keine personenbezogenen Daten erhebt. Plausible verwendet keine Cookies, verfolgt keine Nutzer \u00fcber Websites hinweg und ist vollst\u00e4ndig DSGVO-konform, ohne dass ein Zustimmungsbanner erforderlich ist.',
+    notCollectTitle: 'Daten, die wir NICHT erheben',
+    notCollectBody: 'Wir m\u00f6chten ausdr\u00fccklich klarstellen, was wir nicht erheben. Wir erfassen weder Ihren Namen noch staatliche Identifikationsnummern, genaue Standorte oder IP-Adressen zu Analysezwecken. Plausible Analytics verarbeitet Seitenaufrufdaten, ohne Besucher-IP-Adressen zu speichern. Wir erstellen keine Nutzerprofile, f\u00fchren keine Retargeting-Kampagnen durch und verkaufen oder teilen keine Daten mit Werbetreibenden. Gehaltseinreichungen sind konstruktionsgem\u00e4\u00df vollst\u00e4ndig anonym \u2014 es gibt kein Kontosystem, keine Anmeldepflicht und keine M\u00f6glichkeit, eine Einreichung zu einer Person zur\u00fcckzuverfolgen.',
+    thirdPartyTitle: 'Drittanbieter-Dienste',
+    thirdPartyBody: 'Wir arbeiten mit einem sorgf\u00e4ltig ausgew\u00e4hlten Satz von Drittanbieter-Diensten, die alle aufgrund ihrer Datenschutzpraktiken und EU-Konformit\u00e4t gew\u00e4hlt wurden. Plausible Analytics bietet cookielose, DSGVO-konforme Website-Analysen, wobei alle Daten in der EU verarbeitet werden. Resend \u00fcbernimmt den Newsletter-E-Mail-Versand und fungiert als EU-Auftragsverarbeiter. Supabase hostet unsere Datenbank in der Region Frankfurt (EU) mit Verschl\u00fcsselung im Ruhezustand und bei der \u00dcbertragung. Cloudflare Pages stellt unsere statische Website \u00fcber sein globales CDN bereit und bietet Leistung sowie DDoS-Schutz. Keiner dieser Dienste platziert Tracking-Cookies auf Ihrem Ger\u00e4t oder erhebt personenbezogene Daten \u00fcber das f\u00fcr ihre Funktion strikt Notwendige hinaus.',
+    rightsTitle: 'Ihre Rechte nach der DSGVO',
+    rightsBody: 'Nach der Datenschutz-Grundverordnung haben Sie das Recht auf Auskunft \u00fcber die bei uns gespeicherten personenbezogenen Daten, das Recht auf Berichtigung unrichtiger Daten, das Recht auf L\u00f6schung (Recht auf Vergessenwerden), das Recht auf Daten\u00fcbertragbarkeit, das Recht auf Einschr\u00e4nkung der Verarbeitung und das Widerspruchsrecht gegen die Verarbeitung. Wenn Sie unseren Newsletter abonniert haben und eines dieser Rechte aus\u00fcben m\u00f6chten, kontaktieren Sie uns bitte unter der unten angegebenen E-Mail-Adresse. Sie haben au\u00dferdem das Recht, eine Beschwerde bei Ihrer nationalen Aufsichtsbeh\u00f6rde oder bei der CNPD in Luxemburg einzureichen, wenn Sie der Ansicht sind, dass Ihre Datenschutzrechte verletzt wurden.',
+    contactTitle: 'Kontakt',
+    contactBody: 'F\u00fcr datenschutzbezogene Fragen, Auskunftsersuchen oder zur Aus\u00fcbung Ihrer DSGVO-Rechte kontaktieren Sie uns bitte unter:',
+    cookieTitle: 'Cookie-Richtlinie',
+    cookieBody: 'EuroSalary.eu verwendet keine Cookies. Unser Analyseanbieter Plausible Analytics ist vollst\u00e4ndig cookielos und speichert keine Informationen auf Ihrem Ger\u00e4t. Da wir keine Cookies setzen, ist kein Cookie-Zustimmungsbanner erforderlich. Sollte sich dies in Zukunft \u00e4ndern, werden wir diese Richtlinie aktualisieren und geeignete Einwilligungsmechanismen implementieren, bevor Cookies eingesetzt werden.',
+    tldr: [
+      'Keine Cookies — Cloudflare Analytics (cookiefrei)',
+      'Keine personenbezogenen Daten bei Gehaltsabfragen',
+      'DSGVO-konform, beaufsichtigt durch CNPD Luxemburg',
+    ],
+    faq: [
+      { question: 'Verwendet EuroSalary Cookies?', answer: 'Nein. EuroSalary nutzt Cloudflare Web Analytics, das vollst\u00e4ndig ohne Cookies funktioniert. Keine Tracking-Cookies, keine Session-Cookies, und kein Zustimmungsbanner ist erforderlich, da nichts auf Ihrem Ger\u00e4t gespeichert wird.' },
+      { question: 'Welche personenbezogenen Daten erhebt EuroSalary?', answer: 'Fast keine. Wenn Sie unseren Newsletter abonnieren, speichern wir Ihre E-Mail-Adresse. Gehaltseinreichungen sind vollst\u00e4ndig anonym \u2014 sie enthalten nur Berufsbezeichnung, Land, Gehaltsspanne und Erfahrungsniveau. Wir erheben niemals Namen, IP-Adressen oder Ausweisnummern.' },
+      { question: 'Wie kann ich meine Daten bei EuroSalary l\u00f6schen lassen?', answer: 'Senden Sie uns eine E-Mail an hello@eurosalary.eu mit Ihrer Anfrage. Wenn Sie den Newsletter abonniert haben, l\u00f6schen wir Ihre E-Mail-Adresse. Gehaltseinreichungen sind anonym und k\u00f6nnen nicht zu Einzelpersonen zur\u00fcckverfolgt werden, daher gibt es nichts zu l\u00f6schen.' },
+      { question: 'Wo werden die Daten von EuroSalary gespeichert?', answer: 'Unsere Datenbank wird auf Supabase in Frankfurt, Deutschland (EU-Region) gehostet, mit Verschl\u00fcsselung im Ruhezustand und bei der \u00dcbertragung. Unsere Website wird \u00fcber Cloudflare Pages mit EU-Datenverarbeitung bereitgestellt. Die gesamte Infrastruktur befindet sich in der EU.' },
+      { question: 'Ist EuroSalary DSGVO-konform?', answer: 'Ja. EuroSalary hat seinen Sitz in Luxemburg und unterliegt der Aufsicht der Commission Nationale pour la Protection des Donn\u00e9es (CNPD). Wir verwenden cookielose Analysen, erheben minimale Daten und respektieren vollst\u00e4ndig alle DSGVO-Rechte einschlie\u00dflich Auskunft, Berichtigung, L\u00f6schung und Daten\u00fcbertragbarkeit.' },
+    ],
+  },
+  es: {
+    h1: 'Pol\u00edtica de privacidad',
+    metaTitle: 'Pol\u00edtica de privacidad | EuroSalary.eu',
+    metaDesc: 'Pol\u00edtica de privacidad de EuroSalary.eu. Usamos Plausible Analytics (sin cookies), no almacenamos datos personales de consultas salariales y cumplimos plenamente con el RGPD.',
+    home: 'Inicio',
+    breadcrumb: 'Privacidad',
+    lastUpdated: '\u00daltima actualizaci\u00f3n: abril de 2026',
+    controllerTitle: 'Responsable del tratamiento',
+    controllerBody: 'El responsable del tratamiento de este sitio web es EuroSalary.eu, con sede en Luxemburgo. Nos comprometemos a proteger su privacidad y a tratar cualquier dato personal de acuerdo con el Reglamento General de Protecci\u00f3n de Datos (RGPD) y la legislaci\u00f3n luxemburguesa de protecci\u00f3n de datos aplicable. Como servicio con sede en Luxemburgo, estamos bajo la supervisi\u00f3n de la Commission Nationale pour la Protection des Donn\u00e9es (CNPD).',
+    collectTitle: 'Datos que recopilamos',
+    collectBody: 'Mantenemos la recolecci\u00f3n de datos en un m\u00ednimo absoluto. Si se suscribe a nuestro bolet\u00edn, almacenamos su direcci\u00f3n de correo electr\u00f3nico, que es procesada por Resend, nuestro socio de env\u00edo de correos. Si env\u00eda un informe salarial an\u00f3nimo a trav\u00e9s de nuestro formulario de contribuci\u00f3n, el env\u00edo contiene solo el t\u00edtulo del puesto, pa\u00eds, rango salarial y a\u00f1os de experiencia \u2014 no se recopila ni almacena informaci\u00f3n de identificaci\u00f3n personal (IIP). Los env\u00edos salariales se almacenan en Supabase (Fr\u00e1ncfort, regi\u00f3n UE). Para las anal\u00edticas del sitio web, utilizamos Plausible Analytics, una herramienta de an\u00e1lisis orientada a la privacidad y sin cookies que no recopila datos personales. Plausible no usa cookies, no rastrea usuarios entre sitios y es totalmente compatible con el RGPD sin necesidad de banner de consentimiento.',
+    notCollectTitle: 'Datos que NO recopilamos',
+    notCollectBody: 'Queremos ser expl\u00edcitos sobre lo que no recopilamos. No recopilamos su nombre, n\u00fameros de identificaci\u00f3n gubernamental, ubicaci\u00f3n f\u00edsica exacta ni direcciones IP con fines anal\u00edticos. Plausible Analytics procesa datos de p\u00e1ginas vistas sin almacenar direcciones IP de visitantes. No creamos perfiles de usuario, no realizamos campa\u00f1as de retargeting y no vendemos ni compartimos datos con anunciantes. Los env\u00edos salariales son completamente an\u00f3nimos por dise\u00f1o \u2014 no hay sistema de cuentas, no se requiere inicio de sesi\u00f3n y no hay forma de rastrear un env\u00edo hasta un individuo.',
+    thirdPartyTitle: 'Servicios de terceros',
+    thirdPartyBody: 'Trabajamos con un conjunto cuidadosamente seleccionado de servicios de terceros, todos elegidos por sus pr\u00e1cticas de privacidad y cumplimiento europeo. Plausible Analytics proporciona anal\u00edticas web sin cookies y compatibles con el RGPD, con todos los datos procesados en la UE. Resend gestiona el env\u00edo de correos del bolet\u00edn y act\u00faa como encargado del tratamiento en la UE. Supabase aloja nuestra base de datos en la regi\u00f3n de Fr\u00e1ncfort (UE) con cifrado en reposo y en tr\u00e1nsito. Cloudflare Pages sirve nuestro sitio web est\u00e1tico a trav\u00e9s de su CDN global, proporcionando rendimiento y protecci\u00f3n DDoS. Ninguno de estos servicios coloca cookies de seguimiento en su dispositivo ni recopila datos personales m\u00e1s all\u00e1 de lo estrictamente necesario para su funci\u00f3n.',
+    rightsTitle: 'Sus derechos bajo el RGPD',
+    rightsBody: 'Bajo el Reglamento General de Protecci\u00f3n de Datos, usted tiene derecho de acceso a cualquier dato personal que tengamos sobre usted, derecho de rectificaci\u00f3n de datos inexactos, derecho de supresi\u00f3n (derecho al olvido), derecho a la portabilidad de datos, derecho a la limitaci\u00f3n del tratamiento y derecho de oposici\u00f3n al tratamiento. Si se ha suscrito a nuestro bolet\u00edn y desea ejercer alguno de estos derechos, cont\u00e1ctenos en la direcci\u00f3n indicada a continuaci\u00f3n. Tambi\u00e9n tiene derecho a presentar una reclamaci\u00f3n ante su autoridad de control nacional o ante la CNPD en Luxemburgo si considera que se han vulnerado sus derechos de protecci\u00f3n de datos.',
+    contactTitle: 'Contacto',
+    contactBody: 'Para cualquier pregunta relacionada con la privacidad, solicitudes de acceso a datos o para ejercer sus derechos RGPD, cont\u00e1ctenos en:',
+    cookieTitle: 'Pol\u00edtica de cookies',
+    cookieBody: 'EuroSalary.eu no utiliza cookies. Nuestro proveedor de anal\u00edticas, Plausible Analytics, es completamente sin cookies y no almacena ninguna informaci\u00f3n en su dispositivo. Como no colocamos cookies, no se necesita banner de consentimiento de cookies. Si esto cambiara en el futuro, actualizaremos esta pol\u00edtica e implementaremos mecanismos de consentimiento adecuados antes de que se despliegue cualquier cookie.',
+    tldr: [
+      'Sin cookies — Analytics Cloudflare sin cookies',
+      'Cero datos personales en consultas salariales',
+      'Conforme al RGPD, supervisado por CNPD Luxemburgo',
+    ],
+    faq: [
+      { question: '\u00bfEuroSalary utiliza cookies?', answer: 'No. EuroSalary utiliza Cloudflare Web Analytics, que funciona completamente sin cookies. Sin cookies de seguimiento, sin cookies de sesi\u00f3n, y no se necesita banner de consentimiento porque nada se almacena en su dispositivo.' },
+      { question: '\u00bfQu\u00e9 datos personales recopila EuroSalary?', answer: 'Pr\u00e1cticamente ninguno. Si se suscribe a nuestro bolet\u00edn, almacenamos su direcci\u00f3n de correo electr\u00f3nico. Los env\u00edos salariales son completamente an\u00f3nimos \u2014 contienen solo el t\u00edtulo del puesto, pa\u00eds, rango salarial y nivel de experiencia. Nunca recopilamos nombres, direcciones IP o n\u00fameros de identificaci\u00f3n.' },
+      { question: '\u00bfC\u00f3mo puedo eliminar mis datos de EuroSalary?', answer: 'Env\u00edenos un correo electr\u00f3nico a hello@eurosalary.eu con su solicitud. Si est\u00e1 suscrito al bolet\u00edn, eliminaremos su direcci\u00f3n de correo. Los env\u00edos salariales son an\u00f3nimos y no pueden rastrearse hasta individuos, por lo que no hay nada que eliminar.' },
+      { question: '\u00bfD\u00f3nde se almacenan los datos de EuroSalary?', answer: 'Nuestra base de datos est\u00e1 alojada en Supabase en Fr\u00e1ncfort, Alemania (regi\u00f3n UE) con cifrado en reposo y en tr\u00e1nsito. Nuestro sitio web se sirve a trav\u00e9s de Cloudflare Pages con procesamiento de datos en la UE. Toda la infraestructura est\u00e1 basada en la UE.' },
+      { question: '\u00bfEuroSalary cumple con el RGPD?', answer: 'S\u00ed. EuroSalary tiene su sede en Luxemburgo y est\u00e1 bajo la supervisi\u00f3n de la Commission Nationale pour la Protection des Donn\u00e9es (CNPD). Utilizamos anal\u00edticas sin cookies, recopilamos datos m\u00ednimos y respetamos plenamente todos los derechos del RGPD, incluidos el acceso, la rectificaci\u00f3n, la supresi\u00f3n y la portabilidad de datos.' },
+    ],
+  },
+};
+
+// --------------- getStaticPaths ---------------
+const langs = Object.keys(languages);
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+  }));
+}
+
+// --------------- Page data ---------------
+const { lang } = Astro.params;
+const t = fb(i18n, lang);
+const ui = useTranslations(lang as any);
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: t.h1,
+    description: t.metaDesc,
+    url: `https://eurosalary.eu/${lang}/privacy/`,
+    inLanguage: lang,
+    dateModified: '2026-04-01',
+    publisher: {
+      '@type': 'Organization',
+      name: 'EuroSalary.eu',
+      url: 'https://eurosalary.eu',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: t.faq.map((item: any) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title={t.metaTitle}
+  description={t.metaDesc}
+  dateModified="2026-04-01"
+  schema={pageSchema}
+>
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{t.home}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{t.breadcrumb}</span>
+      </nav>
+      <div class="page-hero__grid page-hero__grid--full">
+        <div class="page-hero__content">
+          <h1 class="page-hero__title">{ui('hero.privacy.title1')}<br/><span class="page-hero__accent">{ui('hero.privacy.title2')}</span></h1>
+          <p class="page-hero__desc">{ui('hero.privacy.desc')}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <article class="container page-body">
+    <TLDRBox items={t.tldr} />
+
+    <p class="privacy-page__updated">{t.lastUpdated}</p>
+
+    <!-- Data Controller -->
+    <section class="section">
+      <h2>{t.controllerTitle}</h2>
+      <p>{t.controllerBody}</p>
+    </section>
+
+    <!-- Data We Collect -->
+    <section class="section">
+      <h2>{t.collectTitle}</h2>
+      <p>{t.collectBody}</p>
+    </section>
+
+    <!-- Data We Do NOT Collect -->
+    <section class="section">
+      <h2>{t.notCollectTitle}</h2>
+      <p>{t.notCollectBody}</p>
+    </section>
+
+    <!-- Third-Party Services -->
+    <section class="section">
+      <h2>{t.thirdPartyTitle}</h2>
+      <p>{t.thirdPartyBody}</p>
+    </section>
+
+    <!-- Your Rights -->
+    <section class="section">
+      <h2>{t.rightsTitle}</h2>
+      <p>{t.rightsBody}</p>
+    </section>
+
+    <!-- Contact -->
+    <section class="section">
+      <h2>{t.contactTitle}</h2>
+      <p>{t.contactBody}</p>
+      <p class="privacy-page__email">
+        <a href="mailto:hello@eurosalary.eu">hello@eurosalary.eu</a>
+      </p>
+    </section>
+
+    <!-- Cookie Policy -->
+    <section class="section">
+      <h2>{t.cookieTitle}</h2>
+      <p>{t.cookieBody}</p>
+    </section>
+
+    <FAQSection items={t.faq} />
+  </article>
+</BaseLayout>
+
+<style>
+  .page-body {
+    padding-top: 2.5rem;
+    padding-bottom: 4rem;
+  }
+  .page-body h2 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em;
+    color: #0F1F3D; margin-top: 3rem; margin-bottom: 1rem;
+  }
+
+  .privacy-page__updated {
+    font-size: var(--text-sm);
+    color: var(--color-text-tertiary, #6b7280);
+    margin-bottom: var(--space-8);
+  }
+
+  .privacy-page__email {
+    font-size: var(--text-lg);
+    font-weight: 600;
+  }
+
+  .privacy-page__email a {
+    color: var(--color-primary, #2563eb);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

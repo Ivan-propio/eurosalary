@@ -1,0 +1,1009 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { countrySlugsByLang, countryFlags } from '../../../data/slugs';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+import { countryNames, uiLabels } from '../../../i18n/translations';
+
+// --------------- Transparency data per country ---------------
+const transparencyData: Record<string, { status: 'implemented' | 'in-progress' | 'pending'; deadline: string; keyRules: string[]; penalties: string; genderGap: number; reportingThreshold: string }> = {
+  DE: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Companies 250+ must report gender pay gaps', 'Employees can request pay info for comparable roles', 'Works councils involved in compliance'], penalties: 'Up to \u20AC500K', genderGap: 18.0, reportingThreshold: '250+ employees' },
+  FR: { status: 'implemented', deadline: 'Already active', keyRules: ['Index \u00e9galit\u00e9 professionnelle since 2019', 'Companies 50+ publish gender equality score', 'Mandatory corrective action if score < 75/100'], penalties: 'Up to 1% of payroll', genderGap: 15.8, reportingThreshold: '50+ employees' },
+  ES: { status: 'implemented', deadline: 'Already active', keyRules: ['Salary audit required for companies 50+', 'Equal pay register mandatory', 'Gender equality plan required'], penalties: 'Up to \u20AC225K', genderGap: 12.2, reportingThreshold: '50+ employees' },
+  NL: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Bill pending in parliament', 'Focus on pay gap reporting', 'Certification system planned'], penalties: 'TBD', genderGap: 13.5, reportingThreshold: '250+ employees' },
+  BE: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Existing gender pay analysis every 2 years', 'New directive extends requirements', 'Social partners involved'], penalties: 'TBD', genderGap: 5.3, reportingThreshold: '50+ employees' },
+  IT: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Law 162/2021 requires equal pay certification', 'Companies 50+ report gender statistics', 'Tax incentives for certified companies'], penalties: 'Loss of public contracts', genderGap: 5.0, reportingThreshold: '50+ employees' },
+  PT: { status: 'implemented', deadline: 'Already active', keyRules: ['Law 60/2018 requires salary transparency', 'Barometer of pay differences published annually', 'Companies must justify pay differences > 5%'], penalties: 'Up to \u20AC13K', genderGap: 11.9, reportingThreshold: '250+ employees' },
+  PL: { status: 'pending', deadline: 'Jun 2026', keyRules: ['Transposition not yet started', 'Expected to align with EU directive', 'Consultation phase in 2025'], penalties: 'TBD', genderGap: 4.5, reportingThreshold: 'TBD' },
+  SE: { status: 'implemented', deadline: 'Already active', keyRules: ['Annual pay survey required since 2009', 'All employers must map and analyze pay differences', 'Action plans required for unjustified gaps'], penalties: 'Discrimination damages', genderGap: 11.2, reportingThreshold: '10+ employees' },
+  AT: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Income report required for 150+ employees since 2011', 'New directive lowers threshold', 'Works council involvement required'], penalties: 'TBD', genderGap: 18.8, reportingThreshold: '150+ employees (dropping)' },
+  CH: { status: 'in-progress', deadline: 'N/A (non-EU)', keyRules: ['Federal Act on Gender Equality', 'Companies 100+ must conduct pay equity analysis', 'Not bound by EU directive but aligned'], penalties: 'Limited enforcement', genderGap: 17.7, reportingThreshold: '100+ employees' },
+  LU: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Positive Actions program exists', 'New legislation in preparation', 'Focus on private sector reporting'], penalties: 'TBD', genderGap: 0.7, reportingThreshold: 'TBD' },
+  IE: { status: 'implemented', deadline: 'Already active', keyRules: ['Gender Pay Gap Information Act 2021', 'Companies 150+ report since 2024', 'Threshold drops to 50+ by 2025'], penalties: 'Enforcement by WRC', genderGap: 9.6, reportingThreshold: '50+ employees' },
+  DK: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Gender-specific pay statistics since 2006', 'Companies 35+ report', 'New directive strengthens requirements'], penalties: 'TBD', genderGap: 13.9, reportingThreshold: '35+ employees' },
+  FI: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Equality Act requires pay surveys', 'Companies 30+ must have equality plan', 'New directive adds reporting requirements'], penalties: 'Discrimination compensation', genderGap: 16.5, reportingThreshold: '30+ employees' },
+};
+
+// --------------- Status display config ---------------
+const statusConfig: Record<string, { color: string; label: Record<string, string> }> = {
+  'implemented': {
+    color: '#22c55e',
+    label: { en: 'Implemented', fr: 'Mis en oeuvre', de: 'Umgesetzt', es: 'Implementado' },
+  },
+  'in-progress': {
+    color: '#eab308',
+    label: { en: 'In Progress', fr: 'En cours', de: 'In Bearbeitung', es: 'En progreso' },
+  },
+  'pending': {
+    color: '#ef4444',
+    label: { en: 'Pending', fr: 'En attente', de: 'Ausstehend', es: 'Pendiente' },
+  },
+};
+
+// --------------- i18n strings ---------------
+const i18n: Record<string, {
+  h1Template: string;
+  metaTitleTemplate: string;
+  metaDescTemplate: string;
+  home: string;
+  breadcrumb: string;
+  breadcrumbIndex: string;
+  tldrTemplates: string[];
+  introTemplate: string;
+  introImplementedTemplate: string;
+  introPendingTemplate: string;
+  statusTitle: string;
+  keyRulesTitle: string;
+  genderGapTitle: string;
+  genderGapEuAvg: string;
+  genderGapAbove: string;
+  genderGapBelow: string;
+  penaltiesTitle: string;
+  thresholdTitle: string;
+  timelineTitle: string;
+  timelineDirective: string;
+  timelineTranspose: string;
+  timelineReport250: string;
+  timelineReport150: string;
+  timelineReport100: string;
+  otherCountriesTitle: string;
+  otherCountriesIntro: string;
+  statusLabel: string;
+  deadlineLabel: string;
+  viewDetails: string;
+  faqTemplates: Array<{ q: string; a: string }>;
+}> = {
+  en: {
+    h1Template: 'Salary Transparency in {country}: What Employers Must Know in 2026',
+    metaTitleTemplate: 'Salary Transparency in {country} 2026: Rules, Penalties & Status | EuroSalary.eu',
+    metaDescTemplate: 'Complete guide to salary transparency rules in {country}. Current status: {status}. Gender pay gap: {gap}%. Reporting threshold, penalties, and employer obligations for 2026.',
+    home: 'Home',
+    breadcrumb: '{country}',
+    breadcrumbIndex: 'Salary Transparency',
+    tldrTemplates: [
+      '{country} transparency status: {status} \u2014 deadline: {deadline}',
+      'Gender pay gap stands at {gap}%, {gapComparison} the EU average of 12.7%',
+      'Reporting threshold: {threshold} | Penalties: {penalties}',
+    ],
+    introTemplate: '{country} is currently transposing the EU Pay Transparency Directive (2023/970) into national law. The directive requires salary ranges in job postings, bans salary history questions, and mandates gender pay gap reporting. Here is everything employers and workers in {country} need to know.',
+    introImplementedTemplate: '{country} is ahead of the curve on pay transparency. The country already has active legislation that meets or exceeds many requirements of the EU Pay Transparency Directive (2023/970). Here is a detailed look at the current rules, enforcement, and what changes may still come.',
+    introPendingTemplate: '{country} has not yet begun transposing the EU Pay Transparency Directive (2023/970) into national law, despite the June 2026 deadline. Employers should prepare for significant changes once the legislation is enacted. Here is what to expect.',
+    statusTitle: 'Current Status',
+    keyRulesTitle: 'Key Transparency Rules',
+    genderGapTitle: 'Gender Pay Gap',
+    genderGapEuAvg: 'EU average: 12.7%',
+    genderGapAbove: 'above the EU average \u2014 significant reforms needed',
+    genderGapBelow: 'below the EU average',
+    penaltiesTitle: 'Penalties for Non-Compliance',
+    thresholdTitle: 'Reporting Threshold',
+    timelineTitle: 'Implementation Timeline',
+    timelineDirective: 'EU Directive 2023/970 adopted',
+    timelineTranspose: 'Transposition deadline for all member states',
+    timelineReport250: 'Pay gap reporting starts: 250+ employees',
+    timelineReport150: 'Pay gap reporting extends: 150+ employees',
+    timelineReport100: 'Pay gap reporting extends: 100+ employees',
+    otherCountriesTitle: 'Compare With Other Countries',
+    otherCountriesIntro: 'See how other European countries are implementing the EU Pay Transparency Directive.',
+    statusLabel: 'Status',
+    deadlineLabel: 'Deadline',
+    viewDetails: 'View details',
+    faqTemplates: [
+      { q: 'What is the salary transparency status in {country}?', a: '{country}\'s transparency status is: {statusLabel}. The implementation deadline is {deadline}. Current key rules include: {firstRule}.' },
+      { q: 'What is the gender pay gap in {country}?', a: 'The gender pay gap in {country} is {gap}%, which is {gapComparison} the EU average of 12.7%. Under the EU directive, companies with gaps above 5% that cannot be justified must conduct joint pay assessments.' },
+      { q: 'What penalties do employers face in {country} for non-compliance?', a: 'In {country}, penalties for non-compliance with pay transparency rules are: {penalties}. The EU directive also entitles workers to full compensation for pay discrimination, including back pay and bonuses.' },
+      { q: 'Which companies must report gender pay gaps in {country}?', a: 'In {country}, the reporting threshold is {threshold}. Under the EU directive phase-in, companies with 250+ employees must report from 2027, 150+ from 2028, and 100+ from 2031.' },
+      { q: 'Do employers in {country} have to include salary ranges in job postings?', a: 'Once the EU directive is fully transposed, yes. All employers in {country} must include a salary range in job postings or communicate it before the first interview. They also cannot ask candidates about their salary history.' },
+    ],
+  },
+  fr: {
+    h1Template: 'Transparence salariale en {country} : ce que les employeurs doivent savoir en 2026',
+    metaTitleTemplate: 'Transparence salariale en {country} 2026 : r\u00e8gles, sanctions et statut | EuroSalary.eu',
+    metaDescTemplate: 'Guide complet de la transparence salariale en {country}. Statut actuel : {status}. \u00c9cart salarial : {gap}%. Seuil de d\u00e9claration, sanctions et obligations.',
+    home: 'Accueil',
+    breadcrumb: '{country}',
+    breadcrumbIndex: 'Transparence salariale',
+    tldrTemplates: [
+      'Statut de transparence de {country} : {status} \u2014 \u00e9ch\u00e9ance : {deadline}',
+      "\u00c9cart salarial de genre : {gap}%, {gapComparison} la moyenne UE de 12,7%",
+      'Seuil de d\u00e9claration : {threshold} | Sanctions : {penalties}',
+    ],
+    introTemplate: '{country} transpose actuellement la directive europ\u00e9enne sur la transparence salariale (2023/970) en droit national. La directive exige des fourchettes salariales dans les offres, interdit les questions sur l\'historique salarial et impose le reporting de l\'\u00e9cart salarial.',
+    introImplementedTemplate: '{country} est en avance sur la transparence salariale avec une l\u00e9gislation active qui r\u00e9pond \u00e0 de nombreuses exigences de la directive UE 2023/970. Voici un aper\u00e7u d\u00e9taill\u00e9 des r\u00e8gles actuelles.',
+    introPendingTemplate: '{country} n\'a pas encore commenc\u00e9 la transposition de la directive UE 2023/970 malgr\u00e9 la date limite de juin 2026. Les employeurs doivent se pr\u00e9parer \u00e0 des changements importants.',
+    statusTitle: 'Statut actuel',
+    keyRulesTitle: 'R\u00e8gles cl\u00e9s de transparence',
+    genderGapTitle: '\u00c9cart salarial de genre',
+    genderGapEuAvg: 'Moyenne UE : 12,7%',
+    genderGapAbove: 'au-dessus de la moyenne UE \u2014 des r\u00e9formes importantes sont n\u00e9cessaires',
+    genderGapBelow: 'en dessous de la moyenne UE',
+    penaltiesTitle: 'Sanctions pour non-conformit\u00e9',
+    thresholdTitle: 'Seuil de d\u00e9claration',
+    timelineTitle: 'Calendrier de mise en oeuvre',
+    timelineDirective: 'Directive UE 2023/970 adopt\u00e9e',
+    timelineTranspose: 'Date limite de transposition pour tous les \u00c9tats membres',
+    timelineReport250: 'Reporting des \u00e9carts salariaux : entreprises de 250+',
+    timelineReport150: 'Reporting \u00e9tendu : entreprises de 150+',
+    timelineReport100: 'Reporting \u00e9tendu : entreprises de 100+',
+    otherCountriesTitle: 'Comparer avec d\'autres pays',
+    otherCountriesIntro: 'D\u00e9couvrez comment d\'autres pays europ\u00e9ens mettent en oeuvre la directive.',
+    statusLabel: 'Statut',
+    deadlineLabel: '\u00c9ch\u00e9ance',
+    viewDetails: 'Voir les d\u00e9tails',
+    faqTemplates: [
+      { q: 'Quel est le statut de la transparence salariale en {country} ?', a: 'Le statut de transparence de {country} est : {statusLabel}. La date limite est {deadline}. Les r\u00e8gles cl\u00e9s incluent : {firstRule}.' },
+      { q: 'Quel est l\'\u00e9cart salarial de genre en {country} ?', a: 'L\'\u00e9cart salarial de genre en {country} est de {gap}%, soit {gapComparison} la moyenne UE de 12,7%. Les entreprises avec des \u00e9carts sup\u00e9rieurs \u00e0 5% doivent mener des \u00e9valuations conjointes.' },
+      { q: 'Quelles sanctions risquent les employeurs en {country} ?', a: 'En {country}, les sanctions pour non-conformit\u00e9 sont : {penalties}. La directive accorde \u00e9galement aux travailleurs le droit \u00e0 une indemnisation compl\u00e8te.' },
+      { q: 'Quelles entreprises doivent d\u00e9clarer l\'\u00e9cart salarial en {country} ?', a: 'En {country}, le seuil de d\u00e9claration est {threshold}. Selon la directive UE, les entreprises de 250+ rapportent d\u00e8s 2027, 150+ d\u00e8s 2028, et 100+ d\u00e8s 2031.' },
+      { q: 'Les employeurs en {country} doivent-ils indiquer les salaires dans les offres ?', a: 'Oui, une fois la directive transpos\u00e9e. Tous les employeurs doivent indiquer une fourchette salariale dans les offres ou avant le premier entretien. Ils ne peuvent pas demander l\'historique salarial.' },
+    ],
+  },
+  de: {
+    h1Template: 'Gehaltstransparenz in {country}: Was Arbeitgeber 2026 wissen m\u00fcssen',
+    metaTitleTemplate: 'Gehaltstransparenz in {country} 2026: Regeln, Strafen & Status | EuroSalary.eu',
+    metaDescTemplate: 'Leitfaden zur Gehaltstransparenz in {country}. Status: {status}. Gender Pay Gap: {gap}%. Meldeschwelle, Strafen und Pflichten f\u00fcr 2026.',
+    home: 'Startseite',
+    breadcrumb: '{country}',
+    breadcrumbIndex: 'Gehaltstransparenz',
+    tldrTemplates: [
+      'Transparenzstatus von {country}: {status} \u2014 Frist: {deadline}',
+      'Gender Pay Gap: {gap}%, {gapComparison} dem EU-Durchschnitt von 12,7%',
+      'Meldeschwelle: {threshold} | Strafen: {penalties}',
+    ],
+    introTemplate: '{country} setzt derzeit die EU-Gehaltstransparenzrichtlinie (2023/970) in nationales Recht um. Die Richtlinie verlangt Gehaltsspannen in Stellenanzeigen, verbietet Fragen zur Gehaltshistorie und schreibt Gender-Pay-Gap-Berichte vor.',
+    introImplementedTemplate: '{country} ist bei der Gehaltstransparenz bereits fortgeschritten. Das Land verf\u00fcgt \u00fcber aktive Gesetze, die viele Anforderungen der EU-Richtlinie 2023/970 erf\u00fcllen oder \u00fcbertreffen.',
+    introPendingTemplate: '{country} hat die Umsetzung der EU-Gehaltstransparenzrichtlinie (2023/970) trotz der Frist Juni 2026 noch nicht begonnen. Arbeitgeber sollten sich auf erhebliche \u00c4nderungen vorbereiten.',
+    statusTitle: 'Aktueller Status',
+    keyRulesTitle: 'Wichtigste Transparenzregeln',
+    genderGapTitle: 'Gender Pay Gap',
+    genderGapEuAvg: 'EU-Durchschnitt: 12,7%',
+    genderGapAbove: '\u00fcber dem EU-Durchschnitt \u2014 erhebliche Reformen erforderlich',
+    genderGapBelow: 'unter dem EU-Durchschnitt',
+    penaltiesTitle: 'Strafen bei Nichtkonformit\u00e4t',
+    thresholdTitle: 'Meldeschwelle',
+    timelineTitle: 'Zeitplan der Umsetzung',
+    timelineDirective: 'EU-Richtlinie 2023/970 angenommen',
+    timelineTranspose: 'Umsetzungsfrist f\u00fcr alle Mitgliedstaaten',
+    timelineReport250: 'Pay-Gap-Berichte starten: 250+ Mitarbeiter',
+    timelineReport150: 'Pay-Gap-Berichte erweitert: 150+ Mitarbeiter',
+    timelineReport100: 'Pay-Gap-Berichte erweitert: 100+ Mitarbeiter',
+    otherCountriesTitle: 'Mit anderen L\u00e4ndern vergleichen',
+    otherCountriesIntro: 'Sehen Sie, wie andere europ\u00e4ische L\u00e4nder die EU-Richtlinie umsetzen.',
+    statusLabel: 'Status',
+    deadlineLabel: 'Frist',
+    viewDetails: 'Details ansehen',
+    faqTemplates: [
+      { q: 'Wie ist der Transparenzstatus in {country}?', a: 'Der Transparenzstatus von {country} ist: {statusLabel}. Die Umsetzungsfrist ist {deadline}. Wichtige Regeln umfassen: {firstRule}.' },
+      { q: 'Wie hoch ist der Gender Pay Gap in {country}?', a: 'Der Gender Pay Gap in {country} betr\u00e4gt {gap}%, was {gapComparison} dem EU-Durchschnitt von 12,7% liegt. Unternehmen mit L\u00fccken \u00fcber 5% m\u00fcssen gemeinsame Bewertungen durchf\u00fchren.' },
+      { q: 'Welche Strafen drohen Arbeitgebern in {country}?', a: 'In {country} sind die Strafen: {penalties}. Die EU-Richtlinie gew\u00e4hrt Arbeitnehmern au\u00dferdem Anspruch auf vollst\u00e4ndige Entsch\u00e4digung.' },
+      { q: 'Welche Unternehmen m\u00fcssen in {country} berichten?', a: 'In {country} gilt die Meldeschwelle: {threshold}. Gem\u00e4\u00df EU-Richtlinie berichten Unternehmen ab 250 Mitarbeitern ab 2027, ab 150 ab 2028, ab 100 ab 2031.' },
+      { q: 'M\u00fcssen Arbeitgeber in {country} Gehaltsspannen in Anzeigen angeben?', a: 'Ja, nach vollst\u00e4ndiger Umsetzung. Alle Arbeitgeber m\u00fcssen Gehaltsspannen angeben und d\u00fcrfen nicht nach der Gehaltshistorie fragen.' },
+    ],
+  },
+  es: {
+    h1Template: 'Transparencia salarial en {country}: lo que los empleadores deben saber en 2026',
+    metaTitleTemplate: 'Transparencia salarial en {country} 2026: reglas, sanciones y estado | EuroSalary.eu',
+    metaDescTemplate: 'Gu\u00eda completa de transparencia salarial en {country}. Estado: {status}. Brecha salarial: {gap}%. Umbral de reporte, sanciones y obligaciones para 2026.',
+    home: 'Inicio',
+    breadcrumb: '{country}',
+    breadcrumbIndex: 'Transparencia salarial',
+    tldrTemplates: [
+      'Estado de transparencia de {country}: {status} \u2014 plazo: {deadline}',
+      'Brecha salarial de g\u00e9nero: {gap}%, {gapComparison} la media de la UE del 12,7%',
+      'Umbral de reporte: {threshold} | Sanciones: {penalties}',
+    ],
+    introTemplate: '{country} est\u00e1 transponiendo actualmente la directiva de transparencia salarial de la UE (2023/970) a la legislaci\u00f3n nacional. La directiva exige rangos salariales en ofertas de empleo, proh\u00edbe preguntas sobre historial salarial y exige informes de brecha salarial.',
+    introImplementedTemplate: '{country} va por delante en transparencia salarial con legislaci\u00f3n activa que cumple o supera muchos requisitos de la directiva UE 2023/970. Aqu\u00ed est\u00e1 el detalle de las reglas actuales.',
+    introPendingTemplate: '{country} a\u00fan no ha comenzado la transposici\u00f3n de la directiva UE 2023/970 a pesar del plazo de junio 2026. Los empleadores deben prepararse para cambios significativos.',
+    statusTitle: 'Estado actual',
+    keyRulesTitle: 'Reglas clave de transparencia',
+    genderGapTitle: 'Brecha salarial de g\u00e9nero',
+    genderGapEuAvg: 'Media UE: 12,7%',
+    genderGapAbove: 'por encima de la media de la UE \u2014 se necesitan reformas significativas',
+    genderGapBelow: 'por debajo de la media de la UE',
+    penaltiesTitle: 'Sanciones por incumplimiento',
+    thresholdTitle: 'Umbral de reporte',
+    timelineTitle: 'Cronograma de implementaci\u00f3n',
+    timelineDirective: 'Directiva UE 2023/970 adoptada',
+    timelineTranspose: 'Plazo de transposici\u00f3n para todos los Estados miembros',
+    timelineReport250: 'Informes de brecha salarial: empresas de 250+',
+    timelineReport150: 'Informes ampliados: empresas de 150+',
+    timelineReport100: 'Informes ampliados: empresas de 100+',
+    otherCountriesTitle: 'Comparar con otros pa\u00edses',
+    otherCountriesIntro: 'Vea c\u00f3mo otros pa\u00edses europeos implementan la directiva.',
+    statusLabel: 'Estado',
+    deadlineLabel: 'Plazo',
+    viewDetails: 'Ver detalles',
+    faqTemplates: [
+      { q: '\u00bfCu\u00e1l es el estado de la transparencia salarial en {country}?', a: 'El estado de transparencia de {country} es: {statusLabel}. El plazo es {deadline}. Las reglas clave incluyen: {firstRule}.' },
+      { q: '\u00bfCu\u00e1l es la brecha salarial de g\u00e9nero en {country}?', a: 'La brecha salarial en {country} es del {gap}%, lo que est\u00e1 {gapComparison} la media de la UE del 12,7%. Las empresas con brechas superiores al 5% deben realizar evaluaciones conjuntas.' },
+      { q: '\u00bfQu\u00e9 sanciones enfrentan los empleadores en {country}?', a: 'En {country}, las sanciones son: {penalties}. La directiva tambi\u00e9n otorga a los trabajadores derecho a indemnizaci\u00f3n completa.' },
+      { q: '\u00bfQu\u00e9 empresas deben reportar la brecha salarial en {country}?', a: 'En {country}, el umbral es {threshold}. Seg\u00fan la directiva UE, empresas de 250+ reportan desde 2027, 150+ desde 2028 y 100+ desde 2031.' },
+      { q: '\u00bfDeben los empleadores en {country} incluir salarios en las ofertas?', a: 'S\u00ed, una vez transpuesta la directiva. Todos los empleadores deben indicar un rango salarial y no pueden preguntar sobre el historial salarial.' },
+    ],
+  },
+};
+
+// --------------- getStaticPaths ---------------
+export function getStaticPaths() {
+  const paths: Array<{ params: { lang: string; country: string }; props: { countryCode: string; lang: string } }> = [];
+  for (const lang of Object.keys(languages)) {
+    const slugs = countrySlugsByLang[lang];
+    for (const [code, slug] of Object.entries(slugs)) {
+      paths.push({
+        params: { lang, country: slug },
+        props: { countryCode: code, lang },
+      });
+    }
+  }
+  return paths;
+}
+
+// --------------- Page props ---------------
+const { countryCode, lang } = Astro.props;
+const t = fb(i18n, lang);
+const data = transparencyData[countryCode];
+const countryName = fb(countryNames[countryCode], lang);
+const flag = countryFlags[countryCode];
+const slugs = countrySlugsByLang[lang] || countrySlugsByLang.en;
+const sc = statusConfig[data.status];
+const statusLabel = fb(sc.label, lang);
+const euAvgGap = 12.7;
+const gapAboveAvg = data.genderGap > euAvgGap;
+const gapComparison = gapAboveAvg ? t.genderGapAbove : t.genderGapBelow;
+
+// Build page strings
+const h1 = t.h1Template.replace(/{country}/g, countryName);
+const metaTitle = t.metaTitleTemplate.replace(/{country}/g, countryName).replace(/{status}/g, statusLabel).replace(/{gap}/g, String(data.genderGap));
+const metaDesc = t.metaDescTemplate.replace(/{country}/g, countryName).replace(/{status}/g, statusLabel).replace(/{gap}/g, String(data.genderGap));
+
+// Intro based on status
+let introText: string;
+if (data.status === 'implemented') {
+  introText = t.introImplementedTemplate.replace(/{country}/g, countryName);
+} else if (data.status === 'pending') {
+  introText = t.introPendingTemplate.replace(/{country}/g, countryName);
+} else {
+  introText = t.introTemplate.replace(/{country}/g, countryName);
+}
+
+// TL;DR items
+const tldrItems = t.tldrTemplates.map((tmpl: string) =>
+  tmpl
+    .replace(/{country}/g, countryName)
+    .replace(/{status}/g, statusLabel)
+    .replace(/{deadline}/g, data.deadline)
+    .replace(/{gap}/g, String(data.genderGap))
+    .replace(/{gapComparison}/g, gapAboveAvg
+      ? fb({ en: 'above', fr: 'au-dessus de', de: '\u00fcber', es: 'por encima de' }, lang)
+      : fb({ en: 'below', fr: 'en dessous de', de: 'unter', es: 'por debajo de' }, lang))
+    .replace(/{threshold}/g, data.reportingThreshold)
+    .replace(/{penalties}/g, data.penalties)
+);
+
+// FAQ items
+const faqItems = t.faqTemplates.map((tmpl: { q: string; a: string }) => ({
+  question: tmpl.q.replace(/{country}/g, countryName),
+  answer: tmpl.a
+    .replace(/{country}/g, countryName)
+    .replace(/{statusLabel}/g, statusLabel)
+    .replace(/{deadline}/g, data.deadline)
+    .replace(/{gap}/g, String(data.genderGap))
+    .replace(/{gapComparison}/g, gapAboveAvg
+      ? fb({ en: 'above', fr: 'au-dessus de', de: '\u00fcber', es: 'por encima de' }, lang)
+      : fb({ en: 'below', fr: 'en dessous de', de: 'unter', es: 'por debajo de' }, lang))
+    .replace(/{penalties}/g, data.penalties)
+    .replace(/{threshold}/g, data.reportingThreshold)
+    .replace(/{firstRule}/g, data.keyRules[0]),
+}));
+
+// Other countries for cross-linking
+const allCountries = Object.keys(transparencyData).filter((c) => c !== countryCode);
+const otherCountryNames: Record<string, string> = Object.fromEntries(
+  Object.keys(countryNames).map((code) => [code, fb(countryNames[code], lang)])
+);
+
+// Schema
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: h1,
+    author: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    datePublished: '2026-03-20',
+    dateModified: '2026-04-04',
+    description: metaDesc,
+    mainEntityOfPage: `https://eurosalary.eu/${lang}/salary-transparency/${slugs[countryCode]}/`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: { '@type': 'Answer', text: item.answer },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title={metaTitle}
+  description={metaDesc}
+  datePublished="2026-03-20"
+  dateModified="2026-04-04"
+  schema={pageSchema}
+>
+  <!-- Hero -->
+  <section class="country-hero">
+    <div class="country-hero__bg-icon">
+      <span class="material-symbols-outlined">gavel</span>
+    </div>
+    <div class="container country-hero__inner">
+      <nav class="country-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{t.home}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a href={`/${lang}/salary-transparency/`}>{t.breadcrumbIndex}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="country-hero__breadcrumbs-current">{countryName}</span>
+      </nav>
+
+      <div class="country-hero__grid">
+        <div class="country-hero__content">
+          <div class="country-hero__badge">
+            <span class="country-hero__flag">{flag}</span>
+            <span class="country-hero__badge-text">{t.breadcrumbIndex}</span>
+          </div>
+          <h1 class="country-hero__title">{h1}</h1>
+          <p class="country-hero__desc">{introText}</p>
+        </div>
+
+        <div class="country-hero__stats">
+          <div class="country-hero__stat-card">
+            <span class="country-hero__stat-label">{t.statusTitle}</span>
+            <div class="country-hero__stat-badge" style={`background: ${sc.color}15; color: ${sc.color}; border: 2px solid ${sc.color}40`}>
+              {statusLabel}
+            </div>
+          </div>
+          <div class="country-hero__stat-card">
+            <span class="country-hero__stat-label">{t.genderGapTitle}</span>
+            <div class="country-hero__stat-value">{data.genderGap}%</div>
+            <span class="country-hero__stat-note">{t.genderGapEuAvg}</span>
+          </div>
+          <div class="country-hero__stat-card">
+            <span class="country-hero__stat-label">{t.deadlineLabel}</span>
+            <div class="country-hero__stat-value stat-value--small">{data.deadline}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <article class="container tp-body">
+    <TLDRBox items={tldrItems} />
+
+    <!-- Key Rules -->
+    <section class="tp-section">
+      <h2 class="tp-section__title">
+        <span class="material-symbols-outlined tp-section__icon">checklist</span>
+        {t.keyRulesTitle}
+      </h2>
+      <ul class="tp-rules-list">
+        {data.keyRules.map((rule) => (
+          <li class="tp-rules-list__item">
+            <span class="material-symbols-outlined tp-rules-list__check">check_circle</span>
+            <span>{rule}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Gender Pay Gap -->
+    <section class="tp-section">
+      <h2 class="tp-section__title">
+        <span class="material-symbols-outlined tp-section__icon">equalizer</span>
+        {t.genderGapTitle}
+      </h2>
+      <div class="tp-gap-card">
+        <div class="tp-gap-card__header">
+          <div class="tp-gap-card__value">{data.genderGap}%</div>
+          <div class="tp-gap-card__comparison">
+            <span class={`tp-gap-card__arrow ${gapAboveAvg ? 'tp-gap-card__arrow--up' : 'tp-gap-card__arrow--down'}`}>
+              {gapAboveAvg ? '\u25B2' : '\u25BC'}
+            </span>
+            <span>{gapComparison}</span>
+          </div>
+        </div>
+        <div class="tp-gap-card__bar-container">
+          <div class="tp-gap-card__bar-track">
+            <div class="tp-gap-card__bar-fill" style={`width: ${Math.min((data.genderGap / 25) * 100, 100)}%`}></div>
+            <div class="tp-gap-card__bar-marker" style={`left: ${(euAvgGap / 25) * 100}%`} title={t.genderGapEuAvg}></div>
+          </div>
+          <div class="tp-gap-card__bar-labels">
+            <span>0%</span>
+            <span class="tp-gap-card__bar-avg">{t.genderGapEuAvg}</span>
+            <span>25%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reporting Threshold & Penalties -->
+    <div class="tp-two-col">
+      <section class="tp-section tp-info-card">
+        <h2 class="tp-section__title">
+          <span class="material-symbols-outlined tp-section__icon">business</span>
+          {t.thresholdTitle}
+        </h2>
+        <div class="tp-info-card__value">{data.reportingThreshold}</div>
+        <p class="tp-info-card__note">
+          {fb({
+            en: 'Companies at or above this threshold must report gender pay gap data under current or upcoming rules.',
+            fr: 'Les entreprises atteignant ce seuil doivent d\u00e9clarer l\'\u00e9cart salarial selon les r\u00e8gles actuelles ou \u00e0 venir.',
+            de: 'Unternehmen ab dieser Schwelle m\u00fcssen den Gender Pay Gap gem\u00e4\u00df aktuellen oder kommenden Regeln melden.',
+            es: 'Las empresas que alcanzan este umbral deben reportar la brecha salarial seg\u00fan las reglas actuales o pr\u00f3ximas.',
+          }, lang)}
+        </p>
+      </section>
+
+      <section class="tp-section tp-info-card">
+        <h2 class="tp-section__title">
+          <span class="material-symbols-outlined tp-section__icon">gavel</span>
+          {t.penaltiesTitle}
+        </h2>
+        <div class="tp-info-card__value tp-info-card__value--penalty">{data.penalties}</div>
+        <p class="tp-info-card__note">
+          {fb({
+            en: 'Workers who suffer pay discrimination are also entitled to full compensation under the EU directive, including back pay.',
+            fr: 'Les travailleurs victimes de discrimination salariale ont \u00e9galement droit \u00e0 une indemnisation compl\u00e8te en vertu de la directive UE.',
+            de: 'Arbeitnehmer, die von Gehaltsdiskriminierung betroffen sind, haben gem\u00e4\u00df EU-Richtlinie Anspruch auf vollst\u00e4ndige Entsch\u00e4digung.',
+            es: 'Los trabajadores v\u00edctimas de discriminaci\u00f3n salarial tambi\u00e9n tienen derecho a indemnizaci\u00f3n completa seg\u00fan la directiva UE.',
+          }, lang)}
+        </p>
+      </section>
+    </div>
+
+    <!-- Implementation Timeline -->
+    <section class="tp-section">
+      <h2 class="tp-section__title">
+        <span class="material-symbols-outlined tp-section__icon">timeline</span>
+        {t.timelineTitle}
+      </h2>
+      <div class="tp-timeline">
+        <div class="tp-timeline__item tp-timeline__item--past">
+          <div class="tp-timeline__dot"></div>
+          <div class="tp-timeline__content">
+            <span class="tp-timeline__date">May 2023</span>
+            <span class="tp-timeline__text">{t.timelineDirective}</span>
+          </div>
+        </div>
+        <div class="tp-timeline__item tp-timeline__item--upcoming">
+          <div class="tp-timeline__dot"></div>
+          <div class="tp-timeline__content">
+            <span class="tp-timeline__date">Jun 2026</span>
+            <span class="tp-timeline__text">{t.timelineTranspose}</span>
+          </div>
+        </div>
+        <div class="tp-timeline__item tp-timeline__item--future">
+          <div class="tp-timeline__dot"></div>
+          <div class="tp-timeline__content">
+            <span class="tp-timeline__date">Jun 2027</span>
+            <span class="tp-timeline__text">{t.timelineReport250}</span>
+          </div>
+        </div>
+        <div class="tp-timeline__item tp-timeline__item--future">
+          <div class="tp-timeline__dot"></div>
+          <div class="tp-timeline__content">
+            <span class="tp-timeline__date">Jun 2028</span>
+            <span class="tp-timeline__text">{t.timelineReport150}</span>
+          </div>
+        </div>
+        <div class="tp-timeline__item tp-timeline__item--future">
+          <div class="tp-timeline__dot"></div>
+          <div class="tp-timeline__content">
+            <span class="tp-timeline__date">Jun 2031</span>
+            <span class="tp-timeline__text">{t.timelineReport100}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Other Countries -->
+    <section class="tp-section">
+      <h2 class="tp-section__title">
+        <span class="material-symbols-outlined tp-section__icon">public</span>
+        {t.otherCountriesTitle}
+      </h2>
+      <p class="tp-text">{t.otherCountriesIntro}</p>
+      <div class="tp-other-grid">
+        {allCountries.map((code) => {
+          const oSlug = slugs[code] || countrySlugsByLang.en[code];
+          const oName = otherCountryNames[code] || countryNames[code]?.en;
+          const oFlag = countryFlags[code];
+          const oData = transparencyData[code];
+          const oSc = statusConfig[oData.status];
+          const oStatusLabel = fb(oSc.label, lang);
+          return (
+            <a href={`/${lang}/salary-transparency/${oSlug}/`} class="tp-other-card">
+              <span class="tp-other-card__flag">{oFlag}</span>
+              <span class="tp-other-card__name">{oName}</span>
+              <span class="tp-other-card__status" style={`color: ${oSc.color}`}>{oStatusLabel}</span>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+
+    <!-- Internal Links -->
+    <section class="tp-section">
+      <div class="tp-internal-links">
+        <a href={`/${lang}/salary-transparency/`} class="tp-internal-link">
+          <span class="material-symbols-outlined">arrow_back</span>
+          {fb({ en: 'All Countries', fr: 'Tous les pays', de: 'Alle L\u00e4nder', es: 'Todos los pa\u00edses' }, lang)}
+        </a>
+        <a href={`/${lang}/country/${slugs[countryCode]}/`} class="tp-internal-link">
+          <span class="material-symbols-outlined">payments</span>
+          {fb({ en: `Salaries in ${countryName}`, fr: `Salaires en ${countryName}`, de: `Geh\u00e4lter in ${countryName}`, es: `Salarios en ${countryName}` }, lang)}
+        </a>
+        <a href={`/${lang}/premium/`} class="tp-internal-link tp-internal-link--cta">
+          <span class="material-symbols-outlined">workspace_premium</span>
+          {fb({ en: 'Get Detailed Reports', fr: 'Obtenir des rapports d\u00e9taill\u00e9s', de: 'Detaillierte Berichte erhalten', es: 'Obtener informes detallados' }, lang)}
+        </a>
+      </div>
+    </section>
+
+    <FAQSection items={faqItems} />
+  </article>
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .country-hero {
+    position: relative;
+    background: linear-gradient(135deg, #0F1F3D 0%, #1a2e54 100%);
+    padding: 2.5rem 0 3rem;
+    overflow: hidden;
+  }
+  .country-hero__bg-icon {
+    position: absolute;
+    right: -40px;
+    top: -20px;
+    opacity: 0.04;
+    font-size: 280px;
+    color: #fff;
+    pointer-events: none;
+  }
+  .country-hero__inner {
+    position: relative;
+    z-index: 1;
+  }
+  .country-hero__breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 1.5rem;
+  }
+  .country-hero__breadcrumbs a {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+  }
+  .country-hero__breadcrumbs a:hover {
+    color: #fff;
+  }
+  .country-hero__breadcrumbs .material-symbols-outlined {
+    font-size: 14px;
+  }
+  .country-hero__breadcrumbs-current {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+  }
+  .country-hero__grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 2.5rem;
+    align-items: start;
+  }
+  @media (max-width: 768px) {
+    .country-hero__grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+  .country-hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 99px;
+    padding: 0.35rem 1rem 0.35rem 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .country-hero__flag {
+    font-size: 1.3rem;
+  }
+  .country-hero__badge-text {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.7);
+  }
+  .country-hero__title {
+    font-family: 'Public Sans', sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+  .country-hero__desc {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.7);
+    max-width: 600px;
+  }
+  .country-hero__stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .country-hero__stat-card {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .country-hero__stat-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .country-hero__stat-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+  .stat-value--small {
+    font-size: 1.25rem;
+  }
+  .country-hero__stat-badge {
+    display: inline-flex;
+    align-self: flex-start;
+    padding: 0.35rem 1rem;
+    border-radius: 99px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .country-hero__stat-note {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  /* Body */
+  .tp-body {
+    padding-top: 2.5rem;
+    padding-bottom: 4rem;
+  }
+  .tp-section {
+    margin-top: 2.5rem;
+  }
+  .tp-section__title {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #0F1F3D;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .tp-section__icon {
+    font-size: 24px;
+    color: #2563eb;
+  }
+  .tp-text {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #334155;
+    margin-bottom: 1rem;
+  }
+
+  /* Key Rules */
+  .tp-rules-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .tp-rules-list__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #1e293b;
+  }
+  .tp-rules-list__check {
+    color: #22c55e;
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Gender Gap Card */
+  .tp-gap-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .tp-gap-card__header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .tp-gap-card__value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #0F1F3D;
+    letter-spacing: -0.03em;
+  }
+  .tp-gap-card__comparison {
+    font-size: 0.9rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .tp-gap-card__arrow--up {
+    color: #ef4444;
+  }
+  .tp-gap-card__arrow--down {
+    color: #22c55e;
+  }
+  .tp-gap-card__bar-container {
+    margin-top: 0.5rem;
+  }
+  .tp-gap-card__bar-track {
+    position: relative;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: visible;
+  }
+  .tp-gap-card__bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #22c55e, #eab308, #ef4444);
+    border-radius: 4px;
+  }
+  .tp-gap-card__bar-marker {
+    position: absolute;
+    top: -4px;
+    width: 2px;
+    height: 16px;
+    background: #0F1F3D;
+    border-radius: 1px;
+  }
+  .tp-gap-card__bar-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.35rem;
+    font-size: 0.7rem;
+    color: #94a3b8;
+  }
+  .tp-gap-card__bar-avg {
+    font-weight: 600;
+    color: #0F1F3D;
+  }
+
+  /* Two Column */
+  .tp-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+  @media (max-width: 640px) {
+    .tp-two-col {
+      grid-template-columns: 1fr;
+    }
+  }
+  .tp-info-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 0;
+  }
+  .tp-info-card__value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0F1F3D;
+    margin-bottom: 0.5rem;
+  }
+  .tp-info-card__value--penalty {
+    color: #ef4444;
+  }
+  .tp-info-card__note {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #64748b;
+  }
+
+  /* Timeline */
+  .tp-timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+  .tp-timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: #e2e8f0;
+  }
+  .tp-timeline__item {
+    position: relative;
+    padding-bottom: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+  }
+  .tp-timeline__item:last-child {
+    padding-bottom: 0;
+  }
+  .tp-timeline__dot {
+    position: absolute;
+    left: -2rem;
+    top: 4px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 3px solid #e2e8f0;
+    background: #fff;
+    z-index: 1;
+  }
+  .tp-timeline__item--past .tp-timeline__dot {
+    background: #22c55e;
+    border-color: #22c55e;
+  }
+  .tp-timeline__item--upcoming .tp-timeline__dot {
+    background: #eab308;
+    border-color: #eab308;
+  }
+  .tp-timeline__item--future .tp-timeline__dot {
+    background: #fff;
+    border-color: #cbd5e1;
+  }
+  .tp-timeline__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .tp-timeline__date {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+  }
+  .tp-timeline__text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  /* Other countries grid */
+  .tp-other-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+  .tp-other-card {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #0F1F3D;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .tp-other-card:hover {
+    border-color: #2563eb;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+  }
+  .tp-other-card__flag {
+    font-size: 1.2rem;
+  }
+  .tp-other-card__name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    flex: 1;
+  }
+  .tp-other-card__status {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  /* Internal Links */
+  .tp-internal-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+  .tp-internal-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.65rem 1.1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-decoration: none;
+    background: #f1f5f9;
+    color: #0F1F3D;
+    transition: background 0.2s;
+  }
+  .tp-internal-link:hover {
+    background: #e2e8f0;
+  }
+  .tp-internal-link--cta {
+    background: #2563eb;
+    color: #fff;
+  }
+  .tp-internal-link--cta:hover {
+    background: #1d4ed8;
+  }
+  .tp-internal-link .material-symbols-outlined {
+    font-size: 18px;
+  }
+</style>

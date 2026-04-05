@@ -1,0 +1,503 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// --------------- i18n strings ---------------
+const i18n: Record<string, {
+  h1: string;
+  metaTitle: string;
+  metaDesc: string;
+  home: string;
+  breadcrumb: string;
+  introAnswer: string;
+  tldr: string[];
+  howItWorksTitle: string;
+  steps: { num: string; title: string; desc: string; icon: string }[];
+  alertTypesTitle: string;
+  alertTypes: { title: string; desc: string; icon: string }[];
+  configTitle: string;
+  configDesc: string;
+  selectCountryLabel: string;
+  selectCountryPlaceholder: string;
+  selectJobLabel: string;
+  selectJobPlaceholder: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  frequencyLabel: string;
+  frequencyWeekly: string;
+  frequencyMonthly: string;
+  submitLabel: string;
+  pricingTitle: string;
+  pricingDesc: string;
+  tiers: { name: string; price: string; features: string[]; highlight?: boolean }[];
+  faq: { question: string; answer: string }[];
+}> = {
+  en: {
+    h1: 'How Can Salary Alerts Help You Stay Ahead of the Market?',
+    metaTitle: 'Salary Alerts: Real-Time European Salary Notifications | EuroSalary.eu',
+    metaDesc: 'Set up personalised salary alerts for 15 European countries and 21 job categories. Get notified when market rates shift, new Eurostat data drops, or tax laws change.',
+    home: 'Home',
+    breadcrumb: 'Salary Alerts',
+    introAnswer: 'EuroSalary salary alerts notify you the moment European salary data changes for your role, country, or industry. Stop checking manually and let verified data come to you, so you can negotiate better, hire smarter, and plan ahead.',
+    tldr: [
+      'Personalised alerts for salary changes, new Eurostat data, and policy updates across 15 EU countries',
+      'Choose from four alert types: salary shifts, new data, country policy changes, and job market thresholds',
+      'Free tier includes one alert; Pro unlocks unlimited alerts with weekly or monthly delivery',
+    ],
+    howItWorksTitle: 'How It Works',
+    steps: [
+      { num: '1', title: 'Set Your Criteria', desc: 'Pick your country, job category, and preferred notification frequency. Our system creates a personalised monitoring profile tailored to your career or hiring needs.', icon: 'tune' },
+      { num: '2', title: 'We Monitor the Market', desc: 'Our data pipeline scans Eurostat releases, job boards, policy changes, and anonymous submissions around the clock. When something matches your criteria, we flag it.', icon: 'monitoring' },
+      { num: '3', title: 'Get Notified Instantly', desc: 'Receive a concise email summary with the exact data change, historical context, and a direct link to the updated EuroSalary page. No noise, only actionable insights.', icon: 'notifications_active' },
+    ],
+    alertTypesTitle: 'Alert Types',
+    alertTypes: [
+      { title: 'Salary Change Alerts', desc: 'Triggered when market rates shift more than 5% for your selected role and country combination. Includes direction of change, percentage delta, and comparison to the previous quarter.', icon: 'trending_up' },
+      { title: 'New Data Alerts', desc: 'Sent whenever fresh Eurostat or OECD salary data is published for your tracked countries. Be the first to see updated official figures before they hit mainstream news.', icon: 'dataset' },
+      { title: 'Country Alerts', desc: 'Covers changes in minimum wage legislation, income tax rates, social security contributions, and EU Pay Transparency Directive transposition deadlines for your selected countries.', icon: 'flag' },
+      { title: 'Job Market Alerts', desc: 'Fires when new job postings in your tracked category exceed historical thresholds, signalling increased demand. Includes posting volume, salary range trends, and top hiring locations.', icon: 'work' },
+    ],
+    configTitle: 'Configure Your Alert',
+    configDesc: 'Set up your first salary alert in under 30 seconds. Choose your criteria below and we will start monitoring immediately.',
+    selectCountryLabel: 'Country',
+    selectCountryPlaceholder: 'Select a country',
+    selectJobLabel: 'Job Category',
+    selectJobPlaceholder: 'Select a job category',
+    emailLabel: 'Email Address',
+    emailPlaceholder: 'you@example.com',
+    frequencyLabel: 'Frequency',
+    frequencyWeekly: 'Weekly',
+    frequencyMonthly: 'Monthly',
+    submitLabel: 'Create Alert',
+    pricingTitle: 'Pricing',
+    pricingDesc: 'Start free with one alert. Upgrade to Pro for unlimited monitoring across all countries and job categories.',
+    tiers: [
+      { name: 'Free', price: '\u20ac0', features: ['1 salary alert', 'Monthly delivery', 'Salary change alerts only', 'Email notifications'] },
+      { name: 'Pro', price: '\u20ac4.99/mo', features: ['Unlimited alerts', 'Weekly or monthly delivery', 'All 4 alert types', 'Priority email delivery', 'Historical trend context'], highlight: true },
+    ],
+    faq: [
+      { question: 'How quickly will I receive an alert after data changes?', answer: 'Salary change and job market alerts are processed within 24 hours of our data pipeline detecting a qualifying change. New data alerts are sent within 4 hours of Eurostat or OECD publication. Country policy alerts are curated by our research team and typically delivered within 48 hours of an official announcement.' },
+      { question: 'Can I set alerts for multiple countries and jobs at once?', answer: 'Free users can configure one alert covering one country and one job category. Pro users can create unlimited alerts spanning any combination of the 15 supported countries and 21 job categories, each with independent frequency settings.' },
+      { question: 'What counts as a 5% salary shift for Salary Change Alerts?', answer: 'We compare the current rolling 3-month median salary for a country-job pair against the previous quarter median. If the absolute percentage change exceeds 5%, the alert triggers. This threshold filters out normal fluctuations while catching meaningful market movements.' },
+      { question: 'Will I receive too many emails if I create many alerts?', answer: 'No. We batch alerts into a single digest email per delivery cycle (weekly or monthly). Even if you track 15 countries, you receive one organised email per period, not 15 separate messages. Each section is clearly labelled by country and alert type.' },
+      { question: 'Can I change or cancel my alerts at any time?', answer: 'Yes. Every alert email includes a one-click management link that lets you edit criteria, change frequency, pause, or permanently delete any alert. You can also manage all alerts from your EuroSalary dashboard if you have a Pro account.' },
+    ],
+  },
+  fr: {
+    h1: 'Comment les alertes salariales peuvent-elles vous aider a anticiper le marche ?',
+    metaTitle: 'Alertes Salariales : notifications en temps reel sur les salaires europeens | EuroSalary.eu',
+    metaDesc: 'Configurez des alertes salariales personnalisees pour 15 pays europeens et 21 categories d\'emploi. Soyez notifie quand les taux du marche changent ou que de nouvelles donnees Eurostat sont publiees.',
+    home: 'Accueil',
+    breadcrumb: 'Alertes Salariales',
+    introAnswer: 'Les alertes salariales EuroSalary vous notifient des que les donnees salariales europeennes changent pour votre poste, pays ou secteur. Arretez de verifier manuellement et laissez les donnees verifiees venir a vous pour mieux negocier, recruter plus efficacement et planifier.',
+    tldr: [
+      'Alertes personnalisees pour les changements de salaires, nouvelles donnees Eurostat et mises a jour de politique dans 15 pays de l\'UE',
+      'Quatre types d\'alertes : variations salariales, nouvelles donnees, changements politiques par pays et seuils du marche de l\'emploi',
+      'L\'offre gratuite comprend une alerte ; Pro donne acces a des alertes illimitees en livraison hebdomadaire ou mensuelle',
+    ],
+    howItWorksTitle: 'Comment ca fonctionne',
+    steps: [
+      { num: '1', title: 'Definissez vos criteres', desc: 'Choisissez votre pays, categorie d\'emploi et frequence de notification preferee. Notre systeme cree un profil de surveillance personnalise adapte a vos besoins de carriere ou de recrutement.', icon: 'tune' },
+      { num: '2', title: 'Nous surveillons le marche', desc: 'Notre pipeline de donnees analyse les publications Eurostat, les sites d\'emploi, les changements de politique et les soumissions anonymes en continu. Quand quelque chose correspond a vos criteres, nous le signalons.', icon: 'monitoring' },
+      { num: '3', title: 'Recevez une notification', desc: 'Recevez un email concis avec le changement exact, le contexte historique et un lien direct vers la page EuroSalary mise a jour. Aucun bruit, uniquement des informations exploitables.', icon: 'notifications_active' },
+    ],
+    alertTypesTitle: 'Types d\'alertes',
+    alertTypes: [
+      { title: 'Alertes de variation salariale', desc: 'Declenchees lorsque les taux du marche varient de plus de 5 % pour votre combinaison poste-pays. Inclut la direction du changement, le delta en pourcentage et la comparaison avec le trimestre precedent.', icon: 'trending_up' },
+      { title: 'Alertes nouvelles donnees', desc: 'Envoyees chaque fois que de nouvelles donnees salariales Eurostat ou OCDE sont publiees pour vos pays suivis. Soyez le premier a voir les chiffres officiels mis a jour.', icon: 'dataset' },
+      { title: 'Alertes pays', desc: 'Couvrent les changements de salaire minimum, taux d\'imposition, cotisations sociales et echeances de transposition de la directive sur la transparence salariale pour vos pays selectionnes.', icon: 'flag' },
+      { title: 'Alertes marche de l\'emploi', desc: 'Declenchees quand les nouvelles offres d\'emploi dans votre categorie depassent les seuils historiques, signalant une demande accrue. Inclut le volume d\'offres et les tendances salariales.', icon: 'work' },
+    ],
+    configTitle: 'Configurez votre alerte',
+    configDesc: 'Creez votre premiere alerte salariale en moins de 30 secondes. Choisissez vos criteres ci-dessous et nous commencerons la surveillance immediatement.',
+    selectCountryLabel: 'Pays',
+    selectCountryPlaceholder: 'Selectionnez un pays',
+    selectJobLabel: 'Categorie d\'emploi',
+    selectJobPlaceholder: 'Selectionnez une categorie',
+    emailLabel: 'Adresse email',
+    emailPlaceholder: 'vous@exemple.com',
+    frequencyLabel: 'Frequence',
+    frequencyWeekly: 'Hebdomadaire',
+    frequencyMonthly: 'Mensuelle',
+    submitLabel: 'Creer l\'alerte',
+    pricingTitle: 'Tarification',
+    pricingDesc: 'Commencez gratuitement avec une alerte. Passez a Pro pour une surveillance illimitee de tous les pays et categories d\'emploi.',
+    tiers: [
+      { name: 'Gratuit', price: '\u20ac0', features: ['1 alerte salariale', 'Livraison mensuelle', 'Alertes de variation salariale uniquement', 'Notifications par email'] },
+      { name: 'Pro', price: '\u20ac4,99/mois', features: ['Alertes illimitees', 'Livraison hebdomadaire ou mensuelle', 'Les 4 types d\'alertes', 'Livraison email prioritaire', 'Contexte historique des tendances'], highlight: true },
+    ],
+    faq: [
+      { question: 'Combien de temps faut-il pour recevoir une alerte apres un changement de donnees ?', answer: 'Les alertes de variation salariale et de marche de l\'emploi sont traitees dans les 24 heures suivant la detection d\'un changement qualifiant. Les alertes de nouvelles donnees sont envoyees dans les 4 heures suivant la publication Eurostat ou OCDE. Les alertes pays sont curees par notre equipe et generalement livrees dans les 48 heures.' },
+      { question: 'Puis-je configurer des alertes pour plusieurs pays et emplois a la fois ?', answer: 'Les utilisateurs gratuits peuvent configurer une alerte couvrant un pays et une categorie d\'emploi. Les utilisateurs Pro peuvent creer des alertes illimitees couvrant toute combinaison des 15 pays et 21 categories d\'emploi supportes.' },
+      { question: 'Qu\'est-ce qui constitue une variation salariale de 5 % ?', answer: 'Nous comparons le salaire median glissant sur 3 mois pour une paire pays-emploi avec le median du trimestre precedent. Si le changement en pourcentage absolu depasse 5 %, l\'alerte se declenche.' },
+      { question: 'Vais-je recevoir trop d\'emails si je cree beaucoup d\'alertes ?', answer: 'Non. Nous regroupons les alertes dans un seul email digest par cycle de livraison (hebdomadaire ou mensuel). Meme si vous suivez 15 pays, vous recevez un seul email organise par periode.' },
+      { question: 'Puis-je modifier ou annuler mes alertes a tout moment ?', answer: 'Oui. Chaque email d\'alerte inclut un lien de gestion en un clic qui vous permet de modifier les criteres, changer la frequence, mettre en pause ou supprimer definitivement toute alerte.' },
+    ],
+  },
+  de: {
+    h1: 'Wie konnen Gehaltsalarme Ihnen helfen, dem Markt voraus zu sein?',
+    metaTitle: 'Gehaltsalarme: Echtzeit-Benachrichtigungen zu europaischen Gehaltern | EuroSalary.eu',
+    metaDesc: 'Richten Sie personalisierte Gehaltsalarme fur 15 europaische Lander und 21 Berufskategorien ein. Werden Sie benachrichtigt, wenn sich Marktraten andern oder neue Eurostat-Daten erscheinen.',
+    home: 'Startseite',
+    breadcrumb: 'Gehaltsalarme',
+    introAnswer: 'EuroSalary-Gehaltsalarme benachrichtigen Sie, sobald sich europaische Gehaltsdaten fur Ihre Rolle, Ihr Land oder Ihre Branche andern. Horen Sie auf, manuell zu prufen, und lassen Sie verifizierte Daten zu Ihnen kommen.',
+    tldr: [
+      'Personalisierte Alarme fur Gehaltsanderungen, neue Eurostat-Daten und politische Updates in 15 EU-Landern',
+      'Vier Alarmtypen: Gehaltsverschiebungen, neue Daten, Landerpolitik-Anderungen und Arbeitsmarkt-Schwellenwerte',
+      'Kostenlose Stufe enthalt einen Alarm; Pro schaltet unbegrenzte Alarme mit wochentlicher oder monatlicher Zustellung frei',
+    ],
+    howItWorksTitle: 'So funktioniert es',
+    steps: [
+      { num: '1', title: 'Kriterien festlegen', desc: 'Wahlen Sie Ihr Land, Ihre Berufskategorie und bevorzugte Benachrichtigungsfrequenz. Unser System erstellt ein personalisiertes Uberwachungsprofil.', icon: 'tune' },
+      { num: '2', title: 'Wir uberwachen den Markt', desc: 'Unsere Datenpipeline scannt Eurostat-Veroffentlichungen, Jobborsen, Politikanderungen und anonyme Einreichungen rund um die Uhr.', icon: 'monitoring' },
+      { num: '3', title: 'Sofort benachrichtigt werden', desc: 'Erhalten Sie eine ubersichtliche E-Mail mit der genauen Datenanderung, historischem Kontext und einem direkten Link zur aktualisierten EuroSalary-Seite.', icon: 'notifications_active' },
+    ],
+    alertTypesTitle: 'Alarmtypen',
+    alertTypes: [
+      { title: 'Gehaltsanderungs-Alarme', desc: 'Werden ausgelost, wenn sich Marktraten um mehr als 5 % fur Ihre ausgewahlte Rollen-Land-Kombination verschieben. Enthalt Anderungsrichtung, Prozent-Delta und Quartalsvergleich.', icon: 'trending_up' },
+      { title: 'Neue-Daten-Alarme', desc: 'Werden gesendet, wenn neue Eurostat- oder OECD-Gehaltsdaten fur Ihre verfolgten Lander veroffentlicht werden.', icon: 'dataset' },
+      { title: 'Lander-Alarme', desc: 'Umfassen Anderungen bei Mindestlohn, Einkommensteuersatzen, Sozialversicherungsbeitragen und Umsetzungsfristen der EU-Gehaltstransparenz-Richtlinie.', icon: 'flag' },
+      { title: 'Arbeitsmarkt-Alarme', desc: 'Werden ausgelost, wenn neue Stellenausschreibungen in Ihrer verfolgten Kategorie historische Schwellenwerte uberschreiten, was auf erhohte Nachfrage hinweist.', icon: 'work' },
+    ],
+    configTitle: 'Alarm konfigurieren',
+    configDesc: 'Richten Sie Ihren ersten Gehaltsalarm in unter 30 Sekunden ein. Wahlen Sie Ihre Kriterien unten und wir beginnen sofort mit der Uberwachung.',
+    selectCountryLabel: 'Land',
+    selectCountryPlaceholder: 'Land auswahlen',
+    selectJobLabel: 'Berufskategorie',
+    selectJobPlaceholder: 'Kategorie auswahlen',
+    emailLabel: 'E-Mail-Adresse',
+    emailPlaceholder: 'sie@beispiel.de',
+    frequencyLabel: 'Haufigkeit',
+    frequencyWeekly: 'Wochentlich',
+    frequencyMonthly: 'Monatlich',
+    submitLabel: 'Alarm erstellen',
+    pricingTitle: 'Preise',
+    pricingDesc: 'Starten Sie kostenlos mit einem Alarm. Upgraden Sie auf Pro fur unbegrenzte Uberwachung aller Lander und Berufskategorien.',
+    tiers: [
+      { name: 'Kostenlos', price: '\u20ac0', features: ['1 Gehaltsalarm', 'Monatliche Zustellung', 'Nur Gehaltsanderungs-Alarme', 'E-Mail-Benachrichtigungen'] },
+      { name: 'Pro', price: '\u20ac4,99/Monat', features: ['Unbegrenzte Alarme', 'Wochentliche oder monatliche Zustellung', 'Alle 4 Alarmtypen', 'Prioritats-E-Mail-Zustellung', 'Historischer Trendkontext'], highlight: true },
+    ],
+    faq: [
+      { question: 'Wie schnell erhalte ich einen Alarm nach Datenanderungen?', answer: 'Gehaltsanderungs- und Arbeitsmarkt-Alarme werden innerhalb von 24 Stunden verarbeitet. Neue-Daten-Alarme werden innerhalb von 4 Stunden nach Eurostat- oder OECD-Veroffentlichung gesendet. Lander-Alarme werden innerhalb von 48 Stunden nach offizieller Ankundigung zugestellt.' },
+      { question: 'Kann ich Alarme fur mehrere Lander und Berufe gleichzeitig einrichten?', answer: 'Kostenlose Nutzer konnen einen Alarm fur ein Land und eine Berufskategorie konfigurieren. Pro-Nutzer konnen unbegrenzte Alarme fur beliebige Kombinationen der 15 unterstutzten Lander und 21 Berufskategorien erstellen.' },
+      { question: 'Was zahlt als 5%-Gehaltsverschiebung?', answer: 'Wir vergleichen das aktuelle gleitende 3-Monats-Mediangehalt fur ein Land-Beruf-Paar mit dem Median des Vorquartals. Ubersteigt die absolute prozentuale Anderung 5 %, wird der Alarm ausgelost.' },
+      { question: 'Erhalte ich zu viele E-Mails bei vielen Alarmen?', answer: 'Nein. Wir bundeln Alarme in einer einzigen Digest-E-Mail pro Zustellungszyklus. Selbst bei 15 verfolgten Landern erhalten Sie eine organisierte E-Mail pro Zeitraum.' },
+      { question: 'Kann ich meine Alarme jederzeit andern oder kundigen?', answer: 'Ja. Jede Alarm-E-Mail enthalt einen Ein-Klick-Verwaltungslink zum Bearbeiten, Pausieren oder dauerhaften Loschen. Pro-Nutzer konnen alle Alarme uber ihr Dashboard verwalten.' },
+    ],
+  },
+  es: {
+    h1: 'Como pueden las alertas salariales ayudarle a anticiparse al mercado?',
+    metaTitle: 'Alertas Salariales: notificaciones en tiempo real sobre salarios europeos | EuroSalary.eu',
+    metaDesc: 'Configure alertas salariales personalizadas para 15 paises europeos y 21 categorias de empleo. Reciba notificaciones cuando cambien las tasas del mercado o se publiquen nuevos datos de Eurostat.',
+    home: 'Inicio',
+    breadcrumb: 'Alertas Salariales',
+    introAnswer: 'Las alertas salariales de EuroSalary le notifican en cuanto los datos salariales europeos cambian para su puesto, pais o sector. Deje de verificar manualmente y permita que los datos verificados lleguen a usted para negociar mejor y planificar con anticipacion.',
+    tldr: [
+      'Alertas personalizadas para cambios salariales, nuevos datos de Eurostat y actualizaciones de politicas en 15 paises de la UE',
+      'Cuatro tipos de alertas: variaciones salariales, nuevos datos, cambios de politica por pais y umbrales del mercado laboral',
+      'El nivel gratuito incluye una alerta; Pro desbloquea alertas ilimitadas con entrega semanal o mensual',
+    ],
+    howItWorksTitle: 'Como funciona',
+    steps: [
+      { num: '1', title: 'Defina sus criterios', desc: 'Elija su pais, categoria de empleo y frecuencia de notificacion preferida. Nuestro sistema crea un perfil de monitoreo personalizado adaptado a sus necesidades.', icon: 'tune' },
+      { num: '2', title: 'Monitoreamos el mercado', desc: 'Nuestro pipeline de datos analiza publicaciones de Eurostat, bolsas de empleo, cambios de politica y envios anonimos continuamente.', icon: 'monitoring' },
+      { num: '3', title: 'Reciba la notificacion', desc: 'Reciba un email conciso con el cambio exacto, contexto historico y un enlace directo a la pagina actualizada de EuroSalary. Sin ruido, solo informacion accionable.', icon: 'notifications_active' },
+    ],
+    alertTypesTitle: 'Tipos de alertas',
+    alertTypes: [
+      { title: 'Alertas de cambio salarial', desc: 'Se activan cuando las tasas del mercado varian mas del 5 % para su combinacion de puesto y pais. Incluye direccion del cambio, delta porcentual y comparacion trimestral.', icon: 'trending_up' },
+      { title: 'Alertas de nuevos datos', desc: 'Se envian cada vez que se publican nuevos datos salariales de Eurostat u OCDE para sus paises rastreados.', icon: 'dataset' },
+      { title: 'Alertas de pais', desc: 'Cubren cambios en salario minimo, tasas impositivas, cotizaciones sociales y plazos de transposicion de la Directiva de Transparencia Salarial.', icon: 'flag' },
+      { title: 'Alertas del mercado laboral', desc: 'Se activan cuando las nuevas ofertas de empleo en su categoria superan los umbrales historicos, senalando un aumento de la demanda.', icon: 'work' },
+    ],
+    configTitle: 'Configure su alerta',
+    configDesc: 'Cree su primera alerta salarial en menos de 30 segundos. Elija sus criterios abajo y comenzaremos el monitoreo inmediatamente.',
+    selectCountryLabel: 'Pais',
+    selectCountryPlaceholder: 'Seleccione un pais',
+    selectJobLabel: 'Categoria de empleo',
+    selectJobPlaceholder: 'Seleccione una categoria',
+    emailLabel: 'Correo electronico',
+    emailPlaceholder: 'usted@ejemplo.com',
+    frequencyLabel: 'Frecuencia',
+    frequencyWeekly: 'Semanal',
+    frequencyMonthly: 'Mensual',
+    submitLabel: 'Crear alerta',
+    pricingTitle: 'Precios',
+    pricingDesc: 'Comience gratis con una alerta. Actualice a Pro para monitoreo ilimitado de todos los paises y categorias de empleo.',
+    tiers: [
+      { name: 'Gratuito', price: '\u20ac0', features: ['1 alerta salarial', 'Entrega mensual', 'Solo alertas de cambio salarial', 'Notificaciones por email'] },
+      { name: 'Pro', price: '\u20ac4,99/mes', features: ['Alertas ilimitadas', 'Entrega semanal o mensual', 'Los 4 tipos de alertas', 'Entrega de email prioritaria', 'Contexto historico de tendencias'], highlight: true },
+    ],
+    faq: [
+      { question: 'Cuanto tarda en llegar una alerta despues de un cambio de datos?', answer: 'Las alertas de cambio salarial y mercado laboral se procesan en 24 horas. Las alertas de nuevos datos se envian en 4 horas tras la publicacion de Eurostat u OCDE. Las alertas de pais se entregan generalmente en 48 horas tras un anuncio oficial.' },
+      { question: 'Puedo configurar alertas para varios paises y empleos a la vez?', answer: 'Los usuarios gratuitos pueden configurar una alerta para un pais y una categoria de empleo. Los usuarios Pro pueden crear alertas ilimitadas para cualquier combinacion de los 15 paises y 21 categorias soportados.' },
+      { question: 'Que cuenta como una variacion salarial del 5 %?', answer: 'Comparamos el salario mediano movil de 3 meses para un par pais-empleo con el mediano del trimestre anterior. Si el cambio porcentual absoluto supera el 5 %, se activa la alerta.' },
+      { question: 'Recibire demasiados correos si creo muchas alertas?', answer: 'No. Agrupamos las alertas en un unico email digest por ciclo de entrega. Incluso si rastrea 15 paises, recibira un solo email organizado por periodo.' },
+      { question: 'Puedo modificar o cancelar mis alertas en cualquier momento?', answer: 'Si. Cada email de alerta incluye un enlace de gestion con un clic para editar, pausar o eliminar permanentemente cualquier alerta. Los usuarios Pro pueden gestionar todas las alertas desde su panel.' },
+    ],
+  },
+};
+
+const c = fb(i18n, lang);
+
+const countries = [
+  { code: 'DE', en: 'Germany', fr: 'Allemagne', de: 'Deutschland', es: 'Alemania' },
+  { code: 'FR', en: 'France', fr: 'France', de: 'Frankreich', es: 'Francia' },
+  { code: 'NL', en: 'Netherlands', fr: 'Pays-Bas', de: 'Niederlande', es: 'Paises Bajos' },
+  { code: 'BE', en: 'Belgium', fr: 'Belgique', de: 'Belgien', es: 'Belgica' },
+  { code: 'LU', en: 'Luxembourg', fr: 'Luxembourg', de: 'Luxemburg', es: 'Luxemburgo' },
+  { code: 'AT', en: 'Austria', fr: 'Autriche', de: 'Osterreich', es: 'Austria' },
+  { code: 'IE', en: 'Ireland', fr: 'Irlande', de: 'Irland', es: 'Irlanda' },
+  { code: 'ES', en: 'Spain', fr: 'Espagne', de: 'Spanien', es: 'Espana' },
+  { code: 'IT', en: 'Italy', fr: 'Italie', de: 'Italien', es: 'Italia' },
+  { code: 'PT', en: 'Portugal', fr: 'Portugal', de: 'Portugal', es: 'Portugal' },
+  { code: 'FI', en: 'Finland', fr: 'Finlande', de: 'Finnland', es: 'Finlandia' },
+  { code: 'SE', en: 'Sweden', fr: 'Suede', de: 'Schweden', es: 'Suecia' },
+  { code: 'DK', en: 'Denmark', fr: 'Danemark', de: 'Danemark', es: 'Dinamarca' },
+  { code: 'PL', en: 'Poland', fr: 'Pologne', de: 'Polen', es: 'Polonia' },
+  { code: 'CZ', en: 'Czech Republic', fr: 'Republique tcheque', de: 'Tschechien', es: 'Republica Checa' },
+];
+
+const jobs = [
+  'Software Engineer', 'Data Scientist', 'Product Manager', 'UX Designer',
+  'DevOps Engineer', 'Marketing Manager', 'Sales Manager', 'Financial Analyst',
+  'Human Resources Manager', 'Project Manager', 'Business Analyst', 'Accountant',
+  'Mechanical Engineer', 'Electrical Engineer', 'Civil Engineer', 'Nurse',
+  'Teacher', 'Pharmacist', 'Architect', 'Lawyer', 'Consultant',
+];
+
+// --------------- Schema ---------------
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: c.h1,
+  description: c.metaDesc,
+  url: `https://eurosalary.eu/${lang}/alerts/`,
+  inLanguage: lang,
+  datePublished: '2026-04-04',
+  dateModified: '2026-04-04',
+  author: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+  publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu', logo: { '@type': 'ImageObject', url: 'https://eurosalary.eu/logo.svg' } },
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: c.faq.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer },
+  })),
+};
+---
+
+<BaseLayout
+  title={c.metaTitle}
+  description={c.metaDesc}
+  datePublished="2026-04-04"
+  dateModified="2026-04-04"
+  schema={[articleSchema, faqSchema]}
+>
+  <!-- Hero -->
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{c.home}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{c.breadcrumb}</span>
+      </nav>
+      <h1 class="page-hero__title">{c.h1}</h1>
+      <p class="page-hero__desc">{c.introAnswer}</p>
+    </div>
+  </section>
+
+  <div class="container page-body">
+    <!-- TL;DR -->
+    <TLDRBox items={c.tldr} />
+
+    <!-- How It Works -->
+    <section class="section">
+      <h2>{c.howItWorksTitle}</h2>
+      <div class="steps-grid">
+        {c.steps.map((step) => (
+          <div class="step-card">
+            <div class="step-card__num">{step.num}</div>
+            <span class="material-symbols-outlined step-card__icon">{step.icon}</span>
+            <h3>{step.title}</h3>
+            <p>{step.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Alert Types -->
+    <section class="section">
+      <h2>{c.alertTypesTitle}</h2>
+      <div class="alert-types-grid">
+        {c.alertTypes.map((at) => (
+          <div class="alert-type-card">
+            <span class="material-symbols-outlined alert-type-card__icon">{at.icon}</span>
+            <h3>{at.title}</h3>
+            <p>{at.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Configuration Form -->
+    <section class="section">
+      <h2>{c.configTitle}</h2>
+      <p class="section-desc">{c.configDesc}</p>
+      <form class="alert-form" id="alertForm">
+        <div class="alert-form__row">
+          <div class="alert-form__field">
+            <label for="alertCountry">{c.selectCountryLabel}</label>
+            <select id="alertCountry" name="country" required>
+              <option value="" disabled selected>{c.selectCountryPlaceholder}</option>
+              {countries.map((country) => (
+                <option value={country.code}>{fb(country, lang)}</option>
+              ))}
+            </select>
+          </div>
+          <div class="alert-form__field">
+            <label for="alertJob">{c.selectJobLabel}</label>
+            <select id="alertJob" name="job" required>
+              <option value="" disabled selected>{c.selectJobPlaceholder}</option>
+              {jobs.map((job) => (
+                <option value={job}>{job}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div class="alert-form__row">
+          <div class="alert-form__field">
+            <label for="alertEmail">{c.emailLabel}</label>
+            <input type="email" id="alertEmail" name="email" placeholder={c.emailPlaceholder} required />
+          </div>
+          <div class="alert-form__field">
+            <label for="alertFreq">{c.frequencyLabel}</label>
+            <select id="alertFreq" name="frequency" required>
+              <option value="weekly">{c.frequencyWeekly}</option>
+              <option value="monthly">{c.frequencyMonthly}</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="alert-form__submit">{c.submitLabel}</button>
+      </form>
+    </section>
+
+    <!-- Pricing -->
+    <section class="section">
+      <h2>{c.pricingTitle}</h2>
+      <p class="section-desc">{c.pricingDesc}</p>
+      <div class="pricing-grid">
+        {c.tiers.map((tier) => (
+          <div class:list={['pricing-card', { 'pricing-card--highlight': tier.highlight }]}>
+            <h3 class="pricing-card__name">{tier.name}</h3>
+            <div class="pricing-card__price">{tier.price}</div>
+            <ul class="pricing-card__features">
+              {tier.features.map((f) => (
+                <li><span class="material-symbols-outlined">check_circle</span>{f}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <FAQSection items={c.faq} />
+  </div>
+</BaseLayout>
+
+<style>
+  .page-body { padding: 2.5rem 0 4rem; }
+  .page-body h2 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em;
+    color: #0F1F3D; margin-top: 2.5rem; margin-bottom: 1rem;
+  }
+  .section { margin-bottom: 3rem; }
+  .section-desc { color: #4b5563; margin-bottom: 1.5rem; line-height: 1.7; }
+
+  /* Steps */
+  .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+  .step-card {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+    padding: 2rem; position: relative; text-align: center;
+  }
+  .step-card__num {
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #2563EB; color: #fff; font-weight: 800; font-size: 0.875rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-card__icon { font-size: 2rem; color: #2563EB; margin-bottom: 0.5rem; }
+  .step-card h3 { font-size: 1.125rem; font-weight: 700; color: #0F1F3D; margin-bottom: 0.5rem; }
+  .step-card p { font-size: 0.9rem; color: #4b5563; line-height: 1.6; }
+
+  /* Alert Types */
+  .alert-types-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+  .alert-type-card {
+    background: #0F1F3D; border-radius: 12px; padding: 2rem; color: #fff;
+  }
+  .alert-type-card__icon { font-size: 2rem; color: #2563EB; margin-bottom: 0.75rem; display: block; }
+  .alert-type-card h3 { font-size: 1.125rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .alert-type-card p { font-size: 0.9rem; color: rgba(255, 255, 255, 0.8); line-height: 1.6; }
+
+  /* Form */
+  .alert-form {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+    padding: 2rem; max-width: 640px;
+  }
+  .alert-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  @media (max-width: 600px) { .alert-form__row { grid-template-columns: 1fr; } }
+  .alert-form__field label {
+    display: block; font-size: 0.8rem; font-weight: 700; color: #0F1F3D;
+    margin-bottom: 0.375rem; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .alert-form__field select,
+  .alert-form__field input {
+    width: 100%; padding: 0.625rem 0.75rem; border: 1px solid #d1d5db; border-radius: 8px;
+    font-size: 0.9rem; background: #fff; color: #0F1F3D;
+  }
+  .alert-form__submit {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 0.75rem 2rem; background: #2563EB; color: #fff;
+    border: none; border-radius: 8px; font-size: 1rem; font-weight: 700;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .alert-form__submit:hover { background: #1d4ed8; }
+
+  /* Pricing */
+  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+  .pricing-card {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+    padding: 2rem; text-align: center;
+  }
+  .pricing-card--highlight { background: #0F1F3D; color: #fff; border-color: #2563EB; }
+  .pricing-card__name { font-size: 1.25rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .pricing-card--highlight .pricing-card__name { color: #fff; }
+  .pricing-card__price { font-size: 2rem; font-weight: 800; color: #2563EB; margin-bottom: 1.25rem; }
+  .pricing-card__features { list-style: none; padding: 0; text-align: left; }
+  .pricing-card__features li {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.9rem; padding: 0.375rem 0; color: inherit;
+  }
+  .pricing-card__features li .material-symbols-outlined { font-size: 1.125rem; color: #2563EB; }
+  .pricing-card--highlight .pricing-card__features li { color: rgba(255, 255, 255, 0.9); }
+</style>

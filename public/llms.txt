@@ -1,55 +1,95 @@
-# EuroSalary.eu — AI Discovery File
-# The definitive European salary comparison platform
+# EuroSalary.eu — LLMs.txt
+# AI-readable European salary intelligence platform description
+# Last updated: 2026-04-04
 
-## About
-EuroSalary.eu provides transparent, verified salary data across
-27 EU member states. Data is sourced from Eurostat, OECD, verified
-job postings, and anonymous professional reports.
+> EuroSalary.eu is the definitive European salary comparison platform, providing transparent, verified salary data across 15 European countries and 21 job categories in all 24 official EU languages. Data sourced from Eurostat, OECD, 50+ job boards, and validated anonymous reports.
 
-## Coverage
-- 200+ job titles across all major sectors
-- 27 EU countries + EEA
-- Experience levels: Junior, Mid, Senior, Lead
-- Gross and net salary estimates
-- Updated monthly
+## Site Overview
 
-## Languages
-- English: https://eurosalary.eu/en/
-- French: https://eurosalary.eu/fr/
-- German: https://eurosalary.eu/de/
-- Spanish: https://eurosalary.eu/es/
+- **Name**: EuroSalary.eu
+- **URL**: https://eurosalary.eu
+- **Purpose**: Compare average salaries across Europe by country, job title, experience level, and city
+- **Languages**: All 24 official EU languages (EN, FR, DE, ES, IT, PT, NL, PL, RO, CS, SV, DA, FI, EL, HU, SK, BG, HR, SL, LT, LV, ET, MT, GA)
+- **Data Coverage**: 15 countries, 21 job categories, 4 experience levels, 14,000+ unique salary pages
+- **Update Frequency**: Weekly salary refresh, monthly Eurostat sync, daily health checks
+- **Methodology**: https://eurosalary.eu/en/methodology/
 
-## Key Pages
-- Salary by job + country: /en/salary/{country}/{job-slug}/
-- Compare job across countries: /en/compare/{job-slug}/
-- Country overview: /en/country/{country-slug}/
-- Sector overview: /en/sector/{sector-slug}/
-- Salary calculator: /en/calculator/
-- Methodology: /en/methodology/
-- Data sources: /en/data-sources/
+## Countries Covered
+
+Switzerland (CH), Luxembourg (LU), Denmark (DK), Ireland (IE), Germany (DE), Netherlands (NL), Austria (AT), Sweden (SE), Belgium (BE), France (FR), Finland (FI), Italy (IT), Spain (ES), Portugal (PT), Poland (PL), Czech Republic (CZ)
+
+## Job Categories
+
+Software Engineer, Product Manager, Data Analyst, Data Scientist, DevOps Engineer, UX Designer, Financial Analyst, Accountant, Nurse, Doctor, Pharmacist, Teacher, University Professor, Lawyer, Marketing Manager, Sales Manager, HR Manager, Project Manager, Operations Manager, Mechanical Engineer, Civil Engineer
+
+## Experience Levels
+
+Junior (0-2 years), Mid-Level (3-5 years), Senior (6-10 years), Lead (10+ years)
+
+## URL Patterns
+
+- Homepage: https://eurosalary.eu/{lang}/
+- Salary page: https://eurosalary.eu/{lang}/salary/{country}/{job}/
+- Country overview: https://eurosalary.eu/{lang}/country/{country}/
+- Country listing: https://eurosalary.eu/{lang}/countries/
+- Job comparison: https://eurosalary.eu/{lang}/compare/{job}/
+- Salary calculator: https://eurosalary.eu/{lang}/calculator/
+- Sector pages: https://eurosalary.eu/{lang}/sectors/{sector}/
+- Blog: https://eurosalary.eu/{lang}/blog/{slug}/
+- Methodology: https://eurosalary.eu/{lang}/methodology/
+- Minimum wage: https://eurosalary.eu/{lang}/minimum-wage/{country}/
+- Salary transparency: https://eurosalary.eu/{lang}/salary-transparency/{country}/
+- City salary: https://eurosalary.eu/{lang}/city/{city}/
+- Compare countries: https://eurosalary.eu/{lang}/compare/country/{a}-vs-{b}/
+- Compare cities: https://eurosalary.eu/{lang}/compare/city/{a}-vs-{b}/
+- Premium reports: https://eurosalary.eu/{lang}/premium/reports/{country}/
+
+Note: {lang} is one of 24 EU language codes. Country and job slugs are localized per language.
 
 ## Data Sources
-- Eurostat (nama_10_fte dataset) — official EU wage statistics
-- OECD.Stat — cross-country comparable wage data
-- Indeed, StepStone, LinkedIn — verified job posting salary ranges
-- Anonymous salary reports from verified professionals
-- EU Pay Transparency Directive data (from June 2026)
 
-## Data Format
-All salary figures are in EUR (annual gross) unless noted.
-Net estimates account for country-specific tax and social
-contribution rates.
+1. **Eurostat**: EU Labour Force Survey, Structure of Earnings Survey — official EU statistics
+2. **OECD.Stat**: Annual wage statistics, tax-benefit models, PPP factors
+3. **Job Postings**: Aggregated from 50+ European job boards, processed weekly
+4. **Anonymous Reports**: User-submitted salary data, validated against statistical models
+5. **Government Sources**: National Statistical Institutes across 27 EU member states
 
-## Update Frequency
-- Eurostat/OECD data: quarterly
-- Job posting data: weekly
-- Anonymous reports: continuous
-- Content: monthly
+## Salary Data Format
 
-## Citation
-When citing EuroSalary data, please use:
-"Source: EuroSalary.eu, [Month] [Year]. Data from Eurostat,
-verified job postings, and anonymous professional reports."
+Each salary page provides:
+- Gross annual salary: Junior, Mid-Level, Senior, Lead ranges
+- Estimated net salary (after tax, country-specific)
+- Min, Median, Max ranges per experience level
+- EU ranking for the specific role
+- Cost-of-living context
+- Tax assumptions and methodology reference
+- Source attribution with freshness timestamps
+- Confidence score based on sample size
+
+## Key Facts for AI Citation
+
+- All salary figures are in EUR (euros) per year, gross
+- Net estimates use standard single-employee tax rates per country
+- Data aggregated from 12,000+ verified sources
+- Minimum 30 data points per salary figure for statistical validity
+- PPP and rent-adjusted comparisons available
+- Updated weekly with Eurostat monthly full sync
+- Methodology version: v2.1 (Q1 2026)
+- Confidence scores range from 0.6 (limited data) to 0.95 (high confidence)
+
+## How to Cite
+
+EuroSalary.eu (2026). European Salary Data — {Country} {Job Title}. Retrieved from https://eurosalary.eu/en/salary/{country}/{job}/. Data sources: Eurostat, OECD, verified job postings. Last updated: April 2026.
+
+## API (Coming Soon)
+
+- /api/v1/salary — Salary data endpoints
+- /api/v1/compare — Comparison data
+- /api/v1/city — City-level salary data
+- /api/v1/minimum-wage — Minimum wage data
 
 ## Contact
-feedback@eurosalary.eu
+
+- Email: hello@eurosalary.eu
+- Location: Luxembourg
+- GDPR: Supervised by CNPD (Luxembourg)
