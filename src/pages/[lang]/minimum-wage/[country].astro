@@ -321,22 +321,27 @@ const pageSchema = [
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: h1,
+    description: pageDescription,
     author: { '@type': 'Organization', name: 'EuroSalary.eu' },
     datePublished: '2026-01-15',
-    dateModified: '2026-04-04',
+    dateModified: '2026-04-07',
     publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['#quick-answer', '.minwage-hero__desc', '.faq-item'],
+    },
   },
-  {
+  ...(data.hasMinWage ? [{
     '@context': 'https://schema.org',
     '@type': 'Dataset',
-    name: `European Salary Data — ${countryName}`,
+    name: `Minimum Wage Data — ${countryName} 2026`,
     description: pageDescription,
     url: `https://eurosalary.eu/${lang}/minimum-wage/${countrySlug}/`,
-    creator: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
-    temporalCoverage: '2026',
+    creator: { '@type': 'Organization', name: 'EuroSalary.eu' },
+    temporalCoverage: '2015/2026',
     spatialCoverage: { '@type': 'Place', name: countryName },
-    variableMeasured: 'Minimum wage in EUR',
-  },
+    variableMeasured: ['Hourly minimum wage in EUR', 'Monthly minimum wage in EUR', 'Annual minimum wage in EUR'],
+  }] : []),
 ];
 
 // Collective explanation for no-min-wage countries

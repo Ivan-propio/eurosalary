@@ -90,8 +90,12 @@ const pageSchema = [
     description: pageDescription,
     author: { '@type': 'Organization', name: 'EuroSalary.eu' },
     datePublished: '2026-01-15',
-    dateModified: '2026-04-01',
+    dateModified: '2026-04-07',
     publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['#quick-answer', '.page-hero__desc', '.faq-item'],
+    },
     about: {
       '@type': 'Occupation',
       name: jobName,
@@ -104,6 +108,17 @@ const pageSchema = [
         percentile90: r.senior,
       })),
     },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: `${jobName} Salary Comparison Across Europe ${new Date().getFullYear()}`,
+    description: pageDescription,
+    url: `https://eurosalary.eu/${lang}/compare/${jobSlug}/`,
+    creator: { '@type': 'Organization', name: 'EuroSalary.eu' },
+    temporalCoverage: '2025/2026',
+    spatialCoverage: { '@type': 'Place', name: 'European Union' },
+    variableMeasured: 'Annual gross salary in EUR by country and seniority level',
   },
 ];
 ---
