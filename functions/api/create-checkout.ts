@@ -36,8 +36,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       success_url: body.successUrl || `${origin}/${lang}/pricing/?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: body.cancelUrl || `${origin}/${lang}/pricing/?canceled=true`,
       allow_promotion_codes: true,
+      payment_method_collection: 'if_required',
       billing_address_collection: 'required',
       tax_id_collection: { enabled: true },
+      metadata: { lang, source: 'eurosalary_pricing' },
     };
 
     if (body.customerEmail) {

@@ -464,7 +464,7 @@ const c = fb(i18n, lang);
         <div class="auth__field">
           <div class="auth__label-row">
             <label for="login-password">{c.passwordLabel}</label>
-            <a href={`/${lang}/forgot-password/`} class="auth__forgot">{c.forgotPassword}</a>
+            <a href={`/${lang}/auth/forgot-password/`} class="auth__forgot">{c.forgotPassword}</a>
           </div>
           <div class="auth__input-wrap">
             <span class="material-symbols-outlined">lock</span>
@@ -526,6 +526,7 @@ const c = fb(i18n, lang);
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
 

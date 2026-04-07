@@ -1,0 +1,454 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { languages, type Lang } from '../../../i18n/ui';
+import { fb } from '../../../i18n/utils';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+const { lang } = Astro.props as { lang: Lang };
+
+const i18n: Record<string, {
+  metaTitle: string;
+  processing: string;
+  processingDesc: string;
+  error: string;
+  errorDesc: string;
+  backToLogin: string;
+  redirecting: string;
+}> = {
+  en: {
+    metaTitle: 'Verifying | EuroSalary.eu',
+    processing: 'Processing...',
+    processingDesc: 'We are verifying your account. Please wait a moment.',
+    error: 'Verification Failed',
+    errorDesc: 'We could not verify your account. The link may have expired or is invalid.',
+    backToLogin: 'Back to Log In',
+    redirecting: 'Redirecting...',
+  },
+  fr: {
+    metaTitle: 'Verification | EuroSalary.eu',
+    processing: 'Traitement en cours...',
+    processingDesc: 'Nous verifions votre compte. Veuillez patienter un instant.',
+    error: 'Echec de la verification',
+    errorDesc: 'Nous n\'avons pas pu verifier votre compte. Le lien a peut-etre expire ou est invalide.',
+    backToLogin: 'Retour a la connexion',
+    redirecting: 'Redirection...',
+  },
+  de: {
+    metaTitle: 'Verifizierung | EuroSalary.eu',
+    processing: 'Verarbeitung...',
+    processingDesc: 'Wir verifizieren Ihr Konto. Bitte warten Sie einen Moment.',
+    error: 'Verifizierung fehlgeschlagen',
+    errorDesc: 'Wir konnten Ihr Konto nicht verifizieren. Der Link ist moglicherweise abgelaufen oder ungultig.',
+    backToLogin: 'Zuruck zur Anmeldung',
+    redirecting: 'Weiterleitung...',
+  },
+  es: {
+    metaTitle: 'Verificacion | EuroSalary.eu',
+    processing: 'Procesando...',
+    processingDesc: 'Estamos verificando su cuenta. Espere un momento.',
+    error: 'Verificacion fallida',
+    errorDesc: 'No pudimos verificar su cuenta. El enlace puede haber expirado o no es valido.',
+    backToLogin: 'Volver al inicio de sesion',
+    redirecting: 'Redirigiendo...',
+  },
+  it: {
+    metaTitle: 'Verifica | EuroSalary.eu',
+    processing: 'Elaborazione...',
+    processingDesc: 'Stiamo verificando il tuo account. Attendi un momento.',
+    error: 'Verifica fallita',
+    errorDesc: 'Non siamo riusciti a verificare il tuo account. Il link potrebbe essere scaduto o non valido.',
+    backToLogin: 'Torna al login',
+    redirecting: 'Reindirizzamento...',
+  },
+  pt: {
+    metaTitle: 'Verificacao | EuroSalary.eu',
+    processing: 'Processando...',
+    processingDesc: 'Estamos verificando sua conta. Aguarde um momento.',
+    error: 'Verificacao falhou',
+    errorDesc: 'Nao foi possivel verificar sua conta. O link pode ter expirado ou ser invalido.',
+    backToLogin: 'Voltar ao login',
+    redirecting: 'Redirecionando...',
+  },
+  nl: {
+    metaTitle: 'Verificatie | EuroSalary.eu',
+    processing: 'Verwerken...',
+    processingDesc: 'We verifieren uw account. Even geduld.',
+    error: 'Verificatie mislukt',
+    errorDesc: 'We konden uw account niet verifieren. De link is mogelijk verlopen of ongeldig.',
+    backToLogin: 'Terug naar inloggen',
+    redirecting: 'Doorverwijzen...',
+  },
+  pl: {
+    metaTitle: 'Weryfikacja | EuroSalary.eu',
+    processing: 'Przetwarzanie...',
+    processingDesc: 'Weryfikujemy Twoje konto. Prosimy o chwile cierpliwosci.',
+    error: 'Weryfikacja nieudana',
+    errorDesc: 'Nie udalo sie zweryfikowac Twojego konta. Link mogl wygasnac lub jest nieprawidlowy.',
+    backToLogin: 'Powrot do logowania',
+    redirecting: 'Przekierowywanie...',
+  },
+  ro: {
+    metaTitle: 'Verificare | EuroSalary.eu',
+    processing: 'Se proceseaza...',
+    processingDesc: 'Verificam contul dumneavoastra. Va rugam sa asteptati.',
+    error: 'Verificare esuata',
+    errorDesc: 'Nu am putut verifica contul dumneavoastra. Linkul poate fi expirat sau invalid.',
+    backToLogin: 'Inapoi la autentificare',
+    redirecting: 'Redirectionare...',
+  },
+  cs: {
+    metaTitle: 'Overeni | EuroSalary.eu',
+    processing: 'Zpracovani...',
+    processingDesc: 'Overujeme vas ucet. Prosim vyckejte.',
+    error: 'Overeni selhalo',
+    errorDesc: 'Vas ucet se nepodarilo overit. Odkaz mohl vyprsit nebo je neplatny.',
+    backToLogin: 'Zpet na prihlaseni',
+    redirecting: 'Presmerovani...',
+  },
+  sv: {
+    metaTitle: 'Verifiering | EuroSalary.eu',
+    processing: 'Bearbetar...',
+    processingDesc: 'Vi verifierar ditt konto. Vanligen vanta.',
+    error: 'Verifiering misslyckades',
+    errorDesc: 'Vi kunde inte verifiera ditt konto. Lanken kan ha gatt ut eller ar ogiltig.',
+    backToLogin: 'Tillbaka till inloggning',
+    redirecting: 'Omdirigerar...',
+  },
+  da: {
+    metaTitle: 'Bekraeftelse | EuroSalary.eu',
+    processing: 'Behandler...',
+    processingDesc: 'Vi bekraefter din konto. Vent venligst.',
+    error: 'Bekraeftelse mislykkedes',
+    errorDesc: 'Vi kunne ikke bekraefte din konto. Linket kan vaere udlobet eller ugyldigt.',
+    backToLogin: 'Tilbage til login',
+    redirecting: 'Omdirigerer...',
+  },
+  fi: {
+    metaTitle: 'Vahvistus | EuroSalary.eu',
+    processing: 'Kasitellaan...',
+    processingDesc: 'Vahvistamme tilisi. Odota hetki.',
+    error: 'Vahvistus epaonnistui',
+    errorDesc: 'Tiliasi ei voitu vahvistaa. Linkki on saattanut vanhentua tai on virheellinen.',
+    backToLogin: 'Takaisin kirjautumiseen',
+    redirecting: 'Ohjataan uudelleen...',
+  },
+  el: {
+    metaTitle: 'Epalitheusi | EuroSalary.eu',
+    processing: 'Epexergasia...',
+    processingDesc: 'Epalitheutoume ton logariasmo sas. Parakalw perimentete.',
+    error: 'I epalitheusi apetyche',
+    errorDesc: 'Den boroume na epalithefoume ton logariasmo sas. O syndesmos mporei na echei liksei i na einai mi egkyros.',
+    backToLogin: 'Epistrofi sti syndesi',
+    redirecting: 'Anakateuthynsi...',
+  },
+  hu: {
+    metaTitle: 'Ellenorzes | EuroSalary.eu',
+    processing: 'Feldolgozas...',
+    processingDesc: 'Ellenorizzuk a fiokjat. Kerjuk, varjon.',
+    error: 'Ellenorzes sikertelen',
+    errorDesc: 'Nem sikerult ellenorizni a fiokjat. A link lejart vagy ervenytelen lehet.',
+    backToLogin: 'Vissza a bejelentkezeshez',
+    redirecting: 'Atiranyitas...',
+  },
+  sk: {
+    metaTitle: 'Overenie | EuroSalary.eu',
+    processing: 'Spracovanie...',
+    processingDesc: 'Overujeme vas ucet. Prosim cakajte.',
+    error: 'Overenie zlyhalo',
+    errorDesc: 'Vas ucet sa nepodarilo overit. Odkaz mohol vyprsat alebo je neplatny.',
+    backToLogin: 'Spat na prihlasenie',
+    redirecting: 'Presmerovanie...',
+  },
+  bg: {
+    metaTitle: 'Proverka | EuroSalary.eu',
+    processing: 'Obrabotka...',
+    processingDesc: 'Proveryavame vashia akount. Molya, izchakaite.',
+    error: 'Proverkata e neuspeshna',
+    errorDesc: 'Ne mozhahme da proverim vashia akount. Vruzkata mozhe da e iztekla ili e nevalidna.',
+    backToLogin: 'Nazad kum vhod',
+    redirecting: 'Prenasochvane...',
+  },
+  hr: {
+    metaTitle: 'Provjera | EuroSalary.eu',
+    processing: 'Obrada...',
+    processingDesc: 'Provjeravamo vas racun. Molimo pricekajte.',
+    error: 'Provjera neuspjesna',
+    errorDesc: 'Nismo mogli provjeriti vas racun. Poveznica je mozda istekla ili je nevazeca.',
+    backToLogin: 'Povratak na prijavu',
+    redirecting: 'Preusmjeravanje...',
+  },
+  sl: {
+    metaTitle: 'Preverjanje | EuroSalary.eu',
+    processing: 'Obdelava...',
+    processingDesc: 'Preverjamo vas racun. Prosimo, pocakajte.',
+    error: 'Preverjanje neuspesno',
+    errorDesc: 'Vasega racuna nismo mogli preveriti. Povezava je morda potekla ali je neveljavna.',
+    backToLogin: 'Nazaj na prijavo',
+    redirecting: 'Preusmeritev...',
+  },
+  lt: {
+    metaTitle: 'Patvirtinimas | EuroSalary.eu',
+    processing: 'Apdorojama...',
+    processingDesc: 'Patvirtiname jusu paskyra. Prasome palaukti.',
+    error: 'Patvirtinimas nepavyko',
+    errorDesc: 'Nepavyko patvirtinti jusu paskyros. Nuoroda galejo baigtis arba yra negaliojanti.',
+    backToLogin: 'Grizti prie prisijungimo',
+    redirecting: 'Peradresavimas...',
+  },
+  lv: {
+    metaTitle: 'Verifikacija | EuroSalary.eu',
+    processing: 'Apstrade...',
+    processingDesc: 'Mes parbaudam jusu kontu. Ludzu, uzgaidiet.',
+    error: 'Verifikacija neizdevas',
+    errorDesc: 'Mes nevarejam parbaudit jusu kontu. Saite varbutu ir beidzusies vai nav derigs.',
+    backToLogin: 'Atpakal uz pieteikshanos',
+    redirecting: 'Parsutishana...',
+  },
+  et: {
+    metaTitle: 'Kinnitamine | EuroSalary.eu',
+    processing: 'Tootlemine...',
+    processingDesc: 'Kinnitame teie kontot. Palun oodake.',
+    error: 'Kinnitamine ebaonnestus',
+    errorDesc: 'Me ei saanud teie kontot kinnitada. Link voib olla aegunud voi kehtetu.',
+    backToLogin: 'Tagasi sisselogimisele',
+    redirecting: 'Suunamine...',
+  },
+  mt: {
+    metaTitle: 'Verifika | EuroSalary.eu',
+    processing: 'Qed jigi processat...',
+    processingDesc: 'Qeghdin nivverifikaw il-kont tieghek. Jekk joghgbok stenna.',
+    error: 'Il-verifika ma rnexxietx',
+    errorDesc: 'Ma stajniex nivverifikaw il-kont tieghek. Il-link jista\' skada jew mhux validu.',
+    backToLogin: 'Lura ghall-login',
+    redirecting: 'Qed jigi ridirezzjonat...',
+  },
+  ga: {
+    metaTitle: 'Fioruchain | EuroSalary.eu',
+    processing: 'Ag proiseail...',
+    processingDesc: 'Ta muid ag fioruchain do chuntas. Fan noiméad le do thoil.',
+    error: 'Theip ar an bhfioruchain',
+    errorDesc: 'Ni raibh muid in ann do chuntas a fhioruchain. B\'fheidir go bhfuil an nasc imithe in eag no neamhbhaili.',
+    backToLogin: 'Ar ais go logail isteach',
+    redirecting: 'Ag atreoru...',
+  },
+};
+
+const c = fb(i18n, lang);
+---
+
+<BaseLayout title={c.metaTitle} description={c.processingDesc}>
+  <section class="auth">
+    <div class="auth__card">
+      <div class="auth__header">
+        <a href={`/${lang}/`} class="auth__logo" aria-label="EuroSalary.eu">
+          Euro<span>Salary</span><small>.eu</small>
+        </a>
+      </div>
+
+      <div class="callback__status" id="callback-processing">
+        <div class="callback__spinner"></div>
+        <h1 class="callback__title">{c.processing}</h1>
+        <p class="callback__desc">{c.processingDesc}</p>
+      </div>
+
+      <div class="callback__status callback__status--hidden" id="callback-redirecting">
+        <div class="callback__spinner"></div>
+        <h1 class="callback__title">{c.redirecting}</h1>
+      </div>
+
+      <div class="callback__status callback__status--hidden" id="callback-error">
+        <div class="callback__icon-error">
+          <span class="material-symbols-outlined">error</span>
+        </div>
+        <h1 class="callback__title callback__title--error">{c.error}</h1>
+        <p class="callback__desc">{c.errorDesc}</p>
+        <a href={`/${lang}/login/`} class="callback__btn">{c.backToLogin}</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script define:vars={{ lang }}>
+  (function () {
+    var hash = window.location.hash.substring(1);
+    var params = new URLSearchParams(hash);
+
+    var accessToken = params.get('access_token');
+    var refreshToken = params.get('refresh_token');
+    var expiresIn = params.get('expires_in');
+    var type = params.get('type');
+
+    var processingEl = document.getElementById('callback-processing');
+    var redirectingEl = document.getElementById('callback-redirecting');
+    var errorEl = document.getElementById('callback-error');
+
+    function showError() {
+      processingEl.classList.add('callback__status--hidden');
+      redirectingEl.classList.add('callback__status--hidden');
+      errorEl.classList.remove('callback__status--hidden');
+    }
+
+    function showRedirecting() {
+      processingEl.classList.add('callback__status--hidden');
+      errorEl.classList.add('callback__status--hidden');
+      redirectingEl.classList.remove('callback__status--hidden');
+    }
+
+    if (!accessToken || !refreshToken) {
+      showError();
+      return;
+    }
+
+    fetch('/api/auth/callback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+        expires_in: expiresIn ? parseInt(expiresIn, 10) : 3600,
+      }),
+    })
+      .then(function (res) {
+        if (!res.ok) throw new Error('callback failed');
+        return res.json();
+      })
+      .then(function () {
+        showRedirecting();
+
+        // Clear hash from URL
+        if (window.history.replaceState) {
+          window.history.replaceState(null, '', window.location.pathname);
+        }
+
+        if (type === 'recovery') {
+          window.location.href = '/' + lang + '/auth/reset-password/';
+        } else {
+          window.location.href = '/' + lang + '/dashboard/';
+        }
+      })
+      .catch(function () {
+        showError();
+      });
+  })();
+</script>
+
+<style>
+  .auth {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(37, 99, 235, 0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 80%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
+      var(--color-primary-container, #0F1F3D);
+  }
+
+  .auth__card {
+    width: 100%;
+    max-width: 440px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    backdrop-filter: blur(20px);
+  }
+
+  .auth__header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .auth__logo {
+    font-family: var(--font-heading, 'Public Sans', sans-serif);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-white, #fff);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .auth__logo span { color: var(--color-secondary, #2563EB); }
+  .auth__logo small { font-size: 0.6em; opacity: 0.5; font-weight: 400; }
+
+  .callback__status {
+    text-align: center;
+  }
+
+  .callback__status--hidden {
+    display: none;
+  }
+
+  .callback__spinner {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 1.25rem;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--color-secondary, #2563EB);
+    border-radius: 50%;
+    animation: callback-spin 0.7s linear infinite;
+  }
+
+  @keyframes callback-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .callback__icon-error {
+    margin: 0 auto 1rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(248, 113, 113, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .callback__icon-error .material-symbols-outlined {
+    font-size: 28px;
+    color: #f87171;
+  }
+
+  .callback__title {
+    font-family: var(--font-heading, 'Public Sans', sans-serif);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-white, #fff);
+    margin: 0 0 0.5rem;
+  }
+
+  .callback__title--error {
+    color: #f87171;
+  }
+
+  .callback__desc {
+    font-size: 0.9rem;
+    color: rgba(203, 213, 225, 0.7);
+    line-height: 1.5;
+    margin: 0 0 1.5rem;
+  }
+
+  .callback__btn {
+    display: inline-block;
+    padding: 0.7rem 1.5rem;
+    background: var(--color-secondary, #2563EB);
+    color: var(--color-white, #fff);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  .callback__btn:hover {
+    background: #1d4ed8;
+  }
+
+  @media (max-width: 480px) {
+    .auth__card { padding: 2rem 1.25rem; }
+  }
+</style>

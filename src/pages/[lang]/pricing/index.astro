@@ -1735,9 +1735,22 @@ const pageSchema = [
   // --- Handle success/cancel URL params ---
   const params = new URLSearchParams(window.location.search);
   if (params.get('success') === 'true') {
+    const pLang = window.location.pathname.split('/')[1] || 'en';
     const banner = document.createElement('div');
     banner.className = 'checkout-banner checkout-banner--success';
-    banner.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Payment successful! Your subscription is now active.';
+    // Check if user has an auth session
+    fetch('/api/auth/session', { credentials: 'include' })
+      .then(r => r.json())
+      .then(data => {
+        if (data.user) {
+          banner.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Payment successful! Your subscription is now active. <a href="/' + pLang + '/dashboard/" style="color:white;text-decoration:underline;font-weight:700;margin-left:8px;">Go to Dashboard &rarr;</a>';
+        } else {
+          banner.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Payment successful! <a href="/' + pLang + '/signup/" style="color:white;text-decoration:underline;font-weight:700;margin-left:8px;">Create your account</a> to access your Pro features.';
+        }
+      })
+      .catch(() => {
+        banner.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Payment successful! <a href="/' + pLang + '/signup/" style="color:white;text-decoration:underline;font-weight:700;margin-left:8px;">Create your account</a> to access your Pro features.';
+      });
     document.querySelector('.ph__inner')?.appendChild(banner);
   }
   if (params.get('canceled') === 'true') {

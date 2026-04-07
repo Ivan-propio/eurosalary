@@ -21,621 +21,671 @@ const i18n: Record<string, {
   emailPlaceholder: string;
   passwordLabel: string;
   passwordPlaceholder: string;
-  confirmLabel: string;
-  confirmPlaceholder: string;
+  confirmPasswordLabel: string;
+  confirmPasswordPlaceholder: string;
+  passwordHint: string;
+  termsLabel: string;
+  termsLink: string;
+  privacyLink: string;
   signupBtn: string;
   hasAccount: string;
   loginLink: string;
-  termsText: string;
-  termsLink: string;
-  privacyLink: string;
-  successTitle: string;
-  successMsg: string;
-  errorMismatch: string;
-  errorWeak: string;
-  errorExists: string;
+  errorPasswordLength: string;
+  errorPasswordMatch: string;
+  errorTerms: string;
+  errorEmailUsed: string;
   errorNetwork: string;
   errorGeneric: string;
+  successTitle: string;
+  successMsg: string;
 }> = {
   en: {
     metaTitle: 'Sign Up | EuroSalary.eu',
-    metaDesc: 'Create your free EuroSalary account. Access European salary data, API keys, CSV exports, and salary intelligence tools.',
-    h1: 'Create your EuroSalary account',
-    subtitle: 'Start with a free plan. No credit card required.',
+    metaDesc: 'Create your free EuroSalary account to access salary data, dashboards, API keys, and European salary intelligence tools.',
+    h1: 'Create your account',
+    subtitle: 'Get started with salary data, dashboards, and intelligence tools.',
     emailLabel: 'Email address',
     emailPlaceholder: 'you@company.com',
     passwordLabel: 'Password',
-    passwordPlaceholder: 'Min. 8 characters',
-    confirmLabel: 'Confirm password',
-    confirmPlaceholder: 'Re-enter your password',
+    passwordPlaceholder: 'Create a password',
+    confirmPasswordLabel: 'Confirm password',
+    confirmPasswordPlaceholder: 'Repeat your password',
+    passwordHint: 'Minimum 8 characters',
+    termsLabel: 'I agree to the',
+    termsLink: 'Terms of Service',
+    privacyLink: 'Privacy Policy',
     signupBtn: 'Create Account',
     hasAccount: 'Already have an account?',
     loginLink: 'Log in',
-    termsText: 'By signing up, you agree to our',
-    termsLink: 'Terms of Service',
-    privacyLink: 'Privacy Policy',
-    successTitle: 'Check your email',
-    successMsg: 'We sent a confirmation link to your email address. Please click the link to activate your account.',
-    errorMismatch: 'Passwords do not match.',
-    errorWeak: 'Password must be at least 8 characters.',
-    errorExists: 'An account with this email already exists.',
+    errorPasswordLength: 'Password must be at least 8 characters.',
+    errorPasswordMatch: 'Passwords do not match.',
+    errorTerms: 'You must accept the terms to continue.',
+    errorEmailUsed: 'This email is already registered. Try logging in.',
     errorNetwork: 'Network error. Please check your connection.',
     errorGeneric: 'Something went wrong. Please try again later.',
+    successTitle: 'Check your inbox',
+    successMsg: 'We sent a confirmation link to your email. Please verify to activate your account.',
   },
   fr: {
     metaTitle: 'Inscription | EuroSalary.eu',
-    metaDesc: 'Créez votre compte EuroSalary gratuit. Accédez aux données salariales européennes, clés API, exports CSV et outils d\'intelligence salariale.',
-    h1: 'Créez votre compte EuroSalary',
-    subtitle: 'Commencez avec un plan gratuit. Aucune carte bancaire requise.',
+    metaDesc: "Cr\u00e9ez votre compte EuroSalary gratuit pour acc\u00e9der aux donn\u00e9es salariales, tableaux de bord, cl\u00e9s API et outils d'intelligence salariale.",
+    h1: 'Cr\u00e9ez votre compte',
+    subtitle: "Commencez avec les donn\u00e9es salariales, tableaux de bord et outils d'analyse.",
     emailLabel: 'Adresse e-mail',
     emailPlaceholder: 'vous@entreprise.com',
     passwordLabel: 'Mot de passe',
-    passwordPlaceholder: 'Min. 8 caractères',
-    confirmLabel: 'Confirmer le mot de passe',
-    confirmPlaceholder: 'Ressaisissez votre mot de passe',
-    signupBtn: 'Créer un compte',
-    hasAccount: 'Vous avez déjà un compte ?',
+    passwordPlaceholder: 'Cr\u00e9ez un mot de passe',
+    confirmPasswordLabel: 'Confirmer le mot de passe',
+    confirmPasswordPlaceholder: 'R\u00e9p\u00e9tez votre mot de passe',
+    passwordHint: '8 caract\u00e8res minimum',
+    termsLabel: "J'accepte les",
+    termsLink: "Conditions d'utilisation",
+    privacyLink: 'Politique de confidentialit\u00e9',
+    signupBtn: 'Cr\u00e9er un compte',
+    hasAccount: 'Vous avez d\u00e9j\u00e0 un compte ?',
     loginLink: 'Se connecter',
-    termsText: 'En vous inscrivant, vous acceptez nos',
-    termsLink: 'Conditions d\'utilisation',
-    privacyLink: 'Politique de confidentialité',
-    successTitle: 'Vérifiez votre e-mail',
-    successMsg: 'Nous avons envoyé un lien de confirmation à votre adresse e-mail. Cliquez sur le lien pour activer votre compte.',
-    errorMismatch: 'Les mots de passe ne correspondent pas.',
-    errorWeak: 'Le mot de passe doit comporter au moins 8 caractères.',
-    errorExists: 'Un compte avec cet e-mail existe déjà.',
-    errorNetwork: 'Erreur réseau. Vérifiez votre connexion.',
-    errorGeneric: 'Une erreur est survenue. Veuillez réessayer plus tard.',
+    errorPasswordLength: 'Le mot de passe doit comporter au moins 8 caract\u00e8res.',
+    errorPasswordMatch: 'Les mots de passe ne correspondent pas.',
+    errorTerms: 'Vous devez accepter les conditions pour continuer.',
+    errorEmailUsed: 'Cet e-mail est d\u00e9j\u00e0 enregistr\u00e9. Essayez de vous connecter.',
+    errorNetwork: 'Erreur r\u00e9seau. V\u00e9rifiez votre connexion.',
+    errorGeneric: 'Une erreur est survenue. Veuillez r\u00e9essayer plus tard.',
+    successTitle: 'V\u00e9rifiez votre bo\u00eete mail',
+    successMsg: 'Nous avons envoy\u00e9 un lien de confirmation \u00e0 votre e-mail. Veuillez v\u00e9rifier pour activer votre compte.',
   },
   de: {
-    metaTitle: 'Registrierung | EuroSalary.eu',
-    metaDesc: 'Erstellen Sie Ihr kostenloses EuroSalary-Konto. Zugang zu europäischen Gehaltsdaten, API-Schlüsseln, CSV-Exporten und Gehaltstools.',
-    h1: 'Erstellen Sie Ihr EuroSalary-Konto',
-    subtitle: 'Starten Sie mit dem kostenlosen Plan. Keine Kreditkarte erforderlich.',
+    metaTitle: 'Registrieren | EuroSalary.eu',
+    metaDesc: 'Erstellen Sie Ihr kostenloses EuroSalary-Konto f\u00fcr Gehaltsdaten, Dashboards, API-Schl\u00fcssel und Gehaltsanalyse-Tools.',
+    h1: 'Konto erstellen',
+    subtitle: 'Starten Sie mit Gehaltsdaten, Dashboards und Analysetools.',
     emailLabel: 'E-Mail-Adresse',
     emailPlaceholder: 'sie@unternehmen.com',
     passwordLabel: 'Passwort',
-    passwordPlaceholder: 'Min. 8 Zeichen',
-    confirmLabel: 'Passwort bestätigen',
-    confirmPlaceholder: 'Passwort erneut eingeben',
+    passwordPlaceholder: 'Passwort erstellen',
+    confirmPasswordLabel: 'Passwort best\u00e4tigen',
+    confirmPasswordPlaceholder: 'Passwort wiederholen',
+    passwordHint: 'Mindestens 8 Zeichen',
+    termsLabel: 'Ich stimme den',
+    termsLink: 'Nutzungsbedingungen',
+    privacyLink: 'Datenschutzrichtlinie',
     signupBtn: 'Konto erstellen',
     hasAccount: 'Haben Sie bereits ein Konto?',
     loginLink: 'Anmelden',
-    termsText: 'Mit der Registrierung akzeptieren Sie unsere',
-    termsLink: 'Nutzungsbedingungen',
-    privacyLink: 'Datenschutzrichtlinie',
-    successTitle: 'E-Mail überprüfen',
-    successMsg: 'Wir haben einen Bestätigungslink an Ihre E-Mail gesendet. Klicken Sie auf den Link, um Ihr Konto zu aktivieren.',
-    errorMismatch: 'Passwörter stimmen nicht überein.',
-    errorWeak: 'Das Passwort muss mindestens 8 Zeichen lang sein.',
-    errorExists: 'Ein Konto mit dieser E-Mail existiert bereits.',
-    errorNetwork: 'Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.',
-    errorGeneric: 'Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut.',
+    errorPasswordLength: 'Das Passwort muss mindestens 8 Zeichen lang sein.',
+    errorPasswordMatch: 'Die Passw\u00f6rter stimmen nicht \u00fcberein.',
+    errorTerms: 'Sie m\u00fcssen die Bedingungen akzeptieren, um fortzufahren.',
+    errorEmailUsed: 'Diese E-Mail ist bereits registriert. Versuchen Sie sich anzumelden.',
+    errorNetwork: 'Netzwerkfehler. Bitte \u00fcberpr\u00fcfen Sie Ihre Verbindung.',
+    errorGeneric: 'Etwas ist schiefgelaufen. Bitte versuchen Sie es sp\u00e4ter erneut.',
+    successTitle: '\u00dcberpr\u00fcfen Sie Ihren Posteingang',
+    successMsg: 'Wir haben einen Best\u00e4tigungslink an Ihre E-Mail gesendet. Bitte best\u00e4tigen Sie, um Ihr Konto zu aktivieren.',
   },
   es: {
-    metaTitle: 'Registro | EuroSalary.eu',
-    metaDesc: 'Crea tu cuenta EuroSalary gratuita. Accede a datos salariales europeos, claves API, exportaciones CSV y herramientas de inteligencia salarial.',
-    h1: 'Crea tu cuenta EuroSalary',
-    subtitle: 'Comienza con un plan gratuito. Sin tarjeta de crédito.',
-    emailLabel: 'Correo electrónico',
+    metaTitle: 'Registrarse | EuroSalary.eu',
+    metaDesc: 'Crea tu cuenta gratuita de EuroSalary para acceder a datos salariales, paneles, claves API y herramientas de inteligencia salarial.',
+    h1: 'Crea tu cuenta',
+    subtitle: 'Comienza con datos salariales, paneles y herramientas de an\u00e1lisis.',
+    emailLabel: 'Correo electr\u00f3nico',
     emailPlaceholder: 'tu@empresa.com',
-    passwordLabel: 'Contraseña',
-    passwordPlaceholder: 'Mín. 8 caracteres',
-    confirmLabel: 'Confirmar contraseña',
-    confirmPlaceholder: 'Reingresa tu contraseña',
+    passwordLabel: 'Contrase\u00f1a',
+    passwordPlaceholder: 'Crea una contrase\u00f1a',
+    confirmPasswordLabel: 'Confirmar contrase\u00f1a',
+    confirmPasswordPlaceholder: 'Repite tu contrase\u00f1a',
+    passwordHint: 'M\u00ednimo 8 caracteres',
+    termsLabel: 'Acepto los',
+    termsLink: 'T\u00e9rminos de servicio',
+    privacyLink: 'Pol\u00edtica de privacidad',
     signupBtn: 'Crear cuenta',
-    hasAccount: '¿Ya tienes cuenta?',
-    loginLink: 'Iniciar sesión',
-    termsText: 'Al registrarte, aceptas nuestros',
-    termsLink: 'Términos de servicio',
-    privacyLink: 'Política de privacidad',
-    successTitle: 'Revisa tu correo',
-    successMsg: 'Enviamos un enlace de confirmación a tu correo electrónico. Haz clic en el enlace para activar tu cuenta.',
-    errorMismatch: 'Las contraseñas no coinciden.',
-    errorWeak: 'La contraseña debe tener al menos 8 caracteres.',
-    errorExists: 'Ya existe una cuenta con este correo.',
-    errorNetwork: 'Error de red. Comprueba tu conexión.',
-    errorGeneric: 'Algo salió mal. Inténtalo más tarde.',
+    hasAccount: '\u00bfYa tienes cuenta?',
+    loginLink: 'Iniciar sesi\u00f3n',
+    errorPasswordLength: 'La contrase\u00f1a debe tener al menos 8 caracteres.',
+    errorPasswordMatch: 'Las contrase\u00f1as no coinciden.',
+    errorTerms: 'Debes aceptar los t\u00e9rminos para continuar.',
+    errorEmailUsed: 'Este correo ya est\u00e1 registrado. Intenta iniciar sesi\u00f3n.',
+    errorNetwork: 'Error de red. Comprueba tu conexi\u00f3n.',
+    errorGeneric: 'Algo sali\u00f3 mal. Int\u00e9ntalo m\u00e1s tarde.',
+    successTitle: 'Revisa tu bandeja de entrada',
+    successMsg: 'Enviamos un enlace de confirmaci\u00f3n a tu correo. Verifica para activar tu cuenta.',
   },
   it: {
     metaTitle: 'Registrati | EuroSalary.eu',
-    metaDesc: 'Crea il tuo account EuroSalary gratuito. Accedi a dati salariali europei, chiavi API, esportazioni CSV e strumenti di intelligence salariale.',
-    h1: 'Crea il tuo account EuroSalary',
-    subtitle: 'Inizia con un piano gratuito. Nessuna carta di credito richiesta.',
+    metaDesc: 'Crea il tuo account gratuito EuroSalary per accedere a dati salariali, dashboard, chiavi API e strumenti di analisi.',
+    h1: 'Crea il tuo account',
+    subtitle: 'Inizia con dati salariali, dashboard e strumenti di intelligence.',
     emailLabel: 'Indirizzo e-mail',
     emailPlaceholder: 'tu@azienda.com',
     passwordLabel: 'Password',
-    passwordPlaceholder: 'Min. 8 caratteri',
-    confirmLabel: 'Conferma password',
-    confirmPlaceholder: 'Reinserisci la password',
-    signupBtn: 'Crea account',
-    hasAccount: 'Hai già un account?',
-    loginLink: 'Accedi',
-    termsText: 'Registrandoti, accetti i nostri',
+    passwordPlaceholder: 'Crea una password',
+    confirmPasswordLabel: 'Conferma password',
+    confirmPasswordPlaceholder: 'Ripeti la password',
+    passwordHint: 'Minimo 8 caratteri',
+    termsLabel: 'Accetto i',
     termsLink: 'Termini di servizio',
     privacyLink: 'Informativa sulla privacy',
-    successTitle: 'Controlla la tua email',
-    successMsg: 'Abbiamo inviato un link di conferma al tuo indirizzo email. Clicca sul link per attivare il tuo account.',
-    errorMismatch: 'Le password non corrispondono.',
-    errorWeak: 'La password deve avere almeno 8 caratteri.',
-    errorExists: 'Un account con questa email esiste già.',
+    signupBtn: 'Crea account',
+    hasAccount: 'Hai gi\u00e0 un account?',
+    loginLink: 'Accedi',
+    errorPasswordLength: 'La password deve avere almeno 8 caratteri.',
+    errorPasswordMatch: 'Le password non corrispondono.',
+    errorTerms: 'Devi accettare i termini per continuare.',
+    errorEmailUsed: 'Questa email \u00e8 gi\u00e0 registrata. Prova ad accedere.',
     errorNetwork: 'Errore di rete. Controlla la connessione.',
-    errorGeneric: 'Qualcosa è andato storto. Riprova più tardi.',
+    errorGeneric: 'Qualcosa \u00e8 andato storto. Riprova pi\u00f9 tardi.',
+    successTitle: 'Controlla la tua casella di posta',
+    successMsg: 'Abbiamo inviato un link di conferma alla tua email. Verifica per attivare il tuo account.',
   },
   pt: {
-    metaTitle: 'Cadastro | EuroSalary.eu',
-    metaDesc: 'Crie sua conta EuroSalary gratuita. Acesse dados salariais europeus, chaves API, exportações CSV e ferramentas de inteligência salarial.',
-    h1: 'Crie sua conta EuroSalary',
-    subtitle: 'Comece com um plano gratuito. Sem cartão de crédito.',
-    emailLabel: 'Endereço de e-mail',
+    metaTitle: 'Criar Conta | EuroSalary.eu',
+    metaDesc: 'Crie sua conta gratuita no EuroSalary para acessar dados salariais, pain\u00e9is, chaves API e ferramentas de intelig\u00eancia salarial.',
+    h1: 'Crie sua conta',
+    subtitle: 'Comece com dados salariais, pain\u00e9is e ferramentas de an\u00e1lise.',
+    emailLabel: 'Endere\u00e7o de e-mail',
     emailPlaceholder: 'voce@empresa.com',
     passwordLabel: 'Senha',
-    passwordPlaceholder: 'Mín. 8 caracteres',
-    confirmLabel: 'Confirmar senha',
-    confirmPlaceholder: 'Digite a senha novamente',
+    passwordPlaceholder: 'Crie uma senha',
+    confirmPasswordLabel: 'Confirmar senha',
+    confirmPasswordPlaceholder: 'Repita sua senha',
+    passwordHint: 'M\u00ednimo 8 caracteres',
+    termsLabel: 'Eu concordo com os',
+    termsLink: 'Termos de Servi\u00e7o',
+    privacyLink: 'Pol\u00edtica de Privacidade',
     signupBtn: 'Criar conta',
-    hasAccount: 'Já tem uma conta?',
+    hasAccount: 'J\u00e1 tem uma conta?',
     loginLink: 'Entrar',
-    termsText: 'Ao se cadastrar, você aceita nossos',
-    termsLink: 'Termos de Serviço',
-    privacyLink: 'Política de Privacidade',
-    successTitle: 'Verifique seu e-mail',
-    successMsg: 'Enviamos um link de confirmação para seu e-mail. Clique no link para ativar sua conta.',
-    errorMismatch: 'As senhas não coincidem.',
-    errorWeak: 'A senha deve ter pelo menos 8 caracteres.',
-    errorExists: 'Uma conta com este e-mail já existe.',
-    errorNetwork: 'Erro de rede. Verifique sua conexão.',
+    errorPasswordLength: 'A senha deve ter pelo menos 8 caracteres.',
+    errorPasswordMatch: 'As senhas n\u00e3o coincidem.',
+    errorTerms: 'Voc\u00ea deve aceitar os termos para continuar.',
+    errorEmailUsed: 'Este e-mail j\u00e1 est\u00e1 cadastrado. Tente fazer login.',
+    errorNetwork: 'Erro de rede. Verifique sua conex\u00e3o.',
     errorGeneric: 'Algo deu errado. Tente novamente mais tarde.',
+    successTitle: 'Verifique sua caixa de entrada',
+    successMsg: 'Enviamos um link de confirma\u00e7\u00e3o para seu e-mail. Verifique para ativar sua conta.',
   },
   nl: {
     metaTitle: 'Registreren | EuroSalary.eu',
-    metaDesc: 'Maak uw gratis EuroSalary-account aan. Toegang tot Europese salarisgegevens, API-sleutels, CSV-exports en salarisintelligentietools.',
-    h1: 'Maak uw EuroSalary-account aan',
-    subtitle: 'Begin met een gratis plan. Geen creditcard nodig.',
+    metaDesc: 'Maak uw gratis EuroSalary-account aan voor salarisgegevens, dashboards, API-sleutels en salarisintelligentietools.',
+    h1: 'Account aanmaken',
+    subtitle: 'Begin met salarisgegevens, dashboards en analysetools.',
     emailLabel: 'E-mailadres',
     emailPlaceholder: 'u@bedrijf.com',
     passwordLabel: 'Wachtwoord',
-    passwordPlaceholder: 'Min. 8 tekens',
-    confirmLabel: 'Bevestig wachtwoord',
-    confirmPlaceholder: 'Voer wachtwoord opnieuw in',
+    passwordPlaceholder: 'Maak een wachtwoord',
+    confirmPasswordLabel: 'Wachtwoord bevestigen',
+    confirmPasswordPlaceholder: 'Herhaal uw wachtwoord',
+    passwordHint: 'Minimaal 8 tekens',
+    termsLabel: 'Ik ga akkoord met de',
+    termsLink: 'Algemene voorwaarden',
+    privacyLink: 'Privacybeleid',
     signupBtn: 'Account aanmaken',
     hasAccount: 'Heeft u al een account?',
     loginLink: 'Inloggen',
-    termsText: 'Door u te registreren, gaat u akkoord met onze',
-    termsLink: 'Gebruiksvoorwaarden',
-    privacyLink: 'Privacybeleid',
-    successTitle: 'Controleer uw e-mail',
-    successMsg: 'We hebben een bevestigingslink naar uw e-mailadres gestuurd. Klik op de link om uw account te activeren.',
-    errorMismatch: 'Wachtwoorden komen niet overeen.',
-    errorWeak: 'Het wachtwoord moet minimaal 8 tekens bevatten.',
-    errorExists: 'Er bestaat al een account met dit e-mailadres.',
+    errorPasswordLength: 'Het wachtwoord moet minimaal 8 tekens bevatten.',
+    errorPasswordMatch: 'De wachtwoorden komen niet overeen.',
+    errorTerms: 'U moet de voorwaarden accepteren om door te gaan.',
+    errorEmailUsed: 'Dit e-mailadres is al geregistreerd. Probeer in te loggen.',
     errorNetwork: 'Netwerkfout. Controleer uw verbinding.',
     errorGeneric: 'Er is iets misgegaan. Probeer het later opnieuw.',
+    successTitle: 'Controleer uw inbox',
+    successMsg: 'We hebben een bevestigingslink naar uw e-mail gestuurd. Bevestig om uw account te activeren.',
   },
   pl: {
     metaTitle: 'Rejestracja | EuroSalary.eu',
-    metaDesc: 'Utwórz bezpłatne konto EuroSalary. Uzyskaj dostęp do europejskich danych płacowych, kluczy API, eksportów CSV i narzędzi analizy wynagrodzeń.',
-    h1: 'Utwórz konto EuroSalary',
-    subtitle: 'Zacznij od darmowego planu. Karta kredytowa nie jest wymagana.',
+    metaDesc: 'Utw\u00f3rz bezp\u0142atne konto EuroSalary, aby uzyska\u0107 dost\u0119p do danych o wynagrodzeniach, paneli, kluczy API i narz\u0119dzi analizy.',
+    h1: 'Utw\u00f3rz konto',
+    subtitle: 'Zacznij korzysta\u0107 z danych o wynagrodzeniach, paneli i narz\u0119dzi analitycznych.',
     emailLabel: 'Adres e-mail',
     emailPlaceholder: 'ty@firma.com',
-    passwordLabel: 'Hasło',
-    passwordPlaceholder: 'Min. 8 znaków',
-    confirmLabel: 'Potwierdź hasło',
-    confirmPlaceholder: 'Wpisz hasło ponownie',
-    signupBtn: 'Utwórz konto',
-    hasAccount: 'Masz już konto?',
-    loginLink: 'Zaloguj się',
-    termsText: 'Rejestrując się, akceptujesz nasze',
-    termsLink: 'Warunki korzystania',
-    privacyLink: 'Politykę prywatności',
-    successTitle: 'Sprawdź e-mail',
-    successMsg: 'Wysłaliśmy link potwierdzający na Twój adres e-mail. Kliknij link, aby aktywować konto.',
-    errorMismatch: 'Hasła nie są identyczne.',
-    errorWeak: 'Hasło musi mieć co najmniej 8 znaków.',
-    errorExists: 'Konto z tym adresem e-mail już istnieje.',
-    errorNetwork: 'Błąd sieci. Sprawdź połączenie.',
-    errorGeneric: 'Coś poszło nie tak. Spróbuj ponownie później.',
+    passwordLabel: 'Has\u0142o',
+    passwordPlaceholder: 'Utw\u00f3rz has\u0142o',
+    confirmPasswordLabel: 'Potwierd\u017a has\u0142o',
+    confirmPasswordPlaceholder: 'Powt\u00f3rz has\u0142o',
+    passwordHint: 'Minimum 8 znak\u00f3w',
+    termsLabel: 'Akceptuj\u0119',
+    termsLink: 'Regulamin',
+    privacyLink: 'Polityk\u0119 prywatno\u015bci',
+    signupBtn: 'Utw\u00f3rz konto',
+    hasAccount: 'Masz ju\u017c konto?',
+    loginLink: 'Zaloguj si\u0119',
+    errorPasswordLength: 'Has\u0142o musi mie\u0107 co najmniej 8 znak\u00f3w.',
+    errorPasswordMatch: 'Has\u0142a nie s\u0105 zgodne.',
+    errorTerms: 'Musisz zaakceptowa\u0107 regulamin, aby kontynuowa\u0107.',
+    errorEmailUsed: 'Ten e-mail jest ju\u017c zarejestrowany. Spr\u00f3buj si\u0119 zalogowa\u0107.',
+    errorNetwork: 'B\u0142\u0105d sieci. Sprawd\u017a po\u0142\u0105czenie.',
+    errorGeneric: 'Co\u015b posz\u0142o nie tak. Spr\u00f3buj ponownie p\u00f3\u017aniej.',
+    successTitle: 'Sprawd\u017a swoj\u0105 skrzynk\u0119',
+    successMsg: 'Wys\u0142ali\u015bmy link potwierdzaj\u0105cy na Tw\u00f3j e-mail. Zweryfikuj, aby aktywowa\u0107 konto.',
   },
   ro: {
-    metaTitle: 'Înregistrare | EuroSalary.eu',
-    metaDesc: 'Creați-vă contul EuroSalary gratuit. Acces la date salariale europene, chei API, exporturi CSV și instrumente de inteligență salarială.',
-    h1: 'Creați contul EuroSalary',
-    subtitle: 'Începeți cu un plan gratuit. Nu este necesar un card de credit.',
-    emailLabel: 'Adresă e-mail',
+    metaTitle: '\u00cenregistrare | EuroSalary.eu',
+    metaDesc: 'Crea\u021bi-v\u0103 contul gratuit EuroSalary pentru a accesa date salariale, tablouri de bord, chei API \u0219i instrumente de analiz\u0103.',
+    h1: 'Crea\u021bi-v\u0103 contul',
+    subtitle: '\u00cencepe\u021bi cu date salariale, tablouri de bord \u0219i instrumente de analiz\u0103.',
+    emailLabel: 'Adres\u0103 e-mail',
     emailPlaceholder: 'dvs@companie.com',
-    passwordLabel: 'Parolă',
-    passwordPlaceholder: 'Min. 8 caractere',
-    confirmLabel: 'Confirmați parola',
-    confirmPlaceholder: 'Reintroduceți parola',
-    signupBtn: 'Creați cont',
-    hasAccount: 'Aveți deja un cont?',
+    passwordLabel: 'Parol\u0103',
+    passwordPlaceholder: 'Crea\u021bi o parol\u0103',
+    confirmPasswordLabel: 'Confirma\u021bi parola',
+    confirmPasswordPlaceholder: 'Repeta\u021bi parola',
+    passwordHint: 'Minim 8 caractere',
+    termsLabel: 'Sunt de acord cu',
+    termsLink: 'Termenii \u0219i condi\u021biile',
+    privacyLink: 'Politica de confiden\u021bialitate',
+    signupBtn: 'Crea\u021bi cont',
+    hasAccount: 'Ave\u021bi deja un cont?',
     loginLink: 'Autentificare',
-    termsText: 'Prin înregistrare, acceptați',
-    termsLink: 'Termenii și condițiile',
-    privacyLink: 'Politica de confidențialitate',
-    successTitle: 'Verificați e-mailul',
-    successMsg: 'Am trimis un link de confirmare la adresa dvs. de e-mail. Faceți clic pe link pentru a activa contul.',
-    errorMismatch: 'Parolele nu se potrivesc.',
-    errorWeak: 'Parola trebuie să aibă cel puțin 8 caractere.',
-    errorExists: 'Un cont cu acest e-mail există deja.',
-    errorNetwork: 'Eroare de rețea. Verificați conexiunea.',
-    errorGeneric: 'Ceva nu a funcționat. Încercați mai târziu.',
+    errorPasswordLength: 'Parola trebuie s\u0103 aib\u0103 cel pu\u021bin 8 caractere.',
+    errorPasswordMatch: 'Parolele nu se potrivesc.',
+    errorTerms: 'Trebuie s\u0103 accepta\u021bi termenii pentru a continua.',
+    errorEmailUsed: 'Acest e-mail este deja \u00eenregistrat. \u00cencerca\u021bi s\u0103 v\u0103 autentifica\u021bi.',
+    errorNetwork: 'Eroare de re\u021bea. Verifica\u021bi conexiunea.',
+    errorGeneric: 'Ceva nu a func\u021bionat. \u00cencerca\u021bi mai t\u00e2rziu.',
+    successTitle: 'Verifica\u021bi-v\u0103 inbox-ul',
+    successMsg: 'Am trimis un link de confirmare la e-mailul dvs. Verifica\u021bi pentru a activa contul.',
   },
   cs: {
     metaTitle: 'Registrace | EuroSalary.eu',
-    metaDesc: 'Vytvořte si bezplatný účet EuroSalary. Přístup k evropským mzdovým datům, API klíčům, CSV exportům a nástrojům mzdové analýzy.',
-    h1: 'Vytvořte si účet EuroSalary',
-    subtitle: 'Začněte s bezplatným plánem. Kreditní karta není potřeba.',
-    emailLabel: 'E-mailová adresa',
+    metaDesc: 'Vytvo\u0159te si bezplatn\u00fd \u00fa\u010det EuroSalary pro p\u0159\u00edstup k mzdov\u00fdm dat\u016fm, dashboardu, API kl\u00ed\u010d\u016fm a analytick\u00fdm n\u00e1stroj\u016fm.',
+    h1: 'Vytvo\u0159te si \u00fa\u010det',
+    subtitle: 'Za\u010dn\u011bte s mzdov\u00fdmi daty, dashboardem a analytick\u00fdmi n\u00e1stroji.',
+    emailLabel: 'E-mailov\u00e1 adresa',
     emailPlaceholder: 'vy@firma.cz',
     passwordLabel: 'Heslo',
-    passwordPlaceholder: 'Min. 8 znaků',
-    confirmLabel: 'Potvrďte heslo',
-    confirmPlaceholder: 'Zadejte heslo znovu',
-    signupBtn: 'Vytvořit účet',
-    hasAccount: 'Máte již účet?',
-    loginLink: 'Přihlásit se',
-    termsText: 'Registrací souhlasíte s našimi',
-    termsLink: 'Podmínkami použití',
-    privacyLink: 'Zásadami ochrany osobních údajů',
-    successTitle: 'Zkontrolujte e-mail',
-    successMsg: 'Poslali jsme potvrzovací odkaz na vaši e-mailovou adresu. Klikněte na odkaz pro aktivaci účtu.',
-    errorMismatch: 'Hesla se neshodují.',
-    errorWeak: 'Heslo musí mít alespoň 8 znaků.',
-    errorExists: 'Účet s tímto e-mailem již existuje.',
-    errorNetwork: 'Chyba sítě. Zkontrolujte připojení.',
-    errorGeneric: 'Něco se pokazilo. Zkuste to později.',
+    passwordPlaceholder: 'Vytvo\u0159te heslo',
+    confirmPasswordLabel: 'Potvrdit heslo',
+    confirmPasswordPlaceholder: 'Zopakujte heslo',
+    passwordHint: 'Minim\u00e1ln\u011b 8 znak\u016f',
+    termsLabel: 'Souhlas\u00edm s',
+    termsLink: 'Podm\u00ednkami slu\u017eby',
+    privacyLink: 'Z\u00e1sadami ochrany osobn\u00edch \u00fadaj\u016f',
+    signupBtn: 'Vytvo\u0159it \u00fa\u010det',
+    hasAccount: 'Ji\u017e m\u00e1te \u00fa\u010det?',
+    loginLink: 'P\u0159ihl\u00e1sit se',
+    errorPasswordLength: 'Heslo mus\u00ed m\u00edt alespo\u0148 8 znak\u016f.',
+    errorPasswordMatch: 'Hesla se neshoduj\u00ed.',
+    errorTerms: 'Pro pokra\u010dov\u00e1n\u00ed mus\u00edte p\u0159ijmout podm\u00ednky.',
+    errorEmailUsed: 'Tento e-mail je ji\u017e registrov\u00e1n. Zkuste se p\u0159ihl\u00e1sit.',
+    errorNetwork: 'Chyba s\u00edt\u011b. Zkontrolujte p\u0159ipojen\u00ed.',
+    errorGeneric: 'N\u011bco se pokazilo. Zkuste to pozd\u011bji.',
+    successTitle: 'Zkontrolujte svou schr\u00e1nku',
+    successMsg: 'Poslali jsme potvrzovac\u00ed odkaz na v\u00e1\u0161 e-mail. Ov\u011b\u0159te jej pro aktivaci \u00fa\u010dtu.',
   },
   sv: {
     metaTitle: 'Registrera | EuroSalary.eu',
-    metaDesc: 'Skapa ditt gratis EuroSalary-konto. Tillgång till europeiska lönedata, API-nycklar, CSV-exporter och löneintelligensverktyg.',
-    h1: 'Skapa ditt EuroSalary-konto',
-    subtitle: 'Börja med en gratis plan. Inget kreditkort krävs.',
+    metaDesc: 'Skapa ditt gratis EuroSalary-konto f\u00f6r l\u00f6nedata, instrumentpaneler, API-nycklar och l\u00f6neintelligensverktyg.',
+    h1: 'Skapa ditt konto',
+    subtitle: 'Kom ig\u00e5ng med l\u00f6nedata, instrumentpaneler och analysverktyg.',
     emailLabel: 'E-postadress',
     emailPlaceholder: 'du@foretag.se',
-    passwordLabel: 'Lösenord',
-    passwordPlaceholder: 'Min. 8 tecken',
-    confirmLabel: 'Bekräfta lösenord',
-    confirmPlaceholder: 'Ange lösenordet igen',
+    passwordLabel: 'L\u00f6senord',
+    passwordPlaceholder: 'Skapa ett l\u00f6senord',
+    confirmPasswordLabel: 'Bekr\u00e4fta l\u00f6senord',
+    confirmPasswordPlaceholder: 'Upprepa ditt l\u00f6senord',
+    passwordHint: 'Minst 8 tecken',
+    termsLabel: 'Jag godk\u00e4nner',
+    termsLink: 'Anv\u00e4ndarvillkor',
+    privacyLink: 'Integritetspolicy',
     signupBtn: 'Skapa konto',
     hasAccount: 'Har du redan ett konto?',
     loginLink: 'Logga in',
-    termsText: 'Genom att registrera dig godkänner du våra',
-    termsLink: 'Användarvillkor',
-    privacyLink: 'Integritetspolicy',
-    successTitle: 'Kolla din e-post',
-    successMsg: 'Vi har skickat en bekräftelselänk till din e-postadress. Klicka på länken för att aktivera ditt konto.',
-    errorMismatch: 'Lösenorden matchar inte.',
-    errorWeak: 'Lösenordet måste vara minst 8 tecken.',
-    errorExists: 'Ett konto med denna e-post finns redan.',
-    errorNetwork: 'Nätverksfel. Kontrollera din anslutning.',
-    errorGeneric: 'Något gick fel. Försök igen senare.',
+    errorPasswordLength: 'L\u00f6senordet m\u00e5ste vara minst 8 tecken.',
+    errorPasswordMatch: 'L\u00f6senorden matchar inte.',
+    errorTerms: 'Du m\u00e5ste acceptera villkoren f\u00f6r att forts\u00e4tta.',
+    errorEmailUsed: 'Denna e-post \u00e4r redan registrerad. F\u00f6rs\u00f6k logga in.',
+    errorNetwork: 'N\u00e4tverksfel. Kontrollera din anslutning.',
+    errorGeneric: 'N\u00e5got gick fel. F\u00f6rs\u00f6k igen senare.',
+    successTitle: 'Kontrollera din inkorg',
+    successMsg: 'Vi har skickat en bekr\u00e4ftelsel\u00e4nk till din e-post. Verifiera f\u00f6r att aktivera ditt konto.',
   },
   da: {
     metaTitle: 'Opret konto | EuroSalary.eu',
-    metaDesc: 'Opret din gratis EuroSalary-konto. Adgang til europæiske løndata, API-nøgler, CSV-eksporter og lønintelligensværktøjer.',
-    h1: 'Opret din EuroSalary-konto',
-    subtitle: 'Start med en gratis plan. Intet kreditkort påkrævet.',
+    metaDesc: 'Opret din gratis EuroSalary-konto for at f\u00e5 adgang til l\u00f8ndata, dashboards, API-n\u00f8gler og l\u00f8nintelligensv\u00e6rkt\u00f8jer.',
+    h1: 'Opret din konto',
+    subtitle: 'Kom i gang med l\u00f8ndata, dashboards og analysev\u00e6rkt\u00f8jer.',
     emailLabel: 'E-mailadresse',
     emailPlaceholder: 'dig@virksomhed.dk',
     passwordLabel: 'Adgangskode',
-    passwordPlaceholder: 'Min. 8 tegn',
-    confirmLabel: 'Bekræft adgangskode',
-    confirmPlaceholder: 'Indtast adgangskoden igen',
+    passwordPlaceholder: 'Opret en adgangskode',
+    confirmPasswordLabel: 'Bekr\u00e6ft adgangskode',
+    confirmPasswordPlaceholder: 'Gentag din adgangskode',
+    passwordHint: 'Minimum 8 tegn',
+    termsLabel: 'Jeg accepterer',
+    termsLink: 'Servicevilk\u00e5r',
+    privacyLink: 'Privatlivspolitik',
     signupBtn: 'Opret konto',
     hasAccount: 'Har du allerede en konto?',
     loginLink: 'Log ind',
-    termsText: 'Ved at oprette en konto accepterer du vores',
-    termsLink: 'Servicevilkår',
-    privacyLink: 'Privatlivspolitik',
-    successTitle: 'Tjek din e-mail',
-    successMsg: 'Vi har sendt et bekræftelseslink til din e-mailadresse. Klik på linket for at aktivere din konto.',
-    errorMismatch: 'Adgangskoderne stemmer ikke overens.',
-    errorWeak: 'Adgangskoden skal være mindst 8 tegn.',
-    errorExists: 'En konto med denne e-mail eksisterer allerede.',
-    errorNetwork: 'Netværksfejl. Tjek din forbindelse.',
-    errorGeneric: 'Noget gik galt. Prøv igen senere.',
+    errorPasswordLength: 'Adgangskoden skal v\u00e6re mindst 8 tegn.',
+    errorPasswordMatch: 'Adgangskoderne stemmer ikke overens.',
+    errorTerms: 'Du skal acceptere vilk\u00e5rene for at forts\u00e6tte.',
+    errorEmailUsed: 'Denne e-mail er allerede registreret. Pr\u00f8v at logge ind.',
+    errorNetwork: 'Netv\u00e6rksfejl. Tjek din forbindelse.',
+    errorGeneric: 'Noget gik galt. Pr\u00f8v igen senere.',
+    successTitle: 'Tjek din indbakke',
+    successMsg: 'Vi har sendt et bekr\u00e6ftelseslink til din e-mail. Bekr\u00e6ft for at aktivere din konto.',
   },
   fi: {
-    metaTitle: 'Rekisteröidy | EuroSalary.eu',
-    metaDesc: 'Luo ilmainen EuroSalary-tili. Pääsy eurooppalaisiin palkkatietoihin, API-avaimiin, CSV-vientiin ja palkkatietotyökaluihin.',
-    h1: 'Luo EuroSalary-tilisi',
-    subtitle: 'Aloita ilmaisella suunnitelmalla. Luottokorttia ei tarvita.',
-    emailLabel: 'Sähköpostiosoite',
+    metaTitle: 'Rekister\u00f6idy | EuroSalary.eu',
+    metaDesc: 'Luo ilmainen EuroSalary-tili palkkatietojen, hallintapaneelien, API-avainten ja palkka-analyysity\u00f6kalujen k\u00e4ytt\u00e4miseen.',
+    h1: 'Luo tili',
+    subtitle: 'Aloita palkkatiedoilla, hallintapaneeleilla ja analyysity\u00f6kaluilla.',
+    emailLabel: 'S\u00e4hk\u00f6postiosoite',
     emailPlaceholder: 'sina@yritys.fi',
     passwordLabel: 'Salasana',
-    passwordPlaceholder: 'Vähintään 8 merkkiä',
-    confirmLabel: 'Vahvista salasana',
-    confirmPlaceholder: 'Syötä salasana uudelleen',
+    passwordPlaceholder: 'Luo salasana',
+    confirmPasswordLabel: 'Vahvista salasana',
+    confirmPasswordPlaceholder: 'Toista salasana',
+    passwordHint: 'V\u00e4hint\u00e4\u00e4n 8 merkki\u00e4',
+    termsLabel: 'Hyv\u00e4ksyn',
+    termsLink: 'K\u00e4ytt\u00f6ehdot',
+    privacyLink: 'Tietosuojak\u00e4yt\u00e4nn\u00f6n',
     signupBtn: 'Luo tili',
     hasAccount: 'Onko sinulla jo tili?',
-    loginLink: 'Kirjaudu sisään',
-    termsText: 'Rekisteröitymällä hyväksyt',
-    termsLink: 'Käyttöehdot',
-    privacyLink: 'Tietosuojakäytännön',
-    successTitle: 'Tarkista sähköpostisi',
-    successMsg: 'Lähetimme vahvistuslinkin sähköpostiisi. Klikkaa linkkiä aktivoidaksesi tilisi.',
-    errorMismatch: 'Salasanat eivät täsmää.',
-    errorWeak: 'Salasanan on oltava vähintään 8 merkkiä pitkä.',
-    errorExists: 'Tili tällä sähköpostilla on jo olemassa.',
+    loginLink: 'Kirjaudu sis\u00e4\u00e4n',
+    errorPasswordLength: 'Salasanan on oltava v\u00e4hint\u00e4\u00e4n 8 merkki\u00e4.',
+    errorPasswordMatch: 'Salasanat eiv\u00e4t t\u00e4sm\u00e4\u00e4.',
+    errorTerms: 'Sinun on hyv\u00e4ksytt\u00e4v\u00e4 ehdot jatkaaksesi.',
+    errorEmailUsed: 'T\u00e4m\u00e4 s\u00e4hk\u00f6posti on jo rekister\u00f6ity. Kokeile kirjautua sis\u00e4\u00e4n.',
     errorNetwork: 'Verkkovirhe. Tarkista yhteys.',
-    errorGeneric: 'Jokin meni pieleen. Yritä myöhemmin uudelleen.',
+    errorGeneric: 'Jokin meni pieleen. Yrit\u00e4 my\u00f6hemmin uudelleen.',
+    successTitle: 'Tarkista s\u00e4hk\u00f6postisi',
+    successMsg: 'L\u00e4hetimme vahvistuslinkin s\u00e4hk\u00f6postiisi. Vahvista aktivoidaksesi tilisi.',
   },
   el: {
-    metaTitle: 'Εγγραφή | EuroSalary.eu',
-    metaDesc: 'Δημιουργήστε τον δωρεάν λογαριασμό EuroSalary. Πρόσβαση σε ευρωπαϊκά μισθολογικά δεδομένα, κλειδιά API, εξαγωγές CSV.',
-    h1: 'Δημιουργήστε τον λογαριασμό EuroSalary',
-    subtitle: 'Ξεκινήστε με δωρεάν πλάνο. Δεν απαιτείται πιστωτική κάρτα.',
-    emailLabel: 'Διεύθυνση e-mail',
-    emailPlaceholder: 'εσείς@εταιρεία.gr',
-    passwordLabel: 'Κωδικός πρόσβασης',
-    passwordPlaceholder: 'Τουλάχιστον 8 χαρακτήρες',
-    confirmLabel: 'Επιβεβαίωση κωδικού',
-    confirmPlaceholder: 'Εισάγετε ξανά τον κωδικό',
-    signupBtn: 'Δημιουργία λογαριασμού',
-    hasAccount: 'Έχετε ήδη λογαριασμό;',
-    loginLink: 'Σύνδεση',
-    termsText: 'Με την εγγραφή, αποδέχεστε τους',
-    termsLink: 'Όρους χρήσης',
-    privacyLink: 'Πολιτική απορρήτου',
-    successTitle: 'Ελέγξτε το email σας',
-    successMsg: 'Στείλαμε σύνδεσμο επιβεβαίωσης στο email σας. Κάντε κλικ για να ενεργοποιήσετε τον λογαριασμό.',
-    errorMismatch: 'Οι κωδικοί δεν ταιριάζουν.',
-    errorWeak: 'Ο κωδικός πρέπει να έχει τουλάχιστον 8 χαρακτήρες.',
-    errorExists: 'Υπάρχει ήδη λογαριασμός με αυτό το email.',
-    errorNetwork: 'Σφάλμα δικτύου. Ελέγξτε τη σύνδεσή σας.',
-    errorGeneric: 'Κάτι πήγε στραβά. Δοκιμάστε αργότερα.',
+    metaTitle: '\u0395\u03b3\u03b3\u03c1\u03b1\u03c6\u03ae | EuroSalary.eu',
+    metaDesc: '\u0394\u03b7\u03bc\u03b9\u03bf\u03c5\u03c1\u03b3\u03ae\u03c3\u03c4\u03b5 \u03c4\u03bf\u03bd \u03b4\u03c9\u03c1\u03b5\u03ac\u03bd \u03bb\u03bf\u03b3\u03b1\u03c1\u03b9\u03b1\u03c3\u03bc\u03cc \u03c3\u03b1\u03c2 \u03c3\u03c4\u03bf EuroSalary \u03b3\u03b9\u03b1 \u03c0\u03c1\u03cc\u03c3\u03b2\u03b1\u03c3\u03b7 \u03c3\u03b5 \u03bc\u03b9\u03c3\u03b8\u03bf\u03bb\u03bf\u03b3\u03b9\u03ba\u03ac \u03b4\u03b5\u03b4\u03bf\u03bc\u03ad\u03bd\u03b1, \u03c0\u03af\u03bd\u03b1\u03ba\u03b5\u03c2 \u03b5\u03bb\u03ad\u03b3\u03c7\u03bf\u03c5 \u03ba\u03b1\u03b9 \u03b5\u03c1\u03b3\u03b1\u03bb\u03b5\u03af\u03b1 \u03b1\u03bd\u03ac\u03bb\u03c5\u03c3\u03b7\u03c2.',
+    h1: '\u0394\u03b7\u03bc\u03b9\u03bf\u03c5\u03c1\u03b3\u03ae\u03c3\u03c4\u03b5 \u03c4\u03bf\u03bd \u03bb\u03bf\u03b3\u03b1\u03c1\u03b9\u03b1\u03c3\u03bc\u03cc \u03c3\u03b1\u03c2',
+    subtitle: '\u039e\u03b5\u03ba\u03b9\u03bd\u03ae\u03c3\u03c4\u03b5 \u03bc\u03b5 \u03bc\u03b9\u03c3\u03b8\u03bf\u03bb\u03bf\u03b3\u03b9\u03ba\u03ac \u03b4\u03b5\u03b4\u03bf\u03bc\u03ad\u03bd\u03b1, \u03c0\u03af\u03bd\u03b1\u03ba\u03b5\u03c2 \u03b5\u03bb\u03ad\u03b3\u03c7\u03bf\u03c5 \u03ba\u03b1\u03b9 \u03b5\u03c1\u03b3\u03b1\u03bb\u03b5\u03af\u03b1 \u03b1\u03bd\u03ac\u03bb\u03c5\u03c3\u03b7\u03c2.',
+    emailLabel: '\u0394\u03b9\u03b5\u03cd\u03b8\u03c5\u03bd\u03c3\u03b7 e-mail',
+    emailPlaceholder: '\u03b5\u03c3\u03b5\u03af\u03c2@\u03b5\u03c4\u03b1\u03b9\u03c1\u03b5\u03af\u03b1.gr',
+    passwordLabel: '\u039a\u03c9\u03b4\u03b9\u03ba\u03cc\u03c2 \u03c0\u03c1\u03cc\u03c3\u03b2\u03b1\u03c3\u03b7\u03c2',
+    passwordPlaceholder: '\u0394\u03b7\u03bc\u03b9\u03bf\u03c5\u03c1\u03b3\u03ae\u03c3\u03c4\u03b5 \u03ba\u03c9\u03b4\u03b9\u03ba\u03cc',
+    confirmPasswordLabel: '\u0395\u03c0\u03b9\u03b2\u03b5\u03b2\u03b1\u03af\u03c9\u03c3\u03b7 \u03ba\u03c9\u03b4\u03b9\u03ba\u03bf\u03cd',
+    confirmPasswordPlaceholder: '\u0395\u03c0\u03b1\u03bd\u03b1\u03bb\u03ac\u03b2\u03b5\u03c4\u03b5 \u03c4\u03bf\u03bd \u03ba\u03c9\u03b4\u03b9\u03ba\u03cc',
+    passwordHint: '\u03a4\u03bf\u03c5\u03bb\u03ac\u03c7\u03b9\u03c3\u03c4\u03bf\u03bd 8 \u03c7\u03b1\u03c1\u03b1\u03ba\u03c4\u03ae\u03c1\u03b5\u03c2',
+    termsLabel: '\u0391\u03c0\u03bf\u03b4\u03ad\u03c7\u03bf\u03bc\u03b1\u03b9 \u03c4\u03bf\u03c5\u03c2',
+    termsLink: '\u038c\u03c1\u03bf\u03c5\u03c2 \u03c7\u03c1\u03ae\u03c3\u03b7\u03c2',
+    privacyLink: '\u03a0\u03bf\u03bb\u03b9\u03c4\u03b9\u03ba\u03ae \u03b1\u03c0\u03bf\u03c1\u03c1\u03ae\u03c4\u03bf\u03c5',
+    signupBtn: '\u0394\u03b7\u03bc\u03b9\u03bf\u03c5\u03c1\u03b3\u03af\u03b1 \u03bb\u03bf\u03b3\u03b1\u03c1\u03b9\u03b1\u03c3\u03bc\u03bf\u03cd',
+    hasAccount: '\u0388\u03c7\u03b5\u03c4\u03b5 \u03ae\u03b4\u03b7 \u03bb\u03bf\u03b3\u03b1\u03c1\u03b9\u03b1\u03c3\u03bc\u03cc;',
+    loginLink: '\u03a3\u03cd\u03bd\u03b4\u03b5\u03c3\u03b7',
+    errorPasswordLength: '\u039f \u03ba\u03c9\u03b4\u03b9\u03ba\u03cc\u03c2 \u03c0\u03c1\u03ad\u03c0\u03b5\u03b9 \u03bd\u03b1 \u03ad\u03c7\u03b5\u03b9 \u03c4\u03bf\u03c5\u03bb\u03ac\u03c7\u03b9\u03c3\u03c4\u03bf\u03bd 8 \u03c7\u03b1\u03c1\u03b1\u03ba\u03c4\u03ae\u03c1\u03b5\u03c2.',
+    errorPasswordMatch: '\u039f\u03b9 \u03ba\u03c9\u03b4\u03b9\u03ba\u03bf\u03af \u03b4\u03b5\u03bd \u03c4\u03b1\u03b9\u03c1\u03b9\u03ac\u03b6\u03bf\u03c5\u03bd.',
+    errorTerms: '\u03a0\u03c1\u03ad\u03c0\u03b5\u03b9 \u03bd\u03b1 \u03b1\u03c0\u03bf\u03b4\u03b5\u03c7\u03c4\u03b5\u03af\u03c4\u03b5 \u03c4\u03bf\u03c5\u03c2 \u03cc\u03c1\u03bf\u03c5\u03c2 \u03b3\u03b9\u03b1 \u03bd\u03b1 \u03c3\u03c5\u03bd\u03b5\u03c7\u03af\u03c3\u03b5\u03c4\u03b5.',
+    errorEmailUsed: '\u0391\u03c5\u03c4\u03cc \u03c4\u03bf e-mail \u03b5\u03af\u03bd\u03b1\u03b9 \u03ae\u03b4\u03b7 \u03b5\u03b3\u03b3\u03b5\u03b3\u03c1\u03b1\u03bc\u03bc\u03ad\u03bd\u03bf. \u0394\u03bf\u03ba\u03b9\u03bc\u03ac\u03c3\u03c4\u03b5 \u03bd\u03b1 \u03c3\u03c5\u03bd\u03b4\u03b5\u03b8\u03b5\u03af\u03c4\u03b5.',
+    errorNetwork: '\u03a3\u03c6\u03ac\u03bb\u03bc\u03b1 \u03b4\u03b9\u03ba\u03c4\u03cd\u03bf\u03c5. \u0395\u03bb\u03ad\u03b3\u03be\u03c4\u03b5 \u03c4\u03b7 \u03c3\u03cd\u03bd\u03b4\u03b5\u03c3\u03ae \u03c3\u03b1\u03c2.',
+    errorGeneric: '\u039a\u03ac\u03c4\u03b9 \u03c0\u03ae\u03b3\u03b5 \u03c3\u03c4\u03c1\u03b1\u03b2\u03ac. \u0394\u03bf\u03ba\u03b9\u03bc\u03ac\u03c3\u03c4\u03b5 \u03b1\u03c1\u03b3\u03cc\u03c4\u03b5\u03c1\u03b1.',
+    successTitle: '\u0395\u03bb\u03ad\u03b3\u03be\u03c4\u03b5 \u03c4\u03b1 \u03b5\u03b9\u03c3\u03b5\u03c1\u03c7\u03cc\u03bc\u03b5\u03bd\u03ac \u03c3\u03b1\u03c2',
+    successMsg: '\u03a3\u03c4\u03b5\u03af\u03bb\u03b1\u03bc\u03b5 \u03c3\u03cd\u03bd\u03b4\u03b5\u03c3\u03bc\u03bf \u03b5\u03c0\u03b9\u03b2\u03b5\u03b2\u03b1\u03af\u03c9\u03c3\u03b7\u03c2 \u03c3\u03c4\u03bf e-mail \u03c3\u03b1\u03c2. \u0395\u03c0\u03b9\u03b2\u03b5\u03b2\u03b1\u03b9\u03ce\u03c3\u03c4\u03b5 \u03b3\u03b9\u03b1 \u03bd\u03b1 \u03b5\u03bd\u03b5\u03c1\u03b3\u03bf\u03c0\u03bf\u03b9\u03ae\u03c3\u03b5\u03c4\u03b5 \u03c4\u03bf\u03bd \u03bb\u03bf\u03b3\u03b1\u03c1\u03b9\u03b1\u03c3\u03bc\u03cc \u03c3\u03b1\u03c2.',
   },
   hu: {
-    metaTitle: 'Regisztráció | EuroSalary.eu',
-    metaDesc: 'Hozza létre ingyenes EuroSalary-fiókját. Hozzáférés európai béradatokhoz, API-kulcsokhoz, CSV-exportokhoz és bérelemző eszközökhöz.',
-    h1: 'Hozza létre EuroSalary-fiókját',
-    subtitle: 'Kezdje ingyenes tervvel. Bankkártya nem szükséges.',
-    emailLabel: 'E-mail cím',
+    metaTitle: 'Regisztr\u00e1ci\u00f3 | EuroSalary.eu',
+    metaDesc: 'Hozza l\u00e9tre ingyenes EuroSalary-fi\u00f3kj\u00e1t a b\u00e9radatok, vez\u00e9rl\u0151pultok, API-kulcsok \u00e9s b\u00e9relemz\u0151 eszk\u00f6z\u00f6k el\u00e9r\u00e9s\u00e9hez.',
+    h1: 'Fi\u00f3k l\u00e9trehoz\u00e1sa',
+    subtitle: 'Kezdjen b\u00e9radatokkal, vez\u00e9rl\u0151pultokkal \u00e9s elemz\u0151 eszk\u00f6z\u00f6kkel.',
+    emailLabel: 'E-mail c\u00edm',
     emailPlaceholder: 'on@ceg.hu',
-    passwordLabel: 'Jelszó',
-    passwordPlaceholder: 'Legalább 8 karakter',
-    confirmLabel: 'Jelszó megerősítése',
-    confirmPlaceholder: 'Írja be újra a jelszót',
-    signupBtn: 'Fiók létrehozása',
-    hasAccount: 'Van már fiókja?',
-    loginLink: 'Bejelentkezés',
-    termsText: 'A regisztrációval elfogadja a',
-    termsLink: 'Felhasználási feltételeket',
-    privacyLink: 'Adatvédelmi irányelveket',
-    successTitle: 'Ellenőrizze az e-mailjét',
-    successMsg: 'Megerősítő linket küldtünk az e-mail címére. Kattintson a linkre a fiók aktiválásához.',
-    errorMismatch: 'A jelszavak nem egyeznek.',
-    errorWeak: 'A jelszónak legalább 8 karakter hosszúnak kell lennie.',
-    errorExists: 'Ezzel az e-mail címmel már létezik fiók.',
-    errorNetwork: 'Hálózati hiba. Ellenőrizze a kapcsolatot.',
-    errorGeneric: 'Valami hiba történt. Próbálja később.',
+    passwordLabel: 'Jelsz\u00f3',
+    passwordPlaceholder: 'Hozzon l\u00e9tre jelsz\u00f3t',
+    confirmPasswordLabel: 'Jelsz\u00f3 meger\u0151s\u00edt\u00e9se',
+    confirmPasswordPlaceholder: 'Ism\u00e9telje meg a jelsz\u00f3t',
+    passwordHint: 'Legal\u00e1bb 8 karakter',
+    termsLabel: 'Elfogadom a',
+    termsLink: 'Felhaszn\u00e1l\u00e1si felt\u00e9teleket',
+    privacyLink: 'Adatv\u00e9delmi ir\u00e1nyelveket',
+    signupBtn: 'Fi\u00f3k l\u00e9trehoz\u00e1sa',
+    hasAccount: 'M\u00e1r van fi\u00f3kja?',
+    loginLink: 'Bejelentkez\u00e9s',
+    errorPasswordLength: 'A jelsz\u00f3nak legal\u00e1bb 8 karakterb\u0151l kell \u00e1llnia.',
+    errorPasswordMatch: 'A jelszavak nem egyeznek.',
+    errorTerms: 'A folytat\u00e1shoz el kell fogadnia a felt\u00e9teleket.',
+    errorEmailUsed: 'Ez az e-mail m\u00e1r regisztr\u00e1lva van. Pr\u00f3b\u00e1ljon bejelentkezni.',
+    errorNetwork: 'H\u00e1l\u00f3zati hiba. Ellen\u0151rizze a kapcsolatot.',
+    errorGeneric: 'Valami hiba t\u00f6rt\u00e9nt. Pr\u00f3b\u00e1lja k\u00e9s\u0151bb.',
+    successTitle: 'Ellen\u0151rizze postafi\u00f3kj\u00e1t',
+    successMsg: 'Meger\u0151s\u00edt\u0151 linket k\u00fcldt\u00fcnk az e-mail c\u00edm\u00e9re. Er\u0151s\u00edtse meg fi\u00f3kja aktiv\u00e1l\u00e1s\u00e1hoz.',
   },
   sk: {
-    metaTitle: 'Registrácia | EuroSalary.eu',
-    metaDesc: 'Vytvorte si bezplatný účet EuroSalary. Prístup k európskym mzdovým dátam, API kľúčom, CSV exportom a nástrojom mzdovej analýzy.',
-    h1: 'Vytvorte si účet EuroSalary',
-    subtitle: 'Začnite s bezplatným plánom. Kreditná karta nie je potrebná.',
-    emailLabel: 'E-mailová adresa',
+    metaTitle: 'Registr\u00e1cia | EuroSalary.eu',
+    metaDesc: 'Vytvorte si bezplatn\u00fd \u00fa\u010det EuroSalary pre pr\u00edstup k mzdov\u00fdm d\u00e1tam, dashboardu, API k\u013e\u00fa\u010dom a analytick\u00fdm n\u00e1strojom.',
+    h1: 'Vytvorte si \u00fa\u010det',
+    subtitle: 'Za\u010dnite s mzdov\u00fdmi d\u00e1tami, dashboardom a analytick\u00fdmi n\u00e1strojmi.',
+    emailLabel: 'E-mailov\u00e1 adresa',
     emailPlaceholder: 'vy@firma.sk',
     passwordLabel: 'Heslo',
-    passwordPlaceholder: 'Min. 8 znakov',
-    confirmLabel: 'Potvrďte heslo',
-    confirmPlaceholder: 'Zadajte heslo znova',
-    signupBtn: 'Vytvoriť účet',
-    hasAccount: 'Máte už účet?',
-    loginLink: 'Prihlásiť sa',
-    termsText: 'Registráciou súhlasíte s našimi',
-    termsLink: 'Podmienkami používania',
-    privacyLink: 'Zásadami ochrany osobných údajov',
-    successTitle: 'Skontrolujte e-mail',
-    successMsg: 'Odoslali sme potvrdzovací odkaz na vašu e-mailovú adresu. Kliknite na odkaz pre aktiváciu účtu.',
-    errorMismatch: 'Heslá sa nezhodujú.',
-    errorWeak: 'Heslo musí mať aspoň 8 znakov.',
-    errorExists: 'Účet s týmto e-mailom už existuje.',
+    passwordPlaceholder: 'Vytvorte heslo',
+    confirmPasswordLabel: 'Potvrdi\u0165 heslo',
+    confirmPasswordPlaceholder: 'Zopakujte heslo',
+    passwordHint: 'Minim\u00e1lne 8 znakov',
+    termsLabel: 'S\u00fahlas\u00edm s',
+    termsLink: 'Podmienkami slu\u017eby',
+    privacyLink: 'Z\u00e1sadami ochrany osobn\u00fdch \u00fadajov',
+    signupBtn: 'Vytvori\u0165 \u00fa\u010det',
+    hasAccount: 'U\u017e m\u00e1te \u00fa\u010det?',
+    loginLink: 'Prihl\u00e1si\u0165 sa',
+    errorPasswordLength: 'Heslo mus\u00ed ma\u0165 aspo\u0148 8 znakov.',
+    errorPasswordMatch: 'Hesl\u00e1 sa nezhoduj\u00fa.',
+    errorTerms: 'Pre pokra\u010dovanie mus\u00edte prija\u0165 podmienky.',
+    errorEmailUsed: 'Tento e-mail je u\u017e registrovan\u00fd. Sk\u00faste sa prihl\u00e1si\u0165.',
     errorNetwork: 'Chyba siete. Skontrolujte pripojenie.',
-    errorGeneric: 'Niečo sa pokazilo. Skúste to neskôr.',
+    errorGeneric: 'Nie\u010do sa pokazilo. Sk\u00faste to nesk\u00f4r.',
+    successTitle: 'Skontrolujte svoju schr\u00e1nku',
+    successMsg: 'Poslali sme potvrdzovac\u00ed odkaz na v\u00e1\u0161 e-mail. Overte ho pre aktiv\u00e1ciu \u00fa\u010dtu.',
   },
   bg: {
-    metaTitle: 'Регистрация | EuroSalary.eu',
-    metaDesc: 'Създайте безплатен акаунт в EuroSalary. Достъп до европейски данни за заплати, API ключове, CSV експорти и инструменти за анализ.',
-    h1: 'Създайте акаунт в EuroSalary',
-    subtitle: 'Започнете с безплатен план. Не е необходима кредитна карта.',
-    emailLabel: 'Имейл адрес',
-    emailPlaceholder: 'вие@компания.bg',
-    passwordLabel: 'Парола',
-    passwordPlaceholder: 'Мин. 8 символа',
-    confirmLabel: 'Потвърдете паролата',
-    confirmPlaceholder: 'Въведете паролата отново',
-    signupBtn: 'Създаване на акаунт',
-    hasAccount: 'Вече имате акаунт?',
-    loginLink: 'Вход',
-    termsText: 'С регистрацията приемате нашите',
-    termsLink: 'Условия за ползване',
-    privacyLink: 'Политика за поверителност',
-    successTitle: 'Проверете имейла си',
-    successMsg: 'Изпратихме линк за потвърждение на вашия имейл. Кликнете върху линка, за да активирате акаунта си.',
-    errorMismatch: 'Паролите не съвпадат.',
-    errorWeak: 'Паролата трябва да е поне 8 символа.',
-    errorExists: 'Акаунт с този имейл вече съществува.',
-    errorNetwork: 'Мрежова грешка. Проверете връзката си.',
-    errorGeneric: 'Нещо се обърка. Опитайте по-късно.',
+    metaTitle: '\u0420\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u044f | EuroSalary.eu',
+    metaDesc: '\u0421\u044a\u0437\u0434\u0430\u0439\u0442\u0435 \u0431\u0435\u0437\u043f\u043b\u0430\u0442\u0435\u043d \u0430\u043a\u0430\u0443\u043d\u0442 \u0432 EuroSalary \u0437\u0430 \u0434\u043e\u0441\u0442\u044a\u043f \u0434\u043e \u0434\u0430\u043d\u043d\u0438 \u0437\u0430 \u0437\u0430\u043f\u043b\u0430\u0442\u0438, \u0442\u0430\u0431\u043b\u0430, API \u043a\u043b\u044e\u0447\u043e\u0432\u0435 \u0438 \u0430\u043d\u0430\u043b\u0438\u0442\u0438\u0447\u043d\u0438 \u0438\u043d\u0441\u0442\u0440\u0443\u043c\u0435\u043d\u0442\u0438.',
+    h1: '\u0421\u044a\u0437\u0434\u0430\u0439\u0442\u0435 \u0430\u043a\u0430\u0443\u043d\u0442',
+    subtitle: '\u0417\u0430\u043f\u043e\u0447\u043d\u0435\u0442\u0435 \u0441 \u0434\u0430\u043d\u043d\u0438 \u0437\u0430 \u0437\u0430\u043f\u043b\u0430\u0442\u0438, \u0442\u0430\u0431\u043b\u0430 \u0438 \u0430\u043d\u0430\u043b\u0438\u0442\u0438\u0447\u043d\u0438 \u0438\u043d\u0441\u0442\u0440\u0443\u043c\u0435\u043d\u0442\u0438.',
+    emailLabel: '\u0418\u043c\u0435\u0439\u043b \u0430\u0434\u0440\u0435\u0441',
+    emailPlaceholder: '\u0432\u0438\u0435@\u043a\u043e\u043c\u043f\u0430\u043d\u0438\u044f.bg',
+    passwordLabel: '\u041f\u0430\u0440\u043e\u043b\u0430',
+    passwordPlaceholder: '\u0421\u044a\u0437\u0434\u0430\u0439\u0442\u0435 \u043f\u0430\u0440\u043e\u043b\u0430',
+    confirmPasswordLabel: '\u041f\u043e\u0442\u0432\u044a\u0440\u0434\u0435\u0442\u0435 \u043f\u0430\u0440\u043e\u043b\u0430\u0442\u0430',
+    confirmPasswordPlaceholder: '\u041f\u043e\u0432\u0442\u043e\u0440\u0435\u0442\u0435 \u043f\u0430\u0440\u043e\u043b\u0430\u0442\u0430',
+    passwordHint: '\u041c\u0438\u043d\u0438\u043c\u0443\u043c 8 \u0441\u0438\u043c\u0432\u043e\u043b\u0430',
+    termsLabel: '\u0421\u044a\u0433\u043b\u0430\u0441\u0435\u043d \u0441\u044a\u043c \u0441',
+    termsLink: '\u0423\u0441\u043b\u043e\u0432\u0438\u044f\u0442\u0430 \u0437\u0430 \u043f\u043e\u043b\u0437\u0432\u0430\u043d\u0435',
+    privacyLink: '\u041f\u043e\u043b\u0438\u0442\u0438\u043a\u0430\u0442\u0430 \u0437\u0430 \u043f\u043e\u0432\u0435\u0440\u0438\u0442\u0435\u043b\u043d\u043e\u0441\u0442',
+    signupBtn: '\u0421\u044a\u0437\u0434\u0430\u0432\u0430\u043d\u0435 \u043d\u0430 \u0430\u043a\u0430\u0443\u043d\u0442',
+    hasAccount: '\u0412\u0435\u0447\u0435 \u0438\u043c\u0430\u0442\u0435 \u0430\u043a\u0430\u0443\u043d\u0442?',
+    loginLink: '\u0412\u0445\u043e\u0434',
+    errorPasswordLength: '\u041f\u0430\u0440\u043e\u043b\u0430\u0442\u0430 \u0442\u0440\u044f\u0431\u0432\u0430 \u0434\u0430 \u0435 \u043f\u043e\u043d\u0435 8 \u0441\u0438\u043c\u0432\u043e\u043b\u0430.',
+    errorPasswordMatch: '\u041f\u0430\u0440\u043e\u043b\u0438\u0442\u0435 \u043d\u0435 \u0441\u044a\u0432\u043f\u0430\u0434\u0430\u0442.',
+    errorTerms: '\u0422\u0440\u044f\u0431\u0432\u0430 \u0434\u0430 \u043f\u0440\u0438\u0435\u043c\u0435\u0442\u0435 \u0443\u0441\u043b\u043e\u0432\u0438\u044f\u0442\u0430, \u0437\u0430 \u0434\u0430 \u043f\u0440\u043e\u0434\u044a\u043b\u0436\u0438\u0442\u0435.',
+    errorEmailUsed: '\u0422\u043e\u0437\u0438 \u0438\u043c\u0435\u0439\u043b \u0432\u0435\u0447\u0435 \u0435 \u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0438\u0440\u0430\u043d. \u041e\u043f\u0438\u0442\u0430\u0439\u0442\u0435 \u0434\u0430 \u0432\u043b\u0435\u0437\u0435\u0442\u0435.',
+    errorNetwork: '\u041c\u0440\u0435\u0436\u043e\u0432\u0430 \u0433\u0440\u0435\u0448\u043a\u0430. \u041f\u0440\u043e\u0432\u0435\u0440\u0435\u0442\u0435 \u0432\u0440\u044a\u0437\u043a\u0430\u0442\u0430 \u0441\u0438.',
+    errorGeneric: '\u041d\u0435\u0449\u043e \u0441\u0435 \u043e\u0431\u044a\u0440\u043a\u0430. \u041e\u043f\u0438\u0442\u0430\u0439\u0442\u0435 \u043f\u043e-\u043a\u044a\u0441\u043d\u043e.',
+    successTitle: '\u041f\u0440\u043e\u0432\u0435\u0440\u0435\u0442\u0435 \u0432\u0445\u043e\u0434\u044f\u0449\u0430\u0442\u0430 \u0441\u0438 \u043f\u043e\u0449\u0430',
+    successMsg: '\u0418\u0437\u043f\u0440\u0430\u0442\u0438\u0445\u043c\u0435 \u043b\u0438\u043d\u043a \u0437\u0430 \u043f\u043e\u0442\u0432\u044a\u0440\u0436\u0434\u0435\u043d\u0438\u0435 \u043d\u0430 \u0438\u043c\u0435\u0439\u043b\u0430 \u0432\u0438. \u041f\u043e\u0442\u0432\u044a\u0440\u0434\u0435\u0442\u0435, \u0437\u0430 \u0434\u0430 \u0430\u043a\u0442\u0438\u0432\u0438\u0440\u0430\u0442\u0435 \u0430\u043a\u0430\u0443\u043d\u0442\u0430 \u0441\u0438.',
   },
   hr: {
     metaTitle: 'Registracija | EuroSalary.eu',
-    metaDesc: 'Izradite besplatni EuroSalary račun. Pristup europskim podacima o plaćama, API ključevima, CSV izvozima i alatima za analizu plaća.',
-    h1: 'Izradite EuroSalary račun',
-    subtitle: 'Započnite s besplatnim planom. Kreditna kartica nije potrebna.',
+    metaDesc: 'Izradite besplatni EuroSalary ra\u010dun za pristup podacima o pla\u0107ama, nadzornoj plo\u010di, API klju\u010devima i analiti\u010dkim alatima.',
+    h1: 'Izradite ra\u010dun',
+    subtitle: 'Zapo\u010dnite s podacima o pla\u0107ama, nadzornom plo\u010dom i analiti\u010dkim alatima.',
     emailLabel: 'E-mail adresa',
     emailPlaceholder: 'vi@tvrtka.hr',
     passwordLabel: 'Lozinka',
-    passwordPlaceholder: 'Min. 8 znakova',
-    confirmLabel: 'Potvrdite lozinku',
-    confirmPlaceholder: 'Unesite lozinku ponovo',
-    signupBtn: 'Izradi račun',
-    hasAccount: 'Već imate račun?',
+    passwordPlaceholder: 'Izradite lozinku',
+    confirmPasswordLabel: 'Potvrdite lozinku',
+    confirmPasswordPlaceholder: 'Ponovite lozinku',
+    passwordHint: 'Najmanje 8 znakova',
+    termsLabel: 'Prihva\u0107am',
+    termsLink: 'Uvjete kori\u0161tenja',
+    privacyLink: 'Pravila privatnosti',
+    signupBtn: 'Izradi ra\u010dun',
+    hasAccount: 'Ve\u0107 imate ra\u010dun?',
     loginLink: 'Prijava',
-    termsText: 'Registracijom prihvaćate naše',
-    termsLink: 'Uvjete korištenja',
-    privacyLink: 'Politiku privatnosti',
-    successTitle: 'Provjerite e-mail',
-    successMsg: 'Poslali smo link za potvrdu na vašu e-mail adresu. Kliknite na link za aktivaciju računa.',
-    errorMismatch: 'Lozinke se ne podudaraju.',
-    errorWeak: 'Lozinka mora imati najmanje 8 znakova.',
-    errorExists: 'Račun s ovom e-mail adresom već postoji.',
-    errorNetwork: 'Mrežna greška. Provjerite vezu.',
-    errorGeneric: 'Nešto je pošlo po krivu. Pokušajte kasnije.',
+    errorPasswordLength: 'Lozinka mora imati najmanje 8 znakova.',
+    errorPasswordMatch: 'Lozinke se ne podudaraju.',
+    errorTerms: 'Morate prihvatiti uvjete za nastavak.',
+    errorEmailUsed: 'Ovaj e-mail je ve\u0107 registriran. Poku\u0161ajte se prijaviti.',
+    errorNetwork: 'Mre\u017ena gre\u0161ka. Provjerite vezu.',
+    errorGeneric: 'Ne\u0161to je po\u0161lo po krivu. Poku\u0161ajte kasnije.',
+    successTitle: 'Provjerite svoju pristiglu po\u0161tu',
+    successMsg: 'Poslali smo link za potvrdu na va\u0161 e-mail. Potvrdite za aktivaciju ra\u010duna.',
   },
   sl: {
     metaTitle: 'Registracija | EuroSalary.eu',
-    metaDesc: 'Ustvarite brezplačen račun EuroSalary. Dostop do evropskih plačnih podatkov, API ključev, CSV izvozov in orodij za analizo plač.',
-    h1: 'Ustvarite račun EuroSalary',
-    subtitle: 'Začnite z brezplačnim načrtom. Kreditna kartica ni potrebna.',
-    emailLabel: 'E-poštni naslov',
+    metaDesc: 'Ustvarite brezpla\u010den ra\u010dun EuroSalary za dostop do podatkov o pla\u010dah, nadzorne plo\u0161\u010de, API klju\u010dev in analiti\u010dnih orodij.',
+    h1: 'Ustvarite ra\u010dun',
+    subtitle: 'Za\u010dnite s podatki o pla\u010dah, nadzorno plo\u0161\u010do in analiti\u010dnimi orodji.',
+    emailLabel: 'E-po\u0161tni naslov',
     emailPlaceholder: 'vi@podjetje.si',
     passwordLabel: 'Geslo',
-    passwordPlaceholder: 'Najmanj 8 znakov',
-    confirmLabel: 'Potrdite geslo',
-    confirmPlaceholder: 'Ponovno vnesite geslo',
-    signupBtn: 'Ustvari račun',
-    hasAccount: 'Že imate račun?',
-    loginLink: 'Prijava',
-    termsText: 'Z registracijo se strinjate z našimi',
+    passwordPlaceholder: 'Ustvarite geslo',
+    confirmPasswordLabel: 'Potrdite geslo',
+    confirmPasswordPlaceholder: 'Ponovite geslo',
+    passwordHint: 'Najmanj 8 znakov',
+    termsLabel: 'Strinjam se s',
     termsLink: 'Pogoji uporabe',
-    privacyLink: 'Politika zasebnosti',
-    successTitle: 'Preverite e-pošto',
-    successMsg: 'Poslali smo potrditveno povezavo na vaš e-poštni naslov. Kliknite na povezavo za aktivacijo računa.',
-    errorMismatch: 'Gesli se ne ujemata.',
-    errorWeak: 'Geslo mora imeti vsaj 8 znakov.',
-    errorExists: 'Račun s tem e-poštnim naslovom že obstaja.',
-    errorNetwork: 'Omrežna napaka. Preverite povezavo.',
-    errorGeneric: 'Nekaj je šlo narobe. Poskusite pozneje.',
+    privacyLink: 'Pravilnik o zasebnosti',
+    signupBtn: 'Ustvari ra\u010dun',
+    hasAccount: '\u017de imate ra\u010dun?',
+    loginLink: 'Prijava',
+    errorPasswordLength: 'Geslo mora vsebovati vsaj 8 znakov.',
+    errorPasswordMatch: 'Gesli se ne ujemata.',
+    errorTerms: 'Za nadaljevanje morate sprejeti pogoje.',
+    errorEmailUsed: 'Ta e-po\u0161tni naslov je \u017ee registriran. Poskusite se prijaviti.',
+    errorNetwork: 'Omre\u017ena napaka. Preverite povezavo.',
+    errorGeneric: 'Nekaj je \u0161lo narobe. Poskusite pozneje.',
+    successTitle: 'Preverite svojo e-po\u0161to',
+    successMsg: 'Poslali smo potrditveno povezavo na va\u0161 e-po\u0161tni naslov. Potrdite za aktivacijo ra\u010duna.',
   },
   lt: {
     metaTitle: 'Registracija | EuroSalary.eu',
-    metaDesc: 'Create your free EuroSalary account. Access European salary data, API keys, CSV exports, and salary intelligence tools.',
-    h1: 'Sukurkite EuroSalary paskyrą',
-    subtitle: 'Start with a free plan. No credit card required.',
-    emailLabel: 'El. pašto adresas',
+    metaDesc: 'Sukurkite nemokam\u0105 EuroSalary paskyr\u0105, kad gal\u0117tum\u0117te pasiekti atlyginim\u0173 duomenis, valdymo skydel\u012f, API raktus ir analiz\u0117s \u012frankius.',
+    h1: 'Sukurkite paskyr\u0105',
+    subtitle: 'Prad\u0117kite naudotis atlyginim\u0173 duomenimis, valdymo skydeliu ir analiz\u0117s \u012frankiais.',
+    emailLabel: 'El. pa\u0161to adresas',
     emailPlaceholder: 'jus@imone.lt',
-    passwordLabel: 'Slaptažodis',
-    passwordPlaceholder: 'Min. 8 simboliai',
-    confirmLabel: 'Patvirtinkite slaptažodį',
-    confirmPlaceholder: 'Įveskite slaptažodį dar kartą',
-    signupBtn: 'Sukurti paskyrą',
-    hasAccount: 'Jau turite paskyrą?',
+    passwordLabel: 'Slapta\u017eodis',
+    passwordPlaceholder: 'Sukurkite slapta\u017eod\u012f',
+    confirmPasswordLabel: 'Patvirtinkite slapta\u017eod\u012f',
+    confirmPasswordPlaceholder: 'Pakartokite slapta\u017eod\u012f',
+    passwordHint: 'Ma\u017eiausiai 8 simboliai',
+    termsLabel: 'Sutinku su',
+    termsLink: 'Paslaug\u0173 s\u0105lygomis',
+    privacyLink: 'Privatumo politika',
+    signupBtn: 'Sukurti paskyr\u0105',
+    hasAccount: 'Jau turite paskyr\u0105?',
     loginLink: 'Prisijungti',
-    termsText: 'By signing up, you agree to our',
-    termsLink: 'Terms of Service',
-    privacyLink: 'Privacy Policy',
-    successTitle: 'Patikrinkite el. paštą',
-    successMsg: 'We sent a confirmation link to your email address. Please click the link to activate your account.',
-    errorMismatch: 'Passwords do not match.',
-    errorWeak: 'Password must be at least 8 characters.',
-    errorExists: 'An account with this email already exists.',
-    errorNetwork: 'Network error. Please check your connection.',
-    errorGeneric: 'Something went wrong. Please try again later.',
+    errorPasswordLength: 'Slapta\u017eodis turi b\u016bti bent 8 simboli\u0173.',
+    errorPasswordMatch: 'Slapta\u017eod\u017eiai nesutampa.',
+    errorTerms: 'Nor\u0117dami t\u0119sti, turite sutikti su s\u0105lygomis.',
+    errorEmailUsed: '\u0160is el. pa\u0161tas jau u\u017eregistruotas. Pabandykite prisijungti.',
+    errorNetwork: 'Tinklo klaida. Patikrinkite ry\u0161\u012f.',
+    errorGeneric: 'Ka\u017ekas nepavyko. Bandykite v\u0117liau.',
+    successTitle: 'Patikrinkite savo el. pa\u0161t\u0105',
+    successMsg: 'I\u0161siunt\u0117me patvirtinimo nuorod\u0105 \u012f j\u016bs\u0173 el. pa\u0161t\u0105. Patvirtinkite, kad aktyvuotum\u0117te paskyr\u0105.',
   },
   lv: {
-    metaTitle: 'Reģistrācija | EuroSalary.eu',
-    metaDesc: 'Create your free EuroSalary account. Access European salary data, API keys, CSV exports, and salary intelligence tools.',
-    h1: 'Izveidojiet EuroSalary kontu',
-    subtitle: 'Start with a free plan. No credit card required.',
+    metaTitle: 'Re\u0123istr\u0101cija | EuroSalary.eu',
+    metaDesc: 'Izveidojiet bezmaksas EuroSalary kontu, lai piek\u013c\u016btu algu datiem, pane\u013ciem, API atsl\u0113g\u0101m un anal\u012bzes r\u012bkiem.',
+    h1: 'Izveidojiet kontu',
+    subtitle: 'S\u0101ciet ar algu datiem, pane\u013ciem un anal\u012bzes r\u012bkiem.',
     emailLabel: 'E-pasta adrese',
     emailPlaceholder: 'jus@uznemums.lv',
     passwordLabel: 'Parole',
-    passwordPlaceholder: 'Min. 8 rakstzīmes',
-    confirmLabel: 'Apstipriniet paroli',
-    confirmPlaceholder: 'Ievadiet paroli vēlreiz',
+    passwordPlaceholder: 'Izveidojiet paroli',
+    confirmPasswordLabel: 'Apstipriniet paroli',
+    confirmPasswordPlaceholder: 'Atk\u0101rtojiet paroli',
+    passwordHint: 'Vismaz 8 rakstz\u012bmes',
+    termsLabel: 'Es piekr\u012btu',
+    termsLink: 'Lieto\u0161anas noteikumiem',
+    privacyLink: 'Priv\u0101tuma politikai',
     signupBtn: 'Izveidot kontu',
     hasAccount: 'Jau ir konts?',
     loginLink: 'Pieteikties',
-    termsText: 'By signing up, you agree to our',
-    termsLink: 'Terms of Service',
-    privacyLink: 'Privacy Policy',
-    successTitle: 'Pārbaudiet e-pastu',
-    successMsg: 'We sent a confirmation link to your email address. Please click the link to activate your account.',
-    errorMismatch: 'Passwords do not match.',
-    errorWeak: 'Password must be at least 8 characters.',
-    errorExists: 'An account with this email already exists.',
-    errorNetwork: 'Network error. Please check your connection.',
-    errorGeneric: 'Something went wrong. Please try again later.',
+    errorPasswordLength: 'Parolei j\u0101b\u016bt vismaz 8 rakstz\u012bm\u0113m.',
+    errorPasswordMatch: 'Paroles nesakr\u012bt.',
+    errorTerms: 'Lai turpin\u0101tu, jums j\u0101piekr\u012bt noteikumiem.',
+    errorEmailUsed: '\u0160is e-pasts jau ir re\u0123istr\u0113ts. M\u0113\u0123iniet pieteikties.',
+    errorNetwork: 'T\u012bkla k\u013c\u016bda. P\u0101rbaudiet savienojumu.',
+    errorGeneric: 'Kaut kas nog\u0101ja greizi. M\u0113\u0123iniet v\u0113l\u0101k.',
+    successTitle: 'P\u0101rbaudiet savu e-pastu',
+    successMsg: 'M\u0113s nos\u016bt\u012bj\u0101m apstiprin\u0101juma saiti uz j\u016bsu e-pastu. Apstipriniet, lai aktiviz\u0113tu kontu.',
   },
   et: {
     metaTitle: 'Registreerimine | EuroSalary.eu',
-    metaDesc: 'Create your free EuroSalary account. Access European salary data, API keys, CSV exports, and salary intelligence tools.',
-    h1: 'Looge oma EuroSalary konto',
-    subtitle: 'Start with a free plan. No credit card required.',
+    metaDesc: 'Looge tasuta EuroSalary konto, et p\u00e4\u00e4seda ligi palgaandmetele, juhtpaneelidele, API-v\u00f5tmetele ja anal\u00fc\u00fcsit\u00f6\u00f6riistadele.',
+    h1: 'Looge konto',
+    subtitle: 'Alustage palgaandmete, juhtpaneelide ja anal\u00fc\u00fcsit\u00f6\u00f6riistadega.',
     emailLabel: 'E-posti aadress',
     emailPlaceholder: 'sina@ettevote.ee',
     passwordLabel: 'Parool',
-    passwordPlaceholder: 'Vähemalt 8 tähemärki',
-    confirmLabel: 'Kinnitage parool',
-    confirmPlaceholder: 'Sisestage parool uuesti',
+    passwordPlaceholder: 'Looge parool',
+    confirmPasswordLabel: 'Kinnitage parool',
+    confirmPasswordPlaceholder: 'Korrake parooli',
+    passwordHint: 'V\u00e4hemalt 8 t\u00e4hem\u00e4rki',
+    termsLabel: 'N\u00f5ustun',
+    termsLink: 'Teenuse tingimustega',
+    privacyLink: 'Privaatsuspoliitikaga',
     signupBtn: 'Loo konto',
-    hasAccount: 'Kas teil on juba konto?',
+    hasAccount: 'Juba on konto?',
     loginLink: 'Logi sisse',
-    termsText: 'By signing up, you agree to our',
-    termsLink: 'Terms of Service',
-    privacyLink: 'Privacy Policy',
-    successTitle: 'Kontrollige e-posti',
-    successMsg: 'We sent a confirmation link to your email address. Please click the link to activate your account.',
-    errorMismatch: 'Passwords do not match.',
-    errorWeak: 'Password must be at least 8 characters.',
-    errorExists: 'An account with this email already exists.',
-    errorNetwork: 'Network error. Please check your connection.',
-    errorGeneric: 'Something went wrong. Please try again later.',
+    errorPasswordLength: 'Parool peab olema v\u00e4hemalt 8 t\u00e4hem\u00e4rki.',
+    errorPasswordMatch: 'Paroolid ei \u00fchti.',
+    errorTerms: 'J\u00e4tkamiseks peate n\u00f5ustuma tingimustega.',
+    errorEmailUsed: 'See e-post on juba registreeritud. Proovige sisse logida.',
+    errorNetwork: 'V\u00f5rgu viga. Kontrollige \u00fchendust.',
+    errorGeneric: 'Midagi l\u00e4ks valesti. Proovige hiljem uuesti.',
+    successTitle: 'Kontrollige oma e-posti',
+    successMsg: 'Saatsime teie e-postile kinnituslingi. Kinnitage konto aktiveerimiseks.',
   },
   mt: {
-    metaTitle: 'Irreġistra | EuroSalary.eu',
-    metaDesc: 'Create your free EuroSalary account. Access European salary data, API keys, CSV exports, and salary intelligence tools.',
-    h1: 'Oħloq il-kont EuroSalary tiegħek',
-    subtitle: 'Start with a free plan. No credit card required.',
+    metaTitle: 'Irre\u0121istra | EuroSalary.eu',
+    metaDesc: "O\u0127loq kont b'xejn fuq EuroSalary g\u0127all-a\u010b\u010bess g\u0127ad-data tas-salarji, dashboards, \u010bwievet API u g\u0127odod ta' anali\u017ci.",
+    h1: "O\u0127loq il-kont tieg\u0127ek",
+    subtitle: "Ibda bid-data tas-salarji, dashboards u g\u0127odod ta' anali\u017ci.",
     emailLabel: 'Indirizz tal-email',
     emailPlaceholder: 'int@kumpanija.mt',
     passwordLabel: 'Password',
-    passwordPlaceholder: 'Min. 8 karattri',
-    confirmLabel: 'Ikkonferma l-password',
-    confirmPlaceholder: 'Daħħal il-password mill-ġdid',
-    signupBtn: 'Oħloq kont',
-    hasAccount: 'Diġà għandek kont?',
-    loginLink: 'Idħol',
-    termsText: 'By signing up, you agree to our',
-    termsLink: 'Terms of Service',
-    privacyLink: 'Privacy Policy',
-    successTitle: 'Iċċekkja l-email tiegħek',
-    successMsg: 'We sent a confirmation link to your email address. Please click the link to activate your account.',
-    errorMismatch: 'Passwords do not match.',
-    errorWeak: 'Password must be at least 8 characters.',
-    errorExists: 'An account with this email already exists.',
-    errorNetwork: 'Network error. Please check your connection.',
-    errorGeneric: 'Something went wrong. Please try again later.',
+    passwordPlaceholder: 'O\u0127loq password',
+    confirmPasswordLabel: 'Ikkonferma l-password',
+    confirmPasswordPlaceholder: 'Irrepeti l-password',
+    passwordHint: 'Minimu 8 karattri',
+    termsLabel: 'Naqbel mat-',
+    termsLink: 'Termini tas-Servizz',
+    privacyLink: 'Politika tal-Privatezza',
+    signupBtn: 'O\u0127loq kont',
+    hasAccount: 'Di\u0121\u00e0 g\u0127andek kont?',
+    loginLink: 'Id\u0127ol',
+    errorPasswordLength: 'Il-password trid tkun tal-anqas 8 karattri.',
+    errorPasswordMatch: 'Il-passwords ma jaqblux.',
+    errorTerms: "Trid ta\u010b\u010betta t-termini biex tkompli.",
+    errorEmailUsed: "Dan l-email di\u0121\u00e0 re\u0121istrat. Ipprova id\u0127ol.",
+    errorNetwork: "\u017dball tan-netwerk. I\u010b\u010bekkja l-konnessjoni.",
+    errorGeneric: "Xi \u0127a\u0121a marret \u0127a\u017cin. Erga' pprova aktar tard.",
+    successTitle: "I\u010b\u010bekkja l-inbox tieg\u0127ek",
+    successMsg: "Bg\u0127atna link ta' konferma lill-email tieg\u0127ek. Ikkonferma biex tattiva l-kont tieg\u0127ek.",
   },
   ga: {
-    metaTitle: 'Cláraigh | EuroSalary.eu',
-    metaDesc: 'Create your free EuroSalary account. Access European salary data, API keys, CSV exports, and salary intelligence tools.',
-    h1: 'Cruthaigh do chuntas EuroSalary',
-    subtitle: 'Start with a free plan. No credit card required.',
-    emailLabel: 'Seoladh ríomhphoist',
+    metaTitle: 'Cl\u00e1raigh | EuroSalary.eu',
+    metaDesc: 'Cruthaigh do chuntas EuroSalary saor in aisce le haghaidh sonra\u00ed tuarastail, pain\u00e9il, eochracha API agus uirlis\u00ed anail\u00edse.',
+    h1: 'Cruthaigh do chuntas',
+    subtitle: 'Tosaigh le sonra\u00ed tuarastail, pain\u00e9il agus uirlis\u00ed anail\u00edse.',
+    emailLabel: 'Seoladh r\u00edomhphoist',
     emailPlaceholder: 'tu@comhlacht.ie',
     passwordLabel: 'Pasfhocal',
-    passwordPlaceholder: 'Ar a laghad 8 gcarachtar',
-    confirmLabel: 'Deimhnigh pasfhocal',
-    confirmPlaceholder: 'Cuir isteach an pasfhocal arís',
+    passwordPlaceholder: 'Cruthaigh pasfhocal',
+    confirmPasswordLabel: 'Deimhnigh pasfhocal',
+    confirmPasswordPlaceholder: 'Athscr\u00edobh do phasfhocal',
+    passwordHint: '8 gcarachtar ar a laghad',
+    termsLabel: 'Aonta\u00edm leis na',
+    termsLink: 'T\u00e9arma\u00ed Seirbh\u00edse',
+    privacyLink: 'Polasa\u00ed Pr\u00edobh\u00e1ideachais',
     signupBtn: 'Cruthaigh cuntas',
     hasAccount: 'An bhfuil cuntas agat cheana?',
-    loginLink: 'Logáil isteach',
-    termsText: 'By signing up, you agree to our',
-    termsLink: 'Terms of Service',
-    privacyLink: 'Privacy Policy',
-    successTitle: 'Seiceáil do ríomhphost',
-    successMsg: 'We sent a confirmation link to your email address. Please click the link to activate your account.',
-    errorMismatch: 'Passwords do not match.',
-    errorWeak: 'Password must be at least 8 characters.',
-    errorExists: 'An account with this email already exists.',
-    errorNetwork: 'Network error. Please check your connection.',
-    errorGeneric: 'Something went wrong. Please try again later.',
+    loginLink: 'Log\u00e1il isteach',
+    errorPasswordLength: 'Caithfidh 8 gcarachtar ar a laghad a bheith sa phasfhocal.',
+    errorPasswordMatch: 'N\u00ed hionann na pasfhocail.',
+    errorTerms: 'Caithfidh t\u00fa glacadh leis na t\u00e9arma\u00ed chun lean\u00faint ar aghaidh.',
+    errorEmailUsed: 'T\u00e1 an r\u00edomhphost seo cl\u00e1raithe cheana. Bain triail as log\u00e1il isteach.',
+    errorNetwork: 'Earr\u00e1id l\u00edonra. Seice\u00e1il do nasc.',
+    errorGeneric: 'Chuaigh rud \u00e9igin m\u00edcheart. Bain triail eile as n\u00edos d\u00e9ana\u00ed.',
+    successTitle: 'Seice\u00e1il do bhosca isteach',
+    successMsg: 'Sheol muid nasc deimhnithe chuig do r\u00edomhphost. Deimhnigh chun do chuntas a ghn\u00edomhacht\u00fa.',
   },
 };
 
@@ -653,12 +703,12 @@ const c = fb(i18n, lang);
         <p class="auth__subtitle">{c.subtitle}</p>
       </div>
 
-      <!-- Success message (hidden by default) -->
-      <div class="auth__success" id="signup-success">
-        <span class="material-symbols-outlined auth__success-icon">mark_email_read</span>
-        <h2 class="auth__success-title">{c.successTitle}</h2>
-        <p class="auth__success-msg">{c.successMsg}</p>
-        <a href={`/${lang}/login/`} class="auth__success-link">{c.loginLink} &rarr;</a>
+      <div class="auth__success" id="signup-success" role="status" aria-live="polite">
+        <span class="material-symbols-outlined">check_circle</span>
+        <div>
+          <strong>{c.successTitle}</strong>
+          <p>{c.successMsg}</p>
+        </div>
       </div>
 
       <form class="auth__form" id="signup-form" novalidate>
@@ -669,25 +719,35 @@ const c = fb(i18n, lang);
             <input type="email" id="signup-email" name="email" placeholder={c.emailPlaceholder} required autocomplete="email" />
           </div>
         </div>
+
         <div class="auth__field">
           <label for="signup-password">{c.passwordLabel}</label>
           <div class="auth__input-wrap">
             <span class="material-symbols-outlined">lock</span>
-            <input type="password" id="signup-password" name="password" placeholder={c.passwordPlaceholder} required minlength="8" autocomplete="new-password" />
+            <input type="password" id="signup-password" name="password" placeholder={c.passwordPlaceholder} required autocomplete="new-password" minlength="8" />
+            <button type="button" class="auth__toggle-pw" aria-label="Toggle password visibility">
+              <span class="material-symbols-outlined">visibility</span>
+            </button>
+          </div>
+          <span class="auth__hint">{c.passwordHint}</span>
+        </div>
+
+        <div class="auth__field">
+          <label for="signup-confirm">{c.confirmPasswordLabel}</label>
+          <div class="auth__input-wrap">
+            <span class="material-symbols-outlined">lock</span>
+            <input type="password" id="signup-confirm" name="confirm" placeholder={c.confirmPasswordPlaceholder} required autocomplete="new-password" minlength="8" />
             <button type="button" class="auth__toggle-pw" aria-label="Toggle password visibility">
               <span class="material-symbols-outlined">visibility</span>
             </button>
           </div>
         </div>
-        <div class="auth__field">
-          <label for="signup-confirm">{c.confirmLabel}</label>
-          <div class="auth__input-wrap">
-            <span class="material-symbols-outlined">lock</span>
-            <input type="password" id="signup-confirm" name="confirm" placeholder={c.confirmPlaceholder} required minlength="8" autocomplete="new-password" />
-            <button type="button" class="auth__toggle-pw" aria-label="Toggle password visibility">
-              <span class="material-symbols-outlined">visibility</span>
-            </button>
-          </div>
+
+        <div class="auth__field auth__terms-field">
+          <label class="auth__checkbox-label">
+            <input type="checkbox" id="signup-terms" name="terms" required />
+            <span>{c.termsLabel} <a href={`/${lang}/terms/`}>{c.termsLink}</a> &amp; <a href={`/${lang}/privacy/`}>{c.privacyLink}</a></span>
+          </label>
         </div>
 
         <div class="auth__error" id="signup-error" role="alert" aria-live="polite"></div>
@@ -696,10 +756,6 @@ const c = fb(i18n, lang);
           <span class="auth__submit-text">{c.signupBtn}</span>
           <span class="auth__spinner"></span>
         </button>
-
-        <p class="auth__terms">
-          {c.termsText} <a href={`/${lang}/terms/`}>{c.termsLink}</a> & <a href={`/${lang}/privacy/`}>{c.privacyLink}</a>.
-        </p>
       </form>
 
       <p class="auth__alt">
@@ -709,14 +765,23 @@ const c = fb(i18n, lang);
   </section>
 </BaseLayout>
 
-<script define:vars={{ lang, errorMismatch: c.errorMismatch, errorWeak: c.errorWeak, errorExists: c.errorExists, errorNetwork: c.errorNetwork, errorGeneric: c.errorGeneric }}>
+<script define:vars={{
+  lang,
+  errorPasswordLength: c.errorPasswordLength,
+  errorPasswordMatch: c.errorPasswordMatch,
+  errorTerms: c.errorTerms,
+  errorEmailUsed: c.errorEmailUsed,
+  errorNetwork: c.errorNetwork,
+  errorGeneric: c.errorGeneric,
+}}>
   const form = document.getElementById('signup-form');
   const emailInput = document.getElementById('signup-email');
   const passwordInput = document.getElementById('signup-password');
   const confirmInput = document.getElementById('signup-confirm');
+  const termsCheckbox = document.getElementById('signup-terms');
   const errorEl = document.getElementById('signup-error');
-  const submitBtn = document.getElementById('signup-btn');
   const successEl = document.getElementById('signup-success');
+  const submitBtn = document.getElementById('signup-btn');
 
   // Toggle password visibility
   document.querySelectorAll('.auth__toggle-pw').forEach((btn) => {
@@ -733,10 +798,19 @@ const c = fb(i18n, lang);
     });
   });
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  function showError(msg) {
+    errorEl.textContent = msg;
+    errorEl.classList.add('auth__error--show');
+  }
+
+  function hideError() {
     errorEl.textContent = '';
     errorEl.classList.remove('auth__error--show');
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideError();
     submitBtn.classList.add('auth__submit--loading');
     submitBtn.disabled = true;
 
@@ -746,15 +820,21 @@ const c = fb(i18n, lang);
 
     // Client-side validation
     if (password.length < 8) {
-      errorEl.textContent = errorWeak;
-      errorEl.classList.add('auth__error--show');
+      showError(errorPasswordLength);
       submitBtn.classList.remove('auth__submit--loading');
       submitBtn.disabled = false;
       return;
     }
+
     if (password !== confirm) {
-      errorEl.textContent = errorMismatch;
-      errorEl.classList.add('auth__error--show');
+      showError(errorPasswordMatch);
+      submitBtn.classList.remove('auth__submit--loading');
+      submitBtn.disabled = false;
+      return;
+    }
+
+    if (!termsCheckbox.checked) {
+      showError(errorTerms);
       submitBtn.classList.remove('auth__submit--loading');
       submitBtn.disabled = false;
       return;
@@ -764,25 +844,31 @@ const c = fb(i18n, lang);
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        credentials: 'include',
+        body: JSON.stringify({ email, password, lang }),
       });
 
       if (res.ok) {
-        form.style.display = 'none';
-        document.querySelector('.auth__alt').style.display = 'none';
-        successEl.classList.add('auth__success--show');
+        const data = await res.json().catch(() => ({}));
+        if (data.confirmation_required) {
+          // Email confirmation required — show success message
+          form.style.display = 'none';
+          document.querySelector('.auth__alt').style.display = 'none';
+          successEl.classList.add('auth__success--show');
+        } else {
+          // Account created and auto-logged in — redirect to dashboard
+          window.location.href = `/${lang}/dashboard/`;
+        }
       } else {
         const data = await res.json().catch(() => ({}));
-        if (res.status === 409 || (data.error && data.error.toLowerCase().includes('exist'))) {
-          errorEl.textContent = errorExists;
+        if (res.status === 409 || (data.error && data.error.toLowerCase().includes('already'))) {
+          showError(errorEmailUsed);
         } else {
-          errorEl.textContent = data.error || errorGeneric;
+          showError(data.error || errorGeneric);
         }
-        errorEl.classList.add('auth__error--show');
       }
     } catch (err) {
-      errorEl.textContent = err.message.includes('fetch') ? errorNetwork : errorGeneric;
-      errorEl.classList.add('auth__error--show');
+      showError(err.message.includes('fetch') ? errorNetwork : errorGeneric);
     } finally {
       submitBtn.classList.remove('auth__submit--loading');
       submitBtn.disabled = false;
@@ -813,7 +899,10 @@ const c = fb(i18n, lang);
     backdrop-filter: blur(20px);
   }
 
-  .auth__header { text-align: center; margin-bottom: 2rem; }
+  .auth__header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
 
   .auth__logo {
     font-family: var(--font-heading, 'Public Sans', sans-serif);
@@ -840,7 +929,11 @@ const c = fb(i18n, lang);
     line-height: 1.5;
   }
 
-  .auth__form { display: flex; flex-direction: column; gap: 1.25rem; }
+  .auth__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
 
   .auth__field label {
     display: block;
@@ -850,6 +943,13 @@ const c = fb(i18n, lang);
     margin-bottom: 0.4rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
+  }
+
+  .auth__hint {
+    display: block;
+    font-size: 0.75rem;
+    color: rgba(148, 163, 184, 0.5);
+    margin-top: 0.3rem;
   }
 
   .auth__input-wrap {
@@ -866,7 +966,10 @@ const c = fb(i18n, lang);
     border-color: var(--color-secondary, #2563EB);
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
   }
-  .auth__input-wrap .material-symbols-outlined { font-size: 18px; color: rgba(148, 163, 184, 0.6); }
+  .auth__input-wrap .material-symbols-outlined {
+    font-size: 18px;
+    color: rgba(148, 163, 184, 0.6);
+  }
   .auth__input-wrap input {
     flex: 1;
     background: none;
@@ -877,13 +980,54 @@ const c = fb(i18n, lang);
     outline: none;
     font-family: var(--font-sans, 'Inter', sans-serif);
   }
-  .auth__input-wrap input::placeholder { color: rgba(148, 163, 184, 0.4); }
+  .auth__input-wrap input::placeholder {
+    color: rgba(148, 163, 184, 0.4);
+  }
 
   .auth__toggle-pw {
-    background: none; border: none; cursor: pointer; padding: 2px; display: flex;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
   }
-  .auth__toggle-pw .material-symbols-outlined { font-size: 18px; color: rgba(148, 163, 184, 0.5); transition: color 0.15s; }
+  .auth__toggle-pw .material-symbols-outlined {
+    font-size: 18px;
+    color: rgba(148, 163, 184, 0.5);
+    transition: color 0.15s;
+  }
   .auth__toggle-pw:hover .material-symbols-outlined { color: rgba(203, 213, 225, 0.8); }
+
+  .auth__terms-field {
+    margin-top: 0.25rem;
+  }
+
+  .auth__checkbox-label {
+    display: flex !important;
+    align-items: flex-start;
+    gap: 0.5rem;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    font-weight: 400 !important;
+    font-size: 0.85rem !important;
+    color: rgba(203, 213, 225, 0.7) !important;
+    cursor: pointer;
+  }
+
+  .auth__checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    accent-color: var(--color-secondary, #2563EB);
+    flex-shrink: 0;
+  }
+
+  .auth__checkbox-label a {
+    color: var(--color-secondary, #2563EB);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .auth__checkbox-label a:hover { text-decoration: underline; }
 
   .auth__error {
     font-size: 0.85rem;
@@ -895,6 +1039,37 @@ const c = fb(i18n, lang);
     display: none;
   }
   .auth__error--show { display: block; }
+
+  .auth__success {
+    display: none;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    border-radius: 8px;
+    color: #4ade80;
+  }
+  .auth__success--show { display: flex; }
+  .auth__success .material-symbols-outlined {
+    font-size: 28px;
+    color: #4ade80;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .auth__success strong {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.35rem;
+    color: #4ade80;
+  }
+  .auth__success p {
+    font-size: 0.85rem;
+    color: rgba(203, 213, 225, 0.8);
+    line-height: 1.5;
+    margin: 0;
+  }
 
   .auth__submit {
     display: flex;
@@ -919,7 +1094,8 @@ const c = fb(i18n, lang);
 
   .auth__spinner {
     display: none;
-    width: 16px; height: 16px;
+    width: 16px;
+    height: 16px;
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-top-color: #fff;
     border-radius: 50%;
@@ -928,16 +1104,9 @@ const c = fb(i18n, lang);
   .auth__submit--loading .auth__submit-text { display: none; }
   .auth__submit--loading .auth__spinner { display: block; }
 
-  @keyframes auth-spin { to { transform: rotate(360deg); } }
-
-  .auth__terms {
-    font-size: 0.78rem;
-    color: rgba(148, 163, 184, 0.5);
-    text-align: center;
-    line-height: 1.5;
+  @keyframes auth-spin {
+    to { transform: rotate(360deg); }
   }
-  .auth__terms a { color: rgba(148, 163, 184, 0.7); text-decoration: underline; }
-  .auth__terms a:hover { color: var(--color-white, #fff); }
 
   .auth__alt {
     text-align: center;
@@ -945,42 +1114,12 @@ const c = fb(i18n, lang);
     font-size: 0.88rem;
     color: rgba(203, 213, 225, 0.6);
   }
-  .auth__alt a { color: var(--color-secondary, #2563EB); text-decoration: none; font-weight: 600; }
-  .auth__alt a:hover { text-decoration: underline; }
-
-  /* Success state */
-  .auth__success {
-    display: none;
-    text-align: center;
-    padding: 1rem 0;
-  }
-  .auth__success--show { display: block; }
-  .auth__success-icon {
-    font-size: 48px;
-    color: #34d399;
-    margin-bottom: 0.75rem;
-  }
-  .auth__success-title {
-    font-family: var(--font-heading, 'Public Sans', sans-serif);
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--color-white, #fff);
-    margin-bottom: 0.5rem;
-  }
-  .auth__success-msg {
-    font-size: 0.9rem;
-    color: rgba(203, 213, 225, 0.7);
-    line-height: 1.6;
-    margin-bottom: 1.25rem;
-  }
-  .auth__success-link {
-    display: inline-block;
+  .auth__alt a {
     color: var(--color-secondary, #2563EB);
-    font-weight: 600;
     text-decoration: none;
-    font-size: 0.9rem;
+    font-weight: 600;
   }
-  .auth__success-link:hover { text-decoration: underline; }
+  .auth__alt a:hover { text-decoration: underline; }
 
   @media (max-width: 480px) {
     .auth__card { padding: 2rem 1.25rem; }
