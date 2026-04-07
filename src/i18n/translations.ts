@@ -4,7 +4,7 @@
 // for country names, job titles, and common UI labels
 // ============================================
 
-// --------------- Country display names (15 countries × 24 langs) ---------------
+// --------------- Country display names (27+ countries × 24 langs) ---------------
 export const countryNames: Record<string, Record<string, string>> = {
   DE: {
     en: 'Germany', fr: 'Allemagne', de: 'Deutschland', es: 'Alemania',
@@ -133,6 +133,102 @@ export const countryNames: Record<string, Record<string, string>> = {
     fi: 'Tšekki', el: 'Τσεχία', hu: 'Csehország', sk: 'Česko',
     bg: 'Чехия', hr: 'Češka', sl: 'Češka', lt: 'Čekija',
     lv: 'Čehija', et: 'Tšehhi', mt: 'Ir-Repubblika Ċeka', ga: 'Poblacht na Seice',
+  },
+  RO: {
+    en: 'Romania', fr: 'Roumanie', de: 'Rumanien', es: 'Rumania',
+    bg: 'Румъния', hr: 'Rumunjska', cs: 'Rumunsko', da: 'Rumaenien',
+    nl: 'Roemenie', et: 'Rumeenia', fi: 'Romania', el: 'Ρουμανια',
+    hu: 'Romania', ga: 'An Romàin', it: 'Romania', lv: 'Rumānija',
+    lt: 'Rumunija', mt: 'Ir-Rumanija', pl: 'Rumunia', pt: 'Romenia',
+    ro: 'Romania', sk: 'Rumunsko', sl: 'Romunija', sv: 'Rumanien',
+  },
+  HU: {
+    en: 'Hungary', fr: 'Hongrie', de: 'Ungarn', es: 'Hungria',
+    bg: 'Унгария', hr: 'Madarska', cs: 'Madarsko', da: 'Ungarn',
+    nl: 'Hongarije', et: 'Ungari', fi: 'Unkari', el: 'Ουγγαρια',
+    hu: 'Magyarorszag', ga: 'An Ungàir', it: 'Ungheria', lv: 'Ungārija',
+    lt: 'Vengrija', mt: 'L-Ungerija', pl: 'Wegry', pt: 'Hungria',
+    ro: 'Ungaria', sk: 'Madarsko', sl: 'Madzarska', sv: 'Ungern',
+  },
+  BG: {
+    en: 'Bulgaria', fr: 'Bulgarie', de: 'Bulgarien', es: 'Bulgaria',
+    bg: 'България', hr: 'Bugarska', cs: 'Bulharsko', da: 'Bulgarien',
+    nl: 'Bulgarije', et: 'Bulgaaria', fi: 'Bulgaria', el: 'Βουλγαρια',
+    hu: 'Bulgaria', ga: 'An Bhulgàir', it: 'Bulgaria', lv: 'Bulgārija',
+    lt: 'Bulgarija', mt: 'Il-Bulgarija', pl: 'Bulgaria', pt: 'Bulgaria',
+    ro: 'Bulgaria', sk: 'Bulharsko', sl: 'Bolgarija', sv: 'Bulgarien',
+  },
+  HR: {
+    en: 'Croatia', fr: 'Croatie', de: 'Kroatien', es: 'Croacia',
+    bg: 'Хърватия', hr: 'Hrvatska', cs: 'Chorvatsko', da: 'Kroatien',
+    nl: 'Kroatie', et: 'Horvaatia', fi: 'Kroatia', el: 'Κροατια',
+    hu: 'Horvatorszag', ga: 'An Chroàit', it: 'Croazia', lv: 'Horvātija',
+    lt: 'Kroatija', mt: 'Il-Kroazja', pl: 'Chorwacja', pt: 'Croacia',
+    ro: 'Croatia', sk: 'Chorvatsko', sl: 'Hrvaska', sv: 'Kroatien',
+  },
+  SK: {
+    en: 'Slovakia', fr: 'Slovaquie', de: 'Slowakei', es: 'Eslovaquia',
+    bg: 'Словакия', hr: 'Slovacka', cs: 'Slovensko', da: 'Slovakiet',
+    nl: 'Slowakije', et: 'Slovakkia', fi: 'Slovakia', el: 'Σλοβακια',
+    hu: 'Szlovakia', ga: 'An tSlòvaic', it: 'Slovacchia', lv: 'Slovākija',
+    lt: 'Slovakija', mt: 'Is-Slovakkja', pl: 'Slowacja', pt: 'Eslovaquia',
+    ro: 'Slovacia', sk: 'Slovensko', sl: 'Slovaska', sv: 'Slovakien',
+  },
+  SI: {
+    en: 'Slovenia', fr: 'Slovenie', de: 'Slowenien', es: 'Eslovenia',
+    bg: 'Словения', hr: 'Slovenija', cs: 'Slovinsko', da: 'Slovenien',
+    nl: 'Slovenie', et: 'Sloveenia', fi: 'Slovenia', el: 'Σλοβενια',
+    hu: 'Szlovenia', ga: 'An tSlòivein', it: 'Slovenia', lv: 'Slovēnija',
+    lt: 'Slovenija', mt: 'Is-Slovenja', pl: 'Slowenia', pt: 'Eslovenia',
+    ro: 'Slovenia', sk: 'Slovinsko', sl: 'Slovenija', sv: 'Slovenien',
+  },
+  LT: {
+    en: 'Lithuania', fr: 'Lituanie', de: 'Litauen', es: 'Lituania',
+    bg: 'Литва', hr: 'Litva', cs: 'Litva', da: 'Litauen',
+    nl: 'Litouwen', et: 'Leedu', fi: 'Liettua', el: 'Λιθουανια',
+    hu: 'Litvania', ga: 'An Liotuàin', it: 'Lituania', lv: 'Lietuva',
+    lt: 'Lietuva', mt: 'Il-Litwanja', pl: 'Litwa', pt: 'Lituania',
+    ro: 'Lituania', sk: 'Litva', sl: 'Litva', sv: 'Litauen',
+  },
+  LV: {
+    en: 'Latvia', fr: 'Lettonie', de: 'Lettland', es: 'Letonia',
+    bg: 'Латвия', hr: 'Latvija', cs: 'Lotyssko', da: 'Letland',
+    nl: 'Letland', et: 'Lati', fi: 'Latvia', el: 'Λετονια',
+    hu: 'Lettorszag', ga: 'An Laitvia', it: 'Lettonia', lv: 'Latvija',
+    lt: 'Latvija', mt: 'Il-Latvja', pl: 'Lotwa', pt: 'Letonia',
+    ro: 'Letonia', sk: 'Lotyssko', sl: 'Latvija', sv: 'Lettland',
+  },
+  EE: {
+    en: 'Estonia', fr: 'Estonie', de: 'Estland', es: 'Estonia',
+    bg: 'Естония', hr: 'Estonija', cs: 'Estonsko', da: 'Estland',
+    nl: 'Estland', et: 'Eesti', fi: 'Viro', el: 'Εσθονια',
+    hu: 'Esztorszag', ga: 'An Eastòin', it: 'Estonia', lv: 'Igaunija',
+    lt: 'Estija', mt: 'L-Estonja', pl: 'Estonia', pt: 'Estonia',
+    ro: 'Estonia', sk: 'Estonsko', sl: 'Estonija', sv: 'Estland',
+  },
+  CY: {
+    en: 'Cyprus', fr: 'Chypre', de: 'Zypern', es: 'Chipre',
+    bg: 'Кипър', hr: 'Cipar', cs: 'Kypr', da: 'Cypern',
+    nl: 'Cyprus', et: 'Kuupros', fi: 'Kypros', el: 'Κυπρος',
+    hu: 'Ciprus', ga: 'An Chipir', it: 'Cipro', lv: 'Kipra',
+    lt: 'Kipras', mt: 'Cipru', pl: 'Cypr', pt: 'Chipre',
+    ro: 'Cipru', sk: 'Cyprus', sl: 'Ciper', sv: 'Cypern',
+  },
+  MT: {
+    en: 'Malta', fr: 'Malte', de: 'Malta', es: 'Malta',
+    bg: 'Малта', hr: 'Malta', cs: 'Malta', da: 'Malta',
+    nl: 'Malta', et: 'Malta', fi: 'Malta', el: 'Μαλτα',
+    hu: 'Malta', ga: 'Maltà', it: 'Malta', lv: 'Malta',
+    lt: 'Malta', mt: 'Malta', pl: 'Malta', pt: 'Malta',
+    ro: 'Malta', sk: 'Malta', sl: 'Malta', sv: 'Malta',
+  },
+  EL: {
+    en: 'Greece', fr: 'Grece', de: 'Griechenland', es: 'Grecia',
+    bg: 'Гърция', hr: 'Grcka', cs: 'Recko', da: 'Graekenland',
+    nl: 'Griekenland', et: 'Kreeka', fi: 'Kreikka', el: 'Ελλαδα',
+    hu: 'Gorogorszag', ga: 'An Ghreig', it: 'Grecia', lv: 'Griekija',
+    lt: 'Graikija', mt: 'Il-Grecja', pl: 'Grecja', pt: 'Grecia',
+    ro: 'Grecia', sk: 'Grecko', sl: 'Grcija', sv: 'Grekland',
   },
 };
 
@@ -457,12 +553,12 @@ export const uiLabels: Record<string, Record<string, string>> = {
     lv: 'Salīdziniet algas', et: 'Võrrelge palku', mt: 'Qabbel is-salarji', ga: 'Déan comparáid tuarastail',
   },
   inCountries: {
-    en: 'across 15 European countries', fr: 'dans 15 pays européens', de: 'in 15 europäischen Ländern', es: 'en 15 países europeos',
-    it: 'in 15 paesi europei', pt: 'em 15 países europeus', nl: 'in 15 Europese landen', pl: 'w 15 krajach europejskich',
-    ro: 'în 15 țări europene', cs: 'v 15 evropských zemích', sv: 'i 15 europeiska länder', da: 'i 15 europæiske lande',
-    fi: '15 Euroopan maassa', el: 'σε 15 ευρωπαϊκές χώρες', hu: '15 európai országban', sk: 'v 15 európskych krajinách',
-    bg: 'в 15 европейски държави', hr: 'u 15 europskih država', sl: 'v 15 evropskih državah', lt: '15 Europos šalių',
-    lv: '15 Eiropas valstīs', et: '15 Euroopa riigis', mt: 'f\'15-il pajjiż Ewropew', ga: 'i 15 tír Eorpach',
+    en: 'across 27 European countries', fr: 'dans 27 pays européens', de: 'in 27 europäischen Ländern', es: 'en 27 países europeos',
+    it: 'in 27 paesi europei', pt: 'em 27 países europeus', nl: 'in 27 Europese landen', pl: 'w 27 krajach europejskich',
+    ro: 'în 27 țări europene', cs: 'v 27 evropských zemích', sv: 'i 27 europeiska länder', da: 'i 15 europæiske lande',
+    fi: '27 Euroopan maassa', el: 'σε 15 ευρωπαϊκές χώρες', hu: '27 európai országban', sk: 'v 15 európskych krajinách',
+    bg: 'в 15 европейски държави', hr: 'u 27 europskih država', sl: 'v 15 evropskih državah', lt: '27 Europos šalių',
+    lv: '27 Eiropas valstīs', et: '27 Euroopa riigis', mt: 'f\'15-il pajjiż Ewropew', ga: 'i 27 tír Eorpach',
   },
   seniorityData: {
     en: 'Junior, mid-level, and senior salary data',

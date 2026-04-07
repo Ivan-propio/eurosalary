@@ -125,12 +125,12 @@ Searchable dropdown, all 24 langs with traffic-priority sort order
 ### Core pages
 - /[lang]/ — homepage (24 routes)
 - /[lang]/salary/[country]/[job]/ — salary pages
-- /[lang]/country/[country]/ — 15 countries x 24
+- /[lang]/country/[country]/ — 27 countries x 24
 - /[lang]/compare/[job]/ — job comparisons
 - /[lang]/compare/country/[pair]/ — 105 country pairs x 24
 - /[lang]/city/[city]/ — 24 cities x 24 langs
 - /[lang]/minimum-wage/[country]/ — 15 x 24
-- /[lang]/salary-transparency/ — index + 15 countries x 24
+- /[lang]/salary-transparency/ — index + 27 countries x 24
 - /[lang]/countries/ — country list
 - /[lang]/sectors/ + /[lang]/sectors/[sector]/
 
@@ -302,6 +302,20 @@ Before doing ANYTHING in a new session:
 - Content groups: salary_page, country_page, compare_page, pricing, b2b_employers, b2b_recruiters, b2b_enterprise, b2b_partners, b2b_api, premium, calculator, blog, newsletter, alerts
 - GA4 Data API endpoint: /api/admin/analytics (ready, needs GA4_PROPERTY_ID + GA4_SERVICE_ACCOUNT_JSON env vars)
 - Plausible Analytics also active (GDPR-compliant backup)
+
+## Working method — Token-efficient bulk operations
+When a task involves repetitive changes across 24 languages or many
+entities (countries, jobs, pages), **never write translations inline**.
+Instead:
+1. **Create a Python/JS script** that reads the existing data files,
+   generates the new entries programmatically, and writes them back.
+2. **One script = one task** — e.g. "add 12 countries to slugs.ts +
+   translations.ts + seed.ts" all in a single script run.
+3. **Use grep/sed for bulk text updates** — e.g. replacing "27 countries"
+   → "27 countries" across all files and all languages at once.
+4. **Apply to any repetitive i18n work**: new page translations, new
+   UI labels, new entity names, bulk content updates.
+5. This saves ~90% of tokens vs. writing each translation manually.
 
 ## Current status
 Revenue engine built (CRM, API endpoints, automation, B2B pages).

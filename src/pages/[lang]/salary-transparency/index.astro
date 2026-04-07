@@ -24,6 +24,19 @@ const transparencyData: Record<string, { status: 'implemented' | 'in-progress' |
   IE: { status: 'implemented', deadline: 'Already active', keyRules: ['Gender Pay Gap Information Act 2021', 'Companies 150+ report since 2024', 'Threshold drops to 50+ by 2025'], penalties: 'Enforcement by WRC', genderGap: 9.6, reportingThreshold: '50+ employees' },
   DK: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Gender-specific pay statistics since 2006', 'Companies 35+ report', 'New directive strengthens requirements'], penalties: 'TBD', genderGap: 13.9, reportingThreshold: '35+ employees' },
   FI: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Equality Act requires pay surveys', 'Companies 30+ must have equality plan', 'New directive adds reporting requirements'], penalties: 'Discrimination compensation', genderGap: 16.5, reportingThreshold: '30+ employees' },
+  CZ: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Transposition in legislative process', 'Existing anti-discrimination framework being extended', 'Focus on pay gap reporting for large companies'], penalties: 'TBD', genderGap: 16.4, reportingThreshold: '250+ employees' },
+  RO: { status: 'pending', deadline: 'Jun 2026', keyRules: ['Transposition not yet started', 'Existing equal pay provisions in Labour Code', 'Expected to align with EU directive'], penalties: 'TBD', genderGap: 3.6, reportingThreshold: 'TBD' },
+  HU: { status: 'pending', deadline: 'Jun 2026', keyRules: ['Transposition not yet started', 'Equal Treatment Authority handles complaints', 'Expected alignment with EU directive'], penalties: 'TBD', genderGap: 17.2, reportingThreshold: 'TBD' },
+  BG: { status: 'pending', deadline: 'Jun 2026', keyRules: ['Transposition not yet started', 'Protection against Discrimination Act exists', 'Expected to adopt EU reporting framework'], penalties: 'TBD', genderGap: 12.7, reportingThreshold: 'TBD' },
+  HR: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Gender Equality Act being amended', 'Ombudsperson for Gender Equality involved', 'New reporting obligations planned'], penalties: 'TBD', genderGap: 11.3, reportingThreshold: '250+ employees' },
+  SK: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Anti-discrimination Act being updated', 'Labour inspectorate to oversee compliance', 'Pay gap reporting requirements in development'], penalties: 'TBD', genderGap: 16.6, reportingThreshold: '250+ employees' },
+  SI: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Equal Opportunities Act being amended', 'Advocate of the Principle of Equality involved', 'Reporting threshold and penalties under discussion'], penalties: 'TBD', genderGap: 3.1, reportingThreshold: '250+ employees' },
+  LT: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Equal Opportunities Ombudsperson active', 'Labour Code amendments in progress', 'New pay transparency reporting planned'], penalties: 'TBD', genderGap: 13.0, reportingThreshold: '250+ employees' },
+  LV: { status: 'pending', deadline: 'Jun 2026', keyRules: ['Transposition not yet started', 'Labour Law provides equal pay principle', 'Expected to align with EU directive'], penalties: 'TBD', genderGap: 22.3, reportingThreshold: 'TBD' },
+  EE: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Gender Equality Act being updated', 'Gender Equality Commissioner active', 'Pay gap reporting framework in development'], penalties: 'TBD', genderGap: 21.1, reportingThreshold: '250+ employees' },
+  CY: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Equal Pay Law being updated', 'Commissioner for Administration involved', 'New reporting obligations planned'], penalties: 'TBD', genderGap: 9.7, reportingThreshold: '250+ employees' },
+  MT: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Equality Act being amended', 'National Commission for Promotion of Equality active', 'Pay gap reporting in development'], penalties: 'TBD', genderGap: 10.0, reportingThreshold: '250+ employees' },
+  EL: { status: 'in-progress', deadline: 'Jun 2026', keyRules: ['Law 4604/2019 on gender equality being extended', 'Labour Inspectorate to oversee compliance', 'Pay transparency requirements being drafted'], penalties: 'TBD', genderGap: 10.4, reportingThreshold: '250+ employees' },
 };
 
 // --------------- Status display config ---------------
@@ -71,7 +84,7 @@ const i18n: Record<string, {
   en: {
     h1: 'EU Salary Transparency Directive: Which Countries Are Ready?',
     metaTitle: 'EU Salary Transparency Directive 2026: Country-by-Country Status | EuroSalary.eu',
-    metaDesc: 'EU Directive 2023/970 requires salary disclosure by June 2026. See which of 15 European countries have implemented pay transparency and what it means for employers.',
+    metaDesc: 'EU Directive 2023/970 requires salary disclosure by June 2026. See which of 27 European countries have implemented pay transparency and what it means for employers.',
     home: 'Home',
     breadcrumb: 'Salary Transparency',
     tldr: [

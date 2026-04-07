@@ -29,7 +29,7 @@ function welcomeEmailHtml(lang: Lang): string {
       heading: 'Welcome to Salary Pulse Europe!',
       body: `You're now subscribed to the most comprehensive European salary data newsletter. Every Tuesday, you'll receive:<br><br>
         <strong>What to expect:</strong><br>
-        • Salary trends across 15 EU countries<br>
+        • Salary trends across 27 EU countries<br>
         • Job market insights by sector<br>
         • Country spotlights with tax comparisons<br>
         • New data releases from Eurostat<br><br>
@@ -42,7 +42,7 @@ function welcomeEmailHtml(lang: Lang): string {
       heading: 'Bienvenue à Salary Pulse Europe !',
       body: `Vous êtes maintenant abonné à la newsletter la plus complète sur les salaires européens. Chaque mardi, vous recevrez :<br><br>
         <strong>Ce qui vous attend :</strong><br>
-        • Tendances salariales dans 15 pays de l'UE<br>
+        • Tendances salariales dans 27 pays de l'UE<br>
         • Analyses du marché de l'emploi par secteur<br>
         • Focus pays avec comparaisons fiscales<br>
         • Nouvelles données Eurostat<br><br>
@@ -55,7 +55,7 @@ function welcomeEmailHtml(lang: Lang): string {
       heading: 'Willkommen bei Salary Pulse Europe!',
       body: `Sie sind jetzt für den umfassendsten europäischen Gehaltsdaten-Newsletter angemeldet. Jeden Dienstag erhalten Sie:<br><br>
         <strong>Was Sie erwartet:</strong><br>
-        • Gehaltstrends in 15 EU-Ländern<br>
+        • Gehaltstrends in 27 EU-Ländern<br>
         • Arbeitsmarktanalysen nach Branche<br>
         • Länderfokus mit Steuervergleichen<br>
         • Neue Eurostat-Datenveröffentlichungen<br><br>
@@ -68,7 +68,7 @@ function welcomeEmailHtml(lang: Lang): string {
       heading: '¡Bienvenido a Salary Pulse Europe!',
       body: `Ahora estás suscrito al newsletter más completo sobre salarios europeos. Cada martes recibirás:<br><br>
         <strong>Qué esperar:</strong><br>
-        • Tendencias salariales en 15 países de la UE<br>
+        • Tendencias salariales en 27 países de la UE<br>
         • Análisis del mercado laboral por sector<br>
         • Foco por país con comparaciones fiscales<br>
         • Nuevos datos de Eurostat<br><br>

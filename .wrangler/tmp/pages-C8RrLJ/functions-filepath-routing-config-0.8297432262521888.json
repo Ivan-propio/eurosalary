@@ -1,0 +1,165 @@
+{
+  "routes": [
+    {
+      "routePath": "/api/admin/analytics",
+      "mountPath": "/api/admin",
+      "method": "GET",
+      "module": [
+        "api/admin/analytics.ts:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/v1/city",
+      "mountPath": "/api/v1",
+      "method": "GET",
+      "module": [
+        "api/v1/city.ts:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/v1/city",
+      "mountPath": "/api/v1",
+      "method": "OPTIONS",
+      "module": [
+        "api/v1/city.ts:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/v1/compare",
+      "mountPath": "/api/v1",
+      "method": "GET",
+      "module": [
+        "api/v1/compare.ts:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/v1/compare",
+      "mountPath": "/api/v1",
+      "method": "OPTIONS",
+      "module": [
+        "api/v1/compare.ts:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/v1/minimum-wage",
+      "mountPath": "/api/v1",
+      "method": "GET",
+      "module": [
+        "api/v1/minimum-wage.ts:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/v1/minimum-wage",
+      "mountPath": "/api/v1",
+      "method": "OPTIONS",
+      "module": [
+        "api/v1/minimum-wage.ts:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/v1/salary",
+      "mountPath": "/api/v1",
+      "method": "GET",
+      "module": [
+        "api/v1/salary.ts:onRequestGet"
+      ]
+    },
+    {
+      "routePath": "/api/v1/salary",
+      "mountPath": "/api/v1",
+      "method": "OPTIONS",
+      "module": [
+        "api/v1/salary.ts:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/contact",
+      "mountPath": "/api",
+      "method": "OPTIONS",
+      "module": [
+        "api/contact.ts:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/contact",
+      "mountPath": "/api",
+      "method": "POST",
+      "module": [
+        "api/contact.ts:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/lead-capture",
+      "mountPath": "/api",
+      "method": "OPTIONS",
+      "module": [
+        "api/lead-capture.ts:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/lead-capture",
+      "mountPath": "/api",
+      "method": "POST",
+      "module": [
+        "api/lead-capture.ts:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/partner-apply",
+      "mountPath": "/api",
+      "method": "OPTIONS",
+      "module": [
+        "api/partner-apply.ts:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/partner-apply",
+      "mountPath": "/api",
+      "method": "POST",
+      "module": [
+        "api/partner-apply.ts:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/subscribe",
+      "mountPath": "/api",
+      "method": "OPTIONS",
+      "module": [
+        "api/subscribe.ts:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/subscribe",
+      "mountPath": "/api",
+      "method": "POST",
+      "module": [
+        "api/subscribe.ts:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/track-activity",
+      "mountPath": "/api",
+      "method": "OPTIONS",
+      "module": [
+        "api/track-activity.ts:onRequestOptions"
+      ]
+    },
+    {
+      "routePath": "/api/track-activity",
+      "mountPath": "/api",
+      "method": "POST",
+      "module": [
+        "api/track-activity.ts:onRequestPost"
+      ]
+    },
+    {
+      "routePath": "/api/detect-locale",
+      "mountPath": "/api",
+      "method": "",
+      "module": [
+        "api/detect-locale.ts:onRequest"
+      ]
+    }
+  ],
+  "baseURL": "/"
+}
