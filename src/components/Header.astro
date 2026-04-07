@@ -58,7 +58,7 @@ const sortedAlternates = langOrder
               </a>
             </div>
             <div class="nav-dropdown__col">
-              <div class="nav-dropdown__heading">Data & API</div>
+              <div class="nav-dropdown__heading">{t('nav.dataAPI')}</div>
               <a href={`/${lang}/salary-api/`} class="nav-dropdown__link">
                 <span class="material-symbols-outlined">api</span>
                 {t('nav.salaryAPI')}
@@ -202,8 +202,12 @@ const sortedAlternates = langOrder
   .nav-dropdown__trigger {
     display: inline-flex; align-items: center; gap: 2px;
     background: none; border: none; cursor: pointer;
-    font-family: inherit; font-size: inherit; font-weight: inherit;
-    color: rgba(203, 213, 225, 0.8); padding: 0;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(203, 213, 225, 0.9); padding: 0;
     transition: color 0.15s ease;
   }
   .nav-dropdown__trigger:hover { color: var(--color-white); }
