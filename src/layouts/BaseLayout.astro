@@ -43,12 +43,35 @@ const orgSchema = {
 
 // BreadcrumbList schema (always present)
 const pathParts = Astro.url.pathname.split('/').filter(Boolean);
-const breadcrumbItems = pathParts.map((part, index) => ({
+// pathParts[0] is the lang segment (e.g. "en") — skip it in breadcrumb labels
+const segmentLabels: Record<string, string> = {
+  salary: 'Salaries',
+  country: 'Countries',
+  'minimum-wage': 'Minimum Wage',
+  compare: 'Compare',
+  calculator: 'Calculator',
+  blog: 'Blog',
+};
+const breadcrumbItems = pathParts
+  .slice(1) // skip lang segment
+  .map((part, index) => {
+    const label = segmentLabels[part]
+      ?? part.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+    // position accounts for the home item being index 0; lang was index 0 in pathParts
+    return {
+      '@type': 'ListItem',
+      position: index + 2,
+      name: label,
+      item: `https://eurosalary.eu/${pathParts.slice(0, index + 2).join('/')}/`,
+    };
+  });
+// Prepend home item
+breadcrumbItems.unshift({
   '@type': 'ListItem',
-  position: index + 1,
-  name: part.charAt(0).toUpperCase() + part.slice(1).replace(/-/g, ' '),
-  item: `https://eurosalary.eu/${pathParts.slice(0, index + 1).join('/')}/`,
-}));
+  position: 1,
+  name: 'Home',
+  item: `https://eurosalary.eu/${pathParts[0]}/`,
+});
 
 const breadcrumbSchema = {
   '@context': 'https://schema.org',

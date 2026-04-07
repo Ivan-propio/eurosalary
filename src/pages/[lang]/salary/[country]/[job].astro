@@ -507,6 +507,15 @@ const pageSchema = [
       acceptedAnswer: { '@type': 'Answer', text: f.answer },
     })),
   },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['#quick-answer', '.salary-hero__answer'],
+    },
+    url: `https://eurosalary.eu/${lang}/salary/${countrySlug}/${Astro.params.job}/`,
+  },
 ];
 
 const flag = countryFlags[countryCode] || '';

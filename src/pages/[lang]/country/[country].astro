@@ -142,6 +142,17 @@ const pageSchema = [
     dateModified: '2026-04-01',
     publisher: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
   },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: `European Salary Data — ${countryName}`,
+    description: pageDescription,
+    url: `https://eurosalary.eu/${lang}/country/${countrySlug}/`,
+    creator: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    temporalCoverage: '2026',
+    spatialCoverage: { '@type': 'Place', name: countryName },
+    variableMeasured: 'Annual gross salary in EUR',
+  },
 ];
 ---
 

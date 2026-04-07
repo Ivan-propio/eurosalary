@@ -10,7 +10,7 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 ---
 
-<div class="tldr-box">
+<div class="tldr-box" id="quick-answer">
   <div class="tldr-box__header">
     <span class="material-symbols-outlined tldr-box__icon">bolt</span>
     <span class="tldr-box__title">{t('tldr.title')}</span>
