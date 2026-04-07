@@ -287,13 +287,56 @@ Before doing ANYTHING in a new session:
 3. Check what pages currently exist
 4. Then start working
 
-## Payment system (Stripe — PENDING)
-- Architecture planned, not yet connected
-- Products defined: Pro, Business, API Dev/Biz, Employer Starter/Pro, Reports
-- New tables ready: subscriptions, payments, salary_alerts, report_purchases
-- Migration: supabase/apply-payments.sql (run AFTER apply-crm.sql)
-- Endpoints to create: create-checkout, stripe-webhook, customer-portal
-- REMEMBER: Stripe integration is the final step. Do it last.
+## Payment system (Stripe — LIVE ✅)
+Fully configured and deployed in LIVE mode. Real charges enabled.
+
+### Stripe products (LIVE)
+| Product | ID | Monthly | Annual |
+|---|---|---|---|
+| Pro | prod_UI9MEo3eMqmySl | price_1TJZ3rFVaIUkPsQC12XKbrF3 (€29) | price_1TJZ3sFVaIUkPsQCZnLuFcWh (€279) |
+| Business | prod_UI9ML5efOD4dgg | price_1TJZ3sFVaIUkPsQCP8bnrUHZ (€99) | price_1TJZ3sFVaIUkPsQCU4MsDyoT (€949) |
+| API Developer | prod_UI9M1FjOvGvwfY | price_1TJZ3tFVaIUkPsQCRHanOeHV (€49) | price_1TJZ3tFVaIUkPsQCfQ0Ii4pV (€469) |
+| API Business | prod_UI9MgsuqUn11Sx | price_1TJZ3uFVaIUkPsQC8q6Rai19 (€149) | price_1TJZ3uFVaIUkPsQChM2i3tS3 (€1,429) |
+| Employer Starter | prod_UI9MYQe3s58xfF | price_1TJZ3vFVaIUkPsQCjNNLBYsE (€79) | price_1TJZ3vFVaIUkPsQC6kQM94Mr (€759) |
+| Employer Pro | prod_UI9M25ahnQzpvs | price_1TJZ3vFVaIUkPsQCRTT0cSS9 (€199) | price_1TJZ3wFVaIUkPsQCarpXE0xF (€1,909) |
+| Country Report | prod_UI9M51NHmTNGBA | price_1TJZ3wFVaIUkPsQCuM9IP19N (€29 one-time) | — |
+
+### Stripe keys in use
+- LIVE secret key: sk_live_51TJYTd... (in Cloudflare env)
+- LIVE webhook secret: whsec_XVlqUO7pzlP2jwYHXcMvQZ4apHaBLIcq
+- LIVE webhook endpoint: we_1TJZ3wFVaIUkPsQCN487Gmqk → https://eurosalary.eu/api/stripe-webhook
+- Test keys also exist (sk_test_, whsec_ST10...) for test mode products
+
+### Stripe endpoints (Cloudflare Pages Functions)
+- POST /api/create-checkout — creates Stripe Checkout session (priceId, mode, lang)
+- POST /api/stripe-webhook — receives Stripe events → Supabase + Resend email
+- POST /api/customer-portal — creates Stripe billing portal session
+
+### Stripe data flow
+1. User clicks CTA on pricing page → JS calls /api/create-checkout
+2. Stripe Checkout opens → user pays
+3. Stripe sends webhook → /api/stripe-webhook
+4. Webhook writes to: crm_leads (upsert), payments (insert), subscriptions (upsert)
+5. Confirmation email sent via Resend
+
+### Cloudflare Pages secrets (5 configured)
+- STRIPE_SECRET_KEY (live)
+- STRIPE_WEBHOOK_SECRET (live)
+- RESEND_API_KEY
+- PUBLIC_SUPABASE_URL
+- PUBLIC_SUPABASE_ANON_KEY
+
+### Supabase payment tables (migrated ✅)
+- subscriptions — Stripe subscription tracking with plan, status, amounts
+- payments — all payment records (checkout, invoice, failed)
+- salary_alerts — user alert subscriptions
+- report_purchases — one-time report download tracking
+- v_mrr, v_monthly_revenue, v_plan_breakdown — revenue dashboard views
+- Migration file: supabase/apply-payments.sql
+
+### Price data files
+- src/data/stripe-prices.json — TEST mode price IDs
+- src/data/stripe-prices-live.json — LIVE mode price IDs (in production)
 
 ## Google Analytics 4
 - Measurement ID: G-V3JNJKQDCR (installed in BaseLayout)
@@ -303,19 +346,71 @@ Before doing ANYTHING in a new session:
 - GA4 Data API endpoint: /api/admin/analytics (ready, needs GA4_PROPERTY_ID + GA4_SERVICE_ACCOUNT_JSON env vars)
 - Plausible Analytics also active (GDPR-compliant backup)
 
-## Working method — Token-efficient bulk operations
-When a task involves repetitive changes across 24 languages or many
-entities (countries, jobs, pages), **never write translations inline**.
-Instead:
-1. **Create a Python/JS script** that reads the existing data files,
-   generates the new entries programmatically, and writes them back.
+## Working method — MANDATORY script-first approach
+**This is the DEFAULT for ALL repetitive work. Use it automatically
+without asking. Only ask if a task is clearly too small (< 3 edits).**
+
+### When to use scripts (always, unless impractical)
+- Any change across 24 languages
+- Any change across multiple countries, jobs, or entities
+- Any bulk text replacement (e.g. "15 → 27" across files)
+- Adding new i18n keys, new entity data, new page translations
+- Updating data objects in multiple page files
+- Any task touching > 3 files with similar patterns
+
+### How
+1. **Create a Python/JS script** in `scripts/` that reads existing
+   data files, generates new entries programmatically, writes them back.
 2. **One script = one task** — e.g. "add 12 countries to slugs.ts +
    translations.ts + seed.ts" all in a single script run.
-3. **Use grep/sed for bulk text updates** — e.g. replacing "27 countries"
-   → "27 countries" across all files and all languages at once.
-4. **Apply to any repetitive i18n work**: new page translations, new
-   UI labels, new entity names, bulk content updates.
-5. This saves ~90% of tokens vs. writing each translation manually.
+3. **Use Python for bulk text updates** — regex-based find/replace
+   across all files and all languages at once. Use `os.walk()` for
+   Astro `[lang]` directories (glob can't resolve brackets).
+4. **Delete scripts after use** — they're one-off tools, not permanent.
+5. **Saves ~90% of tokens** vs. writing each translation manually.
+
+### When NOT to use scripts (ask first)
+- Single-file CSS/template changes
+- Fixing 1-2 specific bugs
+- Architecture decisions or new component creation
+
+## Post-deploy — MANDATORY auto-indexing
+**After every build+deploy, ALWAYS run indexing. Never ask.**
+
+### Steps (automatic after every deploy)
+1. `node scripts/index-pages.mjs` — submits all URLs via IndexNow API
+2. IndexNow key file: `public/d4f8e2a1b3c5967082e4f1a9d7b6c3e5.txt`
+3. Sitemap: `https://eurosalary.eu/sitemap-index.xml` (auto-generated by Astro)
+4. Google picks up via Search Console (sitemap auto-refresh, verified)
+5. For specific URLs only: `node scripts/index-pages.mjs --urls https://eurosalary.eu/en/pricing/`
+
+### What's configured
+- IndexNow API key deployed at root
+- Google Search Console: verified, sitemap submitted
+- robots.txt: sitemap reference + all bots allowed
+- Sitemap: auto-generated with hreflang for all 24 languages
+
+## Night Agent System
+Autonomous development agent runs every night 3:00-7:00 AM.
+
+### Files
+- `BACKLOG.md` — task queue (agent reads, executes top task, moves to Done)
+- `NIGHTLOG.md` — daily log (agent writes what it did each night)
+- `CLAUDE.md` — this file (agent reads rules before every session)
+
+### Rules for the night agent
+- Read CLAUDE.md + BACKLOG.md + NIGHTLOG.md before starting
+- Pick TOP task from BACKLOG.md "Ready" section
+- Use script-first method for all bulk work
+- Build → Deploy → Index after every change
+- Never deploy if build has errors or fewer pages than previous
+- Never touch: homepage, database schema, Stripe, API keys, git push
+- Log everything in NIGHTLOG.md
+- If task is risky/ambiguous, skip and note in BACKLOG.md
+
+### How to add tasks
+Add new entries to BACKLOG.md "Ready" section with:
+- Priority (P0-P3), title, files involved, description, method, estimate
 
 ## Current status
 Revenue engine built (CRM, API endpoints, automation, B2B pages).
@@ -323,5 +418,10 @@ Navigation connected: Header Solutions dropdown, Footer Business column, Homepag
 All 3 i18n-partial pages fixed (blog, calculator, newsletter → 24 languages).
 Admin dashboard rebuilt (sidebar nav, revenue tab, subscriptions tab).
 Blog cleared — new posts will be created in all 24 languages from scratch.
-Build: 9,723 pages, 0 errors. Deployed to production.
+Pricing page redesigned + expanded to 24 languages.
+27+1 countries (27 EU + CH) with full data across all pages.
+**Stripe LIVE** — 7 products, 13 prices, webhook, checkout, portal all configured.
+Supabase payment tables migrated (subscriptions, payments, alerts, reports + views).
+Pricing page CTA buttons connected to Stripe Checkout (Pro + Business).
+Build: 17,523 pages, 0 errors. Deployed to production.
 Last deploy: 2026-04-07.

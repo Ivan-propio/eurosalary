@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EuroSalary - ElevenLabs Grants Application</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  @page {
+    size: 1280px 720px;
+    margin: 0;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0F1F3D;
+    color: #fff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .slide {
+    width: 1280px;
+    height: 720px;
+    padding: 60px 80px;
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
+    page-break-inside: avoid;
+    background: #0F1F3D;
+  }
+
+  .slide:last-child { page-break-after: avoid; }
+
+  /* Decorative elements */
+  .slide::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    right: -200px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .slide::after {
+    content: '';
+    position: absolute;
+    bottom: -150px;
+    left: -150px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(37,99,235,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .slide-content { position: relative; z-index: 1; height: 100%; }
+
+  /* Logo bar */
+  .logo-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .logo {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .logo span { color: #2563EB; }
+  .slide-num {
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    font-weight: 500;
+  }
+
+  /* Typography */
+  h1 {
+    font-size: 52px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 24px;
+  }
+  h1 .accent { color: #2563EB; }
+  h1 .accent2 { color: #60A5FA; }
+
+  h2 {
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+  h2 .accent { color: #2563EB; }
+
+  h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #60A5FA;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.8);
+  }
+
+  .subtitle {
+    font-size: 22px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.5;
+    max-width: 700px;
+  }
+
+  .tag {
+    display: inline-block;
+    background: rgba(37,99,235,0.2);
+    border: 1px solid rgba(37,99,235,0.4);
+    color: #60A5FA;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 20px;
+  }
+
+  /* Grid layouts */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 28px;
+  }
+  .grid-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 20px;
+  }
+
+  /* Cards */
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 28px;
+  }
+  .card h3 { margin-bottom: 10px; }
+  .card p { font-size: 15px; color: rgba(255,255,255,0.65); }
+
+  .card-highlight {
+    background: rgba(37,99,235,0.1);
+    border-color: rgba(37,99,235,0.3);
+  }
+
+  /* Stat blocks */
+  .stat {
+    text-align: center;
+    padding: 20px;
+  }
+  .stat-value {
+    font-size: 48px;
+    font-weight: 900;
+    color: #2563EB;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    margin-top: 8px;
+    font-weight: 500;
+  }
+
+  /* Lists */
+  .check-list {
+    list-style: none;
+    padding: 0;
+  }
+  .check-list li {
+    padding: 8px 0;
+    padding-left: 28px;
+    position: relative;
+    font-size: 16px;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.5;
+  }
+  .check-list li::before {
+    content: '\2713';
+    position: absolute;
+    left: 0;
+    color: #22C55E;
+    font-weight: 700;
+  }
+
+  /* Specific slides */
+  .cover-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+  }
+
+  .cover-logos {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 40px;
+  }
+  .cover-logo-text {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .cover-logo-text span { color: #2563EB; }
+  .cover-x {
+    font-size: 24px;
+    color: rgba(255,255,255,0.3);
+    font-weight: 300;
+  }
+
+  .divider {
+    width: 60px;
+    height: 3px;
+    background: #2563EB;
+    margin: 24px 0;
+  }
+
+  .bottom-bar {
+    position: absolute;
+    bottom: 30px;
+    left: 80px;
+    right: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 2;
+  }
+  .bottom-bar span {
+    font-size: 12px;
+    color: rgba(255,255,255,0.25);
+  }
+
+  .flag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .flag-pill {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 500;
+  }
+
+  .use-case-icon {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+
+  .timeline {
+    display: flex;
+    gap: 0;
+    margin-top: 16px;
+  }
+  .timeline-item {
+    flex: 1;
+    padding: 20px;
+    border-left: 3px solid #2563EB;
+    background: rgba(37,99,235,0.05);
+  }
+  .timeline-item h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #60A5FA;
+    margin-bottom: 6px;
+  }
+  .timeline-item p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.4;
+  }
+
+  .cta-box {
+    background: linear-gradient(135deg, #1E3A5F 0%, #0F1F3D 100%);
+    border: 2px solid #2563EB;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .url-highlight {
+    color: #60A5FA;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: Cover -->
+<div class="slide">
+  <div class="slide-content cover-center">
+    <div class="cover-logos">
+      <div class="cover-logo-text">Euro<span>Salary</span>.eu</div>
+      <div class="cover-x">&times;</div>
+      <div class="cover-logo-text" style="color: #fff;">eleven<span style="color:#60A5FA;">labs</span></div>
+    </div>
+    <h1 style="font-size:46px; max-width:800px;">
+      Voice-Powered Salary Intelligence<br>for <span class="accent">24 Languages</span>
+    </h1>
+    <div class="divider" style="margin: 24px auto;"></div>
+    <p class="subtitle" style="text-align:center; max-width:600px;">
+      Grant application to bring AI-narrated salary data<br>to 450 million Europeans in their native language
+    </p>
+    <div style="margin-top: 32px; display:flex; gap:16px;">
+      <span class="tag">Startup Grants Program</span>
+      <span class="tag">April 2026</span>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <span>eurosalary.eu</span>
+    <span>Confidential</span>
+  </div>
+</div>
+
+<!-- SLIDE 2: The Problem -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="logo-bar">
+      <div class="logo">Euro<span>Salary</span>.eu</div>
+      <div class="slide-num">02 / 10</div>
+    </div>
+    <span class="tag">The Problem</span>
+    <h2>Salary data in Europe is<br><span class="accent">fragmented, text-heavy<br>and inaccessible</span></h2>
+    <div class="grid-3" style="margin-top: 32px;">
+      <div class="card">
+        <div class="use-case-icon">&#127758;</div>
+        <h3>24 Languages</h3>
+        <p>The EU has 24 official languages. Salary data is typically only available in English or the local language, excluding millions of cross-border workers.</p>
+      </div>
+      <div class="card">
+        <div class="use-case-icon">&#128196;</div>
+        <h3>Text Walls</h3>
+        <p>Salary reports are dense PDFs and spreadsheets. Nobody reads 20-page compensation benchmarks. Information is buried and hard to consume.</p>
+      </div>
+      <div class="card">
+        <div class="use-case-icon">&#9855;</div>
+        <h3>Accessibility Gap</h3>
+        <p>80 million Europeans live with a disability. Current salary platforms offer zero audio alternatives, excluding a massive underserved population.</p>
+      </div>
+    </div>
+    <div style="margin-top: 32px; background: rgba(37,99,235,0.08); border-radius:12px; padding: 20px 28px; border-left: 4px solid #2563EB;">
+      <p style="font-size:17px;"><strong style="color:#60A5FA;">The result:</strong> European workers make career decisions without understanding compensation across borders &mdash; because the data doesn't speak their language, literally.</p>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <span>eurosalary.eu</span>
+    <span>ElevenLabs Grants Application</span>
+  </div>
+</div>
+
+<!-- SLIDE 3: Our Solution -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="logo-bar">
+      <div class="logo">Euro<span>Salary</span>.eu</div>
+      <div class="slide-num">03 / 10</div>
+    </div>
+    <span class="tag">Our Solution</span>
+    <h2>The institutional ledger of<br><span class="accent">European compensation</span></h2>
+    <p class="subtitle" style="margin-bottom: 32px;">EuroSalary.eu is the largest free, multilingual salary comparison platform covering all 27 EU member states in all 24 official EU languages.</p>
+    <div class="grid-4">
+      <div class="stat">
+        <div class="stat-value">17.5K</div>
+        <div class="stat-label">Static pages<br>indexed by Google</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">24</div>
+        <div class="stat-label">EU languages<br>fully translated</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">27</div>
+        <div class="stat-label">Countries with<br>salary data</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">21</div>
+        <div class="stat-label">Job categories<br>with 3 seniority levels</div>
+      </div>
+    </div>
+    <div style="margin-top: 28px;">
+      <h3 style="font-size:16px; margin-bottom:12px;">Content types per country &times; language:</h3>
+      <div class="flag-row">
+        <span class="flag-pill">Salary comparisons</span>
+        <span class="flag-pill">Country profiles</span>
+        <span class="flag-pill">Job comparisons</span>
+        <span class="flag-pill">City data</span>
+        <span class="flag-pill">Minimum wage</span>
+        <span class="flag-pill">Net salary calculator</span>
+        <span class="flag-pill">Transparency index</span>
+        <span class="flag-pill">Country pair comparisons</span>
+        <span class="flag-pill">Sector analysis</span>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <span>eurosalary.eu</span>
+    <span>ElevenLabs Grants Application</span>
+  </div>
+</div>
+
+<!-- SLIDE 4: Traction -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="logo-bar">
+      <div class="logo">Euro<span>Salary</span>.eu</div>
+      <div class="slide-num">04 / 10</div>
+    </div>
+    <span class="tag">Traction &amp; Infrastructure</span>
+    <h2>Built, deployed and <span class="accent">live</span></h2>
+    <div class="grid-2" style="margin-top: 24px;">
+      <div>
+        <h3>Tech Stack</h3>
+        <ul class="check-list">
+          <li>Astro 6 SSG &mdash; all pages pre-rendered for SEO</li>
+          <li>Cloudflare Pages &mdash; global CDN, edge delivery</li>
+          <li>Supabase (EU Frankfurt) &mdash; PostgreSQL database</li>
+          <li>Google Search Console &mdash; verified, 17.5K pages indexed</li>
+          <li>GA4 + Plausible Analytics &mdash; dual tracking</li>
+          <li>Full CRM layer &mdash; lead scoring, email sequences</li>
+          <li>REST API &mdash; public salary data endpoints</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Business Model (4 tiers)</h3>
+        <ul class="check-list">
+          <li><strong>Free</strong> &mdash; basic salary data, 27 countries</li>
+          <li><strong>Professional</strong> (&euro;29/mo) &mdash; city-level data, net calculations</li>
+          <li><strong>Business</strong> (&euro;99/mo) &mdash; PDF reports, team access, bulk export</li>
+          <li><strong>Enterprise</strong> (custom) &mdash; white-label, API, SSO</li>
+        </ul>
+        <div style="margin-top:20px;">
+          <h3>Target Audience</h3>
+          <ul class="check-list">
+            <li>HR professionals &amp; recruiters</li>
+            <li>Cross-border workers &amp; expats</li>
+            <li>Compensation &amp; benefits teams</li>
+            <li>Government &amp; policy researchers</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <span>eurosalary.eu</span>
+    <span>ElevenLabs Grants Application</span>
+  </div>
+</div>
+
+<!-- SLIDE 5: Voice AI Opportunity -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="logo-bar">
+      <div class="logo">Euro<span>Salary</span>.eu</div>
+      <div class="slide-num">05 / 10</div>
+    </div>
+    <span class="tag">The Voice AI Opportunity</span>
+    <h2>Why EuroSalary + ElevenLabs<br>is a <span class="accent">perfect match</span></h2>
+    <div class="grid-2" style="margin-top: 24px; gap: 50px;">
+      <div>
+        <div class="card card-highlight" style="margin-bottom: 20px;">
+          <h3 style="color:#fff;">&#127911; 24 Languages = 24 Voices</h3>
+          <p>Every page on EuroSalary exists in 24 languages. ElevenLabs' multilingual voices can narrate salary data in each user's native tongue &mdash; a use case no competitor offers.</p>
+        </div>
+        <div class="card" style="margin-bottom: 20px;">
+          <h3>&#128202; Structured Data = Perfect TTS Input</h3>
+          <p>Our data is structured, numerical, and factual. No hallucination risk. Ideal input for high-quality text-to-speech conversion.</p>
+        </div>
+        <div class="card">
+          <h3>&#128640; Scale: 17,500 Pages Ready</h3>
+          <p>Every one of our 17,500+ pages can have an audio summary. That's 17,500 audio assets showcasing ElevenLabs technology to a growing European audience.</p>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; justify-content:center;">
+        <div style="background: rgba(37,99,235,0.12); border-radius: 16px; padding: 32px; border: 1px solid rgba(37,99,235,0.3);">
+          <h3 style="font-size:18px; color:#fff; margin-bottom:16px;">ElevenLabs visibility on EuroSalary</h3>
+          <ul class="check-list">
+            <li>Audio player on every salary page</li>
+            <li>"Powered by ElevenLabs" badge</li>
+            <li>Link to ElevenLabs on every page with audio</li>
+            <li>Grant logo in website footer (12 months)</li>
+            <li>Blog post: "How we use AI voices for salary data"</li>
+            <li>17,500+ pages &times; 24 languages = massive reach</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <span>eurosalary.eu</span>
+    <span>ElevenLabs Grants Application</span>
+  </div>
+</div>
+
+<!-- SLIDE 6: Use Cases -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="logo-bar">
+      <div class="logo">Euro<span>Salary</span>.eu</div>
+      <div class="slide-num">06 / 10</div>
+    </div>
+    <span class="tag">Use Cases</span>
+    <h2>How we'll use <span class="accent">ElevenLabs</span></h2>
+    <div class="grid-2" style="margin-top: 24px; gap: 28px;">
+      <div class="card">
+        <div class="use-case-icon">&#128266;</div>
+        <h3>Audio Salary Summaries</h3>
+        <p>Every salary page gets a 30-60 second audio summary. "The average software engineer salary in Germany is &euro;62,400..." Users can listen instead of read.</p>
+        <p style="margin-top:8px; color:#60A5FA; font-size:13px; font-weight:600;">17,500 pages &times; 60 sec avg = ~290 hours of content</p>
+      </div>
+      <div class="card">
+        <div class="use-case-icon">&#127760;</div>
+        <h3>Multilingual Narration</h3>
+        <p>Same salary data narrated in the user's native language. A Polish worker in Germany hears the report in Polish. True cross-border accessibility.</p>
+        <p style="margin-top:8px; color:#60A5FA; font-size:13px; font-weight:600;">24 languages &times; 27 countries = 648 country+lang combinations</p>
+      </div>
+      <div class="card">
+        <div class="use-case-icon">&#128240;</div>
+        <h3>Premium Audio Reports</h3>
+        <p>Business tier customers get narrated PDF country reports. 5-minute voice briefings for HR teams who need quick salary intelligence during commute.</p>
+        <p style="margin-top:8px; color:#60A5FA; font-size:13px; font-weight:600;">Premium feature driving &euro;99/mo conversions</p>
+      </div>
+      <div class="card">
+        <div class="use-case-icon">&#9855;</div>
+        <h3>Accessibility Compliance</h3>
+        <p>Audio alternatives for all data-heavy pages. Meet EU Accessibility Act (EAA 2025) requirements. Serve visually impaired users across Europe.</p>
+        <p style="margin-top:8px; color:#60A5FA; font-size:13px; font-weight:600;">EU regulatory compliance = competitive moat</p>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <span>eurosalary.eu</span>
+    <span>ElevenLabs Grants Application</span>
+  </div>
+</div>
+
+<!-- SLIDE 7: Market -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="logo-bar">
+      <div class="logo">Euro<span>Salary</span>.eu</div>
+      <div class="slide-num">07 / 10</div>
+    </div>
+    <span class="tag">Market Opportunity</span>
+    <h2>European HR Tech is a<br><span class="accent">&euro;15B+ market</span></h2>
+    <div class="grid-2" style="margin-top: 20px;">
+      <div>
+        <div class="stat" style="text-align:left; padding:0; margin-bottom:24px;">
+          <div class="stat-value" style="font-size:42px;">450M</div>
+          <div class="stat-label" style="font-size:15px;">EU citizens across 27 member states</div>
+        </div>
+        <div class="stat" style="text-align:left; padding:0; margin-bottom:24px;">
+          <div class="stat-value" style="font-size:42px;">17M+</div>
+          <div class="stat-label" style="font-size:15px;">Cross-border workers in the EU</div>
+        </div>
+        <div class="stat" style="text-align:left; padding:0; margin-bottom:24px;">
+          <div class="stat-value" style="font-size:42px;">73%</div>
+          <div class="stat-label" style="font-size:15px;">of EU workers research salaries before job changes</div>
+        </div>
+        <div class="stat" style="text-align:left; padding:0;">
+          <div class="stat-value" style="font-size:42px;">&euro;15B</div>
+          <div class="stat-label" style="font-size:15px;">European HR Tech &amp; compensation data market</div>
+        </div>
+      </div>
+      <div>
+        <div class="card card-highlight" style="margin-bottom: 20px;">
+          <h3 style="color:#fff;">Why voice matters for this market</h3>
+          <ul class="check-list">
+            <li>Mobile-first: 68% of salary searches happen on phones</li>
+            <li>EU Accessibility Act mandates audio alternatives by 2025</li>
+            <li>Cross-border workers need data in their native language</li>
+            <li>Audio salary briefings fit commute consumption patterns</li>
+            <li>HR teams want quick voice summaries, not 20-page PDFs</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Competitive advantage</h3>
+          <p>No European salary platform offers voice-narrated data in 24 languages. Glassdoor, PayScale, and LinkedIn Salary operate English-first. We go native-first.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <span>eurosalary.eu</span>
+    <span>ElevenLabs Grants Application</span>
+  </div>
+</div>
+
+<!-- SLIDE 8: Implementation Plan -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="logo-bar">
+      <div class="logo">Euro<span>Salary</span>.eu</div>
+      <div class="slide-num">08 / 10</div>
+    </div>
+    <span class="tag">Implementation Roadmap</span>
+    <h2>12-month <span class="accent">voice integration</span> plan</h2>
+    <div class="timeline" style="margin-top: 28px;">
+      <div class="timeline-item">
+        <h4>Month 1-2</h4>
+        <p><strong>Foundation</strong><br>API integration. Audio player component. Generate summaries for top 500 pages (EN, FR, DE, ES). Test voice quality across languages.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>Month 3-4</h4>
+        <p><strong>Scale</strong><br>Expand to all 24 languages. Automated pipeline: data update &rarr; text generation &rarr; TTS &rarr; CDN. Cover 5,000+ pages.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>Month 5-8</h4>
+        <p><strong>Premium</strong><br>Audio country reports for Business tier. Voice-narrated salary alerts. Podcast-style weekly European salary briefings.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>Month 9-12</h4>
+        <p><strong>Full Coverage</strong><br>Audio on all 17,500+ pages. Conversational voice search. Enterprise audio API for B2B clients.</p>
+      </div>
+    </div>
+    <div style="margin-top: 28px;">
+      <h3 style="font-size:16px; margin-bottom: 12px;">Estimated character usage over 12 months:</h3>
+      <div class="grid-3">
+        <div class="card" style="text-align:center; padding:16px;">
+          <div style="font-size:28px; font-weight:800; color:#2563EB;">~8M</div>
+          <div style="font-size:13px; color:rgba(255,255,255,0.6);">Audio summaries<br>(17.5K pages &times; ~450 chars)</div>
+        </div>
+        <div class="card" style="text-align:center; padding:16px;">
+          <div style="font-size:28px; font-weight:800; color:#2563EB;">~12M</div>
+          <div style="font-size:13px; color:rgba(255,255,255,0.6);">Premium reports<br>(country &times; language narrations)</div>
+        </div>
+        <div class="card" style="text-align:center; padding:16px;">
+          <div style="font-size:28px; font-weight:800; color:#2563EB;">~10M</div>
+          <div style="font-size:13px; color:rgba(255,255,255,0.6);">Weekly briefings &amp;<br>salary alerts</div>
+        </div>
+      </div>
+      <p style="text-align:center; margin-top:12px; font-size:14px; color:rgba(255,255,255,0.5);">Total: ~30M characters &mdash; well within the 33M grant allocation</p>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <span>eurosalary.eu</span>
+    <span>ElevenLabs Grants Application</span>
+  </div>
+</div>
+
+<!-- SLIDE 9: The Ask -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="logo-bar">
+      <div class="logo">Euro<span>Salary</span>.eu</div>
+      <div class="slide-num">09 / 10</div>
+    </div>
+    <span class="tag">The Ask</span>
+    <h2>What we need from <span class="accent">ElevenLabs</span></h2>
+    <div class="grid-2" style="margin-top: 32px; gap: 50px;">
+      <div>
+        <div class="card card-highlight" style="margin-bottom: 24px;">
+          <h3 style="color: #fff; font-size: 20px;">Startup Grant</h3>
+          <p style="font-size: 17px; color: rgba(255,255,255,0.85);">33 million characters over 12 months to build voice-narrated salary intelligence across 24 European languages.</p>
+        </div>
+        <h3>What ElevenLabs gets in return</h3>
+        <ul class="check-list">
+          <li><strong>Massive multilingual showcase</strong> &mdash; 24 languages, live</li>
+          <li><strong>17,500+ pages</strong> with "Powered by ElevenLabs" badge</li>
+          <li><strong>Footer logo</strong> on all pages for 12+ months</li>
+          <li><strong>Case study</strong> for ElevenLabs grants program</li>
+          <li><strong>Blog post</strong> + social media promotion</li>
+          <li><strong>EU institutional credibility</strong> &mdash; Eurostat data source</li>
+          <li><strong>B2B exposure</strong> to 500+ companies using the platform</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Why now?</h3>
+        <div class="card" style="margin-bottom: 16px;">
+          <p><strong style="color:#60A5FA;">EU Accessibility Act</strong> entered force in 2025. Companies must provide accessible alternatives for digital content. Voice narration is the most natural solution.</p>
+        </div>
+        <div class="card" style="margin-bottom: 16px;">
+          <p><strong style="color:#60A5FA;">EU Pay Transparency Directive</strong> (2026) requires salary range disclosure. Demand for compensation data is exploding across Europe.</p>
+        </div>
+        <div class="card">
+          <p><strong style="color:#60A5FA;">First mover</strong> &mdash; no European salary platform has voice narration. Whoever does it first in 24 languages wins the accessibility and mobile market.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <span>eurosalary.eu</span>
+    <span>ElevenLabs Grants Application</span>
+  </div>
+</div>
+
+<!-- SLIDE 10: Contact -->
+<div class="slide">
+  <div class="slide-content cover-center">
+    <div class="cover-logos" style="margin-bottom: 30px;">
+      <div class="cover-logo-text">Euro<span>Salary</span>.eu</div>
+      <div class="cover-x">&times;</div>
+      <div class="cover-logo-text" style="color: #fff;">eleven<span style="color:#60A5FA;">labs</span></div>
+    </div>
+    <h1 style="font-size: 44px; max-width: 750px;">
+      Let's make salary data<br><span class="accent">speak every language</span>
+    </h1>
+    <div class="divider" style="margin: 28px auto;"></div>
+    <div class="cta-box">
+      <p style="font-size: 20px; color: #fff; margin-bottom: 16px;"><strong>Ready to integrate. Ready to scale.</strong></p>
+      <div style="display: flex; justify-content: center; gap: 40px; margin-top: 20px;">
+        <div>
+          <p style="font-size: 13px; color: #60A5FA; font-weight: 600; margin-bottom: 4px;">WEBSITE</p>
+          <p style="font-size: 17px; color: #fff;">eurosalary.eu</p>
+        </div>
+        <div>
+          <p style="font-size: 13px; color: #60A5FA; font-weight: 600; margin-bottom: 4px;">EMAIL</p>
+          <p style="font-size: 17px; color: #fff;">hello@eurosalary.eu</p>
+        </div>
+        <div>
+          <p style="font-size: 13px; color: #60A5FA; font-weight: 600; margin-bottom: 4px;">TEAM SIZE</p>
+          <p style="font-size: 17px; color: #fff;">&lt; 25 employees</p>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top: 32px; display: flex; gap: 16px;">
+      <span class="flag-pill">17,500+ pages live</span>
+      <span class="flag-pill">24 EU languages</span>
+      <span class="flag-pill">27 countries</span>
+      <span class="flag-pill">Eurostat + OECD data</span>
+      <span class="flag-pill">GDPR compliant</span>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <span>eurosalary.eu &mdash; The Institutional Ledger of European Compensation</span>
+    <span>April 2026</span>
+  </div>
+</div>
+
+</body>
+</html>

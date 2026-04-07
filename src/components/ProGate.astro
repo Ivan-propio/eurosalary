@@ -1,0 +1,272 @@
+---
+/**
+ * ProGate — blur overlay that gates premium content.
+ * Wraps <slot /> content; shows blurred + lock for non-paid users,
+ * full content for authenticated Pro+ users.
+ */
+export interface Props {
+  lang: string;
+  feature: string; // e.g. "net-salary", "city-detail", "csv-export"
+}
+
+const { lang, feature } = Astro.props;
+
+/* ── i18n: all 24 EU languages ──────────────────────────── */
+const i18n: Record<string, { title: string; upgrade: string; login: string }> = {
+  en: { title: 'Pro Feature',          upgrade: 'Upgrade to Pro',         login: 'Already subscribed? Log in' },
+  fr: { title: 'Fonction Pro',         upgrade: 'Passer au Pro',          login: 'Deja abonne ? Connectez-vous' },
+  de: { title: 'Pro-Funktion',         upgrade: 'Auf Pro upgraden',       login: 'Bereits abonniert? Anmelden' },
+  es: { title: 'Funcion Pro',          upgrade: 'Mejorar a Pro',          login: 'Ya suscrito? Iniciar sesion' },
+  it: { title: 'Funzione Pro',         upgrade: 'Passa a Pro',            login: 'Gia abbonato? Accedi' },
+  pt: { title: 'Funcao Pro',           upgrade: 'Atualizar para Pro',     login: 'Ja inscrito? Entrar' },
+  nl: { title: 'Pro-functie',          upgrade: 'Upgraden naar Pro',      login: 'Al geabonneerd? Inloggen' },
+  pl: { title: 'Funkcja Pro',          upgrade: 'Przejdz na Pro',         login: 'Juz subskrybujesz? Zaloguj sie' },
+  ro: { title: 'Functie Pro',          upgrade: 'Treci la Pro',           login: 'Deja abonat? Autentifica-te' },
+  cs: { title: 'Pro funkce',           upgrade: 'Prejit na Pro',          login: 'Jiz predplaceno? Prihlaste se' },
+  sv: { title: 'Pro-funktion',         upgrade: 'Uppgradera till Pro',    login: 'Redan prenumerant? Logga in' },
+  da: { title: 'Pro-funktion',         upgrade: 'Opgrader til Pro',       login: 'Allerede abonnent? Log ind' },
+  fi: { title: 'Pro-ominaisuus',       upgrade: 'Paivita Pro-versioon',   login: 'Jo tilaaja? Kirjaudu sisaan' },
+  el: { title: 'Λειτουργία Pro',       upgrade: 'Αναβάθμιση σε Pro',     login: 'Ήδη συνδρομητής; Σύνδεση' },
+  hu: { title: 'Pro funkcio',          upgrade: 'Valtas Pro-ra',          login: 'Mar elofizetett? Jelentkezzen be' },
+  sk: { title: 'Pro funkcia',          upgrade: 'Prejst na Pro',          login: 'Uz predplatene? Prihlaste sa' },
+  bg: { title: 'Pro функция',          upgrade: 'Надграждане до Pro',     login: 'Вече абонат? Влезте' },
+  hr: { title: 'Pro znacajka',         upgrade: 'Nadogradi na Pro',       login: 'Vec pretplaceni? Prijavite se' },
+  sl: { title: 'Pro funkcija',         upgrade: 'Nadgradi na Pro',        login: 'Ze narocnik? Prijavite se' },
+  lt: { title: 'Pro funkcija',         upgrade: 'Atnaujinti i Pro',       login: 'Jau prenumeruojate? Prisijunkite' },
+  lv: { title: 'Pro funkcija',         upgrade: 'Jaunināt uz Pro',       login: 'Jau abonējat? Pieslēgties' },
+  et: { title: 'Pro funktsioon',       upgrade: 'Uuenda Pro-le',          login: 'Juba tellija? Logi sisse' },
+  mt: { title: 'Funzjoni Pro',         upgrade: 'Aġġorna għal Pro',      login: 'Diġa abbonat? Idħol' },
+  ga: { title: 'Gne Pro',              upgrade: 'Uasghrádaigh go Pro',   login: 'Síntiúsóir cheana? Logáil isteach' },
+};
+
+const featureDescriptions: Record<string, Record<string, string>> = {
+  'net-salary': {
+    en: 'Unlock detailed net salary calculations with tax breakdowns for every EU country.',
+    fr: 'Debloquez les calculs detailles du salaire net avec ventilation fiscale pour chaque pays de l\'UE.',
+    de: 'Detaillierte Nettogehaltsberechnungen mit Steueraufschlusselung fur jedes EU-Land freischalten.',
+    es: 'Desbloquee calculos detallados de salario neto con desgloses fiscales para cada pais de la UE.',
+    it: 'Sblocca i calcoli dettagliati dello stipendio netto con ripartizione fiscale per ogni paese UE.',
+    pt: 'Desbloqueie calculos detalhados de salario liquido com desagregacao fiscal para cada pais da UE.',
+    nl: 'Ontgrendel gedetailleerde nettosalarisberekeningen met belastingopsplitsing voor elk EU-land.',
+    pl: 'Odblokuj szczegolowe obliczenia wynagrodzenia netto z rozkladem podatkowym dla kazdego kraju UE.',
+    ro: 'Deblocati calculele detaliate ale salariului net cu defalcare fiscala pentru fiecare tara UE.',
+    cs: 'Odemknete podrobne vypocty cisteho platu s rozpisem dani pro kazdou zemi EU.',
+    sv: 'Las upp detaljerade nettoloneberakningar med skatteuppdelning for varje EU-land.',
+    da: 'Las op detaljerede nettolonsberegninger med skatteopdeling for hvert EU-land.',
+    fi: 'Avaa yksityiskohtaiset nettopalkkalaskelmat verotiedoilla jokaiselle EU-maalle.',
+    el: 'Ξεκλειδώστε αναλυτικούς υπολογισμούς καθαρού μισθού με φορολογική ανάλυση για κάθε χώρα της ΕΕ.',
+    hu: 'Oldja fel a reszletes netto fizetes szamitasokat adobontassal minden EU-orszagra.',
+    sk: 'Odomknite podrobne vypocty cisteho platu s rozpisom dani pre kazdu krajinu EU.',
+    bg: 'Отключете подробни изчисления на нетната заплата с данъчна разбивка за всяка страна от ЕС.',
+    hr: 'Otključajte detaljne izračune neto plaće s poreznim raščlambama za svaku zemlju EU.',
+    sl: 'Odklenite podrobne izračune neto plače z davčno razčlenitvijo za vsako državo EU.',
+    lt: 'Atrakinkite issamius neto atlyginimo skaiciavimus su mokesciu isklotine kiekvienai ES saliai.',
+    lv: 'Atbloķējiet detalizētus neto algas aprēķinus ar nodokļu sadalījumu katrai ES valstij.',
+    et: 'Avage uksikasjalikud netopalga arvutused maksujaotusega iga EL-i riigi kohta.',
+    mt: 'Iftaħ kalkoli dettaljati tas-salarju nett b\'analiżi tat-taxxa għal kull pajjiż tal-UE.',
+    ga: 'Díghlasáil ríomhanna mionsonraithe glansaothair le miondealú cánach do gach tír AE.',
+  },
+  'city-detail': {
+    en: 'Access detailed salary data, cost of living, and job market insights for this city.',
+    fr: 'Accedez aux donnees salariales detaillees, au cout de la vie et aux perspectives du marche de l\'emploi pour cette ville.',
+    de: 'Zugang zu detaillierten Gehaltsdaten, Lebenshaltungskosten und Arbeitsmarkt-Einblicken fur diese Stadt.',
+    es: 'Acceda a datos salariales detallados, costo de vida e informacion del mercado laboral para esta ciudad.',
+    it: 'Accedi a dati salariali dettagliati, costo della vita e analisi del mercato del lavoro per questa citta.',
+    pt: 'Acesse dados salariais detalhados, custo de vida e insights do mercado de trabalho para esta cidade.',
+    nl: 'Krijg toegang tot gedetailleerde salarisgegevens, kosten van levensonderhoud en arbeidsmarktinzichten voor deze stad.',
+    pl: 'Uzyskaj dostepo do szczegolowych danych o wynagrodzeniach, kosztach zycia i rynku pracy dla tego miasta.',
+    ro: 'Accesati date salariale detaliate, costul vietii si informatii despre piata muncii pentru acest oras.',
+    cs: 'Pristupte k podrobnym platovym datum, nakladum na zivot a prehledum trhu prace pro toto mesto.',
+    sv: 'Fa tillgang till detaljerade lonedata, levnadskostnader och arbetsmarknadsinsikter for denna stad.',
+    da: 'Fa adgang til detaljerede lonsdata, leveomkostninger og arbejdsmarkedsindsigter for denne by.',
+    fi: 'Paase yksityiskohtaisiin palkkatietoihin, elinkustannuksiin ja tyomarkkinatietoihin tasta kaupungista.',
+    el: 'Πρόσβαση σε αναλυτικά δεδομένα μισθών, κόστος ζωής και πληροφορίες αγοράς εργασίας για αυτή την πόλη.',
+    hu: 'Hozzaferes reszletes fizetes adatokhoz, megelhetes koltsegekhez es munkaeropis meglatasokhoz ehhez a varoshoz.',
+    sk: 'Pristupte k podrobnym platovym udajom, nakladom na zivot a prehladom trhu prace pre toto mesto.',
+    bg: 'Достъп до подробни данни за заплатите, разходите за живот и пазара на труда за този град.',
+    hr: 'Pristupite detaljnim podacima o plaćama, troškovima života i uvidu u tržište rada za ovaj grad.',
+    sl: 'Dostopajte do podrobnih podatkov o plačah, stroških življenja in vpogledih v trg dela za to mesto.',
+    lt: 'Gaukite prieiga prie issamiu atlyginimo duomenu, pragyvenimo islaidu ir darbo rinkos informacijos siam miestui.',
+    lv: 'Piekļūstiet detalizētiem algu datiem, dzīves izmaksām un darba tirgus ieskatu šai pilsētai.',
+    et: 'Juurdepääs uksikasjalikele palgaandmetele, elukallidusele ja tooturuulevaatele selle linna kohta.',
+    mt: 'Aċċessa dejta dettaljata dwar is-salarji, l-ispiża tal-ħajja u tagħrif dwar is-suq tax-xogħol għal din il-belt.',
+    ga: 'Faigh rochtain ar shonrai mionsonraithe tuarastail, costas maireachtala agus leirgas margadh fostaíochta don chathair seo.',
+  },
+  'csv-export': {
+    en: 'Export salary data as CSV for your own analysis and reporting.',
+    fr: 'Exportez les donnees salariales en CSV pour vos propres analyses et rapports.',
+    de: 'Gehaltsdaten als CSV exportieren fur eigene Analysen und Berichte.',
+    es: 'Exporte datos salariales como CSV para su propio analisis e informes.',
+    it: 'Esporta i dati salariali come CSV per le tue analisi e report.',
+    pt: 'Exporte dados salariais como CSV para suas proprias analises e relatorios.',
+    nl: 'Exporteer salarisgegevens als CSV voor uw eigen analyses en rapporten.',
+    pl: 'Eksportuj dane o wynagrodzeniach jako CSV do wlasnych analiz i raportow.',
+    ro: 'Exportati datele salariale ca CSV pentru propriile analize si rapoarte.',
+    cs: 'Exportujte platove udaje jako CSV pro vlastni analyzy a reporty.',
+    sv: 'Exportera lonedata som CSV for din egen analys och rapportering.',
+    da: 'Eksporter lonsdata som CSV til din egen analyse og rapportering.',
+    fi: 'Vie palkkatiedot CSV-muodossa omaa analyysia ja raportointia varten.',
+    el: 'Εξαγωγή δεδομένων μισθών ως CSV για δική σας ανάλυση και αναφορές.',
+    hu: 'Exportalja a fizetes adatokat CSV formaban sajat elemzeshez es jelentesekhez.',
+    sk: 'Exportujte platove udaje ako CSV pre vlastne analyzy a reporty.',
+    bg: 'Експортирайте данни за заплатите като CSV за собствен анализ и отчети.',
+    hr: 'Izvezite podatke o plaćama kao CSV za vlastitu analizu i izvješća.',
+    sl: 'Izvozite podatke o plačah kot CSV za lastno analizo in poročila.',
+    lt: 'Eksportuokite atlyginimo duomenis kaip CSV savo analizei ir ataskaitoms.',
+    lv: 'Eksportējiet algu datus kā CSV savai analīzei un pārskatiem.',
+    et: 'Eksportige palgaandmeid CSV-vormingus oma analüüsiks ja aruandluseks.',
+    mt: 'Esporta dejta dwar is-salarji bħala CSV għall-analiżi u r-rapporti tiegħek.',
+    ga: 'Easpórtáil sonraí tuarastail mar CSV le haghaidh d\'anailís agus do thuairiscí féin.',
+  },
+};
+
+const t = i18n[lang] || i18n.en;
+const description = featureDescriptions[feature]?.[lang]
+  || featureDescriptions[feature]?.['en']
+  || featureDescriptions['net-salary'][lang]
+  || featureDescriptions['net-salary']['en'];
+---
+
+<div class="progate" data-progate={feature}>
+  <div class="progate__content">
+    <slot />
+  </div>
+
+  <div class="progate__overlay" aria-hidden="true">
+    <div class="progate__card">
+      <span class="material-symbols-outlined progate__lock">lock</span>
+      <h3 class="progate__title">{t.title}</h3>
+      <p class="progate__desc">{description}</p>
+      <a href={`/${lang}/pricing/`} class="progate__cta">
+        {t.upgrade}
+      </a>
+      <a href={`/${lang}/login/`} class="progate__login">
+        {t.login}
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .progate {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+  }
+
+  .progate__content {
+    filter: blur(8px);
+    pointer-events: none;
+    user-select: none;
+    transition: filter 0.4s ease;
+  }
+
+  .progate--unlocked .progate__content {
+    filter: none;
+    pointer-events: auto;
+    user-select: auto;
+  }
+
+  .progate__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 31, 61, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+  }
+
+  .progate--unlocked .progate__overlay {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .progate__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    max-width: 380px;
+    padding: 32px 28px;
+    background: rgba(15, 31, 61, 0.92);
+    border: 1px solid rgba(37, 99, 235, 0.3);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    text-align: center;
+  }
+
+  .progate__lock {
+    font-size: 40px;
+    color: #2563eb;
+  }
+
+  .progate__title {
+    margin: 0;
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .progate__desc {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .progate__cta {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 12px 32px;
+    background: #2563eb;
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.2s ease, transform 0.15s ease;
+  }
+
+  .progate__cta:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+  }
+
+  .progate__login {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.55);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.2s ease;
+  }
+
+  .progate__login:hover {
+    color: rgba(255, 255, 255, 0.85);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const gates = document.querySelectorAll<HTMLDivElement>('[data-progate]');
+    if (!gates.length) return;
+
+    fetch('/api/auth/session', { credentials: 'include' })
+      .then((res) => res.json())
+      .then((data: { entitlements?: { is_paid?: boolean } }) => {
+        if (data?.entitlements?.is_paid) {
+          gates.forEach((gate) => {
+            gate.classList.add('progate--unlocked');
+          });
+        }
+      })
+      .catch(() => {
+        // Session check failed — keep gated (safe default)
+      });
+  });
+</script>

@@ -1,0 +1,29 @@
+{
+  "pro": {
+    "monthly": "price_1TJYnpFZLfFgYfiwaKmyELvV",
+    "annual": "price_1TJYnqFZLfFgYfiwaZOaMBuY"
+  },
+  "business": {
+    "monthly": "price_1TJYnqFZLfFgYfiwC7nt1cfp",
+    "annual": "price_1TJYnqFZLfFgYfiwYDY3bA0S"
+  },
+  "api-dev": {
+    "monthly": "price_1TJYnrFZLfFgYfiwWPHCB62N",
+    "annual": "price_1TJYnrFZLfFgYfiwiW94xvtY"
+  },
+  "api-business": {
+    "monthly": "price_1TJYnsFZLfFgYfiw1RH1kn6g",
+    "annual": "price_1TJYnsFZLfFgYfiw8XPxEAfL"
+  },
+  "employer-starter": {
+    "monthly": "price_1TJYnsFZLfFgYfiwdRFaPRIy",
+    "annual": "price_1TJYntFZLfFgYfiwo8a53C5B"
+  },
+  "employer-pro": {
+    "monthly": "price_1TJYntFZLfFgYfiwIdPQYK26",
+    "annual": "price_1TJYntFZLfFgYfiwVbyO04xt"
+  },
+  "country-report": {
+    "oneTime": "price_1TJYnuFZLfFgYfiwYfgOWPH1"
+  }
+}

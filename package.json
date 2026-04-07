@@ -16,9 +16,12 @@
     "@astrojs/sitemap": "^3.7.2",
     "@supabase/supabase-js": "^2.101.1",
     "astro": "^6.1.2",
-    "resend": "^6.10.0"
+    "resend": "^6.10.0",
+    "stripe": "^22.0.0"
   },
   "devDependencies": {
-    "googleapis": "^171.4.0"
+    "googleapis": "^171.4.0",
+    "postgres": "^3.4.9",
+    "puppeteer": "^24.40.0"
   }
 }

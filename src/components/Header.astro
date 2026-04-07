@@ -98,6 +98,14 @@ const sortedAlternates = langOrder
     </nav>
 
     <div class="header__right">
+      <!-- Auth buttons (client-side) -->
+      <div class="header__auth" id="header-auth">
+        <a href={`/${lang}/login`} class="header__auth-login" id="header-login-btn">Log In</a>
+        <a href={`/${lang}/dashboard/`} class="header__auth-avatar" id="header-avatar-btn" style="display:none;" title="Dashboard">
+          <span class="material-symbols-outlined">account_circle</span>
+          <span class="header__auth-plan" id="header-plan-badge"></span>
+        </a>
+      </div>
       <LanguageSwitcher />
       <button class="hamburger" id="hamburger-btn" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav">
         <span></span><span></span><span></span>
@@ -127,6 +135,8 @@ const sortedAlternates = langOrder
 
       <div class="mobile-nav__divider"></div>
       <a href={`/${lang}/pricing/`} class="mobile-nav__pricing">{t('nav.pricing')}</a>
+      <a href={`/${lang}/login`} class="mobile-nav__auth-login" id="mobile-login-btn">Log In</a>
+      <a href={`/${lang}/dashboard/`} class="mobile-nav__auth-dashboard" id="mobile-dashboard-btn" style="display:none;">Dashboard</a>
     </nav>
     <div class="mobile-nav__langs">
       <select class="mobile-nav__lang-select" aria-label="Language" onchange="localStorage.setItem('eurosalary-lang',this.options[this.selectedIndex].dataset.lang);window.location.href=this.value">
@@ -160,6 +170,32 @@ const sortedAlternates = langOrder
       }
     });
   }
+
+  // Auth state check
+  (async () => {
+    try {
+      const res = await fetch('/api/auth/session', { credentials: 'include' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.user) {
+          const loginBtn = document.getElementById('header-login-btn');
+          const avatarBtn = document.getElementById('header-avatar-btn');
+          const planBadge = document.getElementById('header-plan-badge');
+          if (loginBtn) loginBtn.style.display = 'none';
+          if (avatarBtn) avatarBtn.style.display = 'flex';
+          if (planBadge && data.plan && data.plan !== 'free') {
+            planBadge.textContent = data.plan.toUpperCase();
+            planBadge.style.display = 'inline';
+          }
+          // Mobile nav
+          const mLoginBtn = document.getElementById('mobile-login-btn');
+          const mDashBtn = document.getElementById('mobile-dashboard-btn');
+          if (mLoginBtn) mLoginBtn.style.display = 'none';
+          if (mDashBtn) mDashBtn.style.display = 'block';
+        }
+      }
+    } catch {}
+  })();
 
   // Desktop dropdown
   const trigger = document.querySelector('.nav-dropdown__trigger');
@@ -250,6 +286,26 @@ const sortedAlternates = langOrder
   }
   .nav-dropdown__cta:hover { color: var(--color-white); }
   .nav-dropdown__cta .material-symbols-outlined { font-size: 16px; }
+
+  /* ---- Auth buttons ---- */
+  .header__auth { display: flex; align-items: center; gap: 8px; margin-right: 8px; }
+  .header__auth-login {
+    font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+    color: rgba(203, 213, 225, 0.9); text-decoration: none; padding: 6px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 6px;
+    transition: all 0.15s ease;
+  }
+  .header__auth-login:hover { background: rgba(255, 255, 255, 0.08); color: var(--color-white); }
+  .header__auth-avatar {
+    display: flex; align-items: center; gap: 4px; text-decoration: none; color: var(--color-secondary);
+    transition: color 0.15s;
+  }
+  .header__auth-avatar:hover { color: var(--color-white); }
+  .header__auth-avatar .material-symbols-outlined { font-size: 28px; }
+  .header__auth-plan {
+    display: none; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    background: var(--color-secondary); color: white; padding: 2px 6px; border-radius: 4px;
+  }
 
   /* ---- Pricing link highlight ---- */
   .header__nav-pricing {

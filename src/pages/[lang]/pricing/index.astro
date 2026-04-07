@@ -242,9 +242,9 @@ const i18n: Record<string, {
     metaDesc: 'W\u00e4hlen Sie den richtigen EuroSalary-Plan: Kostenlose Basisdaten, Professional Stadtebene, Business PDF-Berichte und Team, oder Enterprise-L\u00f6sungen.',
     home: 'Startseite',
     breadcrumb: 'Preise',
-    introAnswer: 'EuroSalary bietet vier Stufen europ\u00e4ischer Gehaltsintelligenz. Der kostenlose Plan deckt Basisdaten f\u00fcr 15 L\u00e4nder ab. Professional erschlie\u00dft Stadtebene und Nettogehaltsberechnungen. Business f\u00fcgt PDF-Berichte und Teamzugang hinzu. Enterprise liefert White-Label-L\u00f6sungen.',
+    introAnswer: 'EuroSalary bietet vier Stufen europ\u00e4ischer Gehaltsintelligenz. Der kostenlose Plan deckt Basisdaten f\u00fcr 27 L\u00e4nder ab. Professional erschlie\u00dft Stadtebene und Nettogehaltsberechnungen. Business f\u00fcgt PDF-Berichte und Teamzugang hinzu. Enterprise liefert White-Label-L\u00f6sungen.',
     tldr: [
-      'Kostenloser Plan: Basisdaten f\u00fcr 15 L\u00e4nder und 21 Berufe',
+      'Kostenloser Plan: Basisdaten f\u00fcr 27 L\u00e4nder und 21 Berufe',
       'Professional- und Business-Pl\u00e4ne mit Stadtdaten, Nettoberechnungen und PDF-Berichten',
       'Enterprise-Stufe mit White-Label, individuellen Integrationen und dediziertem Support',
     ],
@@ -260,7 +260,7 @@ const i18n: Record<string, {
       desc: 'Europ\u00e4ische Grundgehaltsdaten f\u00fcr individuelle Recherche.',
       cta: 'Kostenlos starten',
       features: [
-        'Grundgehaltsdaten f\u00fcr 15 L\u00e4nder',
+        'Grundgehaltsdaten f\u00fcr 27 L\u00e4nder',
         '21 Berufe mit Bruttodurchschnitten',
         'L\u00e4ndervergleiche',
         'API-Zugang (100 Anfragen/Stunde)',
@@ -340,9 +340,9 @@ const i18n: Record<string, {
     metaDesc: 'Elija el plan EuroSalary adecuado: datos gratuitos, inteligencia por ciudad, informes PDF y acceso de equipo, o soluciones empresariales personalizadas.',
     home: 'Inicio',
     breadcrumb: 'Precios',
-    introAnswer: 'EuroSalary ofrece cuatro niveles de inteligencia salarial europea. El plan Gratuito cubre datos b\u00e1sicos para 15 pa\u00edses. Profesional desbloquea datos por ciudad y c\u00e1lculos netos. Business a\u00f1ade informes PDF y acceso de equipo. Enterprise ofrece soluciones de marca blanca.',
+    introAnswer: 'EuroSalary ofrece cuatro niveles de inteligencia salarial europea. El plan Gratuito cubre datos b\u00e1sicos para 27 pa\u00edses. Profesional desbloquea datos por ciudad y c\u00e1lculos netos. Business a\u00f1ade informes PDF y acceso de equipo. Enterprise ofrece soluciones de marca blanca.',
     tldr: [
-      'Plan gratuito: datos salariales b\u00e1sicos para 15 pa\u00edses y 21 puestos',
+      'Plan gratuito: datos salariales b\u00e1sicos para 27 pa\u00edses y 21 puestos',
       'Planes Profesional y Business con datos por ciudad, c\u00e1lculos netos e informes PDF',
       'Nivel Enterprise con marca blanca, integraciones personalizadas y soporte dedicado',
     ],
@@ -358,7 +358,7 @@ const i18n: Record<string, {
       desc: 'Datos salariales europeos b\u00e1sicos para investigaci\u00f3n individual.',
       cta: 'Empezar gratis',
       features: [
-        'Datos salariales b\u00e1sicos para 15 pa\u00edses',
+        'Datos salariales b\u00e1sicos para 27 pa\u00edses',
         '21 puestos con promedios brutos',
         'Comparaciones por pa\u00eds',
         'Acceso API (100 solicitudes/hora)',
@@ -432,6 +432,887 @@ const i18n: Record<string, {
       { question: '\u00bfPuedo a\u00f1adir m\u00e1s puestos de equipo?', answer: 'Business incluye 10 puestos. Puestos adicionales disponibles por 9\u20AC/puesto/mes. Enterprise incluye puestos ilimitados.' },
     ],
   },
+  it: {
+    h1: 'Cosa include ogni piano EuroSalary?',
+    metaTitle: 'Piani e Prezzi | EuroSalary.eu',
+    metaDesc: 'Scegli il piano EuroSalary giusto: dati gratuiti, intelligence a livello di citta, report PDF e accesso team, o soluzioni enterprise personalizzate.',
+    home: 'Home',
+    breadcrumb: 'Prezzi',
+    introAnswer: 'EuroSalary offre quattro livelli di intelligence salariale europea. Il piano Gratuito copre i dati base per 27 paesi. Professional sblocca analisi per citta e calcoli netti. Business aggiunge report PDF e accesso team. Enterprise offre soluzioni white-label.',
+    tldr: [
+      'Piano gratuito: dati salariali base per 27 paesi e 21 professioni',
+      'Piani Professional e Business con dati per citta, calcoli netti e report PDF',
+      'Livello Enterprise con white-label, integrazioni personalizzate e supporto dedicato',
+    ],
+    monthlyLabel: 'Mensile',
+    annualLabel: 'Annuale',
+    annualSave: 'Risparmia 20%',
+    perMonth: '/mese',
+    perYear: '/anno',
+    custom: 'Personalizzato',
+    free: {
+      name: 'Gratuito',
+      price: '\u20AC0',
+      desc: 'Dati salariali europei base per ricerca individuale.',
+      cta: 'Inizia gratis',
+      features: [
+        'Dati salariali base per 27 paesi',
+        '21 professioni con medie lorde',
+        'Confronti tra paesi',
+        'Accesso API (100 richieste/ora)',
+        'Supporto community',
+      ],
+    },
+    pro: {
+      name: 'Professional',
+      priceM: '\u20AC29',
+      priceA: '\u20AC279',
+      desc: 'Intelligence salariale completa per recruiter e professionisti HR.',
+      cta: 'Inizia Professional',
+      features: [
+        'Tutto del piano Gratuito',
+        'Dati salariali completi con fasce di anzianita',
+        'Analisi per citta',
+        'Calcolatore stipendio netto (tasse + contributi)',
+        'Accesso API (10.000 richieste/giorno)',
+        'Avvisi email per ruoli seguiti',
+        'Esportazione CSV',
+        'Supporto email prioritario',
+      ],
+    },
+    biz: {
+      name: 'Business',
+      priceM: '\u20AC99',
+      priceA: '\u20AC949',
+      desc: 'Piattaforma completa per team di compensation e operazioni multi-mercato.',
+      cta: 'Inizia Business',
+      badge: 'Piu popolare',
+      features: [
+        'Tutto del piano Professional',
+        'Report salariali PDF per paese',
+        'Esportazione massiva (JSON, CSV, Excel)',
+        'Accesso team (fino a 10 posti)',
+        'Analisi del divario retributivo di genere',
+        'Confronti per settore',
+        'Tendenze storiche (dati 3 anni)',
+        'Supporto prioritario con SLA',
+      ],
+    },
+    enterprise: {
+      name: 'Enterprise',
+      price: 'Personalizzato',
+      desc: 'Dati salariali white-label e integrazioni personalizzate per piattaforme.',
+      cta: 'Contatta il commerciale',
+      features: [
+        'Tutto del piano Business',
+        'Integrazione dati white-label',
+        'Endpoint API personalizzati',
+        'Account manager dedicato',
+        'Generazione report personalizzati',
+        'Autenticazione SSO / SAML',
+        'Posti team illimitati',
+        'SLA Enterprise (99,9% uptime)',
+      ],
+    },
+    trustTitle: 'Scelto dalle aziende europee',
+    trustBadges: [
+      'Usato da 500+ aziende',
+      'Dati da Eurostat e OCSE',
+      'Conforme al GDPR',
+    ],
+    guaranteeTitle: 'Garanzia soddisfatti o rimborsati 30 giorni',
+    guaranteeDesc: 'Prova qualsiasi piano a pagamento senza rischi. Se non soddisfa le tue esigenze entro 30 giorni, rimborso completo.',
+    faq: [
+      { question: 'Posso cambiare piano in qualsiasi momento?', answer: 'Si. Puoi fare upgrade o downgrade in qualsiasi momento. Con l\'upgrade paghi solo la differenza proporzionale.' },
+      { question: 'Quali metodi di pagamento accettate?', answer: 'Accettiamo le principali carte (Visa, Mastercard, Amex) e addebito diretto SEPA. I piani Enterprise possono essere fatturati.' },
+      { question: 'C\'e una prova gratuita per i piani a pagamento?', answer: 'Offriamo una garanzia soddisfatti o rimborsati 30 giorni invece di una prova tradizionale.' },
+      { question: 'Come funziona il rate limiting dell\'API?', answer: 'Gratuito: 100 richieste/ora. Professional: 10.000/giorno. Business: 50.000/giorno. Enterprise: limiti personalizzati.' },
+      { question: 'Posso aggiungere posti team aggiuntivi?', answer: 'Business include 10 posti. Posti aggiuntivi disponibili a 9\u20AC/posto/mese. Enterprise include posti illimitati.' },
+    ],
+  },
+  pt: {
+    h1: 'O que inclui cada plano EuroSalary?',
+    metaTitle: 'Planos e Precos | EuroSalary.eu',
+    metaDesc: 'Escolha o plano EuroSalary certo: dados gratuitos, inteligencia por cidade, relatorios PDF e acesso de equipa, ou solucoes enterprise.',
+    home: 'Inicio',
+    breadcrumb: 'Precos',
+    introAnswer: 'EuroSalary oferece quatro niveis de inteligencia salarial europeia. O plano Gratuito cobre dados basicos para 27 paises. Professional desbloqueia analises por cidade e calculos liquidos. Business adiciona relatorios PDF e acesso de equipa. Enterprise oferece solucoes white-label.',
+    tldr: [
+      'Plano gratuito: dados salariais basicos para 27 paises e 21 profissoes',
+      'Planos Professional e Business com dados por cidade, calculos liquidos e relatorios PDF',
+      'Nivel Enterprise com white-label, integracoes personalizadas e suporte dedicado',
+    ],
+    monthlyLabel: 'Mensal',
+    annualLabel: 'Anual',
+    annualSave: 'Poupe 20%',
+    perMonth: '/mes',
+    perYear: '/ano',
+    custom: 'Personalizado',
+    free: {
+      name: 'Gratuito',
+      price: '\u20AC0',
+      desc: 'Dados salariais europeus basicos para pesquisa individual.',
+      cta: 'Comecar gratis',
+      features: [
+        'Dados salariais basicos para 27 paises',
+        '21 profissoes com medias brutas',
+        'Comparacoes por pais',
+        'Acesso API (100 pedidos/hora)',
+        'Suporte comunitario',
+      ],
+    },
+    pro: {
+      name: 'Professional',
+      priceM: '\u20AC29',
+      priceA: '\u20AC279',
+      desc: 'Inteligencia salarial completa para recrutadores e profissionais de RH.',
+      cta: 'Iniciar Professional',
+      features: [
+        'Tudo do plano Gratuito',
+        'Dados salariais completos com faixas de experiencia',
+        'Analises por cidade',
+        'Calculadora de salario liquido (impostos + social)',
+        'Acesso API (10.000 pedidos/dia)',
+        'Alertas por email para funcoes seguidas',
+        'Exportacao CSV',
+        'Suporte email prioritario',
+      ],
+    },
+    biz: {
+      name: 'Business',
+      priceM: '\u20AC99',
+      priceA: '\u20AC949',
+      desc: 'Plataforma completa para equipas de compensacao e operacoes multi-mercado.',
+      cta: 'Iniciar Business',
+      badge: 'Mais popular',
+      features: [
+        'Tudo do plano Professional',
+        'Relatorios salariais PDF por pais',
+        'Exportacao em massa (JSON, CSV, Excel)',
+        'Acesso de equipa (ate 10 lugares)',
+        'Analise do gap salarial de genero',
+        'Comparacoes por setor',
+        'Tendencias historicas (dados de 3 anos)',
+        'Suporte prioritario com SLA',
+      ],
+    },
+    enterprise: {
+      name: 'Enterprise',
+      price: 'Personalizado',
+      desc: 'Dados salariais white-label e integracoes personalizadas para plataformas.',
+      cta: 'Contactar vendas',
+      features: [
+        'Tudo do plano Business',
+        'Integracao de dados white-label',
+        'Endpoints API personalizados',
+        'Account manager dedicado',
+        'Geracao de relatorios personalizados',
+        'Autenticacao SSO / SAML',
+        'Lugares de equipa ilimitados',
+        'SLA Enterprise (99,9% uptime)',
+      ],
+    },
+    trustTitle: 'A confianca das empresas europeias',
+    trustBadges: [
+      'Usado por 500+ empresas',
+      'Dados do Eurostat e OCDE',
+      'Conforme com RGPD',
+    ],
+    guaranteeTitle: 'Garantia de reembolso de 30 dias',
+    guaranteeDesc: 'Experimente qualquer plano pago sem risco. Se nao satisfizer as suas necessidades em 30 dias, reembolsamos integralmente.',
+    faq: [
+      { question: 'Posso mudar de plano a qualquer momento?', answer: 'Sim. Pode fazer upgrade ou downgrade a qualquer momento. No upgrade, paga apenas a diferenca proporcional.' },
+      { question: 'Que metodos de pagamento aceitam?', answer: 'Aceitamos os principais cartoes (Visa, Mastercard, Amex) e debito direto SEPA. Os planos Enterprise podem ser faturados.' },
+      { question: 'Ha periodo de teste gratuito para planos pagos?', answer: 'Oferecemos garantia de reembolso de 30 dias em vez de um periodo de teste tradicional.' },
+      { question: 'Como funciona a limitacao da API?', answer: 'Gratuito: 100 pedidos/hora. Professional: 10.000/dia. Business: 50.000/dia. Enterprise: limites personalizados.' },
+      { question: 'Posso adicionar mais lugares de equipa?', answer: 'Business inclui 10 lugares. Lugares adicionais disponiveis por 9\u20AC/lugar/mes. Enterprise inclui lugares ilimitados.' },
+    ],
+  },
+  nl: {
+    h1: 'Wat bevat elk EuroSalary-plan?',
+    metaTitle: 'Prijzen | EuroSalary.eu',
+    metaDesc: 'Kies het juiste EuroSalary-plan: gratis basisdata, Professional stadsniveau, Business PDF-rapporten en team, of Enterprise maatwerkoplossingen.',
+    home: 'Home',
+    breadcrumb: 'Prijzen',
+    introAnswer: 'EuroSalary biedt vier niveaus van Europese salarisintelligentie. Het gratis plan dekt basisgegevens voor 27 landen. Professional ontgrendelt stadsanalyses en nettoberekeningen. Business voegt PDF-rapporten en teamtoegang toe. Enterprise levert white-label oplossingen.',
+    tldr: [
+      'Gratis plan: basissalarisgegevens voor 27 landen en 21 functies',
+      'Professional- en Business-plannen met stadsgegevens, nettoberekeningen en PDF-rapporten',
+      'Enterprise-niveau met white-label, maatwerkintegraties en toegewijde ondersteuning',
+    ],
+    monthlyLabel: 'Maandelijks',
+    annualLabel: 'Jaarlijks',
+    annualSave: 'Bespaar 20%',
+    perMonth: '/maand',
+    perYear: '/jaar',
+    custom: 'Op maat',
+    free: {
+      name: 'Gratis',
+      price: '\u20AC0',
+      desc: 'Europese basissalarisgegevens voor individueel onderzoek.',
+      cta: 'Gratis starten',
+      features: [
+        'Basissalarisgegevens voor 27 landen',
+        '21 functies met bruto gemiddelden',
+        'Vergelijkingen per land',
+        'API-toegang (100 verzoeken/uur)',
+        'Community-ondersteuning',
+      ],
+    },
+    pro: {
+      name: 'Professional',
+      priceM: '\u20AC29',
+      priceA: '\u20AC279',
+      desc: 'Volledige salarisintelligentie voor recruiters en HR-professionals.',
+      cta: 'Start Professional',
+      features: [
+        'Alles uit Gratis',
+        'Volledige salarisgegevens met ervaringsniveaus',
+        'Uitsplitsing per stad',
+        'Nettosalariscalculator (belasting + sociaal)',
+        'API-toegang (10.000 verzoeken/dag)',
+        'E-mailmeldingen voor gevolgde functies',
+        'CSV-export',
+        'Prioriteits-e-mailondersteuning',
+      ],
+    },
+    biz: {
+      name: 'Business',
+      priceM: '\u20AC99',
+      priceA: '\u20AC949',
+      desc: 'Compleet platform voor compensatieteams en multi-markt operaties.',
+      cta: 'Start Business',
+      badge: 'Meest populair',
+      features: [
+        'Alles uit Professional',
+        'PDF-salarisrapporten per land',
+        'Bulkexport (JSON, CSV, Excel)',
+        'Teamtoegang (tot 10 plaatsen)',
+        'Gender pay gap analyse',
+        'Sectorspecifieke vergelijkingen',
+        'Historische trends (3 jaar data)',
+        'Prioriteitsondersteuning met SLA',
+      ],
+    },
+    enterprise: {
+      name: 'Enterprise',
+      price: 'Op maat',
+      desc: 'White-label salarisgegevens en maatwerkintegraties voor platformen.',
+      cta: 'Neem contact op met sales',
+      features: [
+        'Alles uit Business',
+        'White-label data-integratie',
+        'Aangepaste API-endpoints',
+        'Toegewijde account manager',
+        'Aangepaste rapportgeneratie',
+        'SSO / SAML-authenticatie',
+        'Onbeperkte teamplaatsen',
+        'Enterprise SLA (99,9% uptime)',
+      ],
+    },
+    trustTitle: 'Vertrouwd door Europese bedrijven',
+    trustBadges: [
+      'Gebruikt door 500+ bedrijven',
+      'Data van Eurostat & OESO',
+      'AVG-conform',
+    ],
+    guaranteeTitle: '30 dagen geld-terug-garantie',
+    guaranteeDesc: 'Probeer elk betaald plan risicovrij. Als het niet aan uw behoeften voldoet binnen 30 dagen, volledige terugbetaling.',
+    faq: [
+      { question: 'Kan ik op elk moment van plan wisselen?', answer: 'Ja. U kunt op elk moment upgraden of downgraden. Bij upgrade betaalt u alleen het evenredige verschil.' },
+      { question: 'Welke betaalmethoden accepteren jullie?', answer: 'Alle gangbare creditcards (Visa, Mastercard, Amex) en SEPA-incasso. Enterprise-plannen kunnen gefactureerd worden.' },
+      { question: 'Is er een gratis proefperiode voor betaalde plannen?', answer: 'We bieden een 30 dagen geld-terug-garantie in plaats van een traditionele proefperiode.' },
+      { question: 'Hoe werkt de API-snelheidslimiet?', answer: 'Gratis: 100 verzoeken/uur. Professional: 10.000/dag. Business: 50.000/dag. Enterprise: aangepaste limieten.' },
+      { question: 'Kan ik extra teamplaatsen toevoegen?', answer: 'Business bevat 10 plaatsen. Extra plaatsen beschikbaar voor 9\u20AC/plaats/maand. Enterprise bevat onbeperkte plaatsen.' },
+    ],
+  },
+  pl: {
+    h1: 'Co zawiera kazdy plan EuroSalary?',
+    metaTitle: 'Cennik | EuroSalary.eu',
+    metaDesc: 'Wybierz odpowiedni plan EuroSalary: darmowe dane podstawowe, Professional na poziomie miast, Business raporty PDF i zespol, lub Enterprise rozwiazania dedykowane.',
+    home: 'Strona glowna',
+    breadcrumb: 'Cennik',
+    introAnswer: 'EuroSalary oferuje cztery poziomy europejskiej inteligencji placowej. Plan Darmowy obejmuje podstawowe dane dla 27 krajow. Professional odblokowuje analizy na poziomie miast i obliczenia netto. Business dodaje raporty PDF i dostep zespolowy. Enterprise dostarcza rozwiazania white-label.',
+    tldr: [
+      'Plan darmowy: podstawowe dane placowe dla 27 krajow i 21 stanowisk',
+      'Plany Professional i Business z danymi na poziomie miast, obliczeniami netto i raportami PDF',
+      'Poziom Enterprise z white-label, dedykowanymi integracjami i wsparciem',
+    ],
+    monthlyLabel: 'Miesiecznie',
+    annualLabel: 'Rocznie',
+    annualSave: 'Oszczedz 20%',
+    perMonth: '/mies.',
+    perYear: '/rok',
+    custom: 'Indywidualnie',
+    free: {
+      name: 'Darmowy',
+      price: '\u20AC0',
+      desc: 'Europejskie podstawowe dane placowe do indywidualnych badan.',
+      cta: 'Zacznij za darmo',
+      features: [
+        'Podstawowe dane placowe dla 27 krajow',
+        '21 stanowisk ze srednimi brutto',
+        'Porownania miedzy krajami',
+        'Dostep API (100 zapytan/godz.)',
+        'Wsparcie spolecznosciowe',
+      ],
+    },
+    pro: {
+      name: 'Professional',
+      priceM: '\u20AC29',
+      priceA: '\u20AC279',
+      desc: 'Pelna inteligencja placowa dla rekruterow i specjalistow HR.',
+      cta: 'Rozpocznij Professional',
+      features: [
+        'Wszystko z planu Darmowego',
+        'Pelne dane placowe z poziomami stazu',
+        'Analizy na poziomie miast',
+        'Kalkulator wynagrodzenia netto (podatki + ZUS)',
+        'Dostep API (10 000 zapytan/dzien)',
+        'Alerty email dla sledzonych stanowisk',
+        'Eksport CSV',
+        'Priorytetowe wsparcie email',
+      ],
+    },
+    biz: {
+      name: 'Business',
+      priceM: '\u20AC99',
+      priceA: '\u20AC949',
+      desc: 'Kompletna platforma dla zespolow wynagrodzen i operacji wielorynkowych.',
+      cta: 'Rozpocznij Business',
+      badge: 'Najpopularniejszy',
+      features: [
+        'Wszystko z planu Professional',
+        'Raporty placowe PDF na kraj',
+        'Masowy eksport (JSON, CSV, Excel)',
+        'Dostep zespolowy (do 10 miejsc)',
+        'Analiza luki placowej ze wzgledu na plec',
+        'Porownania branzowe',
+        'Trendy historyczne (dane z 3 lat)',
+        'Priorytetowe wsparcie z SLA',
+      ],
+    },
+    enterprise: {
+      name: 'Enterprise',
+      price: 'Indywidualnie',
+      desc: 'Dane placowe white-label i dedykowane integracje dla platform.',
+      cta: 'Skontaktuj sie ze sprzedaza',
+      features: [
+        'Wszystko z planu Business',
+        'Integracja danych white-label',
+        'Dedykowane endpointy API',
+        'Dedykowany account manager',
+        'Generowanie raportow na zamowienie',
+        'Uwierzytelnianie SSO / SAML',
+        'Nieograniczona liczba miejsc',
+        'SLA Enterprise (99,9% dostepnosci)',
+      ],
+    },
+    trustTitle: 'Zaufanie europejskich firm',
+    trustBadges: [
+      'Uzywany przez 500+ firm',
+      'Dane z Eurostat i OECD',
+      'Zgodny z RODO',
+    ],
+    guaranteeTitle: '30-dniowa gwarancja zwrotu pieniedzy',
+    guaranteeDesc: 'Wyprobuj dowolny platny plan bez ryzyka. Jesli nie spelni Twoich oczekiwan w ciagu 30 dni, zwrocimy pelna kwote.',
+    faq: [
+      { question: 'Czy moge zmienic plan w dowolnym momencie?', answer: 'Tak. Mozesz uaktualnic lub obnizyr plan w dowolnym momencie. Przy aktualizacji placisz tylko proporcjonalna roznice.' },
+      { question: 'Jakie metody platnosci akceptujecie?', answer: 'Wszystkie glowne karty (Visa, Mastercard, Amex) i polecenie zaplaty SEPA. Plany Enterprise moga byc fakturowane.' },
+      { question: 'Czy jest darmowy okres probny dla planow platnych?', answer: 'Oferujemy 30-dniowa gwarancje zwrotu zamiast tradycyjnego okresu probnego.' },
+      { question: 'Jak dziala limitowanie API?', answer: 'Darmowy: 100 zapytan/godz. Professional: 10 000/dzien. Business: 50 000/dzien. Enterprise: indywidualne limity.' },
+      { question: 'Czy moge dodac wiecej miejsc zespolowych?', answer: 'Business zawiera 10 miejsc. Dodatkowe miejsca dostepne za 9\u20AC/miejsce/mies. Enterprise zawiera nieograniczone miejsca.' },
+    ],
+  },
+  ro: {
+    h1: 'Ce include fiecare plan EuroSalary?',
+    metaTitle: 'Planuri si Preturi | EuroSalary.eu',
+    metaDesc: 'Alege planul EuroSalary potrivit: date gratuite, inteligenta la nivel de oras, rapoarte PDF si acces echipa, sau solutii enterprise personalizate.',
+    home: 'Acasa',
+    breadcrumb: 'Preturi',
+    introAnswer: 'EuroSalary ofera patru niveluri de inteligenta salariala europeana. Planul Gratuit acopera date de baza pentru 27 de tari. Professional deblocheaza analize pe orase si calcule nete. Business adauga rapoarte PDF si acces de echipa. Enterprise ofera solutii white-label.',
+    tldr: [
+      'Plan gratuit: date salariale de baza pentru 27 de tari si 21 de posturi',
+      'Planuri Professional si Business cu date pe orase, calcule nete si rapoarte PDF',
+      'Nivel Enterprise cu white-label, integrari personalizate si suport dedicat',
+    ],
+    monthlyLabel: 'Lunar',
+    annualLabel: 'Anual',
+    annualSave: 'Economisesti 20%',
+    perMonth: '/luna',
+    perYear: '/an',
+    custom: 'Personalizat',
+    free: { name: 'Gratuit', price: '\u20AC0', desc: 'Date salariale europene de baza pentru cercetare individuala.', cta: 'Incepe gratuit', features: ['Date salariale de baza pentru 27 de tari', '21 de posturi cu medii brute', 'Comparatii intre tari', 'Acces API (100 cereri/ora)', 'Suport comunitar'] },
+    pro: { name: 'Professional', priceM: '\u20AC29', priceA: '\u20AC279', desc: 'Inteligenta salariala completa pentru recrutori si profesionisti HR.', cta: 'Incepe Professional', features: ['Tot din planul Gratuit', 'Date salariale complete cu benzi de experienta', 'Analize pe orase', 'Calculator salariu net (taxe + contributii)', 'Acces API (10.000 cereri/zi)', 'Alerte email pentru posturi urmarite', 'Export CSV', 'Suport email prioritar'] },
+    biz: { name: 'Business', priceM: '\u20AC99', priceA: '\u20AC949', desc: 'Platforma completa pentru echipe de compensare si operatiuni multi-piata.', cta: 'Incepe Business', badge: 'Cel mai popular', features: ['Tot din planul Professional', 'Rapoarte salariale PDF pe tara', 'Export in masa (JSON, CSV, Excel)', 'Acces echipa (pana la 10 locuri)', 'Analiza diferentei salariale de gen', 'Comparatii pe industrie', 'Tendinte istorice (date pe 3 ani)', 'Suport prioritar cu SLA'] },
+    enterprise: { name: 'Enterprise', price: 'Personalizat', desc: 'Date salariale white-label si integrari personalizate pentru platforme.', cta: 'Contacteaza vanzarile', features: ['Tot din planul Business', 'Integrare date white-label', 'Endpoint-uri API personalizate', 'Account manager dedicat', 'Generare rapoarte personalizate', 'Autentificare SSO / SAML', 'Locuri echipa nelimitate', 'SLA Enterprise (99,9% uptime)'] },
+    trustTitle: 'Increderea companiilor europene',
+    trustBadges: ['Folosit de 500+ companii', 'Date de la Eurostat si OCDE', 'Conform GDPR'],
+    guaranteeTitle: 'Garantie de rambursare 30 de zile',
+    guaranteeDesc: 'Incercati orice plan platit fara risc. Daca nu va satisface nevoile in 30 de zile, rambursam integral.',
+    faq: [
+      { question: 'Pot schimba planul oricand?', answer: 'Da. Puteti face upgrade sau downgrade oricand. La upgrade, platiti doar diferenta proportionala.' },
+      { question: 'Ce metode de plata acceptati?', answer: 'Toate cardurile principale (Visa, Mastercard, Amex) si debit direct SEPA. Planurile Enterprise pot fi facturate.' },
+      { question: 'Exista o perioada de proba gratuita?', answer: 'Oferim o garantie de rambursare de 30 de zile in loc de o perioada de proba traditionala.' },
+      { question: 'Cum functioneaza limitarea API?', answer: 'Gratuit: 100 cereri/ora. Professional: 10.000/zi. Business: 50.000/zi. Enterprise: limite personalizate.' },
+      { question: 'Pot adauga mai multe locuri de echipa?', answer: 'Business include 10 locuri. Locuri suplimentare disponibile la 9\u20AC/loc/luna. Enterprise include locuri nelimitate.' },
+    ],
+  },
+  cs: {
+    h1: 'Co obsahuje kazdy plan EuroSalary?',
+    metaTitle: 'Cenove plany | EuroSalary.eu',
+    metaDesc: 'Vyberte spravny plan EuroSalary: bezplatna zakladni data, Professional urovne mest, Business PDF reporty a tym, nebo Enterprise reseni na miru.',
+    home: 'Domov',
+    breadcrumb: 'Cenik',
+    introAnswer: 'EuroSalary nabizi ctyri urovne evropske mzdove inteligence. Bezplatny plan pokryva zakladni data pro 27 zemi. Professional odemyka analyzy na urovni mest a ciste vypocty. Business pridava PDF reporty a tymovy pristup. Enterprise dodava white-label reseni.',
+    tldr: [
+      'Bezplatny plan: zakladni mzdova data pro 27 zemi a 21 pozic',
+      'Plany Professional a Business s daty na urovni mest, cistymi vypocty a PDF reporty',
+      'Uroven Enterprise s white-label, integracemi na miru a dedikovanou podporou',
+    ],
+    monthlyLabel: 'Mesicne',
+    annualLabel: 'Rocne',
+    annualSave: 'Usetrete 20%',
+    perMonth: '/mes.',
+    perYear: '/rok',
+    custom: 'Na miru',
+    free: { name: 'Zdarma', price: '\u20AC0', desc: 'Evropska zakladni mzdova data pro individualni vyzkum.', cta: 'Zacit zdarma', features: ['Zakladni mzdova data pro 27 zemi', '21 pozic s hrubymi prumery', 'Porovnani mezi zememi', 'API pristup (100 pozadavku/hod.)', 'Komunitni podpora'] },
+    pro: { name: 'Professional', priceM: '\u20AC29', priceA: '\u20AC279', desc: 'Kompletni mzdova inteligence pro recruitery a HR profesionaly.', cta: 'Spustit Professional', features: ['Vse z planu Zdarma', 'Kompletni mzdova data s urovnemi seniority', 'Analyzy na urovni mest', 'Kalkulacka ciste mzdy (dane + socialni)', 'API pristup (10 000 pozadavku/den)', 'Emailove alerty pro sledovane pozice', 'CSV export', 'Prioritni emailova podpora'] },
+    biz: { name: 'Business', priceM: '\u20AC99', priceA: '\u20AC949', desc: 'Kompletni platforma pro kompenzacni tymy a multi-trzni operace.', cta: 'Spustit Business', badge: 'Nejpopularnejsi', features: ['Vse z planu Professional', 'PDF mzdove reporty po zemich', 'Hromadny export (JSON, CSV, Excel)', 'Tymovy pristup (az 10 mist)', 'Analyza genderoveho mzdoveho rozdilu', 'Oborova porovnani', 'Historicke trendy (data za 3 roky)', 'Prioritni podpora se SLA'] },
+    enterprise: { name: 'Enterprise', price: 'Na miru', desc: 'White-label mzdova data a integrace na miru pro platformy.', cta: 'Kontaktujte obchod', features: ['Vse z planu Business', 'White-label datova integrace', 'Vlastni API endpointy', 'Vyhrazeny account manager', 'Generovani reportu na miru', 'SSO / SAML autentizace', 'Neomezena tymova mista', 'Enterprise SLA (99,9% dostupnost)'] },
+    trustTitle: 'Duvera evropskych firem',
+    trustBadges: ['Pouzivano 500+ firmami', 'Data z Eurostat a OECD', 'V souladu s GDPR'],
+    guaranteeTitle: '30denni garance vraceni penez',
+    guaranteeDesc: 'Vyzkousejte jakykoli placeny plan bez rizika. Pokud nesplni vase potreby do 30 dnu, vratime plnou castku.',
+    faq: [
+      { question: 'Mohu zmenit plan kdykoli?', answer: 'Ano. Muzete kdykoli upgradovat nebo downgradovat. Pri upgradu platite pouze pomerny rozdil.' },
+      { question: 'Jake platebni metody prijimate?', answer: 'Vsechny hlavni karty (Visa, Mastercard, Amex) a SEPA inkaso. Enterprise plany mohou byt fakturovany.' },
+      { question: 'Existuje bezplatna zkusebni doba?', answer: 'Nabizime 30denni garanci vraceni penez misto tradicni zkusebni doby.' },
+      { question: 'Jak funguje omezeni API?', answer: 'Zdarma: 100 pozadavku/hod. Professional: 10 000/den. Business: 50 000/den. Enterprise: vlastni limity.' },
+      { question: 'Mohu pridat dalsi tymova mista?', answer: 'Business obsahuje 10 mist. Dalsi mista za 9\u20AC/misto/mesic. Enterprise obsahuje neomezena mista.' },
+    ],
+  },
+  sv: {
+    h1: 'Vad innehaller varje EuroSalary-plan?',
+    metaTitle: 'Priser | EuroSalary.eu',
+    metaDesc: 'Valj ratt EuroSalary-plan: gratis basdata, Professional stadsniva, Business PDF-rapporter och team, eller Enterprise skraddarsydda losningar.',
+    home: 'Hem',
+    breadcrumb: 'Priser',
+    introAnswer: 'EuroSalary erbjuder fyra nivaer av europeisk loneintelligens. Gratisplanen tacker basdata for 27 lander. Professional lasar upp stadsanalyser och nettoberakningar. Business lagger till PDF-rapporter och teamatkomst. Enterprise levererar white-label-losningar.',
+    tldr: ['Gratis plan: basdata for 27 lander och 21 yrken', 'Professional- och Business-planer med stadsdata, nettoberakningar och PDF-rapporter', 'Enterprise-niva med white-label, anpassade integrationer och dedikerad support'],
+    monthlyLabel: 'Manadsvis',
+    annualLabel: 'Arsvis',
+    annualSave: 'Spara 20%',
+    perMonth: '/man',
+    perYear: '/ar',
+    custom: 'Anpassad',
+    free: { name: 'Gratis', price: '\u20AC0', desc: 'Europeisk grundlonedata for individuell forskning.', cta: 'Borja gratis', features: ['Grundlonedata for 27 lander', '21 yrken med bruttogenomsnitt', 'Landerjamforelser', 'API-atkomst (100 forfragan/timme)', 'Community-support'] },
+    pro: { name: 'Professional', priceM: '\u20AC29', priceA: '\u20AC279', desc: 'Komplett loneintelligens for rekryterare och HR-proffs.', cta: 'Starta Professional', features: ['Allt fran Gratis', 'Komplett lonedata med erfarenhetsnivaer', 'Stadsuppdelning', 'Nettolonekalkylator (skatt + socialt)', 'API-atkomst (10 000 forfragan/dag)', 'E-postnotiser for bevakade roller', 'CSV-export', 'Prioriterad e-postsupport'] },
+    biz: { name: 'Business', priceM: '\u20AC99', priceA: '\u20AC949', desc: 'Komplett plattform for kompensationsteam och multimarknadsoperationer.', cta: 'Starta Business', badge: 'Mest popular', features: ['Allt fran Professional', 'PDF-lonerapporter per land', 'Massexport (JSON, CSV, Excel)', 'Teamatkomst (upp till 10 platser)', 'Analys av lonegap mellan kon', 'Branschspecifika jamforelser', 'Historiska trender (3 ars data)', 'Prioriterad support med SLA'] },
+    enterprise: { name: 'Enterprise', price: 'Anpassad', desc: 'White-label lonedata och anpassade integrationer for plattformar.', cta: 'Kontakta forsaljning', features: ['Allt fran Business', 'White-label dataintegration', 'Anpassade API-endpoints', 'Dedikerad account manager', 'Anpassad rapportgenerering', 'SSO / SAML-autentisering', 'Obegransat antal teamplatser', 'Enterprise SLA (99,9% drifttid)'] },
+    trustTitle: 'Foretagens fortroende i Europa',
+    trustBadges: ['Anvands av 500+ foretag', 'Data fran Eurostat & OECD', 'GDPR-kompatibel'],
+    guaranteeTitle: '30 dagars pengarna-tillbaka-garanti',
+    guaranteeDesc: 'Prova alla betalplaner riskfritt. Om den inte uppfyller dina behov inom 30 dagar, aterbetalas hela beloppet.',
+    faq: [
+      { question: 'Kan jag byta plan nar som helst?', answer: 'Ja. Du kan uppgradera eller nedgradera nar som helst. Vid uppgradering betalar du bara den proportionella skillnaden.' },
+      { question: 'Vilka betalningsmetoder accepterar ni?', answer: 'Alla vanliga kort (Visa, Mastercard, Amex) och SEPA-autogiro. Enterprise-planer kan faktureras.' },
+      { question: 'Finns det en gratis provperiod?', answer: 'Vi erbjuder 30 dagars pengarna-tillbaka-garanti istallet for en traditionell provperiod.' },
+      { question: 'Hur fungerar API-hastighetsbegransningen?', answer: 'Gratis: 100 forfragan/timme. Professional: 10 000/dag. Business: 50 000/dag. Enterprise: anpassade granser.' },
+      { question: 'Kan jag lagga till fler teamplatser?', answer: 'Business innehaller 10 platser. Extra platser for 9\u20AC/plats/manad. Enterprise innehaller obegransat antal platser.' },
+    ],
+  },
+  da: {
+    h1: 'Hvad indeholder hver EuroSalary-plan?',
+    metaTitle: 'Priser | EuroSalary.eu',
+    metaDesc: 'Vaelg den rigtige EuroSalary-plan: gratis basisdata, Professional byniveau, Business PDF-rapporter og team, eller Enterprise skraeddersyede losninger.',
+    home: 'Hjem',
+    breadcrumb: 'Priser',
+    introAnswer: 'EuroSalary tilbyder fire niveauer af europaeisk lonsintelligens. Den gratis plan daekker basisdata for 27 lande. Professional laser byanalyser og nettoberegninger op. Business tilfojer PDF-rapporter og teamadgang. Enterprise leverer white-label-losninger.',
+    tldr: ['Gratis plan: basislonsdata for 27 lande og 21 stillingsbetegnelser', 'Professional- og Business-planer med bydata, nettoberegninger og PDF-rapporter', 'Enterprise-niveau med white-label, tilpassede integrationer og dedikeret support'],
+    monthlyLabel: 'Manedlig',
+    annualLabel: 'Arlig',
+    annualSave: 'Spar 20%',
+    perMonth: '/md.',
+    perYear: '/ar',
+    custom: 'Tilpasset',
+    free: { name: 'Gratis', price: '\u20AC0', desc: 'Europaeisk basislonsdata til individuel forskning.', cta: 'Start gratis', features: ['Basislonsdata for 27 lande', '21 stillinger med bruttogennemsnit', 'Landesammenligninger', 'API-adgang (100 anmodninger/time)', 'Community-support'] },
+    pro: { name: 'Professional', priceM: '\u20AC29', priceA: '\u20AC279', desc: 'Komplet lonsintelligens for rekrutterere og HR-professionelle.', cta: 'Start Professional', features: ['Alt fra Gratis', 'Komplette lonsdata med anciennitetsniveauer', 'Byopdelinger', 'Nettolonsberegner (skat + social)', 'API-adgang (10.000 anmodninger/dag)', 'E-mail-notifikationer for fulgte roller', 'CSV-eksport', 'Prioriteret e-mail-support'] },
+    biz: { name: 'Business', priceM: '\u20AC99', priceA: '\u20AC949', desc: 'Komplet platform for kompensationsteams og multimarkedsoperationer.', cta: 'Start Business', badge: 'Mest populaer', features: ['Alt fra Professional', 'PDF-lonsrapporter pr. land', 'Masseeksport (JSON, CSV, Excel)', 'Teamadgang (op til 10 pladser)', 'Konsklotsanalyse', 'Branchespecifikke sammenligninger', 'Historiske tendenser (3 ars data)', 'Prioriteret support med SLA'] },
+    enterprise: { name: 'Enterprise', price: 'Tilpasset', desc: 'White-label lonsdata og tilpassede integrationer for platforme.', cta: 'Kontakt salg', features: ['Alt fra Business', 'White-label dataintegration', 'Tilpassede API-endpoints', 'Dedikeret account manager', 'Tilpasset rapportgenerering', 'SSO / SAML-autentificering', 'Ubegraensede teampladser', 'Enterprise SLA (99,9% oppetid)'] },
+    trustTitle: 'Europaeiske virksomheders tillid',
+    trustBadges: ['Brugt af 500+ virksomheder', 'Data fra Eurostat & OECD', 'GDPR-kompatibel'],
+    guaranteeTitle: '30 dages pengene-tilbage-garanti',
+    guaranteeDesc: 'Prov enhver betalt plan risikofrit. Hvis den ikke opfylder dine behov inden 30 dage, refunderer vi fuldt ud.',
+    faq: [
+      { question: 'Kan jeg skifte plan nar som helst?', answer: 'Ja. Du kan opgradere eller nedgradere nar som helst. Ved opgradering betaler du kun den forholdsmassige forskel.' },
+      { question: 'Hvilke betalingsmetoder accepterer I?', answer: 'Alle gaengse kort (Visa, Mastercard, Amex) og SEPA-traek. Enterprise-planer kan faktureres.' },
+      { question: 'Er der en gratis proveperiode?', answer: 'Vi tilbyder 30 dages pengene-tilbage-garanti i stedet for en traditionel proveperiode.' },
+      { question: 'Hvordan fungerer API-hastighedsbegraensningen?', answer: 'Gratis: 100 anmodninger/time. Professional: 10.000/dag. Business: 50.000/dag. Enterprise: tilpassede graenser.' },
+      { question: 'Kan jeg tilfoeje flere teampladser?', answer: 'Business inkluderer 10 pladser. Ekstra pladser for 9\u20AC/plads/maned. Enterprise inkluderer ubegraensede pladser.' },
+    ],
+  },
+  fi: {
+    h1: 'Mita kukin EuroSalary-suunnitelma sisaltaa?',
+    metaTitle: 'Hinnat | EuroSalary.eu',
+    metaDesc: 'Valitse oikea EuroSalary-suunnitelma: ilmaiset perustiedot, Professional kaupunkitaso, Business PDF-raportit ja tiimi, tai Enterprise ratkaisut.',
+    home: 'Etusivu',
+    breadcrumb: 'Hinnat',
+    introAnswer: 'EuroSalary tarjoaa nelja eurooppalaisen palkkatiedon tasoa. Ilmainen suunnitelma kattaa perustiedot 27 maasta. Professional avaa kaupunkitason analyysit ja nettolaskelmat. Business lisaa PDF-raportit ja tiimioikeudet. Enterprise tarjoaa white-label-ratkaisuja.',
+    tldr: ['Ilmainen: peruspalkkatiedot 27 maasta ja 21 ammattinimikkeesta', 'Professional- ja Business-suunnitelmat kaupunkitason datalla, nettolaskelmilla ja PDF-raporteilla', 'Enterprise-taso white-labelilla, raataloidyilla integraatioilla ja dedikoitulla tuella'],
+    monthlyLabel: 'Kuukausittain',
+    annualLabel: 'Vuosittain',
+    annualSave: 'Saasta 20%',
+    perMonth: '/kk',
+    perYear: '/v',
+    custom: 'Raataloity',
+    free: { name: 'Ilmainen', price: '\u20AC0', desc: 'Eurooppalaiset peruspalkkatiedot yksittaiseen tutkimukseen.', cta: 'Aloita ilmaiseksi', features: ['Peruspalkkatiedot 27 maasta', '21 ammattinimiketta bruttokesk.', 'Maavertailut', 'API-kaytto (100 pyyntoa/tunti)', 'Yhteisotuki'] },
+    pro: { name: 'Professional', priceM: '\u20AC29', priceA: '\u20AC279', desc: 'Taysi palkkatiedon alykkyytta rekrytoijille ja HR-ammattilaisille.', cta: 'Aloita Professional', features: ['Kaikki Ilmaisesta', 'Taydelliset palkkatiedot kokemustasoilla', 'Kaupunkitason erittelyt', 'Nettopalkkalaskuri (verot + sos.)', 'API-kaytto (10 000 pyyntoa/paiva)', 'Sahkopostihereytykset seuratuille rooleille', 'CSV-vienti', 'Ensisijainen sahkopostituki'] },
+    biz: { name: 'Business', priceM: '\u20AC99', priceA: '\u20AC949', desc: 'Taysi alusta palkitsemistiimeille ja monimarkkina-operaatioille.', cta: 'Aloita Business', badge: 'Suosituin', features: ['Kaikki Professionalista', 'PDF-palkkaraportit maittain', 'Massavienti (JSON, CSV, Excel)', 'Tiimioikeudet (enintaan 10 paikkaa)', 'Sukupuolten palkkaeroanalyysi', 'Toimialakohtaiset vertailut', 'Historialliset trendit (3 vuoden data)', 'Ensisijainen tuki SLA:lla'] },
+    enterprise: { name: 'Enterprise', price: 'Raataloity', desc: 'White-label palkkatiedot ja raataloidyt integraatiot alustoille.', cta: 'Ota yhteytta myyntiin', features: ['Kaikki Businessista', 'White-label dataintegraatio', 'Raataloidyt API-paatepisteet', 'Dedikoitu account manager', 'Raataloidyt raportit', 'SSO / SAML -todennus', 'Rajattomat tiimipaikat', 'Enterprise SLA (99,9% kayttoaika)'] },
+    trustTitle: 'Eurooppalaisten yritysten luottamus',
+    trustBadges: ['500+ yrityksen kaytossa', 'Eurostat & OECD -data', 'GDPR-yhteensopiva'],
+    guaranteeTitle: '30 paivan rahat takaisin -takuu',
+    guaranteeDesc: 'Kokeile mitka tahansa maksullista suunnitelmaa riskitta. Jos se ei tayta tarpeitasi 30 paivassa, palautamme koko summan.',
+    faq: [
+      { question: 'Voinko vaihtaa suunnitelmaa milloin tahansa?', answer: 'Kylla. Voit paivitta tai alentaa suunnitelmaasi milloin tahansa.' },
+      { question: 'Mitka maksutavat hyvaksytte?', answer: 'Kaikki yleiset kortit (Visa, Mastercard, Amex) ja SEPA-suoraveloitus. Enterprise-suunnitelmat voidaan laskuttaa.' },
+      { question: 'Onko maksullisille suunnitelmille ilmainen kokeilujakso?', answer: 'Tarjoamme 30 paivan rahat takaisin -takuun perinteisen kokeilujakson sijaan.' },
+      { question: 'Miten API-nopeusrajoitus toimii?', answer: 'Ilmainen: 100 pyyntoa/tunti. Professional: 10 000/paiva. Business: 50 000/paiva. Enterprise: raataloidyt rajat.' },
+      { question: 'Voinko lisata tiimipaikoja?', answer: 'Business sisaltaa 10 paikkaa. Lisapaikat 9\u20AC/paikka/kk. Enterprise sisaltaa rajattomat paikat.' },
+    ],
+  },
+  el: {
+    h1: 'Ti perilamvanei kathe plano EuroSalary?',
+    metaTitle: 'Times | EuroSalary.eu',
+    metaDesc: 'Epilexte to swsto plano EuroSalary: dwrean vasika dedomena, Professional epipedo poleon, Business PDF anafores kai omada, i Enterprise prosarmosmenes lyseis.',
+    home: 'Arxiki',
+    breadcrumb: 'Times',
+    introAnswer: 'To EuroSalary prosferrei tessera epipeda eyrwpaikis misthologikis noimosinis. To Dwrean plano kalyptei vasika dedomena gia 27 xwres. To Professional xekleiwdwnei analysis se epipedo poleon kai katharous ypologismous. To Business prosthetei PDF anafores kai prosvasi omadas. To Enterprise prosferrei lyseis white-label.',
+    tldr: ['Dwrean plano: vasika misthologika dedomena gia 27 xwres kai 21 theseis', 'Plana Professional kai Business me dedomena poleon, katharous ypologismous kai PDF anafores', 'Epipedo Enterprise me white-label, prosarmosmenes entaxeis kai aforeosmeni ypostirixi'],
+    monthlyLabel: 'Miniaia',
+    annualLabel: 'Etisia',
+    annualSave: 'Exoikonomiste 20%',
+    perMonth: '/mina',
+    perYear: '/etos',
+    custom: 'Prosarmosmeno',
+    free: { name: 'Dwrean', price: '\u20AC0', desc: 'Vasika eyrwpaika misthologika dedomena gia atomiki erevna.', cta: 'Xekriniste dwrean', features: ['Vasika misthologika dedomena gia 27 xwres', '21 theseis me mesos orous akatharistyn', 'Sygkriseis metaxy xwrwn', 'Prosvasi API (100 aitimata/wra)', 'Koinotiki ypostirixi'] },
+    pro: { name: 'Professional', priceM: '\u20AC29', priceA: '\u20AC279', desc: 'Pliri misthologiki noimosini gia recruiters kai epaggelmatires HR.', cta: 'Xekiniste Professional', features: ['Ola apo to Dwrean', 'Pliri misthologika dedomena me epipeda empeirias', 'Analysis se epipedo poleon', 'Ypologistis katharou misthou (foroi + koinwnika)', 'Prosvasi API (10.000 aitimata/imera)', 'Eidopoiiseis email gia parakolouhoumenes theseis', 'Exagwgi CSV', 'Proteraiotita email ypostirixi'] },
+    biz: { name: 'Business', priceM: '\u20AC99', priceA: '\u20AC949', desc: 'Pliri platforma gia omades antiparoxis kai epixeiriseis pollaplwn agorwn.', cta: 'Xekiniste Business', badge: 'Pio dimofilis', features: ['Ola apo to Professional', 'PDF misthologikes anafores ana xwra', 'Maziki exagwgi (JSON, CSV, Excel)', 'Prosvasi omadas (ews 10 theseis)', 'Analysi xasmatos misthon fylow', 'Sygkriseis kata klado', 'Istorikes taseis (dedomena 3 etwn)', 'Proteraiotita ypostirixi me SLA'] },
+    enterprise: { name: 'Enterprise', price: 'Prosarmosmeno', desc: 'White-label misthologika dedomena kai prosarmosmenes entaxeis gia platformes.', cta: 'Epikoinwniste me tis pwliseis', features: ['Ola apo to Business', 'Entaxi dedomenwn white-label', 'Prosarmosmena API endpoints', 'Aforeosmenos account manager', 'Paragwgi anafwrwn kata paraggelia', 'SSO / SAML pistopoiisi', 'Aperioristes theseis omadas', 'Enterprise SLA (99,9% uptime)'] },
+    trustTitle: 'I empistosyni twn eyrwpaikwn epixeirisewn',
+    trustBadges: ['Xrisimopoieitai apo 500+ etaireies', 'Dedomena apo Eurostat & OECD', 'Symmorfosi me GDPR'],
+    guaranteeTitle: 'Eggyisi epistrofis 30 imerwn',
+    guaranteeDesc: 'Dokimaste opoiodipote plirwmeno plano xwris kindyno. An den kalypsei tis anagkes sas se 30 imeres, epistrefoume to poso.',
+    faq: [
+      { question: 'Mpwrw na allaxw plano opoiadipote stigmi?', answer: 'Nai. Mporrite na anavathmisite i na ypovathmiste opoiadipote stigmi.' },
+      { question: 'Poies methodous plirwmis dexeste?', answer: 'Oles tis kyries kartes (Visa, Mastercard, Amex) kai SEPA. Ta Enterprise plana mporoun na timologithin.' },
+      { question: 'Yparxei dwrean dokimastiki periodos?', answer: 'Prosferroume eggyisi epistrofis 30 imerwn anti gia paradosiaki dokimastiki periodo.' },
+      { question: 'Pws leitourgei to orio tou API?', answer: 'Dwrean: 100 aitimata/wra. Professional: 10.000/imera. Business: 50.000/imera. Enterprise: prosarmosmena oria.' },
+      { question: 'Mporw na prosthesw theseis omadas?', answer: 'To Business perilamvanei 10 theseis. Epipleon theseis stous 9\u20AC/thesi/mina. To Enterprise perilamvanei aperioristes theseis.' },
+    ],
+  },
+  hu: {
+    h1: 'Mit tartalmaz az egyes EuroSalary csomag?',
+    metaTitle: 'Arak | EuroSalary.eu',
+    metaDesc: 'Valassza ki a megfelelo EuroSalary csomagot: ingyenes alapadatok, Professional varosi szintu, Business PDF-jelentesek es csapat, vagy Enterprise egyedi megoldasok.',
+    home: 'Fooldal',
+    breadcrumb: 'Arak',
+    introAnswer: 'Az EuroSalary negy szintu europai berfelderitot kinal. Az Ingyenes csomag 27 orszag alapadatait fedi le. A Professional feloldja a varosi szintu elemzeseket es netto szamitasokat. A Business PDF-jelenteseket es csapathozzaferest ad. Az Enterprise white-label megoldasokat kinal.',
+    tldr: ['Ingyenes csomag: alapberiadatok 27 orszagra es 21 allasra', 'Professional es Business csomagok varosi adatokkal, netto szamitasokkal es PDF-jelentesekkel', 'Enterprise szint white-labellel, egyedi integraciokkal es dedikalt tamogatassal'],
+    monthlyLabel: 'Havi',
+    annualLabel: 'Eves',
+    annualSave: 'Takaritson meg 20%-ot',
+    perMonth: '/ho',
+    perYear: '/ev',
+    custom: 'Egyedi',
+    free: { name: 'Ingyenes', price: '\u20AC0', desc: 'Europai alapberiadatok egyeni kutatashoz.', cta: 'Ingyenes kezdes', features: ['Alapberiadatok 27 orszagra', '21 allas brutto atlagokkal', 'Orszagok kozotti osszehasonlitas', 'API-hozzaferes (100 keres/ora)', 'Kozossegi tamogatas'] },
+    pro: { name: 'Professional', priceM: '\u20AC29', priceA: '\u20AC279', desc: 'Teljes berfelderites toborzoknak es HR-szakembereknek.', cta: 'Professional inditas', features: ['Minden az Ingyenesbol', 'Teljes beriadatok tapasztalati szintekkel', 'Varosi szintu reszletezes', 'Netto berkalkulator (ado + tb)', 'API-hozzaferes (10 000 keres/nap)', 'E-mail ertesitesek kovetett allasokhoz', 'CSV export', 'Prioritasos e-mail tamogatas'] },
+    biz: { name: 'Business', priceM: '\u20AC99', priceA: '\u20AC949', desc: 'Teljes platform javadalmazasi csapatok es tobbpiacos muveletek szamara.', cta: 'Business inditas', badge: 'Legnepszerubb', features: ['Minden a Professionalbol', 'PDF berjelentesek orszagonkent', 'Tomeg export (JSON, CSV, Excel)', 'Csapat hozzaferes (max. 10 hely)', 'Nemek kozotti berkulonbseg-elemzes', 'Agazati osszehasonlitasok', 'Tortenelmi trendek (3 eves adatok)', 'Prioritasos tamogatas SLA-val'] },
+    enterprise: { name: 'Enterprise', price: 'Egyedi', desc: 'White-label beriadatok es egyedi integraciok platformoknak.', cta: 'Kapcsolatfelvetel az ertekesitessel', features: ['Minden a Businessbol', 'White-label adatintegracio', 'Egyedi API vegpontok', 'Dedikalt account manager', 'Egyedi jelentesek generalasa', 'SSO / SAML hitelesites', 'Korlatlan csapat helyek', 'Enterprise SLA (99,9% rendelkezesre allas)'] },
+    trustTitle: 'Europai vallalatok bizalma',
+    trustBadges: ['500+ vallalat hasznalja', 'Eurostat es OECD adatok', 'GDPR-megfelelo'],
+    guaranteeTitle: '30 napos penz-visszafizetesi garancia',
+    guaranteeDesc: 'Probalja ki barmelyik fizetos csomagot kockazat nelkul. Ha 30 napon belul nem felel meg, teljes osszegu visszaterites.',
+    faq: [
+      { question: 'Valthatok csomagot barmeikor?', answer: 'Igen. Barmeikor frissithet vagy visszalephett. Frissitesnel csak az aranyos kulonbsegert fizet.' },
+      { question: 'Milyen fizetesi modokat fogadnak el?', answer: 'Minden fo kartya (Visa, Mastercard, Amex) es SEPA beszedes. Enterprise csomagok szamlazhatoak.' },
+      { question: 'Van ingyenes probaidoszak?', answer: '30 napos penz-visszafizetesi garanciat kinalunk hagyomanyos probaidoszak helyett.' },
+      { question: 'Hogyan mukodik az API sebessegkorlatoza?', answer: 'Ingyenes: 100 keres/ora. Professional: 10 000/nap. Business: 50 000/nap. Enterprise: egyedi limitek.' },
+      { question: 'Hozzaadhatok tobbi csapathelyeket?', answer: 'A Business 10 helyet tartalmaz. Tovabbi helyek 9\u20AC/hely/ho. Az Enterprise korlatlan helyeket tartalmaz.' },
+    ],
+  },
+  sk: {
+    h1: 'Co obsahuje kazdy plan EuroSalary?',
+    metaTitle: 'Cennik | EuroSalary.eu',
+    metaDesc: 'Vyberte si spravny plan EuroSalary: bezplatne zakladne data, Professional na urovni miest, Business PDF reporty a tim, alebo Enterprise na mieru.',
+    home: 'Domov',
+    breadcrumb: 'Cennik',
+    introAnswer: 'EuroSalary ponuka styri urovne europskej mzdovej inteligencie. Bezplatny plan pokryva zakladne data pre 27 krajin. Professional odomyka analyzy na urovni miest a ciste vypocty. Business pridava PDF reporty a timovy pristup. Enterprise dodava white-label riesenia.',
+    tldr: ['Bezplatny plan: zakladne mzdove data pre 27 krajin a 21 pozicii', 'Plany Professional a Business s datami na urovni miest, cistymi vypoctami a PDF reportmi', 'Uroven Enterprise s white-label, integraciami na mieru a dedikovanou podporou'],
+    monthlyLabel: 'Mesacne',
+    annualLabel: 'Rocne',
+    annualSave: 'Usetrite 20%',
+    perMonth: '/mes.',
+    perYear: '/rok',
+    custom: 'Na mieru',
+    free: { name: 'Zdarma', price: '\u20AC0', desc: 'Europske zakladne mzdove data pre individualny vyskum.', cta: 'Zacat zdarma', features: ['Zakladne mzdove data pre 27 krajin', '21 pozicii s hrubymi priemermi', 'Porovnania medzi krajinami', 'API pristup (100 poziadaviek/hod.)', 'Komunitna podpora'] },
+    pro: { name: 'Professional', priceM: '\u20AC29', priceA: '\u20AC279', desc: 'Kompletna mzdova inteligencia pre recruiterov a HR profesionalov.', cta: 'Spustit Professional', features: ['Vsetko z planu Zdarma', 'Kompletne mzdove data s urovnami seniority', 'Analyzy na urovni miest', 'Kalkulacka cistej mzdy (dane + socialne)', 'API pristup (10 000 poziadaviek/den)', 'Emailove alerty pre sledovane pozicie', 'CSV export', 'Prioritna emailova podpora'] },
+    biz: { name: 'Business', priceM: '\u20AC99', priceA: '\u20AC949', desc: 'Kompletna platforma pre kompenzacne timy a multi-trzne operacie.', cta: 'Spustit Business', badge: 'Najpopularnejsi', features: ['Vsetko z planu Professional', 'PDF mzdove reporty po krajinach', 'Hromadny export (JSON, CSV, Excel)', 'Timovy pristup (az 10 miest)', 'Analyza genderoveho mzdoveho rozdielu', 'Odborove porovnania', 'Historicke trendy (data za 3 roky)', 'Prioritna podpora so SLA'] },
+    enterprise: { name: 'Enterprise', price: 'Na mieru', desc: 'White-label mzdove data a integracie na mieru pre platformy.', cta: 'Kontaktujte obchod', features: ['Vsetko z planu Business', 'White-label datova integracia', 'Vlastne API endpointy', 'Vyhradeny account manager', 'Generovanie reportov na mieru', 'SSO / SAML autentifikacia', 'Neobmedzene timove miesta', 'Enterprise SLA (99,9% dostupnost)'] },
+    trustTitle: 'Dovera europskych firiem',
+    trustBadges: ['Pouzivane 500+ firmami', 'Data z Eurostat a OECD', 'V sulade s GDPR'],
+    guaranteeTitle: '30-dnova garancia vratenia penazi',
+    guaranteeDesc: 'Vyskusajte akykolvek plateny plan bez rizika. Ak nesplni vase potreby do 30 dni, vratime plnu sumu.',
+    faq: [
+      { question: 'Mozem zmenit plan kedykolvek?', answer: 'Ano. Mozete kedykolvek upgradovat alebo downgradovat.' },
+      { question: 'Ake platobne metody prijimate?', answer: 'Vsetky hlavne karty (Visa, Mastercard, Amex) a SEPA inkaso. Enterprise plany mozu byt fakturovane.' },
+      { question: 'Existuje bezplatne skusobne obdobie?', answer: 'Ponukame 30-dnovu garanciu vratenia penazi namiesto tradicneho skusobneho obdobia.' },
+      { question: 'Ako funguje obmedzenie API?', answer: 'Zdarma: 100 poziadaviek/hod. Professional: 10 000/den. Business: 50 000/den. Enterprise: vlastne limity.' },
+      { question: 'Mozem pridat dalsie timove miesta?', answer: 'Business obsahuje 10 miest. Dalsie miesta za 9\u20AC/miesto/mesiac. Enterprise obsahuje neobmedzene miesta.' },
+    ],
+  },
+  bg: {
+    h1: 'Kakvo vklyuchva vseki plan na EuroSalary?',
+    metaTitle: 'Tseni | EuroSalary.eu',
+    metaDesc: 'Izberete pravilniya plan EuroSalary: bezplatni bazovi danni, Professional na nivo gradove, Business PDF dokladi i ekip, ili Enterprise personalizirani resheniya.',
+    home: 'Nachalo',
+    breadcrumb: 'Tseni',
+    introAnswer: 'EuroSalary predlaga chetiri niva na evropeyska zaplatna inteligentsiya. Bezplatniyat plan pokriba bazovi danni za 27 darzhavi. Professional otvarya analize na nivo gradove i neto izchisleniya. Business dobavya PDF dokladi i ekipen dostap. Enterprise predlaga white-label resheniya.',
+    tldr: ['Bezplaten plan: bazovi zaplatni danni za 27 darzhavi i 21 pozitsii', 'Planove Professional i Business s danni na nivo gradove, neto izchisleniya i PDF dokladi', 'Nivo Enterprise s white-label, personalizirani integratsii i spetsializirana podkrepa'],
+    monthlyLabel: 'Mesechno',
+    annualLabel: 'Godishno',
+    annualSave: 'Speshtete 20%',
+    perMonth: '/mes.',
+    perYear: '/god.',
+    custom: 'Personaliziran',
+    free: { name: 'Bezplaten', price: '\u20AC0', desc: 'Evropeyski bazovi zaplatni danni za individualno prouchvane.', cta: 'Zapochnete bezplatno', features: ['Bazovi zaplatni danni za 27 darzhavi', '21 pozitsii s bruto sredni stoynosti', 'Sravneniya mezhdu darzhavi', 'API dostap (100 zayavki/chas)', 'Obshtnostna podkrepa'] },
+    pro: { name: 'Professional', priceM: '\u20AC29', priceA: '\u20AC279', desc: 'Palna zaplatna inteligentsiya za rekruteri i HR spetsialisti.', cta: 'Startirayte Professional', features: ['Vsichko ot Bezplaten', 'Palni zaplatni danni s niva na opit', 'Analizi na nivo gradove', 'Kalkulator na neto zaplata (danatsi + osigurovki)', 'API dostap (10 000 zayavki/den)', 'Imeil saobshteniya za sledeni pozitsii', 'CSV eksport', 'Prioritetna imeil podkrepa'] },
+    biz: { name: 'Business', priceM: '\u20AC99', priceA: '\u20AC949', desc: 'Palna platforma za ekipi po kompensatsii i multi-pazarni operatsii.', cta: 'Startirayte Business', badge: 'Nay-populyaren', features: ['Vsichko ot Professional', 'PDF zaplatni dokladi po darzhavi', 'Masov eksport (JSON, CSV, Excel)', 'Ekipen dostap (do 10 myasta)', 'Analiz na razlikata v zaplatite po pol', 'Sravneniya po sektor', 'Istoricheski tendentsii (danni za 3 godini)', 'Prioritetna podkrepa sas SLA'] },
+    enterprise: { name: 'Enterprise', price: 'Personaliziran', desc: 'White-label zaplatni danni i personalizirani integratsii za platformi.', cta: 'Svarzhete se s prodazhbite', features: ['Vsichko ot Business', 'White-label integratsiya na danni', 'Personalizirani API endpoynti', 'Spetsializiran account manager', 'Generirane na personalizirani dokladi', 'SSO / SAML autentikatsiya', 'Neogranicheni ekipni myasta', 'Enterprise SLA (99,9% dostapnost)'] },
+    trustTitle: 'Doverieto na evropeyskite kompanii',
+    trustBadges: ['Izpolzvan ot 500+ kompanii', 'Danni ot Eurostat i OECD', 'Saobrazeno s GDPR'],
+    guaranteeTitle: '30-dnevna garantsiya za vashtane na parite',
+    guaranteeDesc: 'Izprobvayte vseki platen plan bez risk. Ako ne otgovarya na nuzhdite vi za 30 dni, vashtame palnata suma.',
+    faq: [
+      { question: 'Moga li da smenya plana po vsyako vreme?', answer: 'Da. Mozhete da nadgradite ili da namalite plana po vsyako vreme.' },
+      { question: 'Kakvi metodi na plashtane priemate?', answer: 'Vsichki osnovni karti (Visa, Mastercard, Amex) i SEPA direkten debit. Enterprise planovete mogat da badat fakturirani.' },
+      { question: 'Ima li bezplaten proben period?', answer: 'Predlagame 30-dnevna garantsiya za vashtane na parite vmesto traditsionen proben period.' },
+      { question: 'Kak raboti ogranichavaneto na API?', answer: 'Bezplaten: 100 zayavki/chas. Professional: 10 000/den. Business: 50 000/den. Enterprise: personalizirani limiti.' },
+      { question: 'Moga li da dobavya oshte ekipni myasta?', answer: 'Business vklyuchva 10 myasta. Dopalnitelni myasta na 9\u20AC/myasto/mesechno. Enterprise vklyuchva neogranicheni myasta.' },
+    ],
+  },
+  hr: {
+    h1: 'Sto ukljucuje svaki EuroSalary plan?',
+    metaTitle: 'Cijene | EuroSalary.eu',
+    metaDesc: 'Odaberite pravi EuroSalary plan: besplatni osnovni podaci, Professional razina gradova, Business PDF izvjestaji i tim, ili Enterprise prilagodjena rjesenja.',
+    home: 'Pocetna',
+    breadcrumb: 'Cijene',
+    introAnswer: 'EuroSalary nudi cetiri razine europske placne inteligencije. Besplatni plan pokriva osnovne podatke za 27 drzava. Professional otklucava analize na razini gradova i neto izracune. Business dodaje PDF izvjestaje i pristup timu. Enterprise isporucuje white-label rjesenja.',
+    tldr: ['Besplatni plan: osnovni placni podaci za 27 drzava i 21 radno mjesto', 'Planovi Professional i Business s podacima na razini gradova, neto izracunima i PDF izvjestajima', 'Enterprise razina s white-label, prilagodjenim integracijama i posvecenom podrskom'],
+    monthlyLabel: 'Mjesecno',
+    annualLabel: 'Godisnje',
+    annualSave: 'Ustedite 20%',
+    perMonth: '/mj.',
+    perYear: '/god.',
+    custom: 'Prilagodjeno',
+    free: { name: 'Besplatno', price: '\u20AC0', desc: 'Europski osnovni placni podaci za individualno istrazivanje.', cta: 'Zapocnite besplatno', features: ['Osnovni placni podaci za 27 drzava', '21 radno mjesto s bruto prosjekom', 'Usporedbe medju drzavama', 'API pristup (100 zahtjeva/sat)', 'Podrska zajednice'] },
+    pro: { name: 'Professional', priceM: '\u20AC29', priceA: '\u20AC279', desc: 'Potpuna placna inteligencija za recruitere i HR strucnjake.', cta: 'Pokrenite Professional', features: ['Sve iz Besplatnog', 'Potpuni placni podaci s razinama iskustva', 'Analize na razini gradova', 'Kalkulator neto place (porezi + doprinosi)', 'API pristup (10.000 zahtjeva/dan)', 'E-mail obavijesti za pracene pozicije', 'CSV izvoz', 'Prioritetna e-mail podrska'] },
+    biz: { name: 'Business', priceM: '\u20AC99', priceA: '\u20AC949', desc: 'Potpuna platforma za timove kompenzacija i multitrzisne operacije.', cta: 'Pokrenite Business', badge: 'Najpopularniji', features: ['Sve iz Professionala', 'PDF placni izvjestaji po drzavama', 'Masovni izvoz (JSON, CSV, Excel)', 'Pristup timu (do 10 mjesta)', 'Analiza jaza u placama po spolu', 'Usporedbe po industriji', 'Povijesni trendovi (podaci za 3 godine)', 'Prioritetna podrska sa SLA'] },
+    enterprise: { name: 'Enterprise', price: 'Prilagodjeno', desc: 'White-label placni podaci i prilagodjene integracije za platforme.', cta: 'Kontaktirajte prodaju', features: ['Sve iz Businessa', 'White-label integracija podataka', 'Prilagodjeni API endpointovi', 'Posveceni account manager', 'Generiranje prilagodjenih izvjestaja', 'SSO / SAML autentifikacija', 'Neogranicena timska mjesta', 'Enterprise SLA (99,9% uptime)'] },
+    trustTitle: 'Povjerenje europskih tvrtki',
+    trustBadges: ['Koristi 500+ tvrtki', 'Podaci iz Eurostata i OECD-a', 'Uskladjeno s GDPR-om'],
+    guaranteeTitle: 'Garancija povrata novca u 30 dana',
+    guaranteeDesc: 'Isprobajte bilo koji placeni plan bez rizika. Ako ne zadovoljava vase potrebe u 30 dana, vracamo puni iznos.',
+    faq: [
+      { question: 'Mogu li promijeniti plan bilo kad?', answer: 'Da. Mozete nadograditi ili smanjiti plan bilo kad.' },
+      { question: 'Koje nacine placanja prihvacate?', answer: 'Sve glavne kartice (Visa, Mastercard, Amex) i SEPA izravno zaduivanje. Enterprise planovi mogu biti fakturirani.' },
+      { question: 'Postoji li besplatno probno razdoblje?', answer: 'Nudimo garanciju povrata novca u 30 dana umjesto tradicionalnog probnog razdoblja.' },
+      { question: 'Kako funkcionira ogranicenje API-ja?', answer: 'Besplatno: 100 zahtjeva/sat. Professional: 10.000/dan. Business: 50.000/dan. Enterprise: prilagodjeni limiti.' },
+      { question: 'Mogu li dodati vise timskih mjesta?', answer: 'Business uklucuje 10 mjesta. Dodatna mjesta za 9\u20AC/mjesto/mjesecno. Enterprise ukljucuje neogranicena mjesta.' },
+    ],
+  },
+  sl: {
+    h1: 'Kaj vsebuje vsak nacrt EuroSalary?',
+    metaTitle: 'Cene | EuroSalary.eu',
+    metaDesc: 'Izberite pravi nacrt EuroSalary: brezplacni osnovni podatki, Professional na ravni mest, Business PDF porocila in ekipa, ali Enterprise resitve po meri.',
+    home: 'Domov',
+    breadcrumb: 'Cene',
+    introAnswer: 'EuroSalary ponuja stiri ravni evropske placne inteligence. Brezplacni nacrt pokriva osnovne podatke za 27 drzav. Professional odklene analize na ravni mest in neto izracune. Business doda PDF porocila in ekipni dostop. Enterprise zagotavlja white-label resitve.',
+    tldr: ['Brezplacni nacrt: osnovni placni podatki za 27 drzav in 21 delovnih mest', 'Nacrti Professional in Business s podatki na ravni mest, neto izracuni in PDF porocili', 'Raven Enterprise z white-label, prilagojenimi integracijami in namenjeno podporo'],
+    monthlyLabel: 'Mesecno',
+    annualLabel: 'Letno',
+    annualSave: 'Prihranite 20%',
+    perMonth: '/mes.',
+    perYear: '/leto',
+    custom: 'Po meri',
+    free: { name: 'Brezplacno', price: '\u20AC0', desc: 'Evropski osnovni placni podatki za individualno raziskovanje.', cta: 'Zacnite brezplacno', features: ['Osnovni placni podatki za 27 drzav', '21 delovnih mest z bruto povprecji', 'Primerjave med drzavami', 'API dostop (100 zahtev/uro)', 'Podpora skupnosti'] },
+    pro: { name: 'Professional', priceM: '\u20AC29', priceA: '\u20AC279', desc: 'Popolna placna inteligenca za kadrovike in HR strokovnjake.', cta: 'Zazenite Professional', features: ['Vse iz Brezplacnega', 'Popolni placni podatki z ravnmi izkusenj', 'Analize na ravni mest', 'Kalkulator neto place (davki + prispevki)', 'API dostop (10.000 zahtev/dan)', 'E-postna obvestila za sledena delovna mesta', 'CSV izvoz', 'Prednostna e-postna podpora'] },
+    biz: { name: 'Business', priceM: '\u20AC99', priceA: '\u20AC949', desc: 'Popolna platforma za ekipe za nagrajevanje in vectrne operacije.', cta: 'Zazenite Business', badge: 'Najbolj priljubljen', features: ['Vse iz Professionala', 'PDF placna porocila po drzavah', 'Masovni izvoz (JSON, CSV, Excel)', 'Ekipni dostop (do 10 mest)', 'Analiza placne vrzeli med spoloma', 'Primerjave po panogi', 'Zgodovinski trendi (3-letni podatki)', 'Prednostna podpora s SLA'] },
+    enterprise: { name: 'Enterprise', price: 'Po meri', desc: 'White-label placni podatki in prilagojene integracije za platforme.', cta: 'Kontaktirajte prodajo', features: ['Vse iz Businessa', 'White-label integracija podatkov', 'Prilagojene API koncne tocke', 'Namenjen account manager', 'Generiranje prilagojenih porocil', 'SSO / SAML avtentikacija', 'Neomejeno stevilo ekipnih mest', 'Enterprise SLA (99,9% razpolozljivost)'] },
+    trustTitle: 'Zaupanje evropskih podjetij',
+    trustBadges: ['Uporablja 500+ podjetij', 'Podatki iz Eurostata in OECD', 'Skladno z GDPR'],
+    guaranteeTitle: '30-dnevna garancija vracila denarja',
+    guaranteeDesc: 'Preizkusite katerikoli placljivi nacrt brez tveganja. Ce ne ustreza vasim potrebam v 30 dneh, vrnemo celoten znesek.',
+    faq: [
+      { question: 'Ali lahko zamenjam nacrt kadarkoli?', answer: 'Da. Kadarkoli lahko nadgradite ali znizate nacrt.' },
+      { question: 'Katere nacine placila sprejemate?', answer: 'Vse glavne kartice (Visa, Mastercard, Amex) in SEPA direktno bremenitev. Enterprise nacrti se lahko fakturirajo.' },
+      { question: 'Ali obstaja brezplacno preizkusno obdobje?', answer: 'Ponujamo 30-dnevno garancijo vracila denarja namesto tradicionalnega preizkusnega obdobja.' },
+      { question: 'Kako deluje omejitev API?', answer: 'Brezplacno: 100 zahtev/uro. Professional: 10.000/dan. Business: 50.000/dan. Enterprise: prilagojene omejitve.' },
+      { question: 'Ali lahko dodam vec ekipnih mest?', answer: 'Business vklucuje 10 mest. Dodatna mesta za 9\u20AC/mesto/mesec. Enterprise vklucuje neomejeno stevilo mest.' },
+    ],
+  },
+  lt: {
+    h1: 'Ka apima kiekvienas EuroSalary planas?',
+    metaTitle: 'Kainos | EuroSalary.eu',
+    metaDesc: 'Pasirinkite tinkama EuroSalary plana: nemokami baziniai duomenys, Professional miestu lygmuo, Business PDF ataskaitos ir komanda, arba Enterprise sprendimai.',
+    home: 'Pradzia',
+    breadcrumb: 'Kainos',
+    introAnswer: 'EuroSalary siulo keturis Europos atlyginimo zvalgybes lygmenis. Nemokamas planas apima bazinius duomenis 27 salims. Professional atrakina miestu lygio analizes ir grynuosius skaiciavimus. Business prideda PDF ataskaitas ir komandos priega. Enterprise teikia white-label sprendimus.',
+    tldr: ['Nemokamas planas: baziniai atlyginimo duomenys 27 salims ir 21 pareigybei', 'Professional ir Business planai su miestu duomenimis, grynaisiais skaiciavimais ir PDF ataskaitomis', 'Enterprise lygmuo su white-label, individualiais integravimais ir skirta pagalba'],
+    monthlyLabel: 'Menesinis',
+    annualLabel: 'Metinis',
+    annualSave: 'Sutaupykite 20%',
+    perMonth: '/men.',
+    perYear: '/m.',
+    custom: 'Individualus',
+    free: { name: 'Nemokamas', price: '\u20AC0', desc: 'Europos baziniai atlyginimo duomenys individualiam tyrimui.', cta: 'Pradekite nemokamai', features: ['Baziniai atlyginimo duomenys 27 salims', '21 pareigyb su bruto vidurkiais', 'Palyginimai tarp saliu', 'API prieiga (100 uzklausu/val.)', 'Bendruomenes pagalba'] },
+    pro: { name: 'Professional', priceM: '\u20AC29', priceA: '\u20AC279', desc: 'Pilna atlyginimo zvalgyba verboutojams ir HR specialistams.', cta: 'Pradekite Professional', features: ['Viskas is Nemokamo', 'Pilni atlyginimo duomenys su patirties lygiais', 'Miestu lygio analizes', 'Grynojo atlyginimo skaiciuokle (mokesciai + sodra)', 'API prieiga (10 000 uzklausu/diena)', 'El. pasto ispejimas sekamoms pareigybems', 'CSV eksportas', 'Prioritetine el. pasto pagalba'] },
+    biz: { name: 'Business', priceM: '\u20AC99', priceA: '\u20AC949', desc: 'Pilna platforma atlyginimo komandoms ir daugelio rinku operacijoms.', cta: 'Pradekite Business', badge: 'Populiariausias', features: ['Viskas is Professional', 'PDF atlyginimo ataskaitos pagal sali', 'Masinis eksportas (JSON, CSV, Excel)', 'Komandos prieiga (iki 10 vietu)', 'Lyciu atlyginimo skirtumo analize', 'Sektoriu palyginimai', 'Istorines tendencijos (3 metu duomenys)', 'Prioritetine pagalba su SLA'] },
+    enterprise: { name: 'Enterprise', price: 'Individualus', desc: 'White-label atlyginimo duomenys ir individualus integravimai platformoms.', cta: 'Susisiekite su pardavimais', features: ['Viskas is Business', 'White-label duomenu integracija', 'Individualus API galutiniai taskai', 'Skirtas saskaitu vadybininkas', 'Individualiu ataskaitu generavimas', 'SSO / SAML autentifikacija', 'Neriboti komandos vietos', 'Enterprise SLA (99,9% veikimo laikas)'] },
+    trustTitle: 'Europos imoniu pasitikejimas',
+    trustBadges: ['Naudoja 500+ imoniu', 'Eurostat ir OECD duomenys', 'Atitinka BDAR'],
+    guaranteeTitle: '30 dienu pinigu grazinimo garantija',
+    guaranteeDesc: 'Ismeginkite bet kuri mokama plana be rizikos. Jei per 30 dienu nepatenkina jusu poreikiu, graziname visa suma.',
+    faq: [
+      { question: 'Ar galiu pakeisti plana bet kuriuo metu?', answer: 'Taip. Galite bet kuriuo metu atnaujinti arba sumazinti plana.' },
+      { question: 'Kokius mokejimo budus priimate?', answer: 'Visas pagrindines korteles (Visa, Mastercard, Amex) ir SEPA tiesiogini debeta. Enterprise planai gali buti fakturuojami.' },
+      { question: 'Ar yra nemokamas bandomasis laikotarpis?', answer: 'Siulome 30 dienu pinigu grazinimo garantija vietoj tradicinio bandomojo laikotarpio.' },
+      { question: 'Kaip veikia API greicio ribojimas?', answer: 'Nemokamas: 100 uzklausu/val. Professional: 10 000/diena. Business: 50 000/diena. Enterprise: individualus limitai.' },
+      { question: 'Ar galiu prideti daugiau komandos vietu?', answer: 'Business apima 10 vietu. Papildomos vietos uz 9\u20AC/vieta/men. Enterprise apima neribotas vietas.' },
+    ],
+  },
+  lv: {
+    h1: 'Ko ietver katrs EuroSalary plans?',
+    metaTitle: 'Cenas | EuroSalary.eu',
+    metaDesc: 'Izvelieties pareizo EuroSalary planu: bezmaksas pamatdati, Professional pilsetu limenis, Business PDF parskati un komanda, vai Enterprise pielgoti risinajumi.',
+    home: 'Sakums',
+    breadcrumb: 'Cenas',
+    introAnswer: 'EuroSalary piedava cetrus Eiropas algu izlukosanas limenus. Bezmaksas plans sedz pamatdatus 27 valstim. Professional atbloce pilsetu limena analizes un neto aprekinumus. Business pievieno PDF parskatus un komandas pieju. Enterprise nodrosina white-label risinajumus.',
+    tldr: ['Bezmaksas plans: pamata algu dati 27 valstim un 21 amatam', 'Professional un Business plani ar pilsetu datiem, neto aprekiniem un PDF parskatiem', 'Enterprise limenis ar white-label, pielagotam integracijam un veltitu atbalstu'],
+    monthlyLabel: 'Menesis',
+    annualLabel: 'Gada',
+    annualSave: 'Ietaupi 20%',
+    perMonth: '/men.',
+    perYear: '/gada',
+    custom: 'Pielgots',
+    free: { name: 'Bezmaksas', price: '\u20AC0', desc: 'Eiropas pamata algu dati individualai izpetei.', cta: 'Sakt bezmaksas', features: ['Pamata algu dati 27 valstim', '21 amats ar bruto videjiem', 'Salsinajumi starp valstim', 'API pieja (100 pieprasijumu/st.)', 'Kopienas atbalsts'] },
+    pro: { name: 'Professional', priceM: '\u20AC29', priceA: '\u20AC279', desc: 'Pilna algu izlukosana personala atlases specialistiem un HR profesionaliem.', cta: 'Sakt Professional', features: ['Viss no Bezmaksas', 'Pilni algu dati ar pieredzes limeniem', 'Pilsetu limena analizes', 'Neto algas kalkulators (nodokli + socialie)', 'API pieja (10 000 pieprasijumu/diena)', 'E-pasta pazinojumi par sekotem amatiem', 'CSV eksports', 'Prioritara e-pasta atbalsts'] },
+    biz: { name: 'Business', priceM: '\u20AC99', priceA: '\u20AC949', desc: 'Pilna platforma atlidzibas komandom un daudzu tirgu operacijam.', cta: 'Sakt Business', badge: 'Vispopularakais', features: ['Viss no Professional', 'PDF algu parskati pa valstim', 'Masveida eksports (JSON, CSV, Excel)', 'Komandas pieja (lidz 10 vietam)', 'Dzimumu algu atskiribu analize', 'Nozaru saldzinajumi', 'Vesturiskas tendences (3 gadu dati)', 'Prioritars atbalsts ar SLA'] },
+    enterprise: { name: 'Enterprise', price: 'Pielgots', desc: 'White-label algu dati un pielagotas integracijas platformam.', cta: 'Sazinieties ar pardosanu', features: ['Viss no Business', 'White-label datu integracija', 'Pielagoti API galapunkti', 'Veltits konta parvalnieks', 'Pielagotu parskatu generesana', 'SSO / SAML autentifikacija', 'Neierobezots komandas vietu skaits', 'Enterprise SLA (99,9% pieejamiba)'] },
+    trustTitle: 'Eiropas uznemumu uzticiba',
+    trustBadges: ['Izmanto 500+ uznemumu', 'Dati no Eurostat un OECD', 'Atbilst VDAR'],
+    guaranteeTitle: '30 dienu naudas atgriesanas garantija',
+    guaranteeDesc: 'Izmeginiet jebkuru maksas planu bez riska. Ja tas neatbilst jusam vajadzibam 30 dienu laika, atgriezisim pilnu summu.',
+    faq: [
+      { question: 'Vai varu mainit planu jebkura laika?', answer: 'Ja. Varat jebkura laika uzlabot vai pazinat planu.' },
+      { question: 'Kadas maksajumu metodes pienemiet?', answer: 'Visas galvenas kartes (Visa, Mastercard, Amex) un SEPA tieso debetu. Enterprise planus var rekinet.' },
+      { question: 'Vai ir bezmaksas izmeginjuma periods?', answer: 'Piedavajam 30 dienu naudas atgriesanas garantiju tradicionalas izmeginjuma perioda vieta.' },
+      { question: 'Ka darbojas API atruma ierobezosana?', answer: 'Bezmaksas: 100 pieprasijumu/st. Professional: 10 000/diena. Business: 50 000/diena. Enterprise: pielagoti limiti.' },
+      { question: 'Vai varu pievienot vairak komandas vietu?', answer: 'Business ietver 10 vietas. Papildu vietas par 9\u20AC/vieta/menesi. Enterprise ietver neierobeztas vietas.' },
+    ],
+  },
+  et: {
+    h1: 'Mida sisaldab iga EuroSalary plaan?',
+    metaTitle: 'Hinnad | EuroSalary.eu',
+    metaDesc: 'Valige oige EuroSalary plaan: tasuta pohiandmed, Professional linnade tasemel, Business PDF aruanded ja meeskond, voi Enterprise kohandatud lahendused.',
+    home: 'Avaleht',
+    breadcrumb: 'Hinnad',
+    introAnswer: 'EuroSalary pakub nelja Euroopa palgateabe taset. Tasuta plaan katab pohiandmed 27 riigi kohta. Professional avab linnade taseme analyusid ja netoarvutused. Business lisab PDF aruanded ja meeskonnaligipaaasu. Enterprise pakub white-label lahendusi.',
+    tldr: ['Tasuta plaan: pohi palgaandmed 27 riigi ja 21 ametikoha kohta', 'Professional ja Business plaanid linnaandmete, netoarvutuste ja PDF aruannetega', 'Enterprise tase white-labeliga, kohandatud integratsioonide ja puuhendatud toega'],
+    monthlyLabel: 'Kuus',
+    annualLabel: 'Aastas',
+    annualSave: 'Saasta 20%',
+    perMonth: '/kuus',
+    perYear: '/aastas',
+    custom: 'Kohandatud',
+    free: { name: 'Tasuta', price: '\u20AC0', desc: 'Euroopa pohi palgaandmed individuaalseks uurimiseks.', cta: 'Alusta tasuta', features: ['Pohi palgaandmed 27 riigi kohta', '21 ametikohta brutokeskmistega', 'Riikidevahelised voordlused', 'API ligipaaas (100 paringut/tund)', 'Kogukonna tugi'] },
+    pro: { name: 'Professional', priceM: '\u20AC29', priceA: '\u20AC279', desc: 'Taiuslik palgateave varbajaile ja personalispetsialistidele.', cta: 'Alusta Professional', features: ['Koik Tasuta plaanist', 'Taiuslikud palgaandmed kogemustasemetega', 'Linnade taseme analyuusid', 'Netopalga kalkulaator (maksud + sotsiaalkindlustus)', 'API ligipaaas (10 000 paringut/paaev)', 'E-posti teatised jalgitud ametikohtade kohta', 'CSV eksport', 'Prioriteetne e-posti tugi'] },
+    biz: { name: 'Business', priceM: '\u20AC99', priceA: '\u20AC949', desc: 'Taiuslik platvorm tasustamismeeskondadele ja mitmeturu operatsioonidele.', cta: 'Alusta Business', badge: 'Koige populaarsem', features: ['Koik Professional plaanist', 'PDF palgaaruanded riigiti', 'Masseksport (JSON, CSV, Excel)', 'Meeskonnaligipaaas (kuni 10 kohta)', 'Soolise palgalohe analyuus', 'Valdkonnapohised voordlused', 'Ajaloolised trendid (3 aasta andmed)', 'Prioriteetne tugi SLA-ga'] },
+    enterprise: { name: 'Enterprise', price: 'Kohandatud', desc: 'White-label palgaandmed ja kohandatud integratsioonid platvormidele.', cta: 'Vota uhendust muugiosakonaga', features: ['Koik Business plaanist', 'White-label andmete integratsioon', 'Kohandatud API loppunktid', 'Puuhendatud kontohaldur', 'Kohandatud aruannete genereerimine', 'SSO / SAML autentimine', 'Piiramatu arv meeskonnakohti', 'Enterprise SLA (99,9% toimimisaeg)'] },
+    trustTitle: 'Euroopa ettevotete usaldus',
+    trustBadges: ['Kasutab 500+ ettevotet', 'Andmed Eurostatist ja OECD-st', 'GDPR-iga kooskollas'],
+    guaranteeTitle: '30-paaevane raha tagastamise garantii',
+    guaranteeDesc: 'Proovige mis tahes tasulist plaani riskivabalt. Kui see ei vasta teie vajadustele 30 paeva jooksul, tagastame kogu summa.',
+    faq: [
+      { question: 'Kas saan plaani igal ajal vahetada?', answer: 'Jah. Saate igal ajal uuendada voi alandada.' },
+      { question: 'Milliseid makseviise aktsepteerite?', answer: 'Koiki peamisi kaarte (Visa, Mastercard, Amex) ja SEPA otsekorraldust. Enterprise plaane saab arveldada.' },
+      { question: 'Kas on tasuta prooviperiood?', answer: 'Pakume 30-paaevast raha tagastamise garantiid traditsioonilise prooviperioodi asemel.' },
+      { question: 'Kuidas toimib API kiirusepiirang?', answer: 'Tasuta: 100 paringut/tund. Professional: 10 000/paaev. Business: 50 000/paaev. Enterprise: kohandatud piirangud.' },
+      { question: 'Kas saan lisada meeskonnakohti?', answer: 'Business sisaldab 10 kohta. Lisakohad 9\u20AC/koht/kuus. Enterprise sisaldab piiramatult kohti.' },
+    ],
+  },
+  mt: {
+    h1: 'Xi jinkludi kull pjan ta\' EuroSalary?',
+    metaTitle: 'Prezzijiet | EuroSalary.eu',
+    metaDesc: 'Aghzel il-pjan EuroSalary t-tajjeb: data bazika b\'xejn, Professional livell ta\' bliet, Business rapporti PDF u team, jew Enterprise soluzzjonijiet personalizzati.',
+    home: 'Dahla',
+    breadcrumb: 'Prezzijiet',
+    introAnswer: 'EuroSalary joffri erba livelli ta\' intelligenza Ewropea dwar is-salarji. Il-pjan B\'Xejn ikopri data bazika ghal 27 pajjiz. Professional jiftah analizijiet fil-livell tal-bliet u kalkoli netti. Business izid rapporti PDF u access tal-grupp. Enterprise jipprovdi soluzzjonijiet white-label.',
+    tldr: ['Pjan b\'xejn: data bazika ta\' salarji ghal 27 pajjiz u 21 pozizzjoni', 'Pjanijiet Professional u Business b\'data tal-bliet, kalkoli netti u rapporti PDF', 'Livell Enterprise b\'white-label, integrazzjonijiet personalizzati u support dedikati'],
+    monthlyLabel: 'Kull xahar',
+    annualLabel: 'Kull sena',
+    annualSave: 'Iffrankar 20%',
+    perMonth: '/xahar',
+    perYear: '/sena',
+    custom: 'Personalizzat',
+    free: { name: 'B\'Xejn', price: '\u20AC0', desc: 'Data bazika Ewropea dwar is-salarji ghar-ricerka individwali.', cta: 'Ibda b\'xejn', features: ['Data bazika ta\' salarji ghal 27 pajjiz', '21 pozizzjoni b\'medji gross', 'Tqabbil bejn il-pajjizi', 'Access API (100 talba/siegha)', 'Support tal-komunita'] },
+    pro: { name: 'Professional', priceM: '\u20AC29', priceA: '\u20AC279', desc: 'Intelligenza shiha dwar is-salarji ghar-recruiters u professjonisti HR.', cta: 'Ibda Professional', features: ['Kollox minn B\'Xejn', 'Data shiha tas-salarji b\'livelli ta\' esperjenza', 'Analizijiet fil-livell tal-bliet', 'Kalkulatur ta\' salarju nett (taxxi + socjali)', 'Access API (10,000 talba/jum)', 'Alerti bl-email ghal pozizzjonijiet segwiti', 'Esportazzjoni CSV', 'Support email ta\' prijorita'] },
+    biz: { name: 'Business', priceM: '\u20AC99', priceA: '\u20AC949', desc: 'Pjattaforma shiha ghat-teams tal-kumpens u operazzjonijiet multi-suq.', cta: 'Ibda Business', badge: 'L-aktar popolari', features: ['Kollox minn Professional', 'Rapporti PDF ta\' salarji ghal kull pajjiz', 'Esportazzjoni massiva (JSON, CSV, Excel)', 'Access tal-grupp (sa 10 postijiet)', 'Analizi tad-differenza fis-salarji skont il-generu', 'Tqabbil skont is-settur', 'Xejriet storici (data ta\' 3 snin)', 'Support ta\' prijorita b\'SLA'] },
+    enterprise: { name: 'Enterprise', price: 'Personalizzat', desc: 'Data white-label dwar is-salarji u integrazzjonijiet personalizzati ghall-pjattaformi.', cta: 'Ikkuntattja l-bejgh', features: ['Kollox minn Business', 'Integrazzjoni tad-data white-label', 'API endpoints personalizzati', 'Account manager dedikati', 'Generazzjoni ta\' rapporti personalizzati', 'Awtentikazzjoni SSO / SAML', 'Postijiet tal-grupp illimitati', 'SLA Enterprise (99.9% uptime)'] },
+    trustTitle: 'Il-fiducja tan-negozji Ewropej',
+    trustBadges: ['Uzat minn 500+ kumpanija', 'Data minn Eurostat u OECD', 'Konformi mal-GDPR'],
+    guaranteeTitle: 'Garanzija ta\' rifuzjoni ta\' 30 jum',
+    guaranteeDesc: 'Ipprova kwalunkwe pjan bi hlas minghajr riskju. Jekk ma jissodisfax il-htigijiet tieghek fi 30 jum, nirrifonduk kompletament.',
+    faq: [
+      { question: 'Nista nbiddel il-pjan fi kwalunkwe hin?', answer: 'Iva. Tista taghmel upgrade jew downgrade fi kwalunkwe hin.' },
+      { question: 'Liema metodi ta\' hlas tacccettaw?', answer: 'Il-karti principali kollha (Visa, Mastercard, Amex) u SEPA direct debit. Il-pjanijiet Enterprise jistghu jigu fatturati.' },
+      { question: 'Hemm perjodu ta\' prova b\'xejn?', answer: 'Noffru garanzija ta\' rifuzjoni ta\' 30 jum minflok perjodu ta\' prova tradizzjonali.' },
+      { question: 'Kif tahdem il-limitazzjoni tal-API?', answer: 'B\'xejn: 100 talba/siegha. Professional: 10,000/jum. Business: 50,000/jum. Enterprise: limiti personalizzati.' },
+      { question: 'Nista nzid postijiet tal-grupp?', answer: 'Business jinkludi 10 postijiet. Postijiet addizzjonali ghal 9\u20AC/post/xahar. Enterprise jinkludi postijiet illimitati.' },
+    ],
+  },
+  ga: {
+    h1: 'Cad ata san aireamh i ngach plean EuroSalary?',
+    metaTitle: 'Praghsail | EuroSalary.eu',
+    metaDesc: 'Roghnaigh an plean EuroSalary ceart: sonrai bunuisach saor in aisce, Professional leibheal cathrach, Business tuairiscil PDF agus foireann, no Enterprise reiteach saincheaptha.',
+    home: 'Baile',
+    breadcrumb: 'Praghsail',
+    introAnswer: 'Cuireann EuroSalary ceithre leibheal d\'fhaisneis tuarastail Eorpaigh ar fail. Cluidaionn an plean Saor in Aisce sonrai bunuisacha do 27 tir. Osclaionn Professional anailisiu ar leibheal cathrach agus riomhaireachtai glain. Cuireann Business tuairiscil PDF agus rochtain foirne leis. Solatharann Enterprise reiteach bain-lipead.',
+    tldr: ['Plean saor in aisce: sonrai tuarastail bunuisacha do 27 tir agus 21 post', 'Pleanna Professional agus Business le sonrai cathrach, riomhaireachtai glain agus tuairiscil PDF', 'Leibheal Enterprise le bain-lipead, comhthathuithe saincheaptha agus tacaiocht thiomnaithe'],
+    monthlyLabel: 'Miosul',
+    annualLabel: 'Bliantuil',
+    annualSave: 'Saabhail 20%',
+    perMonth: '/mi',
+    perYear: '/bl',
+    custom: 'Saincheaptha',
+    free: { name: 'Saor in Aisce', price: '\u20AC0', desc: 'Sonrai tuarastail bunuisacha Eorpacha do thaighde aonair.', cta: 'Tosaigh saor in aisce', features: ['Sonrai tuarastail bunuisacha do 27 tir', '21 post le meain chomhlain', 'Comparaidi idir tiorthai', 'Rochtain API (100 iarratas/uair)', 'Tacaiocht phobail'] },
+    pro: { name: 'Professional', priceM: '\u20AC29', priceA: '\u20AC279', desc: 'Faisneis tuarastail iomlan d\'earcaitheoir agus gairmithe AD.', cta: 'Tosaigh Professional', features: ['Gach rud on bplean Saor in Aisce', 'Sonrai tuarastail iomlan le leibheil taithi', 'Anailisiu ar leibheal cathrach', 'Aireamhan glan-tuarastail (cain + arachais)', 'Rochtain API (10,000 iarratas/la)', 'Folaireimh rphost do phoist a leantar', 'Easportail CSV', 'Tacaiocht rphost tosaigh'] },
+    biz: { name: 'Business', priceM: '\u20AC99', priceA: '\u20AC949', desc: 'Ardchorais iomlan d\'fhoirne luach saothair agus oibreachtai il-mhargaidh.', cta: 'Tosaigh Business', badge: 'Is mo a eirionn leis', features: ['Gach rud on bplean Professional', 'Tuairiscil tuarastail PDF in aghaidh na tire', 'Easportail ollmhor (JSON, CSV, Excel)', 'Rochtain foirne (suas le 10 suiomh)', 'Anailis ar bhearna pa idir na hinscni', 'Comparaidi de reir earnala', 'Treochta stairiula (sonrai 3 bliana)', 'Tacaiocht tosaigh le SLA'] },
+    enterprise: { name: 'Enterprise', price: 'Saincheaptha', desc: 'Sonrai tuarastail bain-lipead agus comhthathuithe saincheaptha d\'ardchorsais.', cta: 'Dean teagmhail leis an bhfoireann diola', features: ['Gach rud on bplean Business', 'Comhthathui sonrai bain-lipead', 'Criochphointai API saincheaptha', 'Bainisteoir cuntais tiomnaithe', 'Gineadh tuairisc saincheaptha', 'Fioruchain SSO / SAML', 'Suiomhanna foirne gan teorainn', 'SLA Enterprise (99.9% aga)'] },
+    trustTitle: 'Muinin gnolaichtai Eorpacha',
+    trustBadges: ['In usaid ag 500+ cuideachta', 'Sonrai o Eurostat agus ECFE', 'I gcomhreir le RGCS'],
+    guaranteeTitle: 'Rathaiocht aisioicaiochta 30 la',
+    guaranteeDesc: 'Bain triail as aon phlean ioctha gan phriacal. Mura saisionn se do riachtanais laistigh de 30 la, aisioiocaimid go hionlan.',
+    faq: [
+      { question: 'An feidir liom plean a athru am ar bith?', answer: 'Is feidir. Is feidir leat uasgradu no isliniu am ar bith.' },
+      { question: 'Ce modhanna iocaiochta a ghlacann sibh?', answer: 'Na priomhchartai go leir (Visa, Mastercard, Amex) agus dochar direach SEPA. Is feidir pleanna Enterprise a shonrasc.' },
+      { question: 'An bhfuil treimhse thrialach saor in aisce ann?', answer: 'Cuirimid rathaiocht aisioicaiochta 30 la ar fail in aite treimhse thrialach tradisiunta.' },
+      { question: 'Conas a oibionn teorainniu rata an API?', answer: 'Saor in Aisce: 100 iarratas/uair. Professional: 10,000/la. Business: 50,000/la. Enterprise: teorainneacha saincheaptha.' },
+      { question: 'An feidir liom suiomhanna foirne breise a chur leis?', answer: 'Ta 10 suiomh san aireamh i mBusiness. Suiomhanna breise ar 9\u20AC/suiomh/mi. Ta suiomhanna gan teorainn san aireamh in Enterprise.' },
+    ],
+  },
+
 };
 
 const c = fb(i18n, lang);
@@ -458,495 +1339,424 @@ const pageSchema = [
 ];
 ---
 
-<BaseLayout title={c.metaTitle} description={c.metaDesc} datePublished="2026-04-04" dateModified="2026-04-04" schema={pageSchema}>
-  <!-- Hero -->
-  <section class="pricing-hero">
-    <div class="pricing-hero__dots"></div>
-    <div class="container pricing-hero__inner">
-      <nav class="pricing-hero__breadcrumbs" aria-label="Breadcrumb">
+<BaseLayout title={c.metaTitle} description={c.metaDesc} datePublished="2026-04-04" dateModified="2026-04-07" schema={pageSchema}>
+  <!-- Compact Hero with toggle integrated -->
+  <section class="ph">
+    <div class="container ph__inner">
+      <nav class="ph__bc" aria-label="Breadcrumb">
         <a href={`/${lang}/`}>{c.home}</a>
         <span class="material-symbols-outlined">chevron_right</span>
         <span>{c.breadcrumb}</span>
       </nav>
-      <div class="pricing-hero__badge">
-        <span class="material-symbols-outlined">payments</span>
-        {c.breadcrumb}
+      <h1 class="ph__h1">{c.h1}</h1>
+      <p class="ph__desc">{c.introAnswer}</p>
+
+      <!-- Toggle inside hero -->
+      <div class="ph__toggle" id="billing-toggle">
+        <button class="ph__toggle-btn ph__toggle-btn--active" data-period="monthly">{c.monthlyLabel}</button>
+        <button class="ph__toggle-btn" data-period="annual">
+          {c.annualLabel}
+          <span class="ph__save">{c.annualSave}</span>
+        </button>
       </div>
-      <h1>{c.h1}</h1>
-      <p class="pricing-hero__answer">{c.introAnswer}</p>
     </div>
   </section>
 
-  <article class="container pricing-body">
-    <TLDRBox items={c.tldr} />
-
-    <!-- Billing Toggle -->
-    <section class="pricing-section">
-      <div class="pricing-toggle" id="billing-toggle">
-        <button class="pricing-toggle__btn pricing-toggle__btn--active" data-period="monthly">{c.monthlyLabel}</button>
-        <button class="pricing-toggle__btn" data-period="annual">
-          {c.annualLabel}
-          <span class="pricing-toggle__save">{c.annualSave}</span>
-        </button>
-      </div>
-
-      <!-- Cards -->
-      <div class="pricing-cards">
+  <!-- Cards immediately after hero — no gap -->
+  <section class="pc-wrap">
+    <div class="container">
+      <div class="pc-grid">
         <!-- Free -->
-        <div class="pricing-card">
-          <div class="pricing-card__header">
-            <h3>{c.free.name}</h3>
-            <p class="pricing-card__desc">{c.free.desc}</p>
+        <div class="pc">
+          <h3 class="pc__name">{c.free.name}</h3>
+          <p class="pc__desc">{c.free.desc}</p>
+          <div class="pc__price">
+            <span class="pc__amount">{c.free.price}</span>
           </div>
-          <div class="pricing-card__price">
-            <span class="pricing-card__amount">{c.free.price}</span>
-          </div>
-          <a href={`/${lang}/`} class="pricing-card__cta pricing-card__cta--outline">{c.free.cta}</a>
-          <ul class="pricing-card__features">
+          <a href={`/${lang}/`} class="pc__cta pc__cta--ghost">{c.free.cta}</a>
+          <ul class="pc__list">
             {c.free.features.map((f) => (
-              <li>
-                <span class="pricing-card__check">&#10003;</span>
-                {f}
-              </li>
+              <li><span class="pc__chk">&#10003;</span>{f}</li>
             ))}
           </ul>
         </div>
 
         <!-- Professional -->
-        <div class="pricing-card">
-          <div class="pricing-card__header">
-            <h3>{c.pro.name}</h3>
-            <p class="pricing-card__desc">{c.pro.desc}</p>
+        <div class="pc">
+          <h3 class="pc__name">{c.pro.name}</h3>
+          <p class="pc__desc">{c.pro.desc}</p>
+          <div class="pc__price">
+            <span class="pc__amount" data-monthly={c.pro.priceM} data-annual={c.pro.priceA}>{c.pro.priceM}</span>
+            <span class="pc__period" data-monthly={c.perMonth} data-annual={c.perYear}>{c.perMonth}</span>
           </div>
-          <div class="pricing-card__price">
-            <span class="pricing-card__amount" data-monthly={c.pro.priceM} data-annual={c.pro.priceA}>{c.pro.priceM}</span>
-            <span class="pricing-card__period" data-monthly={c.perMonth} data-annual={c.perYear}>{c.perMonth}</span>
-          </div>
-          <a href="#" class="pricing-card__cta pricing-card__cta--outline">{c.pro.cta}</a>
-          <ul class="pricing-card__features">
+          <a href="#" class="pc__cta pc__cta--outline" data-plan="pro" data-price-monthly="price_1TJZ3rFVaIUkPsQC12XKbrF3" data-price-annual="price_1TJZ3sFVaIUkPsQCZnLuFcWh">{c.pro.cta}</a>
+          <ul class="pc__list">
             {c.pro.features.map((f) => (
-              <li>
-                <span class="pricing-card__check">&#10003;</span>
-                {f}
-              </li>
+              <li><span class="pc__chk">&#10003;</span>{f}</li>
             ))}
           </ul>
         </div>
 
         <!-- Business (Featured) -->
-        <div class="pricing-card pricing-card--featured">
-          <div class="pricing-card__popular">{c.biz.badge}</div>
-          <div class="pricing-card__header">
-            <h3>{c.biz.name}</h3>
-            <p class="pricing-card__desc">{c.biz.desc}</p>
+        <div class="pc pc--pop">
+          <div class="pc__badge">{c.biz.badge}</div>
+          <h3 class="pc__name">{c.biz.name}</h3>
+          <p class="pc__desc">{c.biz.desc}</p>
+          <div class="pc__price">
+            <span class="pc__amount" data-monthly={c.biz.priceM} data-annual={c.biz.priceA}>{c.biz.priceM}</span>
+            <span class="pc__period" data-monthly={c.perMonth} data-annual={c.perYear}>{c.perMonth}</span>
           </div>
-          <div class="pricing-card__price">
-            <span class="pricing-card__amount" data-monthly={c.biz.priceM} data-annual={c.biz.priceA}>{c.biz.priceM}</span>
-            <span class="pricing-card__period" data-monthly={c.perMonth} data-annual={c.perYear}>{c.perMonth}</span>
-          </div>
-          <a href="#" class="pricing-card__cta pricing-card__cta--filled">{c.biz.cta}</a>
-          <ul class="pricing-card__features">
+          <a href="#" class="pc__cta pc__cta--fill" data-plan="business" data-price-monthly="price_1TJZ3sFVaIUkPsQCP8bnrUHZ" data-price-annual="price_1TJZ3sFVaIUkPsQCU4MsDyoT">{c.biz.cta}</a>
+          <ul class="pc__list">
             {c.biz.features.map((f) => (
-              <li>
-                <span class="pricing-card__check pricing-card__check--featured">&#10003;</span>
-                {f}
-              </li>
+              <li><span class="pc__chk pc__chk--blue">&#10003;</span>{f}</li>
             ))}
           </ul>
         </div>
 
         <!-- Enterprise -->
-        <div class="pricing-card">
-          <div class="pricing-card__header">
-            <h3>{c.enterprise.name}</h3>
-            <p class="pricing-card__desc">{c.enterprise.desc}</p>
+        <div class="pc pc--dark">
+          <h3 class="pc__name">{c.enterprise.name}</h3>
+          <p class="pc__desc">{c.enterprise.desc}</p>
+          <div class="pc__price">
+            <span class="pc__amount">{c.custom}</span>
           </div>
-          <div class="pricing-card__price">
-            <span class="pricing-card__amount">{c.custom}</span>
-          </div>
-          <a href="#" class="pricing-card__cta pricing-card__cta--outline">{c.enterprise.cta}</a>
-          <ul class="pricing-card__features">
+          <a href={`/${lang}/enterprise/`} class="pc__cta pc__cta--white">{c.enterprise.cta}</a>
+          <ul class="pc__list">
             {c.enterprise.features.map((f) => (
-              <li>
-                <span class="pricing-card__check">&#10003;</span>
-                {f}
-              </li>
+              <li><span class="pc__chk">&#10003;</span>{f}</li>
             ))}
           </ul>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Trust Badges -->
-    <section class="pricing-section pricing-trust">
-      <h2 class="pricing-trust__title">{c.trustTitle}</h2>
-      <div class="pricing-trust__badges">
+  <!-- Trust + Guarantee in one compact row -->
+  <section class="trust-row">
+    <div class="container">
+      <div class="trust-row__badges">
         {c.trustBadges.map((badge, i) => (
-          <div class="pricing-trust__badge">
+          <div class="trust-row__badge">
             <span class="material-symbols-outlined">
               {i === 0 ? 'business' : i === 1 ? 'verified' : 'shield'}
             </span>
-            <span>{badge}</span>
+            {badge}
           </div>
         ))}
       </div>
-    </section>
-
-    <!-- Guarantee -->
-    <section class="pricing-section">
-      <div class="pricing-guarantee">
+      <div class="trust-row__guarantee">
         <span class="material-symbols-outlined">verified_user</span>
         <div>
           <strong>{c.guaranteeTitle}</strong>
           <p>{c.guaranteeDesc}</p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <FAQSection items={c.faq} />
-
-    <!-- Methodology link -->
-    <section class="pricing-section pricing-methodology">
-      <p class="pricing-methodology__link">
-        <span class="material-symbols-outlined">science</span>
-        <a href={`/${lang}/methodology/`}>{t('nav.methodology')}</a> — {fb({ en: 'Learn how we source, validate, and standardize European salary data.', fr: 'D\u00e9couvrez comment nous sour\u00e7ons et validons les donn\u00e9es salariales.', de: 'Erfahren Sie, wie wir Gehaltsdaten beschaffen und validieren.', es: 'Conozca c\u00f3mo obtenemos y validamos los datos salariales.' }, lang)}
-      </p>
-    </section>
-  </article>
+  <!-- FAQ compact -->
+  <section class="faq-compact">
+    <div class="container container--narrow">
+      <FAQSection items={c.faq} />
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
-  /* ===== Hero ===== */
-  .pricing-hero {
+  /* ===== Hero — compact, dark, toggle integrated ===== */
+  .ph {
     background: var(--color-primary-container, #0F1F3D);
     color: white;
-    padding: var(--space-16) 0 var(--space-12);
-    position: relative;
-    overflow: hidden;
+    padding: 5.5rem 0 2.5rem;
+    text-align: center;
   }
-  .pricing-hero__dots {
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
-    background-size: 24px 24px;
+  .ph__inner { max-width: 680px; margin: 0 auto; }
+  .ph__bc {
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; font-size: 12px; color: rgba(203,213,225,0.5);
+    margin-bottom: 1.25rem;
   }
-  .pricing-hero__inner { position: relative; z-index: 1; max-width: 720px; }
-  .pricing-hero__breadcrumbs {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: rgba(203, 213, 225, 0.6);
-    margin-bottom: var(--space-6);
+  .ph__bc a { color: rgba(203,213,225,0.5); text-decoration: none; }
+  .ph__bc a:hover { color: white; }
+  .ph__bc .material-symbols-outlined { font-size: 14px; }
+  .ph__h1 {
+    font-family: var(--font-headline); font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-weight: 800; letter-spacing: -0.025em; line-height: 1.15;
+    margin-bottom: 0.75rem; color: white;
   }
-  .pricing-hero__breadcrumbs a {
-    color: rgba(203, 213, 225, 0.6);
-    text-decoration: none;
+  .ph__desc {
+    font-size: 0.95rem; line-height: 1.6; color: rgba(203,213,225,0.8);
+    max-width: 560px; margin: 0 auto 1.5rem;
   }
-  .pricing-hero__breadcrumbs a:hover { color: white; }
-  .pricing-hero__breadcrumbs .material-symbols-outlined { font-size: 14px; }
-  .pricing-hero__badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(37, 99, 235, 0.2);
-    border: 1px solid rgba(37, 99, 235, 0.3);
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    color: #93c5fd;
-    margin-bottom: var(--space-4);
+  .ph__toggle {
+    display: inline-flex; background: rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 3px;
   }
-  .pricing-hero__badge .material-symbols-outlined { font-size: 14px; }
-  .pricing-hero h1 {
-    font-family: var(--font-headline, 'Public Sans', sans-serif);
-    font-size: clamp(1.75rem, 4vw, 2.5rem);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1.15;
-    margin-bottom: var(--space-4);
-  }
-  .pricing-hero__answer {
-    font-size: 1.05rem;
-    line-height: 1.65;
-    color: rgba(203, 213, 225, 0.85);
-  }
-
-  /* ===== Body ===== */
-  .pricing-body { padding: var(--space-10) 0 var(--space-16); }
-  .pricing-section { margin-top: var(--space-12); }
-
-  /* ===== Toggle ===== */
-  .pricing-toggle {
-    display: inline-flex;
-    background: #f1f3f5;
-    border-radius: 8px;
-    padding: 4px;
-    margin-bottom: var(--space-10);
-  }
-  .pricing-toggle__btn {
-    padding: 10px 24px;
-    background: transparent;
-    border: none;
-    font-size: 14px;
-    font-weight: 600;
-    color: #45474e;
-    cursor: pointer;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  .ph__toggle-btn {
+    padding: 8px 20px; background: transparent; border: none;
+    font-size: 13px; font-weight: 600; color: rgba(203,213,225,0.7);
+    cursor: pointer; border-radius: 6px; display: flex; align-items: center; gap: 6px;
     transition: all 0.15s;
   }
-  .pricing-toggle__btn--active {
-    background: white;
-    color: var(--color-primary-container, #0F1F3D);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  .ph__toggle-btn--active {
+    background: white; color: var(--color-primary-container);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
   }
-  .pricing-toggle__save {
-    font-size: 11px;
-    font-weight: 700;
-    background: #dcfce7;
-    color: #16a34a;
-    padding: 2px 8px;
-    border-radius: 10px;
+  .ph__save {
+    font-size: 10px; font-weight: 700; background: rgba(22,163,106,0.2);
+    color: #4ade80; padding: 2px 6px; border-radius: 8px;
+  }
+  .ph__toggle-btn--active .ph__save {
+    background: #dcfce7; color: #16a34a;
   }
 
-  /* ===== Cards Grid ===== */
-  .pricing-cards {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-5);
-    align-items: start;
+  /* ===== Cards — pulled up, no gap after hero ===== */
+  .pc-wrap {
+    background: var(--color-surface, #f7f9fb);
+    padding: 2rem 0 2.5rem;
+    margin-top: 0;
   }
-  .pricing-card {
-    background: white;
-    border: 1px solid #e6e8ea;
-    border-radius: 10px;
-    padding: var(--space-7);
-    position: relative;
-    display: flex;
-    flex-direction: column;
+  .pc-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1rem; align-items: start;
   }
-  .pricing-card--featured {
-    border-color: var(--color-secondary, #2563EB);
-    border-width: 2px;
-    box-shadow: 0 4px 24px rgba(37, 99, 235, 0.12);
-    padding-top: calc(var(--space-7) + 8px);
+  .pc {
+    background: white; border: 1px solid #e2e8f0;
+    border-radius: 10px; padding: 1.5rem;
+    display: flex; flex-direction: column; position: relative;
   }
-  .pricing-card__popular {
-    position: absolute;
-    top: -13px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--color-secondary, #2563EB);
-    color: white;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 4px 16px;
-    border-radius: 12px;
+  .pc--pop {
+    border: 2px solid var(--color-secondary, #0051d5);
+    box-shadow: 0 8px 32px rgba(0,81,213,0.12);
+    transform: translateY(-8px);
+    padding-top: 2rem;
+  }
+  .pc--dark {
+    background: var(--color-primary-container, #0F1F3D); color: white;
+    border-color: var(--color-navy-600, #1E3A5F);
+  }
+  .pc--dark .pc__name, .pc--dark .pc__amount { color: white; }
+  .pc--dark .pc__desc { color: rgba(203,213,225,0.7); }
+  .pc--dark .pc__list li { color: rgba(203,213,225,0.85); }
+  .pc--dark .pc__chk { color: #4ade80; }
+
+  .pc__badge {
+    position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
+    background: var(--color-secondary, #0051d5); color: white;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 3px 14px; border-radius: 10px;
     white-space: nowrap;
   }
-  .pricing-card__header h3 {
-    font-family: var(--font-headline, 'Public Sans', sans-serif);
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: var(--color-primary-container, #0F1F3D);
-    margin-bottom: var(--space-1);
+  .pc__name {
+    font-family: var(--font-headline); font-size: 1.1rem;
+    font-weight: 800; color: var(--color-primary-container);
+    margin-bottom: 0.25rem;
   }
-  .pricing-card__desc {
-    font-size: 13px;
-    color: #75777e;
-    line-height: 1.5;
-    margin-bottom: var(--space-5);
+  .pc__desc {
+    font-size: 12px; color: #64748b; line-height: 1.45;
+    margin-bottom: 1rem; min-height: 36px;
   }
-  .pricing-card__price {
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
-    margin-bottom: var(--space-5);
+  .pc__price {
+    display: flex; align-items: baseline; gap: 3px;
+    margin-bottom: 1rem;
   }
-  .pricing-card__amount {
-    font-size: 2.25rem;
-    font-weight: 800;
-    color: var(--color-primary-container, #0F1F3D);
-    letter-spacing: -0.02em;
+  .pc__amount {
+    font-size: 2rem; font-weight: 800;
+    color: var(--color-primary-container); letter-spacing: -0.02em;
   }
-  .pricing-card__period {
-    font-size: 14px;
-    color: #75777e;
-  }
+  .pc__period { font-size: 13px; color: #64748b; }
 
-  /* ===== CTA Buttons ===== */
-  .pricing-card__cta {
-    display: block;
-    text-align: center;
-    padding: 12px 20px;
-    font-weight: 700;
-    font-size: 14px;
-    border-radius: 6px;
-    text-decoration: none;
-    transition: all 0.15s;
-    margin-bottom: var(--space-6);
+  /* CTAs */
+  .pc__cta {
+    display: block; text-align: center; padding: 10px 16px;
+    font-weight: 700; font-size: 13px; border-radius: 6px;
+    text-decoration: none; transition: all 0.15s; margin-bottom: 1rem;
   }
-  .pricing-card__cta--outline {
-    border: 2px solid var(--color-secondary, #2563EB);
-    color: var(--color-secondary, #2563EB);
+  .pc__cta--ghost {
+    border: 1px solid #cbd5e1; color: #475569; background: transparent;
+  }
+  .pc__cta--ghost:hover { background: #f1f5f9; color: #0F1F3D; }
+  .pc__cta--outline {
+    border: 2px solid var(--color-secondary); color: var(--color-secondary);
     background: transparent;
   }
-  .pricing-card__cta--outline:hover {
-    background: var(--color-secondary, #2563EB);
-    color: white;
+  .pc__cta--outline:hover { background: var(--color-secondary); color: white; }
+  .pc__cta--fill {
+    background: var(--color-secondary); color: white;
+    border: 2px solid var(--color-secondary);
   }
-  .pricing-card__cta--filled {
-    background: var(--color-secondary, #2563EB);
-    color: white;
-    border: 2px solid var(--color-secondary, #2563EB);
+  .pc__cta--fill:hover { background: #003ea8; border-color: #003ea8; }
+  .pc__cta--white {
+    background: white; color: var(--color-primary-container);
+    border: 2px solid rgba(255,255,255,0.3); font-weight: 700;
   }
-  .pricing-card__cta--filled:hover {
-    background: #1d4ed8;
-    border-color: #1d4ed8;
-  }
+  .pc__cta--white:hover { background: rgba(255,255,255,0.9); }
 
-  /* ===== Feature Lists ===== */
-  .pricing-card__features {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  /* Feature lists */
+  .pc__list {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 8px;
+    border-top: 1px solid rgba(0,0,0,0.06); padding-top: 1rem;
   }
-  .pricing-card__features li {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    font-size: 13px;
-    color: #374151;
-    line-height: 1.45;
+  .pc--dark .pc__list { border-top-color: rgba(255,255,255,0.1); }
+  .pc__list li {
+    display: flex; align-items: flex-start; gap: 6px;
+    font-size: 12.5px; color: #475569; line-height: 1.4;
   }
-  .pricing-card__check {
-    flex-shrink: 0;
-    color: #16a34a;
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 1.3;
-  }
-  .pricing-card__check--featured {
-    color: var(--color-secondary, #2563EB);
-  }
+  .pc__chk { flex-shrink: 0; color: #16a34a; font-weight: 700; font-size: 13px; line-height: 1.25; }
+  .pc__chk--blue { color: var(--color-secondary); }
 
-  /* ===== Trust Badges ===== */
-  .pricing-trust { text-align: center; }
-  .pricing-trust__title {
-    font-family: var(--font-headline, 'Public Sans', sans-serif);
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--color-primary-container, #0F1F3D);
-    margin-bottom: var(--space-6);
+  /* ===== Trust row ===== */
+  .trust-row { padding: 1.5rem 0 1rem; }
+  .trust-row__badges {
+    display: flex; justify-content: center; gap: 1.5rem;
+    flex-wrap: wrap; margin-bottom: 1.25rem;
   }
-  .pricing-trust__badges {
-    display: flex;
-    justify-content: center;
-    gap: var(--space-8);
-    flex-wrap: wrap;
+  .trust-row__badge {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600; color: var(--color-primary-container);
+    background: #f8fafc; border: 1px solid #e2e8f0;
+    padding: 8px 16px; border-radius: 6px;
   }
-  .pricing-trust__badge {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #f8fafc;
-    border: 1px solid #e6e8ea;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--color-primary-container, #0F1F3D);
+  .trust-row__badge .material-symbols-outlined {
+    font-size: 18px; color: var(--color-secondary);
   }
-  .pricing-trust__badge .material-symbols-outlined {
-    font-size: 20px;
-    color: var(--color-secondary, #2563EB);
+  .trust-row__guarantee {
+    display: flex; align-items: center; gap: 10px;
+    background: #f0fdf4; border: 1px solid #bbf7d0;
+    border-radius: 8px; padding: 12px 20px; max-width: 700px; margin: 0 auto;
   }
+  .trust-row__guarantee .material-symbols-outlined {
+    font-size: 24px; color: #16a34a; flex-shrink: 0;
+  }
+  .trust-row__guarantee strong { font-size: 13px; color: #15803d; }
+  .trust-row__guarantee p { font-size: 12px; color: #45474e; line-height: 1.4; margin: 0; }
 
-  /* ===== Guarantee ===== */
-  .pricing-guarantee {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
-    border-radius: 8px;
-    padding: var(--space-5) var(--space-6);
-  }
-  .pricing-guarantee .material-symbols-outlined {
-    font-size: 28px;
-    color: #16a34a;
-    flex-shrink: 0;
-  }
-  .pricing-guarantee strong {
-    display: block;
-    font-size: 14px;
-    color: #15803d;
-    margin-bottom: 2px;
-  }
-  .pricing-guarantee p {
-    font-size: 13px;
-    color: #45474e;
-    line-height: 1.4;
-    margin: 0;
-  }
+  /* ===== FAQ compact ===== */
+  .faq-compact { padding: 1.5rem 0 2rem; }
+  .faq-compact :global(.section) { padding: 0; }
+  .faq-compact :global(.faq-section) { padding: 0; }
+  .faq-compact :global(h2) { font-size: 1.4rem; margin-bottom: 1rem; }
 
-  /* ===== Methodology ===== */
-  .pricing-methodology__link {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: var(--text-sm);
-    color: #45474e;
+  /* ===== Checkout banners ===== */
+  :global(.checkout-banner) {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 18px; border-radius: 8px;
+    font-size: 14px; font-weight: 600; margin-top: 1.25rem;
+    animation: slideDown 0.3s ease;
   }
-  .pricing-methodology__link .material-symbols-outlined {
-    font-size: 18px;
-    color: var(--color-secondary, #2563EB);
+  :global(.checkout-banner--success) {
+    background: rgba(22,163,74,0.15); color: #4ade80; border: 1px solid rgba(74,222,128,0.3);
   }
-  .pricing-methodology__link a {
-    color: var(--color-secondary, #2563EB);
-    font-weight: 600;
+  :global(.checkout-banner--cancel) {
+    background: rgba(234,179,8,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3);
+  }
+  :global(.checkout-banner .material-symbols-outlined) { font-size: 20px; }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   /* ===== Responsive ===== */
   @media (max-width: 1024px) {
-    .pricing-cards { grid-template-columns: repeat(2, 1fr); }
+    .pc-grid { grid-template-columns: repeat(2, 1fr); }
+    .pc--pop { transform: none; }
   }
   @media (max-width: 640px) {
-    .pricing-cards { grid-template-columns: 1fr; }
-    .pricing-trust__badges { flex-direction: column; align-items: center; }
+    .pc-grid { grid-template-columns: 1fr; }
+    .trust-row__badges { flex-direction: column; align-items: center; }
+    .ph { padding: 5rem 0 2rem; }
   }
 </style>
 
 <script>
+  // --- Billing toggle ---
+  let currentPeriod: 'monthly' | 'annual' = 'monthly';
   const toggle = document.getElementById('billing-toggle');
   if (toggle) {
-    const buttons = toggle.querySelectorAll('.pricing-toggle__btn');
+    const buttons = toggle.querySelectorAll('.ph__toggle-btn');
     buttons.forEach((btn) => {
       btn.addEventListener('click', () => {
-        buttons.forEach((b) => b.classList.remove('pricing-toggle__btn--active'));
-        btn.classList.add('pricing-toggle__btn--active');
-        const period = btn.getAttribute('data-period') as 'monthly' | 'annual';
-
-        // Update all prices
-        document.querySelectorAll('.pricing-card__amount[data-monthly]').forEach((el) => {
-          const amount = el as HTMLElement;
-          amount.textContent = amount.dataset[period] || amount.textContent;
+        buttons.forEach((b) => b.classList.remove('ph__toggle-btn--active'));
+        btn.classList.add('ph__toggle-btn--active');
+        currentPeriod = btn.getAttribute('data-period') as 'monthly' | 'annual';
+        document.querySelectorAll('.pc__amount[data-monthly]').forEach((el) => {
+          const a = el as HTMLElement;
+          a.textContent = a.dataset[currentPeriod] || a.textContent;
         });
-        document.querySelectorAll('.pricing-card__period[data-monthly]').forEach((el) => {
-          const periodEl = el as HTMLElement;
-          periodEl.textContent = periodEl.dataset[period] || periodEl.textContent;
+        document.querySelectorAll('.pc__period[data-monthly]').forEach((el) => {
+          const p = el as HTMLElement;
+          p.textContent = p.dataset[currentPeriod] || p.textContent;
         });
       });
     });
+  }
+
+  // --- Stripe Checkout ---
+  document.querySelectorAll('[data-plan]').forEach((btn) => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const el = btn as HTMLElement;
+      const priceKey = currentPeriod === 'monthly' ? 'data-price-monthly' : 'data-price-annual';
+      const priceId = el.getAttribute(priceKey);
+      if (!priceId) return;
+
+      el.style.pointerEvents = 'none';
+      el.style.opacity = '0.6';
+      const origText = el.textContent;
+      el.textContent = '...';
+
+      try {
+        const lang = window.location.pathname.split('/')[1] || 'en';
+        const res = await fetch('/api/create-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ priceId, mode: 'subscription', lang }),
+        });
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          console.error('Checkout error:', data.error);
+          el.textContent = origText;
+          el.style.pointerEvents = '';
+          el.style.opacity = '';
+        }
+      } catch (err) {
+        console.error('Checkout fetch error:', err);
+        el.textContent = origText;
+        el.style.pointerEvents = '';
+        el.style.opacity = '';
+      }
+    });
+  });
+
+  // --- Handle success/cancel URL params ---
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('success') === 'true') {
+    const banner = document.createElement('div');
+    banner.className = 'checkout-banner checkout-banner--success';
+    banner.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Payment successful! Your subscription is now active.';
+    document.querySelector('.ph__inner')?.appendChild(banner);
+  }
+  if (params.get('canceled') === 'true') {
+    const banner = document.createElement('div');
+    banner.className = 'checkout-banner checkout-banner--cancel';
+    banner.innerHTML = '<span class="material-symbols-outlined">info</span> Checkout canceled. No charges were made.';
+    document.querySelector('.ph__inner')?.appendChild(banner);
+  }
+  if (params.get('manage') === 'true') {
+    // Redirect to customer portal (needs customerId from session/cookie)
+    const customerId = localStorage.getItem('stripe_customer_id');
+    if (customerId) {
+      fetch('/api/customer-portal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerId, lang: window.location.pathname.split('/')[1] || 'en' }),
+      }).then(r => r.json()).then(data => {
+        if (data.url) window.location.href = data.url;
+      });
+    }
   }
 </script>

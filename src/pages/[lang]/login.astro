@@ -1,0 +1,743 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { languages, type Lang } from '../../i18n/ui';
+import { fb } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+const { lang } = Astro.props as { lang: Lang };
+
+const i18n: Record<string, {
+  metaTitle: string;
+  metaDesc: string;
+  h1: string;
+  subtitle: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  passwordLabel: string;
+  passwordPlaceholder: string;
+  forgotPassword: string;
+  loginBtn: string;
+  noAccount: string;
+  signupLink: string;
+  errorInvalid: string;
+  errorNetwork: string;
+  errorGeneric: string;
+}> = {
+  en: {
+    metaTitle: 'Log In | EuroSalary.eu',
+    metaDesc: 'Log in to your EuroSalary account to access your dashboard, API keys, salary reports, and subscription management.',
+    h1: 'Log in to EuroSalary',
+    subtitle: 'Access your dashboard, API keys, and salary intelligence tools.',
+    emailLabel: 'Email address',
+    emailPlaceholder: 'you@company.com',
+    passwordLabel: 'Password',
+    passwordPlaceholder: 'Enter your password',
+    forgotPassword: 'Forgot password?',
+    loginBtn: 'Log In',
+    noAccount: 'Don\'t have an account?',
+    signupLink: 'Create one now',
+    errorInvalid: 'Invalid email or password. Please try again.',
+    errorNetwork: 'Network error. Please check your connection.',
+    errorGeneric: 'Something went wrong. Please try again later.',
+  },
+  fr: {
+    metaTitle: 'Connexion | EuroSalary.eu',
+    metaDesc: 'Connectez-vous à votre compte EuroSalary pour accéder au tableau de bord, clés API, rapports salariaux et gestion d\'abonnement.',
+    h1: 'Connexion à EuroSalary',
+    subtitle: 'Accédez à votre tableau de bord, clés API et outils d\'intelligence salariale.',
+    emailLabel: 'Adresse e-mail',
+    emailPlaceholder: 'vous@entreprise.com',
+    passwordLabel: 'Mot de passe',
+    passwordPlaceholder: 'Entrez votre mot de passe',
+    forgotPassword: 'Mot de passe oublié ?',
+    loginBtn: 'Se connecter',
+    noAccount: 'Pas encore de compte ?',
+    signupLink: 'Créer un compte',
+    errorInvalid: 'E-mail ou mot de passe invalide. Veuillez réessayer.',
+    errorNetwork: 'Erreur réseau. Vérifiez votre connexion.',
+    errorGeneric: 'Une erreur est survenue. Veuillez réessayer plus tard.',
+  },
+  de: {
+    metaTitle: 'Anmelden | EuroSalary.eu',
+    metaDesc: 'Melden Sie sich bei Ihrem EuroSalary-Konto an, um auf Dashboard, API-Schlüssel, Gehaltsberichte und Abonnementverwaltung zuzugreifen.',
+    h1: 'Bei EuroSalary anmelden',
+    subtitle: 'Zugriff auf Ihr Dashboard, API-Schlüssel und Gehaltstools.',
+    emailLabel: 'E-Mail-Adresse',
+    emailPlaceholder: 'sie@unternehmen.com',
+    passwordLabel: 'Passwort',
+    passwordPlaceholder: 'Passwort eingeben',
+    forgotPassword: 'Passwort vergessen?',
+    loginBtn: 'Anmelden',
+    noAccount: 'Noch kein Konto?',
+    signupLink: 'Jetzt erstellen',
+    errorInvalid: 'Ungültige E-Mail oder Passwort. Bitte versuchen Sie es erneut.',
+    errorNetwork: 'Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.',
+    errorGeneric: 'Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut.',
+  },
+  es: {
+    metaTitle: 'Iniciar sesión | EuroSalary.eu',
+    metaDesc: 'Inicia sesión en tu cuenta EuroSalary para acceder al panel, claves API, informes salariales y gestión de suscripción.',
+    h1: 'Iniciar sesión en EuroSalary',
+    subtitle: 'Accede a tu panel, claves API y herramientas de inteligencia salarial.',
+    emailLabel: 'Correo electrónico',
+    emailPlaceholder: 'tu@empresa.com',
+    passwordLabel: 'Contraseña',
+    passwordPlaceholder: 'Introduce tu contraseña',
+    forgotPassword: '¿Olvidaste tu contraseña?',
+    loginBtn: 'Iniciar sesión',
+    noAccount: '¿No tienes cuenta?',
+    signupLink: 'Crea una ahora',
+    errorInvalid: 'Email o contraseña inválidos. Inténtalo de nuevo.',
+    errorNetwork: 'Error de red. Comprueba tu conexión.',
+    errorGeneric: 'Algo salió mal. Inténtalo más tarde.',
+  },
+  it: {
+    metaTitle: 'Accedi | EuroSalary.eu',
+    metaDesc: 'Accedi al tuo account EuroSalary per dashboard, chiavi API, report salariali e gestione abbonamento.',
+    h1: 'Accedi a EuroSalary',
+    subtitle: 'Accedi alla tua dashboard, chiavi API e strumenti di intelligence salariale.',
+    emailLabel: 'Indirizzo e-mail',
+    emailPlaceholder: 'tu@azienda.com',
+    passwordLabel: 'Password',
+    passwordPlaceholder: 'Inserisci la tua password',
+    forgotPassword: 'Password dimenticata?',
+    loginBtn: 'Accedi',
+    noAccount: 'Non hai un account?',
+    signupLink: 'Creane uno ora',
+    errorInvalid: 'Email o password non validi. Riprova.',
+    errorNetwork: 'Errore di rete. Controlla la connessione.',
+    errorGeneric: 'Qualcosa è andato storto. Riprova più tardi.',
+  },
+  pt: {
+    metaTitle: 'Entrar | EuroSalary.eu',
+    metaDesc: 'Entre na sua conta EuroSalary para acessar o painel, chaves API, relatórios salariais e gestão de assinatura.',
+    h1: 'Entrar no EuroSalary',
+    subtitle: 'Acesse seu painel, chaves API e ferramentas de inteligência salarial.',
+    emailLabel: 'Endereço de e-mail',
+    emailPlaceholder: 'voce@empresa.com',
+    passwordLabel: 'Senha',
+    passwordPlaceholder: 'Digite sua senha',
+    forgotPassword: 'Esqueceu a senha?',
+    loginBtn: 'Entrar',
+    noAccount: 'Não tem uma conta?',
+    signupLink: 'Crie uma agora',
+    errorInvalid: 'Email ou senha inválidos. Tente novamente.',
+    errorNetwork: 'Erro de rede. Verifique sua conexão.',
+    errorGeneric: 'Algo deu errado. Tente novamente mais tarde.',
+  },
+  nl: {
+    metaTitle: 'Inloggen | EuroSalary.eu',
+    metaDesc: 'Log in op uw EuroSalary-account voor dashboard, API-sleutels, salarisrapporten en abonnementsbeheer.',
+    h1: 'Inloggen bij EuroSalary',
+    subtitle: 'Toegang tot uw dashboard, API-sleutels en salarisintelligentietools.',
+    emailLabel: 'E-mailadres',
+    emailPlaceholder: 'u@bedrijf.com',
+    passwordLabel: 'Wachtwoord',
+    passwordPlaceholder: 'Voer uw wachtwoord in',
+    forgotPassword: 'Wachtwoord vergeten?',
+    loginBtn: 'Inloggen',
+    noAccount: 'Nog geen account?',
+    signupLink: 'Maak er nu een aan',
+    errorInvalid: 'Ongeldig e-mailadres of wachtwoord. Probeer het opnieuw.',
+    errorNetwork: 'Netwerkfout. Controleer uw verbinding.',
+    errorGeneric: 'Er is iets misgegaan. Probeer het later opnieuw.',
+  },
+  pl: {
+    metaTitle: 'Zaloguj się | EuroSalary.eu',
+    metaDesc: 'Zaloguj się na konto EuroSalary, aby uzyskać dostęp do panelu, kluczy API, raportów płacowych i zarządzania subskrypcją.',
+    h1: 'Zaloguj się do EuroSalary',
+    subtitle: 'Uzyskaj dostęp do panelu, kluczy API i narzędzi analizy wynagrodzeń.',
+    emailLabel: 'Adres e-mail',
+    emailPlaceholder: 'ty@firma.com',
+    passwordLabel: 'Hasło',
+    passwordPlaceholder: 'Wpisz hasło',
+    forgotPassword: 'Nie pamiętasz hasła?',
+    loginBtn: 'Zaloguj się',
+    noAccount: 'Nie masz konta?',
+    signupLink: 'Utwórz je teraz',
+    errorInvalid: 'Nieprawidłowy e-mail lub hasło. Spróbuj ponownie.',
+    errorNetwork: 'Błąd sieci. Sprawdź połączenie.',
+    errorGeneric: 'Coś poszło nie tak. Spróbuj ponownie później.',
+  },
+  ro: {
+    metaTitle: 'Autentificare | EuroSalary.eu',
+    metaDesc: 'Conectați-vă la contul EuroSalary pentru a accesa tabloul de bord, cheile API, rapoartele salariale și gestionarea abonamentului.',
+    h1: 'Autentificare EuroSalary',
+    subtitle: 'Accesați tabloul de bord, cheile API și instrumentele de inteligență salarială.',
+    emailLabel: 'Adresă e-mail',
+    emailPlaceholder: 'dvs@companie.com',
+    passwordLabel: 'Parolă',
+    passwordPlaceholder: 'Introduceți parola',
+    forgotPassword: 'Ați uitat parola?',
+    loginBtn: 'Autentificare',
+    noAccount: 'Nu aveți un cont?',
+    signupLink: 'Creați unul acum',
+    errorInvalid: 'E-mail sau parolă incorectă. Încercați din nou.',
+    errorNetwork: 'Eroare de rețea. Verificați conexiunea.',
+    errorGeneric: 'Ceva nu a funcționat. Încercați mai târziu.',
+  },
+  cs: {
+    metaTitle: 'Přihlášení | EuroSalary.eu',
+    metaDesc: 'Přihlaste se ke svému účtu EuroSalary pro přístup k dashboardu, API klíčům, mzdovým reportům a správě předplatného.',
+    h1: 'Přihlášení do EuroSalary',
+    subtitle: 'Přistupte ke svému dashboardu, API klíčům a nástrojům mzdové analýzy.',
+    emailLabel: 'E-mailová adresa',
+    emailPlaceholder: 'vy@firma.cz',
+    passwordLabel: 'Heslo',
+    passwordPlaceholder: 'Zadejte heslo',
+    forgotPassword: 'Zapomněli jste heslo?',
+    loginBtn: 'Přihlásit se',
+    noAccount: 'Nemáte účet?',
+    signupLink: 'Vytvořte si ho',
+    errorInvalid: 'Neplatný e-mail nebo heslo. Zkuste to znovu.',
+    errorNetwork: 'Chyba sítě. Zkontrolujte připojení.',
+    errorGeneric: 'Něco se pokazilo. Zkuste to později.',
+  },
+  sv: {
+    metaTitle: 'Logga in | EuroSalary.eu',
+    metaDesc: 'Logga in på ditt EuroSalary-konto för att komma åt instrumentpanel, API-nycklar, löneapporter och prenumerationshantering.',
+    h1: 'Logga in på EuroSalary',
+    subtitle: 'Få tillgång till din instrumentpanel, API-nycklar och löneintelligensverktyg.',
+    emailLabel: 'E-postadress',
+    emailPlaceholder: 'du@foretag.se',
+    passwordLabel: 'Lösenord',
+    passwordPlaceholder: 'Ange ditt lösenord',
+    forgotPassword: 'Glömt lösenordet?',
+    loginBtn: 'Logga in',
+    noAccount: 'Har du inget konto?',
+    signupLink: 'Skapa ett nu',
+    errorInvalid: 'Ogiltig e-post eller lösenord. Försök igen.',
+    errorNetwork: 'Nätverksfel. Kontrollera din anslutning.',
+    errorGeneric: 'Något gick fel. Försök igen senare.',
+  },
+  da: {
+    metaTitle: 'Log ind | EuroSalary.eu',
+    metaDesc: 'Log ind på din EuroSalary-konto for at få adgang til dashboard, API-nøgler, lønrapporter og abonnementsstyring.',
+    h1: 'Log ind på EuroSalary',
+    subtitle: 'Få adgang til dit dashboard, API-nøgler og lønintelligensværktøjer.',
+    emailLabel: 'E-mailadresse',
+    emailPlaceholder: 'dig@virksomhed.dk',
+    passwordLabel: 'Adgangskode',
+    passwordPlaceholder: 'Indtast din adgangskode',
+    forgotPassword: 'Glemt adgangskode?',
+    loginBtn: 'Log ind',
+    noAccount: 'Har du ikke en konto?',
+    signupLink: 'Opret en nu',
+    errorInvalid: 'Ugyldig e-mail eller adgangskode. Prøv igen.',
+    errorNetwork: 'Netværksfejl. Tjek din forbindelse.',
+    errorGeneric: 'Noget gik galt. Prøv igen senere.',
+  },
+  fi: {
+    metaTitle: 'Kirjaudu sisään | EuroSalary.eu',
+    metaDesc: 'Kirjaudu EuroSalary-tilillesi päästäksesi hallintapaneeliin, API-avaimiin, palkkaraportteihin ja tilauksen hallintaan.',
+    h1: 'Kirjaudu EuroSalaryyn',
+    subtitle: 'Pääsy hallintapaneeliin, API-avaimiin ja palkkatietotyökaluihin.',
+    emailLabel: 'Sähköpostiosoite',
+    emailPlaceholder: 'sina@yritys.fi',
+    passwordLabel: 'Salasana',
+    passwordPlaceholder: 'Syötä salasanasi',
+    forgotPassword: 'Unohditko salasanan?',
+    loginBtn: 'Kirjaudu sisään',
+    noAccount: 'Eikö sinulla ole tiliä?',
+    signupLink: 'Luo tili nyt',
+    errorInvalid: 'Virheellinen sähköposti tai salasana. Yritä uudelleen.',
+    errorNetwork: 'Verkkovirhe. Tarkista yhteys.',
+    errorGeneric: 'Jokin meni pieleen. Yritä myöhemmin uudelleen.',
+  },
+  el: {
+    metaTitle: 'Σύνδεση | EuroSalary.eu',
+    metaDesc: 'Συνδεθείτε στον λογαριασμό EuroSalary για πρόσβαση στον πίνακα ελέγχου, κλειδιά API, μισθολογικές αναφορές και διαχείριση συνδρομής.',
+    h1: 'Σύνδεση στο EuroSalary',
+    subtitle: 'Πρόσβαση στον πίνακα ελέγχου, κλειδιά API και εργαλεία μισθολογικής ανάλυσης.',
+    emailLabel: 'Διεύθυνση e-mail',
+    emailPlaceholder: 'εσείς@εταιρεία.gr',
+    passwordLabel: 'Κωδικός πρόσβασης',
+    passwordPlaceholder: 'Εισάγετε τον κωδικό σας',
+    forgotPassword: 'Ξεχάσατε τον κωδικό;',
+    loginBtn: 'Σύνδεση',
+    noAccount: 'Δεν έχετε λογαριασμό;',
+    signupLink: 'Δημιουργήστε έναν τώρα',
+    errorInvalid: 'Μη έγκυρο e-mail ή κωδικός. Δοκιμάστε ξανά.',
+    errorNetwork: 'Σφάλμα δικτύου. Ελέγξτε τη σύνδεσή σας.',
+    errorGeneric: 'Κάτι πήγε στραβά. Δοκιμάστε αργότερα.',
+  },
+  hu: {
+    metaTitle: 'Bejelentkezés | EuroSalary.eu',
+    metaDesc: 'Jelentkezzen be EuroSalary-fiókjába a vezérlőpult, API-kulcsok, bérjelentések és előfizetés-kezelés eléréséhez.',
+    h1: 'Bejelentkezés az EuroSalaryba',
+    subtitle: 'Hozzáférés a vezérlőpulthoz, API-kulcsokhoz és bérelemző eszközökhöz.',
+    emailLabel: 'E-mail cím',
+    emailPlaceholder: 'on@ceg.hu',
+    passwordLabel: 'Jelszó',
+    passwordPlaceholder: 'Adja meg jelszavát',
+    forgotPassword: 'Elfelejtett jelszó?',
+    loginBtn: 'Bejelentkezés',
+    noAccount: 'Nincs még fiókja?',
+    signupLink: 'Hozzon létre egyet',
+    errorInvalid: 'Érvénytelen e-mail vagy jelszó. Próbálja újra.',
+    errorNetwork: 'Hálózati hiba. Ellenőrizze a kapcsolatot.',
+    errorGeneric: 'Valami hiba történt. Próbálja később.',
+  },
+  sk: {
+    metaTitle: 'Prihlásenie | EuroSalary.eu',
+    metaDesc: 'Prihláste sa do svojho účtu EuroSalary pre prístup k dashboardu, API kľúčom, mzdovým reportom a správe predplatného.',
+    h1: 'Prihlásenie do EuroSalary',
+    subtitle: 'Prístup k dashboardu, API kľúčom a nástrojom mzdovej analýzy.',
+    emailLabel: 'E-mailová adresa',
+    emailPlaceholder: 'vy@firma.sk',
+    passwordLabel: 'Heslo',
+    passwordPlaceholder: 'Zadajte heslo',
+    forgotPassword: 'Zabudli ste heslo?',
+    loginBtn: 'Prihlásiť sa',
+    noAccount: 'Nemáte účet?',
+    signupLink: 'Vytvorte si ho',
+    errorInvalid: 'Neplatný e-mail alebo heslo. Skúste to znova.',
+    errorNetwork: 'Chyba siete. Skontrolujte pripojenie.',
+    errorGeneric: 'Niečo sa pokazilo. Skúste to neskôr.',
+  },
+  bg: {
+    metaTitle: 'Вход | EuroSalary.eu',
+    metaDesc: 'Влезте в акаунта си в EuroSalary за достъп до табло, API ключове, доклади за заплати и управление на абонамента.',
+    h1: 'Вход в EuroSalary',
+    subtitle: 'Достъп до таблото, API ключовете и инструментите за анализ на заплати.',
+    emailLabel: 'Имейл адрес',
+    emailPlaceholder: 'вие@компания.bg',
+    passwordLabel: 'Парола',
+    passwordPlaceholder: 'Въведете паролата си',
+    forgotPassword: 'Забравена парола?',
+    loginBtn: 'Вход',
+    noAccount: 'Нямате акаунт?',
+    signupLink: 'Създайте един сега',
+    errorInvalid: 'Невалиден имейл или парола. Опитайте отново.',
+    errorNetwork: 'Мрежова грешка. Проверете връзката си.',
+    errorGeneric: 'Нещо се обърка. Опитайте по-късно.',
+  },
+  hr: {
+    metaTitle: 'Prijava | EuroSalary.eu',
+    metaDesc: 'Prijavite se na svoj EuroSalary račun za pristup nadzornoj ploči, API ključevima, izvješćima o plaćama i upravljanju pretplatom.',
+    h1: 'Prijava u EuroSalary',
+    subtitle: 'Pristupite nadzornoj ploči, API ključevima i alatima za analizu plaća.',
+    emailLabel: 'E-mail adresa',
+    emailPlaceholder: 'vi@tvrtka.hr',
+    passwordLabel: 'Lozinka',
+    passwordPlaceholder: 'Unesite lozinku',
+    forgotPassword: 'Zaboravljena lozinka?',
+    loginBtn: 'Prijava',
+    noAccount: 'Nemate račun?',
+    signupLink: 'Izradite ga sada',
+    errorInvalid: 'Neispravna e-mail adresa ili lozinka. Pokušajte ponovo.',
+    errorNetwork: 'Mrežna greška. Provjerite vezu.',
+    errorGeneric: 'Nešto je pošlo po krivu. Pokušajte kasnije.',
+  },
+  sl: {
+    metaTitle: 'Prijava | EuroSalary.eu',
+    metaDesc: 'Prijavite se v svoj račun EuroSalary za dostop do nadzorne plošče, API ključev, poročil o plačah in upravljanja naročnine.',
+    h1: 'Prijava v EuroSalary',
+    subtitle: 'Dostopajte do nadzorne plošče, API ključev in orodij za analizo plač.',
+    emailLabel: 'E-poštni naslov',
+    emailPlaceholder: 'vi@podjetje.si',
+    passwordLabel: 'Geslo',
+    passwordPlaceholder: 'Vnesite geslo',
+    forgotPassword: 'Pozabljeno geslo?',
+    loginBtn: 'Prijava',
+    noAccount: 'Nimate računa?',
+    signupLink: 'Ustvarite ga zdaj',
+    errorInvalid: 'Neveljaven e-poštni naslov ali geslo. Poskusite znova.',
+    errorNetwork: 'Omrežna napaka. Preverite povezavo.',
+    errorGeneric: 'Nekaj je šlo narobe. Poskusite pozneje.',
+  },
+  lt: {
+    metaTitle: 'Prisijungimas | EuroSalary.eu',
+    metaDesc: 'Log in to your EuroSalary account to access your dashboard, API keys, salary reports, and subscription management.',
+    h1: 'Prisijungti prie EuroSalary',
+    subtitle: 'Access your dashboard, API keys, and salary intelligence tools.',
+    emailLabel: 'El. pašto adresas',
+    emailPlaceholder: 'jus@imone.lt',
+    passwordLabel: 'Slaptažodis',
+    passwordPlaceholder: 'Įveskite slaptažodį',
+    forgotPassword: 'Pamiršote slaptažodį?',
+    loginBtn: 'Prisijungti',
+    noAccount: 'Neturite paskyros?',
+    signupLink: 'Sukurkite dabar',
+    errorInvalid: 'Invalid email or password. Please try again.',
+    errorNetwork: 'Network error. Please check your connection.',
+    errorGeneric: 'Something went wrong. Please try again later.',
+  },
+  lv: {
+    metaTitle: 'Pieteikties | EuroSalary.eu',
+    metaDesc: 'Log in to your EuroSalary account to access your dashboard, API keys, salary reports, and subscription management.',
+    h1: 'Pieteikties EuroSalary',
+    subtitle: 'Access your dashboard, API keys, and salary intelligence tools.',
+    emailLabel: 'E-pasta adrese',
+    emailPlaceholder: 'jus@uznemums.lv',
+    passwordLabel: 'Parole',
+    passwordPlaceholder: 'Ievadiet paroli',
+    forgotPassword: 'Aizmirsāt paroli?',
+    loginBtn: 'Pieteikties',
+    noAccount: 'Nav konta?',
+    signupLink: 'Izveidojiet tagad',
+    errorInvalid: 'Invalid email or password. Please try again.',
+    errorNetwork: 'Network error. Please check your connection.',
+    errorGeneric: 'Something went wrong. Please try again later.',
+  },
+  et: {
+    metaTitle: 'Logi sisse | EuroSalary.eu',
+    metaDesc: 'Log in to your EuroSalary account to access your dashboard, API keys, salary reports, and subscription management.',
+    h1: 'Logi sisse EuroSalarysse',
+    subtitle: 'Access your dashboard, API keys, and salary intelligence tools.',
+    emailLabel: 'E-posti aadress',
+    emailPlaceholder: 'sina@ettevote.ee',
+    passwordLabel: 'Parool',
+    passwordPlaceholder: 'Sisesta parool',
+    forgotPassword: 'Unustasid parooli?',
+    loginBtn: 'Logi sisse',
+    noAccount: 'Pole kontot?',
+    signupLink: 'Loo see nüüd',
+    errorInvalid: 'Invalid email or password. Please try again.',
+    errorNetwork: 'Network error. Please check your connection.',
+    errorGeneric: 'Something went wrong. Please try again later.',
+  },
+  mt: {
+    metaTitle: 'Idħol | EuroSalary.eu',
+    metaDesc: 'Log in to your EuroSalary account to access your dashboard, API keys, salary reports, and subscription management.',
+    h1: 'Idħol f\'EuroSalary',
+    subtitle: 'Access your dashboard, API keys, and salary intelligence tools.',
+    emailLabel: 'Indirizz tal-email',
+    emailPlaceholder: 'int@kumpanija.mt',
+    passwordLabel: 'Password',
+    passwordPlaceholder: 'Daħħal il-password',
+    forgotPassword: 'Insejt il-password?',
+    loginBtn: 'Idħol',
+    noAccount: 'M\'għandekx kont?',
+    signupLink: 'Oħloq wieħed issa',
+    errorInvalid: 'Invalid email or password. Please try again.',
+    errorNetwork: 'Network error. Please check your connection.',
+    errorGeneric: 'Something went wrong. Please try again later.',
+  },
+  ga: {
+    metaTitle: 'Logáil Isteach | EuroSalary.eu',
+    metaDesc: 'Log in to your EuroSalary account to access your dashboard, API keys, salary reports, and subscription management.',
+    h1: 'Logáil isteach go EuroSalary',
+    subtitle: 'Access your dashboard, API keys, and salary intelligence tools.',
+    emailLabel: 'Seoladh ríomhphoist',
+    emailPlaceholder: 'tu@comhlacht.ie',
+    passwordLabel: 'Pasfhocal',
+    passwordPlaceholder: 'Cuir isteach do phasfhocal',
+    forgotPassword: 'Dearmad ar phasfhocal?',
+    loginBtn: 'Logáil Isteach',
+    noAccount: 'Níl cuntas agat?',
+    signupLink: 'Cruthaigh ceann anois',
+    errorInvalid: 'Invalid email or password. Please try again.',
+    errorNetwork: 'Network error. Please check your connection.',
+    errorGeneric: 'Something went wrong. Please try again later.',
+  },
+};
+
+const c = fb(i18n, lang);
+---
+
+<BaseLayout title={c.metaTitle} description={c.metaDesc}>
+  <section class="auth">
+    <div class="auth__card">
+      <div class="auth__header">
+        <a href={`/${lang}/`} class="auth__logo" aria-label="EuroSalary.eu — Home">
+          Euro<span>Salary</span><small>.eu</small>
+        </a>
+        <h1 class="auth__title">{c.h1}</h1>
+        <p class="auth__subtitle">{c.subtitle}</p>
+      </div>
+
+      <form class="auth__form" id="login-form" novalidate>
+        <div class="auth__field">
+          <label for="login-email">{c.emailLabel}</label>
+          <div class="auth__input-wrap">
+            <span class="material-symbols-outlined">mail</span>
+            <input type="email" id="login-email" name="email" placeholder={c.emailPlaceholder} required autocomplete="email" />
+          </div>
+        </div>
+        <div class="auth__field">
+          <div class="auth__label-row">
+            <label for="login-password">{c.passwordLabel}</label>
+            <a href={`/${lang}/forgot-password/`} class="auth__forgot">{c.forgotPassword}</a>
+          </div>
+          <div class="auth__input-wrap">
+            <span class="material-symbols-outlined">lock</span>
+            <input type="password" id="login-password" name="password" placeholder={c.passwordPlaceholder} required autocomplete="current-password" />
+            <button type="button" class="auth__toggle-pw" aria-label="Toggle password visibility">
+              <span class="material-symbols-outlined">visibility</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="auth__error" id="login-error" role="alert" aria-live="polite"></div>
+
+        <button type="submit" class="auth__submit" id="login-btn">
+          <span class="auth__submit-text">{c.loginBtn}</span>
+          <span class="auth__spinner"></span>
+        </button>
+      </form>
+
+      <p class="auth__alt">
+        {c.noAccount} <a href={`/${lang}/signup/`}>{c.signupLink}</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<script define:vars={{ lang, errorInvalid: c.errorInvalid, errorNetwork: c.errorNetwork, errorGeneric: c.errorGeneric }}>
+  const form = document.getElementById('login-form');
+  const emailInput = document.getElementById('login-email');
+  const passwordInput = document.getElementById('login-password');
+  const errorEl = document.getElementById('login-error');
+  const submitBtn = document.getElementById('login-btn');
+
+  // Toggle password visibility
+  document.querySelectorAll('.auth__toggle-pw').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const input = btn.parentElement.querySelector('input');
+      const icon = btn.querySelector('.material-symbols-outlined');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = 'visibility_off';
+      } else {
+        input.type = 'password';
+        icon.textContent = 'visibility';
+      }
+    });
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorEl.textContent = '';
+    errorEl.classList.remove('auth__error--show');
+    submitBtn.classList.add('auth__submit--loading');
+    submitBtn.disabled = true;
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (res.ok) {
+        window.location.href = `/${lang}/dashboard/`;
+      } else {
+        const data = await res.json().catch(() => ({}));
+        errorEl.textContent = data.error || errorInvalid;
+        errorEl.classList.add('auth__error--show');
+      }
+    } catch (err) {
+      errorEl.textContent = err.message.includes('fetch') ? errorNetwork : errorGeneric;
+      errorEl.classList.add('auth__error--show');
+    } finally {
+      submitBtn.classList.remove('auth__submit--loading');
+      submitBtn.disabled = false;
+    }
+  });
+</script>
+
+<style>
+  .auth {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(37, 99, 235, 0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 80%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
+      var(--color-primary-container, #0F1F3D);
+  }
+
+  .auth__card {
+    width: 100%;
+    max-width: 440px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    backdrop-filter: blur(20px);
+  }
+
+  .auth__header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .auth__logo {
+    font-family: var(--font-heading, 'Public Sans', sans-serif);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-white, #fff);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .auth__logo span { color: var(--color-secondary, #2563EB); }
+  .auth__logo small { font-size: 0.6em; opacity: 0.5; font-weight: 400; }
+
+  .auth__title {
+    font-family: var(--font-heading, 'Public Sans', sans-serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-white, #fff);
+    margin: 1.25rem 0 0.5rem;
+  }
+
+  .auth__subtitle {
+    font-size: 0.9rem;
+    color: rgba(203, 213, 225, 0.7);
+    line-height: 1.5;
+  }
+
+  .auth__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .auth__field label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(203, 213, 225, 0.9);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .auth__label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .auth__forgot {
+    font-size: 0.78rem;
+    color: var(--color-secondary, #2563EB);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .auth__forgot:hover { text-decoration: underline; }
+
+  .auth__input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 0 0.75rem;
+    transition: border-color 0.15s;
+  }
+  .auth__input-wrap:focus-within {
+    border-color: var(--color-secondary, #2563EB);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  }
+  .auth__input-wrap .material-symbols-outlined {
+    font-size: 18px;
+    color: rgba(148, 163, 184, 0.6);
+  }
+  .auth__input-wrap input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--color-white, #fff);
+    font-size: 0.95rem;
+    padding: 0.7rem 0;
+    outline: none;
+    font-family: var(--font-sans, 'Inter', sans-serif);
+  }
+  .auth__input-wrap input::placeholder {
+    color: rgba(148, 163, 184, 0.4);
+  }
+
+  .auth__toggle-pw {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+  }
+  .auth__toggle-pw .material-symbols-outlined {
+    font-size: 18px;
+    color: rgba(148, 163, 184, 0.5);
+    transition: color 0.15s;
+  }
+  .auth__toggle-pw:hover .material-symbols-outlined { color: rgba(203, 213, 225, 0.8); }
+
+  .auth__error {
+    font-size: 0.85rem;
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.08);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem;
+    display: none;
+  }
+  .auth__error--show { display: block; }
+
+  .auth__submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.8rem;
+    background: var(--color-secondary, #2563EB);
+    color: var(--color-white, #fff);
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: var(--font-sans, 'Inter', sans-serif);
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .auth__submit:hover { background: #1d4ed8; }
+  .auth__submit:active { transform: scale(0.98); }
+  .auth__submit:disabled { opacity: 0.7; cursor: not-allowed; }
+
+  .auth__spinner {
+    display: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: auth-spin 0.6s linear infinite;
+  }
+  .auth__submit--loading .auth__submit-text { display: none; }
+  .auth__submit--loading .auth__spinner { display: block; }
+
+  @keyframes auth-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .auth__alt {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.88rem;
+    color: rgba(203, 213, 225, 0.6);
+  }
+  .auth__alt a {
+    color: var(--color-secondary, #2563EB);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .auth__alt a:hover { text-decoration: underline; }
+
+  @media (max-width: 480px) {
+    .auth__card { padding: 2rem 1.25rem; }
+    .auth__title { font-size: 1.3rem; }
+  }
+</style>

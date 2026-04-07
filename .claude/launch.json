@@ -2,10 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "eurosalary-dev",
+      "name": "pitch-preview",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["astro", "dev", "--port", "4321"],
-      "port": 4321
+      "runtimeArgs": ["http-server", ".", "-p", "8090", "-c-1"],
+      "port": 8090
     }
   ]
 }

@@ -1,0 +1,1275 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { languages, type Lang } from '../../../i18n/ui';
+import { fb } from '../../../i18n/utils';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+const { lang } = Astro.props as { lang: Lang };
+
+const i18n: Record<string, {
+  metaTitle: string;
+  metaDesc: string;
+  h1: string;
+  welcome: string;
+  planLabel: string;
+  statusLabel: string;
+  statusActive: string;
+  statusInactive: string;
+  nextBilling: string;
+  apiKeyTitle: string;
+  apiKeyDesc: string;
+  copyBtn: string;
+  copiedBtn: string;
+  usageTitle: string;
+  usageToday: string;
+  usageOf: string;
+  requestsLabel: string;
+  quickLinks: string;
+  linkCsvExport: string;
+  linkNetCalc: string;
+  linkApiDocs: string;
+  linkCountries: string;
+  manageSubscription: string;
+  upgradePlan: string;
+  upgradeDesc: string;
+  logoutBtn: string;
+  loading: string;
+  freePlan: string;
+}> = {
+  en: {
+    metaTitle: 'Dashboard | EuroSalary.eu',
+    metaDesc: 'Your EuroSalary dashboard. Manage your subscription, view API usage, and access salary intelligence tools.',
+    h1: 'Dashboard',
+    welcome: 'Welcome back',
+    planLabel: 'Current Plan',
+    statusLabel: 'Status',
+    statusActive: 'Active',
+    statusInactive: 'Inactive',
+    nextBilling: 'Next billing date',
+    apiKeyTitle: 'Your API Key',
+    apiKeyDesc: 'Use this key in the Authorization header for all API requests.',
+    copyBtn: 'Copy',
+    copiedBtn: 'Copied!',
+    usageTitle: 'API Usage',
+    usageToday: 'Requests today',
+    usageOf: 'of',
+    requestsLabel: 'requests',
+    quickLinks: 'Quick Links',
+    linkCsvExport: 'CSV Export',
+    linkNetCalc: 'Net Salary Calculator',
+    linkApiDocs: 'API Documentation',
+    linkCountries: 'Browse Countries',
+    manageSubscription: 'Manage Subscription',
+    upgradePlan: 'Upgrade to Pro',
+    upgradeDesc: 'Unlock city-level data, net salary calculations, and 10,000 API requests per day.',
+    logoutBtn: 'Log Out',
+    loading: 'Loading...',
+    freePlan: 'Free',
+  },
+  fr: {
+    metaTitle: 'Tableau de bord | EuroSalary.eu',
+    metaDesc: 'Votre tableau de bord EuroSalary. Gérez votre abonnement, consultez l\'utilisation API et accédez aux outils d\'intelligence salariale.',
+    h1: 'Tableau de bord',
+    welcome: 'Bienvenue',
+    planLabel: 'Plan actuel',
+    statusLabel: 'Statut',
+    statusActive: 'Actif',
+    statusInactive: 'Inactif',
+    nextBilling: 'Prochaine facturation',
+    apiKeyTitle: 'Votre clé API',
+    apiKeyDesc: 'Utilisez cette clé dans l\'en-tête Authorization pour toutes les requêtes API.',
+    copyBtn: 'Copier',
+    copiedBtn: 'Copié !',
+    usageTitle: 'Utilisation API',
+    usageToday: 'Requêtes aujourd\'hui',
+    usageOf: 'sur',
+    requestsLabel: 'requêtes',
+    quickLinks: 'Liens rapides',
+    linkCsvExport: 'Export CSV',
+    linkNetCalc: 'Calculateur salaire net',
+    linkApiDocs: 'Documentation API',
+    linkCountries: 'Parcourir les pays',
+    manageSubscription: 'Gérer l\'abonnement',
+    upgradePlan: 'Passer au Pro',
+    upgradeDesc: 'Débloquez les données par ville, les calculs de salaire net et 10 000 requêtes API par jour.',
+    logoutBtn: 'Déconnexion',
+    loading: 'Chargement...',
+    freePlan: 'Gratuit',
+  },
+  de: {
+    metaTitle: 'Dashboard | EuroSalary.eu',
+    metaDesc: 'Ihr EuroSalary-Dashboard. Abonnement verwalten, API-Nutzung anzeigen und auf Gehaltstools zugreifen.',
+    h1: 'Dashboard',
+    welcome: 'Willkommen zurück',
+    planLabel: 'Aktueller Plan',
+    statusLabel: 'Status',
+    statusActive: 'Aktiv',
+    statusInactive: 'Inaktiv',
+    nextBilling: 'Nächstes Abrechnungsdatum',
+    apiKeyTitle: 'Ihr API-Schlüssel',
+    apiKeyDesc: 'Verwenden Sie diesen Schlüssel im Authorization-Header für alle API-Anfragen.',
+    copyBtn: 'Kopieren',
+    copiedBtn: 'Kopiert!',
+    usageTitle: 'API-Nutzung',
+    usageToday: 'Anfragen heute',
+    usageOf: 'von',
+    requestsLabel: 'Anfragen',
+    quickLinks: 'Schnellzugriff',
+    linkCsvExport: 'CSV-Export',
+    linkNetCalc: 'Nettogehaltsrechner',
+    linkApiDocs: 'API-Dokumentation',
+    linkCountries: 'Länder durchsuchen',
+    manageSubscription: 'Abonnement verwalten',
+    upgradePlan: 'Auf Pro upgraden',
+    upgradeDesc: 'Stadtdaten, Nettogehaltsberechnungen und 10.000 API-Anfragen pro Tag freischalten.',
+    logoutBtn: 'Abmelden',
+    loading: 'Laden...',
+    freePlan: 'Kostenlos',
+  },
+  es: {
+    metaTitle: 'Panel de control | EuroSalary.eu',
+    metaDesc: 'Tu panel de EuroSalary. Gestiona tu suscripción, consulta el uso de API y accede a herramientas de inteligencia salarial.',
+    h1: 'Panel de control',
+    welcome: 'Bienvenido de nuevo',
+    planLabel: 'Plan actual',
+    statusLabel: 'Estado',
+    statusActive: 'Activo',
+    statusInactive: 'Inactivo',
+    nextBilling: 'Próxima fecha de facturación',
+    apiKeyTitle: 'Tu clave API',
+    apiKeyDesc: 'Usa esta clave en el header Authorization para todas las solicitudes API.',
+    copyBtn: 'Copiar',
+    copiedBtn: '¡Copiado!',
+    usageTitle: 'Uso de API',
+    usageToday: 'Solicitudes hoy',
+    usageOf: 'de',
+    requestsLabel: 'solicitudes',
+    quickLinks: 'Enlaces rápidos',
+    linkCsvExport: 'Exportar CSV',
+    linkNetCalc: 'Calculadora salario neto',
+    linkApiDocs: 'Documentación API',
+    linkCountries: 'Explorar países',
+    manageSubscription: 'Gestionar suscripción',
+    upgradePlan: 'Actualizar a Pro',
+    upgradeDesc: 'Desbloquea datos por ciudad, cálculos de salario neto y 10.000 solicitudes API al día.',
+    logoutBtn: 'Cerrar sesión',
+    loading: 'Cargando...',
+    freePlan: 'Gratuito',
+  },
+  it: {
+    metaTitle: 'Dashboard | EuroSalary.eu',
+    metaDesc: 'La tua dashboard EuroSalary. Gestisci l\'abbonamento, visualizza l\'utilizzo API e accedi agli strumenti di intelligence salariale.',
+    h1: 'Dashboard',
+    welcome: 'Bentornato',
+    planLabel: 'Piano attuale',
+    statusLabel: 'Stato',
+    statusActive: 'Attivo',
+    statusInactive: 'Inattivo',
+    nextBilling: 'Prossima fatturazione',
+    apiKeyTitle: 'La tua chiave API',
+    apiKeyDesc: 'Usa questa chiave nell\'header Authorization per tutte le richieste API.',
+    copyBtn: 'Copia',
+    copiedBtn: 'Copiato!',
+    usageTitle: 'Utilizzo API',
+    usageToday: 'Richieste oggi',
+    usageOf: 'di',
+    requestsLabel: 'richieste',
+    quickLinks: 'Link rapidi',
+    linkCsvExport: 'Esportazione CSV',
+    linkNetCalc: 'Calcolatore stipendio netto',
+    linkApiDocs: 'Documentazione API',
+    linkCountries: 'Esplora paesi',
+    manageSubscription: 'Gestisci abbonamento',
+    upgradePlan: 'Passa a Pro',
+    upgradeDesc: 'Sblocca dati per città, calcoli di stipendio netto e 10.000 richieste API al giorno.',
+    logoutBtn: 'Esci',
+    loading: 'Caricamento...',
+    freePlan: 'Gratuito',
+  },
+  pt: {
+    metaTitle: 'Painel | EuroSalary.eu',
+    metaDesc: 'Seu painel EuroSalary. Gerencie sua assinatura, veja o uso da API e acesse ferramentas de inteligência salarial.',
+    h1: 'Painel',
+    welcome: 'Bem-vindo de volta',
+    planLabel: 'Plano atual',
+    statusLabel: 'Status',
+    statusActive: 'Ativo',
+    statusInactive: 'Inativo',
+    nextBilling: 'Próxima cobrança',
+    apiKeyTitle: 'Sua chave API',
+    apiKeyDesc: 'Use esta chave no header Authorization para todas as requisições da API.',
+    copyBtn: 'Copiar',
+    copiedBtn: 'Copiado!',
+    usageTitle: 'Uso da API',
+    usageToday: 'Requisições hoje',
+    usageOf: 'de',
+    requestsLabel: 'requisições',
+    quickLinks: 'Links rápidos',
+    linkCsvExport: 'Exportar CSV',
+    linkNetCalc: 'Calculadora de salário líquido',
+    linkApiDocs: 'Documentação da API',
+    linkCountries: 'Explorar países',
+    manageSubscription: 'Gerenciar assinatura',
+    upgradePlan: 'Atualizar para Pro',
+    upgradeDesc: 'Desbloqueie dados por cidade, cálculos de salário líquido e 10.000 requisições API por dia.',
+    logoutBtn: 'Sair',
+    loading: 'Carregando...',
+    freePlan: 'Gratuito',
+  },
+  nl: {
+    metaTitle: 'Dashboard | EuroSalary.eu',
+    metaDesc: 'Uw EuroSalary-dashboard. Beheer uw abonnement, bekijk API-gebruik en toegang tot salarisintelligentietools.',
+    h1: 'Dashboard',
+    welcome: 'Welkom terug',
+    planLabel: 'Huidig plan',
+    statusLabel: 'Status',
+    statusActive: 'Actief',
+    statusInactive: 'Inactief',
+    nextBilling: 'Volgende factuurdatum',
+    apiKeyTitle: 'Uw API-sleutel',
+    apiKeyDesc: 'Gebruik deze sleutel in de Authorization-header voor alle API-verzoeken.',
+    copyBtn: 'Kopiëren',
+    copiedBtn: 'Gekopieerd!',
+    usageTitle: 'API-gebruik',
+    usageToday: 'Verzoeken vandaag',
+    usageOf: 'van',
+    requestsLabel: 'verzoeken',
+    quickLinks: 'Snelkoppelingen',
+    linkCsvExport: 'CSV-export',
+    linkNetCalc: 'Nettosalarisrekenmachine',
+    linkApiDocs: 'API-documentatie',
+    linkCountries: 'Landen bekijken',
+    manageSubscription: 'Abonnement beheren',
+    upgradePlan: 'Upgraden naar Pro',
+    upgradeDesc: 'Ontgrendel stadsgegevens, nettosalarisberekeningen en 10.000 API-verzoeken per dag.',
+    logoutBtn: 'Uitloggen',
+    loading: 'Laden...',
+    freePlan: 'Gratis',
+  },
+  pl: {
+    metaTitle: 'Panel | EuroSalary.eu',
+    metaDesc: 'Twój panel EuroSalary. Zarządzaj subskrypcją, sprawdzaj użycie API i korzystaj z narzędzi analizy wynagrodzeń.',
+    h1: 'Panel',
+    welcome: 'Witaj ponownie',
+    planLabel: 'Aktualny plan',
+    statusLabel: 'Status',
+    statusActive: 'Aktywny',
+    statusInactive: 'Nieaktywny',
+    nextBilling: 'Następna data rozliczenia',
+    apiKeyTitle: 'Twój klucz API',
+    apiKeyDesc: 'Użyj tego klucza w nagłówku Authorization dla wszystkich zapytań API.',
+    copyBtn: 'Kopiuj',
+    copiedBtn: 'Skopiowano!',
+    usageTitle: 'Użycie API',
+    usageToday: 'Zapytania dzisiaj',
+    usageOf: 'z',
+    requestsLabel: 'zapytań',
+    quickLinks: 'Szybkie linki',
+    linkCsvExport: 'Eksport CSV',
+    linkNetCalc: 'Kalkulator wynagrodzenia netto',
+    linkApiDocs: 'Dokumentacja API',
+    linkCountries: 'Przeglądaj kraje',
+    manageSubscription: 'Zarządzaj subskrypcją',
+    upgradePlan: 'Przejdź na Pro',
+    upgradeDesc: 'Odblokuj dane o miastach, obliczenia netto i 10 000 zapytań API dziennie.',
+    logoutBtn: 'Wyloguj się',
+    loading: 'Ładowanie...',
+    freePlan: 'Darmowy',
+  },
+  ro: {
+    metaTitle: 'Tablou de bord | EuroSalary.eu',
+    metaDesc: 'Tabloul dvs. EuroSalary. Gestionați abonamentul, vizualizați utilizarea API și accesați instrumentele de inteligență salarială.',
+    h1: 'Tablou de bord',
+    welcome: 'Bine ați revenit',
+    planLabel: 'Plan actual',
+    statusLabel: 'Stare',
+    statusActive: 'Activ',
+    statusInactive: 'Inactiv',
+    nextBilling: 'Următoarea dată de facturare',
+    apiKeyTitle: 'Cheia dvs. API',
+    apiKeyDesc: 'Utilizați această cheie în headerul Authorization pentru toate solicitările API.',
+    copyBtn: 'Copiază',
+    copiedBtn: 'Copiat!',
+    usageTitle: 'Utilizare API',
+    usageToday: 'Solicitări astăzi',
+    usageOf: 'din',
+    requestsLabel: 'solicitări',
+    quickLinks: 'Linkuri rapide',
+    linkCsvExport: 'Export CSV',
+    linkNetCalc: 'Calculator salariu net',
+    linkApiDocs: 'Documentație API',
+    linkCountries: 'Explorează țările',
+    manageSubscription: 'Gestionează abonamentul',
+    upgradePlan: 'Treci la Pro',
+    upgradeDesc: 'Deblochează date la nivel de oraș, calcule salariu net și 10.000 solicitări API pe zi.',
+    logoutBtn: 'Deconectare',
+    loading: 'Se încarcă...',
+    freePlan: 'Gratuit',
+  },
+  cs: {
+    metaTitle: 'Dashboard | EuroSalary.eu',
+    metaDesc: 'Váš dashboard EuroSalary. Spravujte předplatné, sledujte využití API a přistupte k nástrojům mzdové analýzy.',
+    h1: 'Dashboard',
+    welcome: 'Vítejte zpět',
+    planLabel: 'Aktuální plán',
+    statusLabel: 'Stav',
+    statusActive: 'Aktivní',
+    statusInactive: 'Neaktivní',
+    nextBilling: 'Další datum fakturace',
+    apiKeyTitle: 'Váš API klíč',
+    apiKeyDesc: 'Použijte tento klíč v hlavičce Authorization pro všechny API požadavky.',
+    copyBtn: 'Kopírovat',
+    copiedBtn: 'Zkopírováno!',
+    usageTitle: 'Využití API',
+    usageToday: 'Požadavky dnes',
+    usageOf: 'z',
+    requestsLabel: 'požadavků',
+    quickLinks: 'Rychlé odkazy',
+    linkCsvExport: 'CSV export',
+    linkNetCalc: 'Kalkulačka čistého platu',
+    linkApiDocs: 'Dokumentace API',
+    linkCountries: 'Procházet země',
+    manageSubscription: 'Spravovat předplatné',
+    upgradePlan: 'Přejít na Pro',
+    upgradeDesc: 'Odemkněte data na úrovni měst, výpočty čistého platu a 10 000 API požadavků denně.',
+    logoutBtn: 'Odhlásit se',
+    loading: 'Načítání...',
+    freePlan: 'Zdarma',
+  },
+  sv: {
+    metaTitle: 'Instrumentpanel | EuroSalary.eu',
+    metaDesc: 'Din EuroSalary-instrumentpanel. Hantera prenumeration, visa API-användning och få tillgång till löneintelligensverktyg.',
+    h1: 'Instrumentpanel',
+    welcome: 'Välkommen tillbaka',
+    planLabel: 'Nuvarande plan',
+    statusLabel: 'Status',
+    statusActive: 'Aktiv',
+    statusInactive: 'Inaktiv',
+    nextBilling: 'Nästa faktureringsdatum',
+    apiKeyTitle: 'Din API-nyckel',
+    apiKeyDesc: 'Använd denna nyckel i Authorization-headern för alla API-förfrågningar.',
+    copyBtn: 'Kopiera',
+    copiedBtn: 'Kopierad!',
+    usageTitle: 'API-användning',
+    usageToday: 'Förfrågningar idag',
+    usageOf: 'av',
+    requestsLabel: 'förfrågningar',
+    quickLinks: 'Snabblänkar',
+    linkCsvExport: 'CSV-export',
+    linkNetCalc: 'Nettolönekalkylator',
+    linkApiDocs: 'API-dokumentation',
+    linkCountries: 'Bläddra länder',
+    manageSubscription: 'Hantera prenumeration',
+    upgradePlan: 'Uppgradera till Pro',
+    upgradeDesc: 'Lås upp stadsdata, nettolöneberäkningar och 10 000 API-förfrågningar per dag.',
+    logoutBtn: 'Logga ut',
+    loading: 'Laddar...',
+    freePlan: 'Gratis',
+  },
+  da: {
+    metaTitle: 'Dashboard | EuroSalary.eu',
+    metaDesc: 'Dit EuroSalary-dashboard. Administrer dit abonnement, se API-brug og få adgang til lønintelligensværktøjer.',
+    h1: 'Dashboard',
+    welcome: 'Velkommen tilbage',
+    planLabel: 'Nuværende plan',
+    statusLabel: 'Status',
+    statusActive: 'Aktiv',
+    statusInactive: 'Inaktiv',
+    nextBilling: 'Næste faktureringsdato',
+    apiKeyTitle: 'Din API-nøgle',
+    apiKeyDesc: 'Brug denne nøgle i Authorization-headeren for alle API-anmodninger.',
+    copyBtn: 'Kopiér',
+    copiedBtn: 'Kopieret!',
+    usageTitle: 'API-brug',
+    usageToday: 'Anmodninger i dag',
+    usageOf: 'af',
+    requestsLabel: 'anmodninger',
+    quickLinks: 'Hurtige links',
+    linkCsvExport: 'CSV-eksport',
+    linkNetCalc: 'Nettolønberegner',
+    linkApiDocs: 'API-dokumentation',
+    linkCountries: 'Gennemse lande',
+    manageSubscription: 'Administrer abonnement',
+    upgradePlan: 'Opgrader til Pro',
+    upgradeDesc: 'Lås op for bydata, nettolønberegninger og 10.000 API-anmodninger om dagen.',
+    logoutBtn: 'Log ud',
+    loading: 'Indlæser...',
+    freePlan: 'Gratis',
+  },
+  fi: {
+    metaTitle: 'Hallintapaneeli | EuroSalary.eu',
+    metaDesc: 'EuroSalary-hallintapaneelisi. Hallitse tilaustasi, tarkastele API-käyttöä ja käytä palkkatietotyökaluja.',
+    h1: 'Hallintapaneeli',
+    welcome: 'Tervetuloa takaisin',
+    planLabel: 'Nykyinen suunnitelma',
+    statusLabel: 'Tila',
+    statusActive: 'Aktiivinen',
+    statusInactive: 'Ei aktiivinen',
+    nextBilling: 'Seuraava laskutuspäivä',
+    apiKeyTitle: 'API-avaimesi',
+    apiKeyDesc: 'Käytä tätä avainta Authorization-otsikossa kaikissa API-pyynnöissä.',
+    copyBtn: 'Kopioi',
+    copiedBtn: 'Kopioitu!',
+    usageTitle: 'API-käyttö',
+    usageToday: 'Pyynnöt tänään',
+    usageOf: '/',
+    requestsLabel: 'pyyntöä',
+    quickLinks: 'Pikalinkit',
+    linkCsvExport: 'CSV-vienti',
+    linkNetCalc: 'Nettopalkkanlaskin',
+    linkApiDocs: 'API-dokumentaatio',
+    linkCountries: 'Selaa maita',
+    manageSubscription: 'Hallitse tilausta',
+    upgradePlan: 'Päivitä Pro-tilaan',
+    upgradeDesc: 'Avaa kaupunkitason tiedot, nettopalkkalaskut ja 10 000 API-pyyntöä päivässä.',
+    logoutBtn: 'Kirjaudu ulos',
+    loading: 'Ladataan...',
+    freePlan: 'Ilmainen',
+  },
+  el: {
+    metaTitle: 'Πίνακας ελέγχου | EuroSalary.eu',
+    metaDesc: 'Ο πίνακας ελέγχου EuroSalary. Διαχειριστείτε τη συνδρομή σας, δείτε τη χρήση API και αποκτήστε πρόσβαση στα εργαλεία μισθολογικής ανάλυσης.',
+    h1: 'Πίνακας ελέγχου',
+    welcome: 'Καλώς ήρθατε πίσω',
+    planLabel: 'Τρέχον πλάνο',
+    statusLabel: 'Κατάσταση',
+    statusActive: 'Ενεργό',
+    statusInactive: 'Ανενεργό',
+    nextBilling: 'Επόμενη ημερομηνία χρέωσης',
+    apiKeyTitle: 'Το κλειδί API σας',
+    apiKeyDesc: 'Χρησιμοποιήστε αυτό το κλειδί στο header Authorization για όλα τα αιτήματα API.',
+    copyBtn: 'Αντιγραφή',
+    copiedBtn: 'Αντιγράφηκε!',
+    usageTitle: 'Χρήση API',
+    usageToday: 'Αιτήματα σήμερα',
+    usageOf: 'από',
+    requestsLabel: 'αιτήματα',
+    quickLinks: 'Γρήγοροι σύνδεσμοι',
+    linkCsvExport: 'Εξαγωγή CSV',
+    linkNetCalc: 'Υπολογιστής καθαρού μισθού',
+    linkApiDocs: 'Τεκμηρίωση API',
+    linkCountries: 'Περιήγηση χωρών',
+    manageSubscription: 'Διαχείριση συνδρομής',
+    upgradePlan: 'Αναβάθμιση σε Pro',
+    upgradeDesc: 'Ξεκλειδώστε δεδομένα σε επίπεδο πόλης, υπολογισμούς καθαρού μισθού και 10.000 αιτήματα API ημερησίως.',
+    logoutBtn: 'Αποσύνδεση',
+    loading: 'Φόρτωση...',
+    freePlan: 'Δωρεάν',
+  },
+  hu: {
+    metaTitle: 'Vezérlőpult | EuroSalary.eu',
+    metaDesc: 'EuroSalary vezérlőpultja. Kezelje előfizetését, tekintse meg az API-használatot és érje el a bérelemző eszközöket.',
+    h1: 'Vezérlőpult',
+    welcome: 'Üdvözöljük újra',
+    planLabel: 'Jelenlegi terv',
+    statusLabel: 'Állapot',
+    statusActive: 'Aktív',
+    statusInactive: 'Inaktív',
+    nextBilling: 'Következő számlázási dátum',
+    apiKeyTitle: 'API-kulcsa',
+    apiKeyDesc: 'Használja ezt a kulcsot az Authorization fejlécben minden API-kéréshez.',
+    copyBtn: 'Másolás',
+    copiedBtn: 'Másolva!',
+    usageTitle: 'API-használat',
+    usageToday: 'Kérések ma',
+    usageOf: '/',
+    requestsLabel: 'kérés',
+    quickLinks: 'Gyorslinkek',
+    linkCsvExport: 'CSV export',
+    linkNetCalc: 'Nettó bérkalkulátor',
+    linkApiDocs: 'API dokumentáció',
+    linkCountries: 'Országok böngészése',
+    manageSubscription: 'Előfizetés kezelése',
+    upgradePlan: 'Frissítés Pro-ra',
+    upgradeDesc: 'Nyissa meg a városszintű adatokat, nettó bérszámításokat és 10 000 API-kérést naponta.',
+    logoutBtn: 'Kijelentkezés',
+    loading: 'Betöltés...',
+    freePlan: 'Ingyenes',
+  },
+  sk: {
+    metaTitle: 'Dashboard | EuroSalary.eu',
+    metaDesc: 'Váš dashboard EuroSalary. Spravujte predplatné, sledujte využitie API a pristupujte k nástrojom mzdovej analýzy.',
+    h1: 'Dashboard',
+    welcome: 'Vitajte späť',
+    planLabel: 'Aktuálny plán',
+    statusLabel: 'Stav',
+    statusActive: 'Aktívny',
+    statusInactive: 'Neaktívny',
+    nextBilling: 'Ďalší dátum fakturácie',
+    apiKeyTitle: 'Váš API kľúč',
+    apiKeyDesc: 'Použite tento kľúč v hlavičke Authorization pre všetky API požiadavky.',
+    copyBtn: 'Kopírovať',
+    copiedBtn: 'Skopírované!',
+    usageTitle: 'Využitie API',
+    usageToday: 'Požiadavky dnes',
+    usageOf: 'z',
+    requestsLabel: 'požiadaviek',
+    quickLinks: 'Rýchle odkazy',
+    linkCsvExport: 'CSV export',
+    linkNetCalc: 'Kalkulačka čistej mzdy',
+    linkApiDocs: 'Dokumentácia API',
+    linkCountries: 'Prehliadať krajiny',
+    manageSubscription: 'Spravovať predplatné',
+    upgradePlan: 'Prejsť na Pro',
+    upgradeDesc: 'Odomknite dáta na úrovni miest, výpočty čistej mzdy a 10 000 API požiadaviek denne.',
+    logoutBtn: 'Odhlásiť sa',
+    loading: 'Načítava sa...',
+    freePlan: 'Zadarmo',
+  },
+  bg: {
+    metaTitle: 'Табло | EuroSalary.eu',
+    metaDesc: 'Вашето табло EuroSalary. Управлявайте абонамента, вижте използването на API и достъпете инструментите за анализ на заплати.',
+    h1: 'Табло',
+    welcome: 'Добре дошли отново',
+    planLabel: 'Текущ план',
+    statusLabel: 'Статус',
+    statusActive: 'Активен',
+    statusInactive: 'Неактивен',
+    nextBilling: 'Следваща дата на фактуриране',
+    apiKeyTitle: 'Вашият API ключ',
+    apiKeyDesc: 'Използвайте този ключ в хедъра Authorization за всички API заявки.',
+    copyBtn: 'Копирай',
+    copiedBtn: 'Копирано!',
+    usageTitle: 'Използване на API',
+    usageToday: 'Заявки днес',
+    usageOf: 'от',
+    requestsLabel: 'заявки',
+    quickLinks: 'Бързи линкове',
+    linkCsvExport: 'CSV експорт',
+    linkNetCalc: 'Калкулатор нетна заплата',
+    linkApiDocs: 'API документация',
+    linkCountries: 'Преглед на страни',
+    manageSubscription: 'Управление на абонамента',
+    upgradePlan: 'Надграждане до Pro',
+    upgradeDesc: 'Отключете данни на ниво град, изчисления на нетна заплата и 10 000 API заявки на ден.',
+    logoutBtn: 'Изход',
+    loading: 'Зареждане...',
+    freePlan: 'Безплатен',
+  },
+  hr: {
+    metaTitle: 'Nadzorna ploča | EuroSalary.eu',
+    metaDesc: 'Vaša EuroSalary nadzorna ploča. Upravljajte pretplatom, pratite korištenje API-ja i pristupite alatima za analizu plaća.',
+    h1: 'Nadzorna ploča',
+    welcome: 'Dobro došli natrag',
+    planLabel: 'Trenutni plan',
+    statusLabel: 'Status',
+    statusActive: 'Aktivan',
+    statusInactive: 'Neaktivan',
+    nextBilling: 'Sljedeći datum naplate',
+    apiKeyTitle: 'Vaš API ključ',
+    apiKeyDesc: 'Koristite ovaj ključ u Authorization zaglavlju za sve API zahtjeve.',
+    copyBtn: 'Kopiraj',
+    copiedBtn: 'Kopirano!',
+    usageTitle: 'Korištenje API-ja',
+    usageToday: 'Zahtjevi danas',
+    usageOf: 'od',
+    requestsLabel: 'zahtjeva',
+    quickLinks: 'Brzi linkovi',
+    linkCsvExport: 'CSV izvoz',
+    linkNetCalc: 'Kalkulator neto plaće',
+    linkApiDocs: 'API dokumentacija',
+    linkCountries: 'Pregledaj zemlje',
+    manageSubscription: 'Upravljaj pretplatom',
+    upgradePlan: 'Nadogradi na Pro',
+    upgradeDesc: 'Otključajte podatke po gradovima, izračune neto plaće i 10.000 API zahtjeva dnevno.',
+    logoutBtn: 'Odjava',
+    loading: 'Učitavanje...',
+    freePlan: 'Besplatno',
+  },
+  sl: {
+    metaTitle: 'Nadzorna plošča | EuroSalary.eu',
+    metaDesc: 'Vaša nadzorna plošča EuroSalary. Upravljajte naročnino, spremljajte uporabo API in dostopajte do orodij za analizo plač.',
+    h1: 'Nadzorna plošča',
+    welcome: 'Dobrodošli nazaj',
+    planLabel: 'Trenutni načrt',
+    statusLabel: 'Stanje',
+    statusActive: 'Aktiven',
+    statusInactive: 'Neaktiven',
+    nextBilling: 'Naslednji datum obračuna',
+    apiKeyTitle: 'Vaš API ključ',
+    apiKeyDesc: 'Uporabite ta ključ v glavi Authorization za vse API zahteve.',
+    copyBtn: 'Kopiraj',
+    copiedBtn: 'Kopirano!',
+    usageTitle: 'Uporaba API',
+    usageToday: 'Zahtevki danes',
+    usageOf: 'od',
+    requestsLabel: 'zahtevkov',
+    quickLinks: 'Hitre povezave',
+    linkCsvExport: 'CSV izvoz',
+    linkNetCalc: 'Kalkulator neto plače',
+    linkApiDocs: 'Dokumentacija API',
+    linkCountries: 'Prebrskaj države',
+    manageSubscription: 'Upravljaj naročnino',
+    upgradePlan: 'Nadgradi na Pro',
+    upgradeDesc: 'Odklenite podatke na ravni mest, izračune neto plače in 10.000 API zahtevkov na dan.',
+    logoutBtn: 'Odjava',
+    loading: 'Nalaganje...',
+    freePlan: 'Brezplačno',
+  },
+  lt: {
+    metaTitle: 'Valdymo pultas | EuroSalary.eu',
+    metaDesc: 'Your EuroSalary dashboard. Manage your subscription, view API usage, and access salary intelligence tools.',
+    h1: 'Valdymo pultas',
+    welcome: 'Sveiki sugrįžę',
+    planLabel: 'Dabartinis planas',
+    statusLabel: 'Būsena',
+    statusActive: 'Aktyvus',
+    statusInactive: 'Neaktyvus',
+    nextBilling: 'Next billing date',
+    apiKeyTitle: 'Jūsų API raktas',
+    apiKeyDesc: 'Use this key in the Authorization header for all API requests.',
+    copyBtn: 'Kopijuoti',
+    copiedBtn: 'Nukopijuota!',
+    usageTitle: 'API naudojimas',
+    usageToday: 'Užklausos šiandien',
+    usageOf: 'iš',
+    requestsLabel: 'užklausų',
+    quickLinks: 'Quick Links',
+    linkCsvExport: 'CSV Export',
+    linkNetCalc: 'Net Salary Calculator',
+    linkApiDocs: 'API Documentation',
+    linkCountries: 'Browse Countries',
+    manageSubscription: 'Manage Subscription',
+    upgradePlan: 'Upgrade to Pro',
+    upgradeDesc: 'Unlock city-level data, net salary calculations, and 10,000 API requests per day.',
+    logoutBtn: 'Atsijungti',
+    loading: 'Kraunama...',
+    freePlan: 'Nemokamas',
+  },
+  lv: {
+    metaTitle: 'Vadības panelis | EuroSalary.eu',
+    metaDesc: 'Your EuroSalary dashboard. Manage your subscription, view API usage, and access salary intelligence tools.',
+    h1: 'Vadības panelis',
+    welcome: 'Laipni lūdzam atpakaļ',
+    planLabel: 'Pašreizējais plāns',
+    statusLabel: 'Statuss',
+    statusActive: 'Aktīvs',
+    statusInactive: 'Neaktīvs',
+    nextBilling: 'Next billing date',
+    apiKeyTitle: 'Jūsu API atslēga',
+    apiKeyDesc: 'Use this key in the Authorization header for all API requests.',
+    copyBtn: 'Kopēt',
+    copiedBtn: 'Nokopēts!',
+    usageTitle: 'API lietojums',
+    usageToday: 'Pieprasījumi šodien',
+    usageOf: 'no',
+    requestsLabel: 'pieprasījumu',
+    quickLinks: 'Quick Links',
+    linkCsvExport: 'CSV Export',
+    linkNetCalc: 'Net Salary Calculator',
+    linkApiDocs: 'API Documentation',
+    linkCountries: 'Browse Countries',
+    manageSubscription: 'Manage Subscription',
+    upgradePlan: 'Upgrade to Pro',
+    upgradeDesc: 'Unlock city-level data, net salary calculations, and 10,000 API requests per day.',
+    logoutBtn: 'Iziet',
+    loading: 'Ielādē...',
+    freePlan: 'Bezmaksas',
+  },
+  et: {
+    metaTitle: 'Juhtpaneel | EuroSalary.eu',
+    metaDesc: 'Your EuroSalary dashboard. Manage your subscription, view API usage, and access salary intelligence tools.',
+    h1: 'Juhtpaneel',
+    welcome: 'Tere tulemast tagasi',
+    planLabel: 'Praegune plaan',
+    statusLabel: 'Olek',
+    statusActive: 'Aktiivne',
+    statusInactive: 'Mitteaktiivne',
+    nextBilling: 'Next billing date',
+    apiKeyTitle: 'Teie API võti',
+    apiKeyDesc: 'Use this key in the Authorization header for all API requests.',
+    copyBtn: 'Kopeeri',
+    copiedBtn: 'Kopeeritud!',
+    usageTitle: 'API kasutus',
+    usageToday: 'Päringud täna',
+    usageOf: '/',
+    requestsLabel: 'päringut',
+    quickLinks: 'Quick Links',
+    linkCsvExport: 'CSV Export',
+    linkNetCalc: 'Net Salary Calculator',
+    linkApiDocs: 'API Documentation',
+    linkCountries: 'Browse Countries',
+    manageSubscription: 'Manage Subscription',
+    upgradePlan: 'Upgrade to Pro',
+    upgradeDesc: 'Unlock city-level data, net salary calculations, and 10,000 API requests per day.',
+    logoutBtn: 'Logi välja',
+    loading: 'Laadimine...',
+    freePlan: 'Tasuta',
+  },
+  mt: {
+    metaTitle: 'Dashboard | EuroSalary.eu',
+    metaDesc: 'Your EuroSalary dashboard. Manage your subscription, view API usage, and access salary intelligence tools.',
+    h1: 'Dashboard',
+    welcome: 'Merħba lura',
+    planLabel: 'Pjan attwali',
+    statusLabel: 'Status',
+    statusActive: 'Attiv',
+    statusInactive: 'Mhux attiv',
+    nextBilling: 'Next billing date',
+    apiKeyTitle: 'Iċ-ċavetta API tiegħek',
+    apiKeyDesc: 'Use this key in the Authorization header for all API requests.',
+    copyBtn: 'Ikkopja',
+    copiedBtn: 'Ikkupjat!',
+    usageTitle: 'Użu tal-API',
+    usageToday: 'Talbiet illum',
+    usageOf: 'minn',
+    requestsLabel: 'talbiet',
+    quickLinks: 'Quick Links',
+    linkCsvExport: 'CSV Export',
+    linkNetCalc: 'Net Salary Calculator',
+    linkApiDocs: 'API Documentation',
+    linkCountries: 'Browse Countries',
+    manageSubscription: 'Manage Subscription',
+    upgradePlan: 'Upgrade to Pro',
+    upgradeDesc: 'Unlock city-level data, net salary calculations, and 10,000 API requests per day.',
+    logoutBtn: 'Oħroġ',
+    loading: 'Qed jitgħabba...',
+    freePlan: 'B\'xejn',
+  },
+  ga: {
+    metaTitle: 'Deais | EuroSalary.eu',
+    metaDesc: 'Your EuroSalary dashboard. Manage your subscription, view API usage, and access salary intelligence tools.',
+    h1: 'Deais',
+    welcome: 'Fáilte ar ais',
+    planLabel: 'Plean reatha',
+    statusLabel: 'Stádas',
+    statusActive: 'Gníomhach',
+    statusInactive: 'Neamhghníomhach',
+    nextBilling: 'Next billing date',
+    apiKeyTitle: 'D\'eochair API',
+    apiKeyDesc: 'Use this key in the Authorization header for all API requests.',
+    copyBtn: 'Cóipeáil',
+    copiedBtn: 'Cóipeáilte!',
+    usageTitle: 'Úsáid API',
+    usageToday: 'Iarratais inniu',
+    usageOf: 'as',
+    requestsLabel: 'iarratas',
+    quickLinks: 'Quick Links',
+    linkCsvExport: 'CSV Export',
+    linkNetCalc: 'Net Salary Calculator',
+    linkApiDocs: 'API Documentation',
+    linkCountries: 'Browse Countries',
+    manageSubscription: 'Manage Subscription',
+    upgradePlan: 'Upgrade to Pro',
+    upgradeDesc: 'Unlock city-level data, net salary calculations, and 10,000 API requests per day.',
+    logoutBtn: 'Logáil Amach',
+    loading: 'Ag lódáil...',
+    freePlan: 'Saor in Aisce',
+  },
+};
+
+const c = fb(i18n, lang);
+---
+
+<BaseLayout title={c.metaTitle} description={c.metaDesc}>
+  <section class="dash">
+    <div class="dash__container">
+
+      <!-- Loading state -->
+      <div class="dash__loading" id="dash-loading">
+        <div class="dash__loading-spinner"></div>
+        <p>{c.loading}</p>
+      </div>
+
+      <!-- Main content (hidden until session verified) -->
+      <div class="dash__content" id="dash-content">
+
+        <!-- Header row -->
+        <div class="dash__header">
+          <div>
+            <h1 class="dash__h1">{c.h1}</h1>
+            <p class="dash__welcome" id="dash-welcome">{c.welcome}</p>
+          </div>
+          <button class="dash__logout" id="logout-btn">
+            <span class="material-symbols-outlined">logout</span>
+            {c.logoutBtn}
+          </button>
+        </div>
+
+        <!-- Plan + Status row -->
+        <div class="dash__grid">
+          <div class="dash__card">
+            <div class="dash__card-label">{c.planLabel}</div>
+            <div class="dash__card-value">
+              <span id="plan-name">{c.freePlan}</span>
+              <span class="dash__badge" id="plan-badge">{c.freePlan}</span>
+            </div>
+          </div>
+          <div class="dash__card">
+            <div class="dash__card-label">{c.statusLabel}</div>
+            <div class="dash__card-value">
+              <span class="dash__status dash__status--active" id="plan-status">{c.statusActive}</span>
+            </div>
+          </div>
+          <div class="dash__card">
+            <div class="dash__card-label">{c.nextBilling}</div>
+            <div class="dash__card-value">
+              <span id="next-billing">&mdash;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- API Key section -->
+        <div class="dash__section">
+          <h2 class="dash__section-title">
+            <span class="material-symbols-outlined">key</span>
+            {c.apiKeyTitle}
+          </h2>
+          <p class="dash__section-desc">{c.apiKeyDesc}</p>
+          <div class="dash__api-key-row">
+            <code class="dash__api-key" id="api-key-value">&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;</code>
+            <button class="dash__copy-btn" id="copy-key-btn">
+              <span class="material-symbols-outlined">content_copy</span>
+              <span class="dash__copy-text">{c.copyBtn}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Usage section -->
+        <div class="dash__section">
+          <h2 class="dash__section-title">
+            <span class="material-symbols-outlined">bar_chart</span>
+            {c.usageTitle}
+          </h2>
+          <div class="dash__usage-row">
+            <span class="dash__usage-label">{c.usageToday}</span>
+            <span class="dash__usage-count">
+              <span id="usage-current">0</span> {c.usageOf} <span id="usage-limit">100</span> {c.requestsLabel}
+            </span>
+          </div>
+          <div class="dash__usage-bar">
+            <div class="dash__usage-fill" id="usage-fill" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="dash__section">
+          <h2 class="dash__section-title">
+            <span class="material-symbols-outlined">link</span>
+            {c.quickLinks}
+          </h2>
+          <div class="dash__links-grid">
+            <a href={`/${lang}/calculator/`} class="dash__link-card">
+              <span class="material-symbols-outlined">download</span>
+              {c.linkCsvExport}
+            </a>
+            <a href={`/${lang}/calculator/net-salary/`} class="dash__link-card">
+              <span class="material-symbols-outlined">calculate</span>
+              {c.linkNetCalc}
+            </a>
+            <a href={`/${lang}/salary-api/`} class="dash__link-card">
+              <span class="material-symbols-outlined">api</span>
+              {c.linkApiDocs}
+            </a>
+            <a href={`/${lang}/countries/`} class="dash__link-card">
+              <span class="material-symbols-outlined">public</span>
+              {c.linkCountries}
+            </a>
+          </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="dash__actions">
+          <button class="dash__btn dash__btn--primary" id="manage-sub-btn">
+            <span class="material-symbols-outlined">credit_card</span>
+            {c.manageSubscription}
+          </button>
+          <a href={`/${lang}/pricing/`} class="dash__btn dash__btn--upgrade" id="upgrade-btn">
+            <span class="material-symbols-outlined">bolt</span>
+            {c.upgradePlan}
+          </a>
+        </div>
+        <p class="dash__upgrade-desc" id="upgrade-desc">{c.upgradeDesc}</p>
+
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script define:vars={{ lang, statusActive: c.statusActive, statusInactive: c.statusInactive, copiedBtn: c.copiedBtn, copyBtn: c.copyBtn, freePlan: c.freePlan }}>
+  const loadingEl = document.getElementById('dash-loading');
+  const contentEl = document.getElementById('dash-content');
+
+  async function initDashboard() {
+    try {
+      const res = await fetch('/api/auth/session');
+      if (!res.ok) {
+        window.location.href = `/${lang}/login/`;
+        return;
+      }
+      const data = await res.json();
+      if (!data.user) {
+        window.location.href = `/${lang}/login/`;
+        return;
+      }
+
+      // Populate user data
+      const welcomeEl = document.getElementById('dash-welcome');
+      if (data.user.email) {
+        welcomeEl.textContent += `, ${data.user.email}`;
+      }
+
+      // Plan info
+      const plan = data.subscription?.plan || 'free';
+      const planName = data.subscription?.plan_name || freePlan;
+      document.getElementById('plan-name').textContent = planName;
+      document.getElementById('plan-badge').textContent = planName;
+
+      // Status
+      const statusEl = document.getElementById('plan-status');
+      const isActive = data.subscription?.status === 'active' || plan === 'free';
+      statusEl.textContent = isActive ? statusActive : statusInactive;
+      statusEl.className = `dash__status ${isActive ? 'dash__status--active' : 'dash__status--inactive'}`;
+
+      // Next billing
+      if (data.subscription?.current_period_end) {
+        const date = new Date(data.subscription.current_period_end);
+        document.getElementById('next-billing').textContent = date.toLocaleDateString();
+      }
+
+      // API key
+      if (data.api_key) {
+        document.getElementById('api-key-value').textContent = data.api_key;
+      }
+
+      // Usage
+      if (data.usage) {
+        const current = data.usage.today || 0;
+        const limit = data.usage.limit || 100;
+        document.getElementById('usage-current').textContent = current;
+        document.getElementById('usage-limit').textContent = limit;
+        const pct = Math.min((current / limit) * 100, 100);
+        document.getElementById('usage-fill').style.width = `${pct}%`;
+        if (pct > 80) document.getElementById('usage-fill').classList.add('dash__usage-fill--warn');
+      }
+
+      // Hide upgrade section for paid plans
+      if (plan !== 'free') {
+        document.getElementById('upgrade-btn').style.display = 'none';
+        document.getElementById('upgrade-desc').style.display = 'none';
+      }
+
+      loadingEl.style.display = 'none';
+      contentEl.style.display = 'block';
+
+    } catch (err) {
+      window.location.href = `/${lang}/login/`;
+    }
+  }
+
+  initDashboard();
+
+  // Copy API key
+  document.getElementById('copy-key-btn').addEventListener('click', async () => {
+    const key = document.getElementById('api-key-value').textContent;
+    try {
+      await navigator.clipboard.writeText(key);
+      const textEl = document.getElementById('copy-key-btn').querySelector('.dash__copy-text');
+      textEl.textContent = copiedBtn;
+      setTimeout(() => { textEl.textContent = copyBtn; }, 2000);
+    } catch (e) { /* clipboard not available */ }
+  });
+
+  // Manage subscription
+  document.getElementById('manage-sub-btn').addEventListener('click', async () => {
+    try {
+      const res = await fetch('/api/customer-portal', { method: 'POST' });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+    } catch (e) { /* portal error */ }
+  });
+
+  // Logout
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (e) { /* logout error */ }
+    window.location.href = `/${lang}/login/`;
+  });
+</script>
+
+<style>
+  .dash {
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(37, 99, 235, 0.06) 0%, transparent 50%),
+      var(--color-primary-container, #0F1F3D);
+  }
+
+  .dash__container {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  /* Loading */
+  .dash__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    gap: 1rem;
+    color: rgba(203, 213, 225, 0.6);
+    font-size: 0.9rem;
+  }
+  .dash__loading-spinner {
+    width: 32px; height: 32px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--color-secondary, #2563EB);
+    border-radius: 50%;
+    animation: dash-spin 0.7s linear infinite;
+  }
+  @keyframes dash-spin { to { transform: rotate(360deg); } }
+
+  .dash__content { display: none; }
+
+  /* Header */
+  .dash__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    gap: 1rem;
+  }
+  .dash__h1 {
+    font-family: var(--font-heading, 'Public Sans', sans-serif);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--color-white, #fff);
+    margin-bottom: 0.25rem;
+  }
+  .dash__welcome {
+    font-size: 0.9rem;
+    color: rgba(203, 213, 225, 0.6);
+  }
+  .dash__logout {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(203, 213, 225, 0.7);
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--font-sans, 'Inter', sans-serif);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .dash__logout:hover { background: rgba(255, 255, 255, 0.08); color: var(--color-white, #fff); }
+  .dash__logout .material-symbols-outlined { font-size: 16px; }
+
+  /* Grid cards */
+  .dash__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .dash__card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+  .dash__card-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(148, 163, 184, 0.6);
+    margin-bottom: 0.5rem;
+  }
+  .dash__card-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-white, #fff);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .dash__badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(37, 99, 235, 0.15);
+    color: var(--color-secondary, #2563EB);
+  }
+
+  .dash__status { font-size: 0.85rem; font-weight: 600; }
+  .dash__status--active { color: #34d399; }
+  .dash__status--inactive { color: #f87171; }
+
+  /* Sections */
+  .dash__section {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .dash__section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-heading, 'Public Sans', sans-serif);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-white, #fff);
+    margin-bottom: 0.5rem;
+  }
+  .dash__section-title .material-symbols-outlined {
+    font-size: 20px;
+    color: var(--color-secondary, #2563EB);
+  }
+  .dash__section-desc {
+    font-size: 0.82rem;
+    color: rgba(148, 163, 184, 0.6);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+
+  /* API Key */
+  .dash__api-key-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem;
+  }
+  .dash__api-key {
+    flex: 1;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.82rem;
+    color: rgba(203, 213, 225, 0.8);
+    word-break: break-all;
+    user-select: all;
+  }
+  .dash__copy-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid rgba(37, 99, 235, 0.3);
+    color: var(--color-secondary, #2563EB);
+    padding: 0.4rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--font-sans, 'Inter', sans-serif);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .dash__copy-btn:hover { background: rgba(37, 99, 235, 0.25); }
+  .dash__copy-btn .material-symbols-outlined { font-size: 14px; }
+
+  /* Usage bar */
+  .dash__usage-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .dash__usage-label { font-size: 0.82rem; color: rgba(203, 213, 225, 0.7); }
+  .dash__usage-count { font-size: 0.82rem; font-weight: 600; color: var(--color-white, #fff); }
+  .dash__usage-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .dash__usage-fill {
+    height: 100%;
+    background: var(--color-secondary, #2563EB);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  .dash__usage-fill--warn { background: #f59e0b; }
+
+  /* Quick links grid */
+  .dash__links-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  .dash__link-card {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: rgba(203, 213, 225, 0.85);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .dash__link-card:hover {
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--color-white, #fff);
+    border-color: rgba(37, 99, 235, 0.3);
+  }
+  .dash__link-card .material-symbols-outlined { font-size: 18px; color: var(--color-secondary, #2563EB); }
+
+  /* Action buttons */
+  .dash__actions { display: flex; gap: 1rem; margin-top: 2rem; }
+  .dash__btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.7rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--font-sans, 'Inter', sans-serif);
+    transition: all 0.15s;
+    text-decoration: none;
+    border: none;
+  }
+  .dash__btn .material-symbols-outlined { font-size: 18px; }
+  .dash__btn--primary {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--color-white, #fff);
+  }
+  .dash__btn--primary:hover { background: rgba(255, 255, 255, 0.1); }
+  .dash__btn--upgrade {
+    background: var(--color-secondary, #2563EB);
+    color: var(--color-white, #fff);
+  }
+  .dash__btn--upgrade:hover { background: #1d4ed8; }
+  .dash__upgrade-desc {
+    font-size: 0.82rem;
+    color: rgba(148, 163, 184, 0.5);
+    margin-top: 0.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .dash__grid { grid-template-columns: 1fr; }
+    .dash__links-grid { grid-template-columns: 1fr; }
+    .dash__header { flex-direction: column; }
+    .dash__actions { flex-direction: column; }
+  }
+  @media (max-width: 480px) {
+    .dash__h1 { font-size: 1.4rem; }
+  }
+</style>
