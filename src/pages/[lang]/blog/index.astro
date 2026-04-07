@@ -6,31 +6,57 @@ import { blogPosts } from '../../../data/blog-posts';
 
 // --------------- Translated UI strings ---------------
 const h1Texts: Record<string, string> = {
-  en: 'EuroSalary Blog',
-  fr: 'Blog EuroSalary',
-  de: 'EuroSalary Blog',
-  es: 'Blog EuroSalary',
+  en: 'EuroSalary Blog', fr: 'Blog EuroSalary', de: 'EuroSalary Blog', es: 'Blog EuroSalary',
+  it: 'Blog EuroSalary', pt: 'Blog EuroSalary', nl: 'EuroSalary Blog', pl: 'Blog EuroSalary',
+  ro: 'Blog EuroSalary', cs: 'Blog EuroSalary', sv: 'EuroSalary Blogg', da: 'EuroSalary Blog',
+  fi: 'EuroSalary Blogi', el: 'Ιστολόγιο EuroSalary', hu: 'EuroSalary Blog', sk: 'Blog EuroSalary',
+  bg: 'Блог EuroSalary', hr: 'Blog EuroSalary', sl: 'Blog EuroSalary', lt: 'EuroSalary Tinklaraštis',
+  lv: 'EuroSalary Emuārs', et: 'EuroSalary Blogi', mt: 'Blog EuroSalary', ga: 'Blag EuroSalary',
 };
 
 const descTexts: Record<string, string> = {
   en: 'Salary insights, career guides, and European labour market analysis. Data-driven articles to help you understand compensation across Europe.',
-  fr: 'Analyses salariales, guides de carriere et etudes du marche du travail europeen. Des articles fondes sur les donnees.',
-  de: 'Gehaltsanalysen, Karriereleitfaden und europaische Arbeitsmarktanalysen. Datenbasierte Artikel zum Verstandnis von Vergutungen in Europa.',
-  es: 'Analisis salariales, guias de carrera y estudios del mercado laboral europeo. Articulos basados en datos para entender la compensacion en Europa.',
+  fr: 'Analyses salariales, guides de carrière et études du marché du travail européen. Des articles fondés sur les données.',
+  de: 'Gehaltsanalysen, Karriereleitfäden und europäische Arbeitsmarktanalysen. Datenbasierte Artikel zum Verständnis von Vergütungen in Europa.',
+  es: 'Análisis salariales, guías de carrera y estudios del mercado laboral europeo. Artículos basados en datos para entender la compensación en Europa.',
+  it: 'Analisi salariali, guide alla carriera e analisi del mercato del lavoro europeo. Articoli basati sui dati per comprendere le retribuzioni in Europa.',
+  pt: 'Análises salariais, guias de carreira e análise do mercado de trabalho europeu. Artigos baseados em dados para compreender a remuneração na Europa.',
+  nl: 'Salarisanalyses, carrièregidsen en Europese arbeidsmarktanalyses. Datagestuurde artikelen om beloning in Europa te begrijpen.',
+  pl: 'Analizy wynagrodzeń, poradniki kariery i analiza europejskiego rynku pracy. Artykuły oparte na danych pomagające zrozumieć wynagrodzenia w Europie.',
+  ro: 'Analize salariale, ghiduri de carieră și analiza pieței muncii europene. Articole bazate pe date pentru a înțelege remunerația în Europa.',
+  cs: 'Analýzy platů, kariérní průvodce a analýza evropského trhu práce. Články založené na datech pro pochopení odměňování v Evropě.',
+  sv: 'Löneanalyser, karriärguider och europeisk arbetsmarknadsanalys. Datadrivna artiklar för att förstå ersättningar i Europa.',
+  da: 'Lønanalyser, karrierevejledninger og europæisk arbejdsmarkedsanalyse. Datadrevne artikler til at forstå aflønning i Europa.',
+  fi: 'Palkka-analyysit, uraoppaat ja Euroopan työmarkkinoiden analyysi. Dataan perustuvat artikkelit palkkauksen ymmärtämiseksi Euroopassa.',
+  el: 'Αναλύσεις μισθών, οδηγοί καριέρας και ανάλυση της ευρωπαϊκής αγοράς εργασίας. Άρθρα βασισμένα σε δεδομένα για την κατανόηση των αποδοχών στην Ευρώπη.',
+  hu: 'Bérelemzések, karrierútmutatók és európai munkaerőpiaci elemzés. Adatalapú cikkek az európai javadalmazás megértéséhez.',
+  sk: 'Analýzy platov, kariérne sprievodcov a analýza európskeho trhu práce. Články založené na údajoch pre pochopenie odmeňovania v Európe.',
+  bg: 'Анализи на заплатите, кариерни ръководства и анализ на европейския пазар на труда. Статии, базирани на данни, за разбиране на възнагражденията в Европа.',
+  hr: 'Analize plaća, vodiči za karijeru i analiza europskog tržišta rada. Članci temeljeni na podacima za razumijevanje naknada u Europi.',
+  sl: 'Analize plač, karierni vodniki in analiza evropskega trga dela. Članki, ki temeljijo na podatkih, za razumevanje plačil v Evropi.',
+  lt: 'Atlyginimų analizė, karjeros vadovai ir Europos darbo rinkos analizė. Duomenimis pagrįsti straipsniai, padedantys suprasti atlyginimus Europoje.',
+  lv: 'Algu analīze, karjeras ceļveži un Eiropas darba tirgus analīze. Uz datiem balstīti raksti, lai izprastu atalgojumu Eiropā.',
+  et: 'Palgaanalüüsid, karjäärijuhendid ja Euroopa tööturu analüüs. Andmepõhised artiklid, mis aitavad mõista tasustamist Euroopas.',
+  mt: 'Analiżi tas-salarji, gwidi tal-karriera u analiżi tas-suq tax-xogħol Ewropew. Artikli bbażati fuq data biex tifhem il-kumpens fl-Ewropa.',
+  ga: 'Anailís tuarastail, treoracha gairme agus anailís mhargadh saothair na hEorpa. Ailt bunaithe ar shonraí chun cúiteamh ar fud na hEorpa a thuiscint.',
 };
 
 const readMoreLabel: Record<string, string> = {
-  en: 'Read more',
-  fr: 'Lire la suite',
-  de: 'Weiterlesen',
-  es: 'Leer mas',
+  en: 'Read more', fr: 'Lire la suite', de: 'Weiterlesen', es: 'Leer más',
+  it: 'Leggi di più', pt: 'Ler mais', nl: 'Lees meer', pl: 'Czytaj więcej',
+  ro: 'Citește mai mult', cs: 'Číst dále', sv: 'Läs mer', da: 'Læs mere',
+  fi: 'Lue lisää', el: 'Διαβάστε περισσότερα', hu: 'Tovább olvasom', sk: 'Čítať ďalej',
+  bg: 'Прочетете повече', hr: 'Pročitajte više', sl: 'Preberite več', lt: 'Skaityti daugiau',
+  lv: 'Lasīt vairāk', et: 'Loe edasi', mt: 'Aqra aktar', ga: 'Léigh tuilleadh',
 };
 
 const publishedLabel: Record<string, string> = {
-  en: 'Published',
-  fr: 'Publie le',
-  de: 'Veroffentlicht',
-  es: 'Publicado',
+  en: 'Published', fr: 'Publié le', de: 'Veröffentlicht', es: 'Publicado',
+  it: 'Pubblicato', pt: 'Publicado', nl: 'Gepubliceerd', pl: 'Opublikowano',
+  ro: 'Publicat', cs: 'Publikováno', sv: 'Publicerad', da: 'Publiceret',
+  fi: 'Julkaistu', el: 'Δημοσιεύθηκε', hu: 'Megjelent', sk: 'Publikované',
+  bg: 'Публикувано', hr: 'Objavljeno', sl: 'Objavljeno', lt: 'Paskelbta',
+  lv: 'Publicēts', et: 'Avaldatud', mt: 'Ippubblikat', ga: 'Foilsithe',
 };
 
 // --------------- getStaticPaths ---------------
@@ -85,7 +111,7 @@ const pageSchema = [
     <div class="page-hero__dots"></div>
     <div class="container page-hero__inner">
       <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
-        <a href={`/${lang}/`}>{fb({ en: 'Home', fr: 'Accueil', de: 'Startseite', es: 'Inicio' }, lang)}</a>
+        <a href={`/${lang}/`}>{fb({ en: 'Home', fr: 'Accueil', de: 'Startseite', es: 'Inicio', it: 'Home', pt: 'Início', nl: 'Home', pl: 'Strona główna', ro: 'Acasă', cs: 'Domů', sv: 'Hem', da: 'Hjem', fi: 'Etusivu', el: 'Αρχική', hu: 'Főoldal', sk: 'Domov', bg: 'Начало', hr: 'Početna', sl: 'Domov', lt: 'Pradžia', lv: 'Sākums', et: 'Avaleht', mt: 'Paġna Ewlenija', ga: 'Baile' }, lang)}</a>
         <span class="material-symbols-outlined">chevron_right</span>
         <span class="page-hero__breadcrumbs-current">Blog</span>
       </nav>

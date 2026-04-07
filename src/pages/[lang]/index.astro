@@ -249,6 +249,60 @@ const schema = [
     </div>
   </section>
 
+  <!-- B2B Solutions Section -->
+  <section class="section b2b-section">
+    <div class="container">
+      <div class="b2b-header">
+        <span class="inst-label">
+          <span class="inst-label__dot"></span>
+          {t('footer.business')}
+        </span>
+        <h2>{t('home.b2bTitle')}</h2>
+        <p class="b2b-header__sub">{t('home.b2bDesc')}</p>
+      </div>
+      <div class="b2b-grid">
+        <a href={`/${lang}/for-employers/`} class="b2b-card">
+          <div class="b2b-card__icon"><span class="material-symbols-outlined">business</span></div>
+          <h3 class="b2b-card__title">{t('home.b2bEmployers')}</h3>
+          <p class="b2b-card__desc">{t('home.b2bEmployersDesc')}</p>
+          <span class="b2b-card__arrow">→</span>
+        </a>
+        <a href={`/${lang}/enterprise/`} class="b2b-card b2b-card--dark">
+          <div class="b2b-card__icon"><span class="material-symbols-outlined">corporate_fare</span></div>
+          <h3 class="b2b-card__title">{t('home.b2bEnterprise')}</h3>
+          <p class="b2b-card__desc">{t('home.b2bEnterpriseDesc')}</p>
+          <span class="b2b-card__arrow">→</span>
+        </a>
+        <a href={`/${lang}/salary-api/`} class="b2b-card">
+          <div class="b2b-card__icon"><span class="material-symbols-outlined">api</span></div>
+          <h3 class="b2b-card__title">{t('home.b2bAPI')}</h3>
+          <p class="b2b-card__desc">{t('home.b2bAPIDesc')}</p>
+          <span class="b2b-card__arrow">→</span>
+        </a>
+      </div>
+      <div class="b2b-footer">
+        <a href={`/${lang}/pricing/`} class="btn btn--outline btn--sm">
+          <span class="material-symbols-outlined" style="font-size: 14px;">storefront</span>
+          {t('home.b2bCTA')}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Premium CTA Bar -->
+  <section class="premium-cta">
+    <div class="container premium-cta__inner">
+      <div class="premium-cta__content">
+        <span class="material-symbols-outlined premium-cta__icon">diamond</span>
+        <div>
+          <h3 class="premium-cta__title">{t('home.premiumCTA')}</h3>
+          <p class="premium-cta__desc">{t('home.premiumCTADesc')}</p>
+        </div>
+      </div>
+      <a href={`/${lang}/pricing/`} class="btn btn--primary">{t('home.premiumCTABtn')}</a>
+    </div>
+  </section>
+
   <NewsletterForm />
 </BaseLayout>
 
@@ -371,6 +425,54 @@ const schema = [
   .btn--outline-light { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-4) var(--space-8); font-family: var(--font-sans); font-size: var(--text-sm); font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.1em; border: 2px solid var(--color-primary-container); background: transparent; color: var(--color-primary-container); cursor: pointer; transition: all var(--transition-fast); text-decoration: none; }
   .btn--outline-light:hover { background: var(--color-primary-container); color: var(--color-white); }
 
+  /* ========== B2B SECTION ========== */
+  .b2b-section { border-top: 1px solid var(--color-surface-high); }
+  .b2b-header { margin-bottom: var(--space-12); }
+  .b2b-header h2 { margin-top: var(--space-4); }
+  .b2b-header__sub { font-size: var(--text-sm); color: var(--color-on-surface-variant); font-weight: var(--weight-medium); margin-top: var(--space-2); }
+  .b2b-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
+  .b2b-card {
+    display: flex; flex-direction: column; padding: var(--space-10);
+    background: var(--color-white); border-top: 4px solid var(--color-secondary);
+    box-shadow: var(--shadow-sm); text-decoration: none; color: inherit;
+    transition: all 0.2s ease; position: relative;
+  }
+  .b2b-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .b2b-card--dark { background: var(--color-primary-container); border-top: none; }
+  .b2b-card--dark .b2b-card__title { color: var(--color-white); }
+  .b2b-card--dark .b2b-card__desc { color: var(--color-on-primary-container); }
+  .b2b-card--dark .b2b-card__arrow { color: var(--color-secondary); }
+  .b2b-card__icon { margin-bottom: var(--space-6); }
+  .b2b-card__icon .material-symbols-outlined { font-size: 32px; color: var(--color-secondary); }
+  .b2b-card__title {
+    font-family: var(--font-headline); font-size: var(--text-xl); font-weight: var(--weight-bold);
+    color: var(--color-primary-container); margin-bottom: var(--space-4);
+  }
+  .b2b-card__desc {
+    font-size: var(--text-sm); color: var(--color-on-surface-variant); line-height: var(--leading-relaxed);
+    font-weight: var(--weight-medium); flex: 1;
+  }
+  .b2b-card__arrow {
+    font-size: var(--text-lg); font-weight: var(--weight-bold); color: var(--color-primary-container);
+    margin-top: var(--space-6); align-self: flex-end;
+  }
+  .b2b-footer { text-align: center; margin-top: var(--space-10); }
+
+  /* ========== PREMIUM CTA BAR ========== */
+  .premium-cta {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.06) 0%, rgba(37, 99, 235, 0.02) 100%);
+    border-top: 1px solid rgba(37, 99, 235, 0.12); border-bottom: 1px solid rgba(37, 99, 235, 0.12);
+    padding: var(--space-10) 0;
+  }
+  .premium-cta__inner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); }
+  .premium-cta__content { display: flex; align-items: center; gap: var(--space-6); }
+  .premium-cta__icon { font-size: 36px; color: var(--color-secondary); }
+  .premium-cta__title {
+    font-family: var(--font-headline); font-size: var(--text-lg); font-weight: var(--weight-bold);
+    color: var(--color-primary-container); margin-bottom: var(--space-1);
+  }
+  .premium-cta__desc { font-size: var(--text-sm); color: var(--color-on-surface-variant); font-weight: var(--weight-medium); }
+
   /* ========== RESPONSIVE ========== */
   @media (max-width: 1024px) {
     .hero__grid { grid-template-columns: 1fr; gap: var(--space-8); padding-top: var(--space-16); }
@@ -389,5 +491,8 @@ const schema = [
     .trust-badges__row { gap: var(--space-6); }
     .cta-dark__actions { flex-direction: column; }
     .hero__meta { flex-wrap: wrap; gap: var(--space-4); }
+    .b2b-grid { grid-template-columns: 1fr; }
+    .premium-cta__inner { flex-direction: column; text-align: center; }
+    .premium-cta__content { flex-direction: column; text-align: center; }
   }
 </style>

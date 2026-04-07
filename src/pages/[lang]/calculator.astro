@@ -6,10 +6,12 @@ import { fb, useTranslations } from '../../i18n/utils';
 
 // --------------- Translated UI strings ---------------
 const h1Titles: Record<string, string> = {
-  en: 'Gross to Net Salary Calculator',
-  fr: 'Calculateur salaire brut-net',
-  de: 'Brutto-Netto-Gehaltsrechner',
-  es: 'Calculadora de salario bruto a neto',
+  en: 'Gross to Net Salary Calculator', fr: 'Calculateur salaire brut-net', de: 'Brutto-Netto-Gehaltsrechner', es: 'Calculadora de salario bruto a neto',
+  it: 'Calcolatore stipendio lordo-netto', pt: 'Calculadora de salário bruto-líquido', nl: 'Bruto-netto salarisberekening', pl: 'Kalkulator wynagrodzenia brutto-netto',
+  ro: 'Calculator salariu brut-net', cs: 'Kalkulačka hrubé a čisté mzdy', sv: 'Brutto-nettolönekalkylator', da: 'Brutto-nettolønsberegner',
+  fi: 'Brutto-nettopalkkalaskuri', el: 'Υπολογιστής μεικτού-καθαρού μισθού', hu: 'Bruttó-nettó fizetés kalkulátor', sk: 'Kalkulačka hrubej a čistej mzdy',
+  bg: 'Калкулатор за брутна-нетна заплата', hr: 'Kalkulator bruto-neto plaće', sl: 'Kalkulator bruto-neto plače', lt: 'Bruto-neto atlyginimo skaičiuoklė',
+  lv: 'Bruto-neto algas kalkulators', et: 'Bruto-netopalga kalkulaator', mt: 'Kalkulatur tas-salarju gross-nett', ga: 'Áireamhán tuarastail comhlán go glan',
 };
 
 const descriptions: Record<string, string> = {
@@ -17,50 +19,163 @@ const descriptions: Record<string, string> = {
   fr: 'Calculez votre salaire net à partir du brut dans 15 pays européens. Inclut l\'impôt sur le revenu, les cotisations sociales, le statut marital et les déductions pour enfants.',
   de: 'Berechnen Sie Ihr Nettogehalt aus dem Bruttogehalt in 15 europäischen Ländern. Einschließlich Einkommensteuer, Sozialabgaben, Familienstand und Kinderfreibeträge.',
   es: 'Calcule su salario neto a partir del bruto en 15 países europeos. Incluye impuesto sobre la renta, contribuciones sociales, estado civil y deducciones por hijos.',
+  it: 'Calcola il tuo stipendio netto dal lordo in 15 paesi europei. Include imposta sul reddito, contributi sociali, stato civile e detrazioni per figli.',
+  pt: 'Calcule o seu salário líquido a partir do bruto em 15 países europeus. Inclui imposto de renda, contribuições sociais, estado civil e deduções por filhos.',
+  nl: 'Bereken uw nettosalaris op basis van het brutosalaris in 15 Europese landen. Inclusief inkomstenbelasting, sociale premies, burgerlijke staat en kindaftrekken.',
+  pl: 'Oblicz swoje wynagrodzenie netto z brutto w 15 krajach europejskich. Uwzględnia podatek dochodowy, składki społeczne, stan cywilny i ulgi na dzieci.',
+  ro: 'Calculați salariul net din brut în 15 țări europene. Include impozitul pe venit, contribuțiile sociale, starea civilă și deducerile pentru copii.',
+  cs: 'Vypočítejte si čistou mzdu z hrubé ve 15 evropských zemích. Zahrnuje daň z příjmu, sociální odvody, rodinný stav a slevy na děti.',
+  sv: 'Beräkna din nettolön från bruttolön i 15 europeiska länder. Inkluderar inkomstskatt, sociala avgifter, civilstånd och barnavdrag.',
+  da: 'Beregn din nettoløn fra bruttoløn i 15 europæiske lande. Inkluderer indkomstskat, sociale bidrag, civilstand og børnefradrag.',
+  fi: 'Laske nettopalkka bruttopalkasta 15 Euroopan maassa. Sisältää tuloveron, sosiaalimaksut, siviilisäädyn ja lapsivähennykset.',
+  el: 'Υπολογίστε τον καθαρό μισθό σας από τον μεικτό σε 15 ευρωπαϊκές χώρες. Περιλαμβάνει φόρο εισοδήματος, κοινωνικές εισφορές, οικογενειακή κατάσταση και εκπτώσεις τέκνων.',
+  hu: 'Számítsa ki nettó fizetését a bruttóból 15 európai országban. Tartalmazza a jövedelemadót, társadalombiztosítási járulékokat, családi állapotot és gyermekkedvezményeket.',
+  sk: 'Vypočítajte si čistú mzdu z hrubej v 15 európskych krajinách. Zahŕňa daň z príjmu, sociálne odvody, rodinný stav a zľavy na deti.',
+  bg: 'Изчислете нетната си заплата от брутната в 15 европейски страни. Включва данък върху дохода, социални осигуровки, семейно положение и данъчни облекчения за деца.',
+  hr: 'Izračunajte svoju neto plaću iz bruto u 15 europskih zemalja. Uključuje porez na dohodak, socijalne doprinose, bračni status i olakšice za djecu.',
+  sl: 'Izračunajte svojo neto plačo iz bruto v 15 evropskih državah. Vključuje dohodnino, socialne prispevke, zakonski stan in olajšave za otroke.',
+  lt: 'Apskaičiuokite savo neto atlyginimą iš bruto 15 Europos šalių. Apima pajamų mokestį, socialines įmokas, šeimyninę padėtį ir vaiko lengvatas.',
+  lv: 'Aprēķiniet savu neto algu no bruto 15 Eiropas valstīs. Ietver ienākuma nodokli, sociālās iemaksas, ģimenes stāvokli un atvieglojumus par bērniem.',
+  et: 'Arvutage oma netopalk brutopalgast 15 Euroopa riigis. Sisaldab tulumaksu, sotsiaalmakseid, perekonnaseisu ja maksusoodustusi lastele.',
+  mt: 'Ikkalkula s-salarju nett tiegħek mill-gross fi 15-il pajjiż Ewropew. Jinkludi taxxa fuq id-dħul, kontribuzzjonijiet soċjali, stat ċivili u tnaqqis għat-tfal.',
+  ga: 'Ríomh do thuarastal glan ón gcomhlán i 15 thír Eorpach. Cuimsíonn cáin ioncaim, ranníocaíochtaí sóisialta, stádas pósta agus asbhaintí leanaí.',
 };
 
 const tldrItems: Record<string, string[]> = {
-  en: [
-    'Covers 15 European countries with simplified 2026 tax rates',
-    'Accounts for income tax, social contributions, marital status, and children',
-    'Results are estimates — consult a tax professional for exact figures',
-  ],
-  fr: [
-    'Couvre 15 pays européens avec des taux d\'imposition simplifiés 2026',
-    'Prend en compte l\'impôt, les cotisations sociales, le statut marital et les enfants',
-    'Les résultats sont des estimations — consultez un fiscaliste pour des chiffres exacts',
-  ],
-  de: [
-    'Deckt 15 europäische Länder mit vereinfachten Steuersätzen 2026 ab',
-    'Berücksichtigt Einkommensteuer, Sozialabgaben, Familienstand und Kinder',
-    'Ergebnisse sind Schätzungen — konsultieren Sie einen Steuerberater für genaue Zahlen',
-  ],
-  es: [
-    'Cubre 15 países europeos con tasas impositivas simplificadas 2026',
-    'Incluye impuesto sobre la renta, contribuciones sociales, estado civil e hijos',
-    'Los resultados son estimaciones — consulte a un asesor fiscal para cifras exactas',
-  ],
+  en: ['Covers 15 European countries with simplified 2026 tax rates', 'Accounts for income tax, social contributions, marital status, and children', 'Results are estimates — consult a tax professional for exact figures'],
+  fr: ['Couvre 15 pays européens avec des taux d\'imposition simplifiés 2026', 'Prend en compte l\'impôt, les cotisations sociales, le statut marital et les enfants', 'Les résultats sont des estimations — consultez un fiscaliste pour des chiffres exacts'],
+  de: ['Deckt 15 europäische Länder mit vereinfachten Steuersätzen 2026 ab', 'Berücksichtigt Einkommensteuer, Sozialabgaben, Familienstand und Kinder', 'Ergebnisse sind Schätzungen — konsultieren Sie einen Steuerberater für genaue Zahlen'],
+  es: ['Cubre 15 países europeos con tasas impositivas simplificadas 2026', 'Incluye impuesto sobre la renta, contribuciones sociales, estado civil e hijos', 'Los resultados son estimaciones — consulte a un asesor fiscal para cifras exactas'],
+  it: ['Copre 15 paesi europei con aliquote fiscali semplificate 2026', 'Tiene conto di imposta sul reddito, contributi sociali, stato civile e figli', 'I risultati sono stime — consulta un professionista fiscale per cifre esatte'],
+  pt: ['Abrange 15 países europeus com taxas fiscais simplificadas de 2026', 'Inclui imposto de renda, contribuições sociais, estado civil e filhos', 'Os resultados são estimativas — consulte um profissional fiscal para valores exatos'],
+  nl: ['Dekt 15 Europese landen met vereenvoudigde belastingtarieven 2026', 'Houdt rekening met inkomstenbelasting, sociale premies, burgerlijke staat en kinderen', 'Resultaten zijn schattingen — raadpleeg een belastingadviseur voor exacte cijfers'],
+  pl: ['Obejmuje 15 krajów europejskich z uproszczonymi stawkami podatkowymi 2026', 'Uwzględnia podatek dochodowy, składki społeczne, stan cywilny i dzieci', 'Wyniki są szacunkowe — skonsultuj się z doradcą podatkowym w celu uzyskania dokładnych danych'],
+  ro: ['Acoperă 15 țări europene cu rate fiscale simplificate 2026', 'Include impozitul pe venit, contribuțiile sociale, starea civilă și copiii', 'Rezultatele sunt estimări — consultați un specialist fiscal pentru cifre exacte'],
+  cs: ['Pokrývá 15 evropských zemí se zjednodušenými daňovými sazbami 2026', 'Zohledňuje daň z příjmu, sociální odvody, rodinný stav a děti', 'Výsledky jsou odhady — konzultujte s daňovým poradcem pro přesné údaje'],
+  sv: ['Täcker 15 europeiska länder med förenklade skattesatser 2026', 'Tar hänsyn till inkomstskatt, sociala avgifter, civilstånd och barn', 'Resultaten är uppskattningar — rådgör med en skatterådgivare för exakta siffror'],
+  da: ['Dækker 15 europæiske lande med forenklede skattesatser 2026', 'Tager hensyn til indkomstskat, sociale bidrag, civilstand og børn', 'Resultaterne er estimater — kontakt en skatterådgiver for præcise tal'],
+  fi: ['Kattaa 15 Euroopan maata yksinkertaistetuilla veroprosenteilla 2026', 'Huomioi tuloveron, sosiaalimaksut, siviilisäädyn ja lapset', 'Tulokset ovat arvioita — konsultoi veroneuvojaa tarkkojen lukujen saamiseksi'],
+  el: ['Καλύπτει 15 ευρωπαϊκές χώρες με απλοποιημένους φορολογικούς συντελεστές 2026', 'Λαμβάνει υπόψη φόρο εισοδήματος, κοινωνικές εισφορές, οικογενειακή κατάσταση και τέκνα', 'Τα αποτελέσματα είναι εκτιμήσεις — συμβουλευτείτε φοροτεχνικό για ακριβή στοιχεία'],
+  hu: ['15 európai országot lefed egyszerűsített 2026-os adókulcsokkal', 'Figyelembe veszi a jövedelemadót, társadalombiztosítási járulékokat, családi állapotot és gyermekeket', 'Az eredmények becslések — pontos adatokért forduljon adószakértőhöz'],
+  sk: ['Pokrýva 15 európskych krajín so zjednodušenými daňovými sadzbami 2026', 'Zohľadňuje daň z príjmu, sociálne odvody, rodinný stav a deti', 'Výsledky sú odhady — pre presné údaje sa poraďte s daňovým poradcom'],
+  bg: ['Обхваща 15 европейски страни с опростени данъчни ставки 2026', 'Отчита данък върху дохода, социални осигуровки, семейно положение и деца', 'Резултатите са приблизителни — консултирайте се с данъчен специалист за точни данни'],
+  hr: ['Pokriva 15 europskih zemalja s pojednostavljenim poreznim stopama 2026', 'Uzima u obzir porez na dohodak, socijalne doprinose, bračni status i djecu', 'Rezultati su procjene — konzultirajte poreznog savjetnika za točne podatke'],
+  sl: ['Pokriva 15 evropskih držav s poenostavljenimi davčnimi stopnjami 2026', 'Upošteva dohodnino, socialne prispevke, zakonski stan in otroke', 'Rezultati so ocene — za natančne podatke se posvetujte z davčnim svetovalcem'],
+  lt: ['Apima 15 Europos šalių su supaprastintais 2026 m. mokesčių tarifais', 'Atsižvelgia į pajamų mokestį, socialines įmokas, šeimyninę padėtį ir vaikus', 'Rezultatai yra orientaciniai — dėl tikslių skaičių kreipkitės į mokesčių konsultantą'],
+  lv: ['Aptver 15 Eiropas valstis ar vienkāršotām 2026. gada nodokļu likmēm', 'Ņem vērā ienākuma nodokli, sociālās iemaksas, ģimenes stāvokli un bērnus', 'Rezultāti ir aplēses — precīziem skaitļiem konsultējieties ar nodokļu speciālistu'],
+  et: ['Hõlmab 15 Euroopa riiki lihtsustatud 2026. aasta maksumääradega', 'Arvestab tulumaksu, sotsiaalmakseid, perekonnaseisu ja lapsi', 'Tulemused on hinnangulised — täpsete andmete saamiseks pöörduge maksunõustaja poole'],
+  mt: ['Ikopri 15-il pajjiż Ewropew b\'rati tat-taxxa simplifikati 2026', 'Jagħti kont tat-taxxa fuq id-dħul, kontribuzzjonijiet soċjali, stat ċivili u tfal', 'Ir-riżultati huma stimi — ikkonsulta professjonist tat-taxxa għal ċifri eżatti'],
+  ga: ['Clúdaíonn 15 thír Eorpach le rátaí cánach simplithe 2026', 'Cuireann san áireamh cáin ioncaim, ranníocaíochtaí sóisialta, stádas pósta agus leanaí', 'Is meastacháin iad na torthaí — téigh i gcomhairle le gairmí cánach le haghaidh figiúirí beachta'],
 };
 
-const countryLabel: Record<string, string> = { en: 'Country', fr: 'Pays', de: 'Land', es: 'País' };
-const grossSalaryLabel: Record<string, string> = { en: 'Gross Annual Salary (€)', fr: 'Salaire brut annuel (€)', de: 'Bruttojahresgehalt (€)', es: 'Salario bruto anual (€)' };
-const employmentTypeLabel: Record<string, string> = { en: 'Employment Type', fr: 'Type d\'emploi', de: 'Beschäftigungsart', es: 'Tipo de empleo' };
-const employedLabel: Record<string, string> = { en: 'Employed', fr: 'Salarié', de: 'Angestellt', es: 'Empleado' };
-const selfEmployedLabel: Record<string, string> = { en: 'Self-employed', fr: 'Indépendant', de: 'Selbstständig', es: 'Autónomo' };
-const maritalStatusLabel: Record<string, string> = { en: 'Marital Status', fr: 'Statut marital', de: 'Familienstand', es: 'Estado civil' };
-const singleLabel: Record<string, string> = { en: 'Single', fr: 'Célibataire', de: 'Ledig', es: 'Soltero/a' };
-const marriedLabel: Record<string, string> = { en: 'Married', fr: 'Marié(e)', de: 'Verheiratet', es: 'Casado/a' };
-const childrenLabel: Record<string, string> = { en: 'Children', fr: 'Enfants', de: 'Kinder', es: 'Hijos' };
-const calculateBtnLabel: Record<string, string> = { en: 'Calculate', fr: 'Calculer', de: 'Berechnen', es: 'Calcular' };
+const countryLabel: Record<string, string> = {
+  en: 'Country', fr: 'Pays', de: 'Land', es: 'País', it: 'Paese', pt: 'País', nl: 'Land', pl: 'Kraj',
+  ro: 'Țara', cs: 'Země', sv: 'Land', da: 'Land', fi: 'Maa', el: 'Χώρα', hu: 'Ország', sk: 'Krajina',
+  bg: 'Държава', hr: 'Država', sl: 'Država', lt: 'Šalis', lv: 'Valsts', et: 'Riik', mt: 'Pajjiż', ga: 'Tír',
+};
+const grossSalaryLabel: Record<string, string> = {
+  en: 'Gross Annual Salary (€)', fr: 'Salaire brut annuel (€)', de: 'Bruttojahresgehalt (€)', es: 'Salario bruto anual (€)',
+  it: 'Stipendio lordo annuale (€)', pt: 'Salário bruto anual (€)', nl: 'Bruto jaarsalaris (€)', pl: 'Wynagrodzenie brutto roczne (€)',
+  ro: 'Salariu brut anual (€)', cs: 'Hrubá roční mzda (€)', sv: 'Brutto årslön (€)', da: 'Brutto årsløn (€)',
+  fi: 'Bruttovuosipalkka (€)', el: 'Ετήσιος μεικτός μισθός (€)', hu: 'Bruttó éves fizetés (€)', sk: 'Hrubá ročná mzda (€)',
+  bg: 'Брутна годишна заплата (€)', hr: 'Bruto godišnja plaća (€)', sl: 'Bruto letna plača (€)', lt: 'Bruto metinis atlyginimas (€)',
+  lv: 'Bruto gada alga (€)', et: 'Bruto aastapalk (€)', mt: 'Salarju gross annwali (€)', ga: 'Tuarastal comhlán bliantúil (€)',
+};
+const employmentTypeLabel: Record<string, string> = {
+  en: 'Employment Type', fr: 'Type d\'emploi', de: 'Beschäftigungsart', es: 'Tipo de empleo',
+  it: 'Tipo di impiego', pt: 'Tipo de emprego', nl: 'Type dienstverband', pl: 'Rodzaj zatrudnienia',
+  ro: 'Tip de angajare', cs: 'Typ zaměstnání', sv: 'Anställningstyp', da: 'Ansættelsestype',
+  fi: 'Työsuhteen tyyppi', el: 'Τύπος απασχόλησης', hu: 'Foglalkoztatás típusa', sk: 'Typ zamestnania',
+  bg: 'Вид заетост', hr: 'Vrsta zaposlenja', sl: 'Vrsta zaposlitve', lt: 'Užimtumo tipas',
+  lv: 'Nodarbinātības veids', et: 'Tööhõive tüüp', mt: 'Tip ta\' impjieg', ga: 'Cineál fostaíochta',
+};
+const employedLabel: Record<string, string> = {
+  en: 'Employed', fr: 'Salarié', de: 'Angestellt', es: 'Empleado', it: 'Dipendente', pt: 'Empregado', nl: 'Werknemer', pl: 'Pracownik',
+  ro: 'Angajat', cs: 'Zaměstnanec', sv: 'Anställd', da: 'Ansat', fi: 'Työntekijä', el: 'Μισθωτός', hu: 'Alkalmazott', sk: 'Zamestnanec',
+  bg: 'Нает', hr: 'Zaposlenik', sl: 'Zaposlen', lt: 'Darbuotojas', lv: 'Darbinieks', et: 'Töötaja', mt: 'Impjegat', ga: 'Fostaithe',
+};
+const selfEmployedLabel: Record<string, string> = {
+  en: 'Self-employed', fr: 'Indépendant', de: 'Selbstständig', es: 'Autónomo', it: 'Autonomo', pt: 'Autónomo', nl: 'Zelfstandige', pl: 'Samozatrudniony',
+  ro: 'Liber profesionist', cs: 'OSVČ', sv: 'Egenföretagare', da: 'Selvstændig', fi: 'Yrittäjä', el: 'Αυτοαπασχολούμενος', hu: 'Önfoglalkoztató', sk: 'SZČO',
+  bg: 'Самонает', hr: 'Samozaposlen', sl: 'Samozaposlen', lt: 'Savarankiškai dirbantis', lv: 'Pašnodarbināts', et: 'FIE', mt: 'Jaħdem għal rasu', ga: 'Féinfhostaithe',
+};
+const maritalStatusLabel: Record<string, string> = {
+  en: 'Marital Status', fr: 'Statut marital', de: 'Familienstand', es: 'Estado civil', it: 'Stato civile', pt: 'Estado civil', nl: 'Burgerlijke staat', pl: 'Stan cywilny',
+  ro: 'Stare civilă', cs: 'Rodinný stav', sv: 'Civilstånd', da: 'Civilstand', fi: 'Siviilisääty', el: 'Οικογενειακή κατάσταση', hu: 'Családi állapot', sk: 'Rodinný stav',
+  bg: 'Семейно положение', hr: 'Bračni status', sl: 'Zakonski stan', lt: 'Šeimyninė padėtis', lv: 'Ģimenes stāvoklis', et: 'Perekonnaseis', mt: 'Stat ċivili', ga: 'Stádas pósta',
+};
+const singleLabel: Record<string, string> = {
+  en: 'Single', fr: 'Célibataire', de: 'Ledig', es: 'Soltero/a', it: 'Celibe/Nubile', pt: 'Solteiro/a', nl: 'Alleenstaand', pl: 'Wolny/a',
+  ro: 'Necăsătorit/ă', cs: 'Svobodný/á', sv: 'Ensamstående', da: 'Enlig', fi: 'Naimaton', el: 'Άγαμος/η', hu: 'Egyedülálló', sk: 'Slobodný/á',
+  bg: 'Неженен/Неомъжена', hr: 'Neoženjen/Neudana', sl: 'Samski/a', lt: 'Nevedęs/Netekėjusi', lv: 'Neprecējies/Neprecējusies', et: 'Vallaline', mt: 'Single', ga: 'Singil',
+};
+const marriedLabel: Record<string, string> = {
+  en: 'Married', fr: 'Marié(e)', de: 'Verheiratet', es: 'Casado/a', it: 'Sposato/a', pt: 'Casado/a', nl: 'Gehuwd', pl: 'Żonaty/Zamężna',
+  ro: 'Căsătorit/ă', cs: 'Ženatý/Vdaná', sv: 'Gift', da: 'Gift', fi: 'Naimisissa', el: 'Παντρεμένος/η', hu: 'Házas', sk: 'Ženatý/Vydatá',
+  bg: 'Женен/Омъжена', hr: 'Oženjen/Udana', sl: 'Poročen/a', lt: 'Vedęs/Ištekėjusi', lv: 'Precējies/Precējusies', et: 'Abielus', mt: 'Miżżewweġ/Miżżewġa', ga: 'Pósta',
+};
+const childrenLabel: Record<string, string> = {
+  en: 'Children', fr: 'Enfants', de: 'Kinder', es: 'Hijos', it: 'Figli', pt: 'Filhos', nl: 'Kinderen', pl: 'Dzieci',
+  ro: 'Copii', cs: 'Děti', sv: 'Barn', da: 'Børn', fi: 'Lapset', el: 'Παιδιά', hu: 'Gyermekek', sk: 'Deti',
+  bg: 'Деца', hr: 'Djeca', sl: 'Otroci', lt: 'Vaikai', lv: 'Bērni', et: 'Lapsed', mt: 'Tfal', ga: 'Leanaí',
+};
+const calculateBtnLabel: Record<string, string> = {
+  en: 'Calculate', fr: 'Calculer', de: 'Berechnen', es: 'Calcular', it: 'Calcola', pt: 'Calcular', nl: 'Berekenen', pl: 'Oblicz',
+  ro: 'Calculează', cs: 'Vypočítat', sv: 'Beräkna', da: 'Beregn', fi: 'Laske', el: 'Υπολογισμός', hu: 'Számítás', sk: 'Vypočítať',
+  bg: 'Изчисли', hr: 'Izračunaj', sl: 'Izračunaj', lt: 'Apskaičiuoti', lv: 'Aprēķināt', et: 'Arvuta', mt: 'Ikkalkula', ga: 'Ríomh',
+};
 
-const netAnnualLabel: Record<string, string> = { en: 'Net Annual Salary', fr: 'Salaire net annuel', de: 'Nettojahresgehalt', es: 'Salario neto anual' };
-const netMonthlyLabel: Record<string, string> = { en: 'Net Monthly Salary', fr: 'Salaire net mensuel', de: 'Nettomonatsgehalt', es: 'Salario neto mensual' };
-const incomeTaxLabel: Record<string, string> = { en: 'Income Tax', fr: 'Impôt sur le revenu', de: 'Einkommensteuer', es: 'Impuesto sobre la renta' };
-const socialContribLabel: Record<string, string> = { en: 'Social Contributions', fr: 'Cotisations sociales', de: 'Sozialabgaben', es: 'Contribuciones sociales' };
-const effectiveRateLabel: Record<string, string> = { en: 'Effective Tax Rate', fr: 'Taux d\'imposition effectif', de: 'Effektiver Steuersatz', es: 'Tasa impositiva efectiva' };
+const netAnnualLabel: Record<string, string> = {
+  en: 'Net Annual Salary', fr: 'Salaire net annuel', de: 'Nettojahresgehalt', es: 'Salario neto anual',
+  it: 'Stipendio netto annuale', pt: 'Salário líquido anual', nl: 'Netto jaarsalaris', pl: 'Wynagrodzenie netto roczne',
+  ro: 'Salariu net anual', cs: 'Čistá roční mzda', sv: 'Netto årslön', da: 'Netto årsløn',
+  fi: 'Nettovuosipalkka', el: 'Ετήσιος καθαρός μισθός', hu: 'Nettó éves fizetés', sk: 'Čistá ročná mzda',
+  bg: 'Нетна годишна заплата', hr: 'Neto godišnja plaća', sl: 'Neto letna plača', lt: 'Neto metinis atlyginimas',
+  lv: 'Neto gada alga', et: 'Neto aastapalk', mt: 'Salarju nett annwali', ga: 'Tuarastal glan bliantúil',
+};
+const netMonthlyLabel: Record<string, string> = {
+  en: 'Net Monthly Salary', fr: 'Salaire net mensuel', de: 'Nettomonatsgehalt', es: 'Salario neto mensual',
+  it: 'Stipendio netto mensile', pt: 'Salário líquido mensal', nl: 'Netto maandsalaris', pl: 'Wynagrodzenie netto miesięczne',
+  ro: 'Salariu net lunar', cs: 'Čistá měsíční mzda', sv: 'Netto månadslön', da: 'Netto månedsløn',
+  fi: 'Nettokuukausipalkka', el: 'Μηνιαίος καθαρός μισθός', hu: 'Nettó havi fizetés', sk: 'Čistá mesačná mzda',
+  bg: 'Нетна месечна заплата', hr: 'Neto mjesečna plaća', sl: 'Neto mesečna plača', lt: 'Neto mėnesinis atlyginimas',
+  lv: 'Neto mēneša alga', et: 'Neto kuupalk', mt: 'Salarju nett fix-xahar', ga: 'Tuarastal glan míosúil',
+};
+const incomeTaxLabel: Record<string, string> = {
+  en: 'Income Tax', fr: 'Impôt sur le revenu', de: 'Einkommensteuer', es: 'Impuesto sobre la renta',
+  it: 'Imposta sul reddito', pt: 'Imposto de renda', nl: 'Inkomstenbelasting', pl: 'Podatek dochodowy',
+  ro: 'Impozit pe venit', cs: 'Daň z příjmu', sv: 'Inkomstskatt', da: 'Indkomstskat',
+  fi: 'Tulovero', el: 'Φόρος εισοδήματος', hu: 'Jövedelemadó', sk: 'Daň z príjmu',
+  bg: 'Данък върху дохода', hr: 'Porez na dohodak', sl: 'Dohodnina', lt: 'Pajamų mokestis',
+  lv: 'Ienākuma nodoklis', et: 'Tulumaks', mt: 'Taxxa fuq id-dħul', ga: 'Cáin ioncaim',
+};
+const socialContribLabel: Record<string, string> = {
+  en: 'Social Contributions', fr: 'Cotisations sociales', de: 'Sozialabgaben', es: 'Contribuciones sociales',
+  it: 'Contributi sociali', pt: 'Contribuições sociais', nl: 'Sociale premies', pl: 'Składki społeczne',
+  ro: 'Contribuții sociale', cs: 'Sociální odvody', sv: 'Sociala avgifter', da: 'Sociale bidrag',
+  fi: 'Sosiaalimaksut', el: 'Κοινωνικές εισφορές', hu: 'Társadalombiztosítási járulékok', sk: 'Sociálne odvody',
+  bg: 'Социални осигуровки', hr: 'Socijalni doprinosi', sl: 'Socialni prispevki', lt: 'Socialinės įmokos',
+  lv: 'Sociālās iemaksas', et: 'Sotsiaalmaksed', mt: 'Kontribuzzjonijiet soċjali', ga: 'Ranníocaíochtaí sóisialta',
+};
+const effectiveRateLabel: Record<string, string> = {
+  en: 'Effective Tax Rate', fr: 'Taux d\'imposition effectif', de: 'Effektiver Steuersatz', es: 'Tasa impositiva efectiva',
+  it: 'Aliquota fiscale effettiva', pt: 'Taxa de imposto efetiva', nl: 'Effectief belastingtarief', pl: 'Efektywna stawka podatkowa',
+  ro: 'Rata efectivă de impozitare', cs: 'Efektivní daňová sazba', sv: 'Effektiv skattesats', da: 'Effektiv skattesats',
+  fi: 'Efektiivinen veroprosentti', el: 'Πραγματικός φορολογικός συντελεστής', hu: 'Effektív adókulcs', sk: 'Efektívna daňová sadzba',
+  bg: 'Ефективна данъчна ставка', hr: 'Efektivna porezna stopa', sl: 'Efektivna davčna stopnja', lt: 'Efektyvus mokesčių tarifas',
+  lv: 'Efektīvā nodokļu likme', et: 'Efektiivne maksumäär', mt: 'Rata effettiva tat-taxxa', ga: 'Ráta cánach éifeachtach',
+};
 
-const homeLabelByLang: Record<string, string> = { en: 'Home', fr: 'Accueil', de: 'Startseite', es: 'Inicio' };
-const calcLabelByLang: Record<string, string> = { en: 'Calculator', fr: 'Calculateur', de: 'Rechner', es: 'Calculadora' };
+const homeLabelByLang: Record<string, string> = {
+  en: 'Home', fr: 'Accueil', de: 'Startseite', es: 'Inicio', it: 'Home', pt: 'Início', nl: 'Home', pl: 'Strona główna',
+  ro: 'Acasă', cs: 'Domů', sv: 'Hem', da: 'Hjem', fi: 'Etusivu', el: 'Αρχική', hu: 'Főoldal', sk: 'Domov',
+  bg: 'Начало', hr: 'Početna', sl: 'Domov', lt: 'Pradžia', lv: 'Sākums', et: 'Avaleht', mt: 'Paġna Ewlenija', ga: 'Baile',
+};
+const calcLabelByLang: Record<string, string> = {
+  en: 'Calculator', fr: 'Calculateur', de: 'Rechner', es: 'Calculadora', it: 'Calcolatore', pt: 'Calculadora', nl: 'Rekentool', pl: 'Kalkulator',
+  ro: 'Calculator', cs: 'Kalkulačka', sv: 'Kalkylator', da: 'Beregner', fi: 'Laskuri', el: 'Υπολογιστής', hu: 'Kalkulátor', sk: 'Kalkulačka',
+  bg: 'Калкулатор', hr: 'Kalkulator', sl: 'Kalkulator', lt: 'Skaičiuoklė', lv: 'Kalkulators', et: 'Kalkulaator', mt: 'Kalkulatur', ga: 'Áireamhán',
+};
 
 const countryOptions: Record<string, string> = {
   DE: 'Germany', FR: 'France', ES: 'Spain', NL: 'Netherlands', BE: 'Belgium',

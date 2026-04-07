@@ -117,13 +117,87 @@ const allSchemas = [orgSchema, breadcrumbSchema, ...schema];
     })(window,document,'script','dataLayer','GTM-T526FS5D');</script>
     <!-- End Google Tag Manager -->
 
-    <!-- Google Analytics -->
+    <!-- Google Analytics 4 with Enhanced Conversion Tracking -->
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-V3JNJKQDCR"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-V3JNJKQDCR');
+      gtag('config', 'G-V3JNJKQDCR', {
+        page_path: window.location.pathname,
+        content_group: (function(){
+          var p = window.location.pathname;
+          if (p.match(/\/pricing\//)) return 'pricing';
+          if (p.match(/\/for-employers\//)) return 'b2b_employers';
+          if (p.match(/\/for-recruiters\//)) return 'b2b_recruiters';
+          if (p.match(/\/enterprise\//)) return 'b2b_enterprise';
+          if (p.match(/\/partners\//)) return 'b2b_partners';
+          if (p.match(/\/salary-api\//)) return 'b2b_api';
+          if (p.match(/\/premium\//)) return 'premium';
+          if (p.match(/\/salary\//)) return 'salary_page';
+          if (p.match(/\/country\//)) return 'country_page';
+          if (p.match(/\/compare\//)) return 'compare_page';
+          if (p.match(/\/calculator/)) return 'calculator';
+          if (p.match(/\/blog\//)) return 'blog';
+          if (p.match(/\/newsletter/)) return 'newsletter';
+          if (p.match(/\/alerts/)) return 'alerts';
+          return 'other';
+        })()
+      });
+    </script>
+    <!-- B2B Conversion Event Tracking -->
+    <script is:inline>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Track CTA clicks on monetization pages
+      document.addEventListener('click', function(e) {
+        var link = e.target.closest('a[href], button[type="submit"]');
+        if (!link) return;
+        var href = link.getAttribute('href') || '';
+        var text = (link.textContent || '').trim().substring(0, 50);
+        var page = window.location.pathname;
+
+        // Track pricing page clicks
+        if (href.match(/\/pricing/) || href.match(/\/create-checkout/)) {
+          gtag('event', 'pricing_click', { event_category: 'conversion', event_label: text, page_location: page });
+        }
+        // Track enterprise/demo form submissions
+        if (href.match(/\/enterprise\/demo/) || (page.match(/\/enterprise/) && link.matches('button[type="submit"]'))) {
+          gtag('event', 'demo_request', { event_category: 'conversion', event_label: text, page_location: page });
+        }
+        // Track API signup interest
+        if (href.match(/\/salary-api/) && !page.match(/\/salary-api/)) {
+          gtag('event', 'api_interest', { event_category: 'engagement', event_label: text, page_location: page });
+        }
+        // Track partner program interest
+        if (href.match(/\/partners/) && !page.match(/\/partners/)) {
+          gtag('event', 'partner_interest', { event_category: 'engagement', event_label: text, page_location: page });
+        }
+        // Track newsletter signups
+        if (link.matches('button[type="submit"]') && link.closest('form[action*="subscribe"]')) {
+          gtag('event', 'newsletter_signup', { event_category: 'conversion', page_location: page });
+        }
+        // Track Solutions dropdown usage
+        if (link.closest('.nav-dropdown__panel')) {
+          gtag('event', 'solutions_nav_click', { event_category: 'navigation', event_label: href });
+        }
+      });
+
+      // Track scroll depth on B2B pages
+      var b2bPages = /\/(pricing|for-employers|for-recruiters|enterprise|partners|salary-api|premium)\//;
+      if (b2bPages.test(window.location.pathname)) {
+        var scrollMilestones = [25, 50, 75, 90];
+        var firedMilestones = {};
+        window.addEventListener('scroll', function() {
+          var scrollPercent = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+          scrollMilestones.forEach(function(milestone) {
+            if (scrollPercent >= milestone && !firedMilestones[milestone]) {
+              firedMilestones[milestone] = true;
+              gtag('event', 'scroll_depth', { event_category: 'engagement', event_label: milestone + '%', page_location: window.location.pathname });
+            }
+          });
+        });
+      }
+    });
     </script>
 
     <!-- Plausible Analytics (GDPR-compliant, no cookies) -->

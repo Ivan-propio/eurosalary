@@ -20,8 +20,8 @@ GitHub repo: eurosalary
    hreflang for all 24 langs, TL;DR box, FAQ section
 6. Deploy to dev branch first,
    staging second, main/production last
-7. Never change the homepage design
-   without explicit instruction
+7. Homepage can be changed when discussed
+   with the user — no explicit gate needed
 8. Data used in getStaticPaths() must be imported
    from external files (src/data/), NOT defined
    inline — Astro hoists getStaticPaths into a
@@ -287,8 +287,27 @@ Before doing ANYTHING in a new session:
 3. Check what pages currently exist
 4. Then start working
 
+## Payment system (Stripe — PENDING)
+- Architecture planned, not yet connected
+- Products defined: Pro, Business, API Dev/Biz, Employer Starter/Pro, Reports
+- New tables ready: subscriptions, payments, salary_alerts, report_purchases
+- Migration: supabase/apply-payments.sql (run AFTER apply-crm.sql)
+- Endpoints to create: create-checkout, stripe-webhook, customer-portal
+- REMEMBER: Stripe integration is the final step. Do it last.
+
+## Google Analytics 4
+- Measurement ID: G-V3JNJKQDCR (installed in BaseLayout)
+- GTM Container: GTM-T526FS5D (installed in BaseLayout)
+- Enhanced event tracking: pricing_click, demo_request, api_interest, partner_interest, newsletter_signup, scroll_depth, solutions_nav_click
+- Content groups: salary_page, country_page, compare_page, pricing, b2b_employers, b2b_recruiters, b2b_enterprise, b2b_partners, b2b_api, premium, calculator, blog, newsletter, alerts
+- GA4 Data API endpoint: /api/admin/analytics (ready, needs GA4_PROPERTY_ID + GA4_SERVICE_ACCOUNT_JSON env vars)
+- Plausible Analytics also active (GDPR-compliant backup)
+
 ## Current status
 Revenue engine built (CRM, API endpoints, automation, B2B pages).
+Navigation connected: Header Solutions dropdown, Footer Business column, Homepage B2B section.
+All 3 i18n-partial pages fixed (blog, calculator, newsletter → 24 languages).
+Admin dashboard rebuilt (sidebar nav, revenue tab, subscriptions tab).
 Blog cleared — new posts will be created in all 24 languages from scratch.
-Build: 9,722 pages, 0 errors. Deployed to production.
-Last deploy: 2026-04-06.
+Build: 9,723 pages, 0 errors. Deployed to production.
+Last deploy: 2026-04-07.
