@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
 import { languages } from '../../../i18n/ui';
 import { fb } from '../../../i18n/utils';
 import { blogPosts } from '../../../data/blog-posts';
@@ -66,6 +68,8 @@ function formatDate(dateStr: string, locale: string): string {
 const pageTitle = fb(post.title, lang);
 const pageDescription = fb(post.excerpt, lang);
 const content = fb(post.content, lang);
+const tldrItems = post.tldr ? (post.tldr[lang] || post.tldr.en || []) : [];
+const faqItems = post.faq ? (post.faq[lang] || post.faq.en || []).map((f: {q: string; a: string}) => ({ question: f.q, answer: f.a })) : [];
 
 const relatedPosts = blogPosts.filter((p) => p.id !== post.id);
 
@@ -99,6 +103,15 @@ const pageSchema = [
     },
     keywords: post.tags.join(', '),
   },
+  ...(faqItems.length > 0 ? [{
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map((f: {question: string; answer: string}) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  }] : []),
 ];
 ---
 
@@ -142,7 +155,11 @@ const pageSchema = [
       />
     </div>
 
+    {tldrItems.length > 0 && <TLDRBox items={tldrItems} />}
+
     <div class="blog-post__content" set:html={content} />
+
+    {faqItems.length > 0 && <FAQSection items={faqItems} />}
 
     <a href={`/${lang}/blog/`} class="blog-post__back">
       &larr; {fb(backLabel, lang)}
