@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 140">
+  <title>EuroSalary.eu — Overlapping Rotated Cards (depth)</title>
+  <!-- 3 hexagonos pointy-top r=26 superpuestos, cada uno rotado, sensacion de capas/profundidad -->
+  <g>
+    <g transform="translate(50 70) rotate(-12)">
+      <polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13" fill="#003399" opacity="0.85"/>
+    </g>
+    <g transform="translate(65 70) rotate(8)">
+      <polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13" fill="#1E40AF" opacity="0.85"/>
+    </g>
+    <g transform="translate(80 70) rotate(28)">
+      <polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13" fill="#FFCC00" opacity="0.92"/>
+    </g>
+  </g>
+  <!-- wordmark -->
+  <text x="125" y="89" font-family="Inter, -apple-system, Segoe UI, system-ui, sans-serif" font-size="54" font-weight="800" fill="#0A1F44" letter-spacing="-1.6">eurosalary<tspan fill="#FFCC00">.eu</tspan></text>
+</svg>

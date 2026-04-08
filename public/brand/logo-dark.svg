@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="18 22 476 85">
+  <title>EuroSalary.eu — Dark Background Variant</title>
+  <defs>
+    <linearGradient id="clusterGradDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4D8FFF"/>
+      <stop offset="100%" stop-color="#8FBFFF"/>
+    </linearGradient>
+  </defs>
+  <g stroke="#0A1F44" stroke-width="2.5" stroke-linejoin="round">
+    <polygon points="60,26 79.05,37 79.05,59 60,70 40.95,59 40.95,37" fill="url(#clusterGradDark)"/>
+    <polygon points="40.95,59 60,70 60,92 40.95,103 21.9,92 21.9,70" fill="url(#clusterGradDark)"/>
+    <polygon points="79.05,59 98.1,70 98.1,92 79.05,103 60,92 60,70" fill="url(#clusterGradDark)"/>
+  </g>
+  <text x="130" y="89" font-family="Inter, -apple-system, Segoe UI, system-ui, sans-serif" font-size="54" font-weight="800" fill="#FFFFFF" letter-spacing="-1.6">EuroSalary<tspan fill="#FFCC00">.eu</tspan></text>
+</svg>

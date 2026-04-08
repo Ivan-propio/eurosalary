@@ -1,0 +1,110 @@
+{
+  "$schema": "./brand-tokens.schema.json",
+  "meta": {
+    "name": "EuroSalary Brand System",
+    "version": "1.0.0",
+    "lastUpdated": "2026-04-08",
+    "source": "brand/brandbook.html",
+    "note": "Single source of truth for all EuroSalary brand tokens. Edit this file, run `npm run build:tokens`, and the entire site picks up the change. DO NOT edit src/styles/tokens.css — it is generated."
+  },
+  "color": {
+    "brand": {
+      "eu-blue": "#003399",
+      "eu-blue-light": "#0066CC",
+      "eu-blue-50": "#E6EBF5",
+      "eu-blue-100": "#C2CFE8",
+      "eu-blue-700": "#002879",
+      "eu-yellow": "#FFCC00",
+      "eu-yellow-50": "#FFFAE0",
+      "eu-yellow-600": "#E0B400",
+      "navy": "#0A1F44",
+      "navy-800": "#152C5C"
+    },
+    "ink": {
+      "ink": "#0A1F44",
+      "ink-2": "#374151",
+      "muted": "#6B7280",
+      "muted-2": "#9CA3AF"
+    },
+    "surface": {
+      "bg": "#F5F7FA",
+      "bg-2": "#F9FAFB",
+      "card": "#FFFFFF",
+      "border": "#E5E7EB",
+      "border-strong": "#D1D5DB"
+    },
+    "semantic": {
+      "success": "#10B981",
+      "success-bg": "#ECFDF5",
+      "warning": "#F59E0B",
+      "warning-bg": "#FFFBEB",
+      "danger": "#EF4444",
+      "danger-bg": "#FEF2F2",
+      "info": "#3B82F6",
+      "info-bg": "#EFF6FF"
+    }
+  },
+  "font": {
+    "sans": "'Inter', -apple-system, 'Segoe UI', Roboto, system-ui, sans-serif",
+    "mono": "'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace",
+    "weights": [400, 500, 600, 700, 800, 900],
+    "googleFontsUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap"
+  },
+  "spacing": {
+    "1": "4px",
+    "2": "8px",
+    "3": "12px",
+    "4": "16px",
+    "5": "20px",
+    "6": "24px",
+    "8": "32px",
+    "10": "40px",
+    "12": "48px",
+    "16": "64px",
+    "24": "96px"
+  },
+  "radius": {
+    "sm": "6px",
+    "md": "12px",
+    "lg": "16px",
+    "xl": "20px",
+    "2xl": "24px",
+    "pill": "9999px"
+  },
+  "shadow": {
+    "sm": "0 1px 2px rgba(10,31,68,0.06)",
+    "md": "0 4px 12px -2px rgba(10,31,68,0.08), 0 2px 4px -2px rgba(10,31,68,0.05)",
+    "lg": "0 12px 32px -8px rgba(10,31,68,0.12), 0 4px 8px -4px rgba(10,31,68,0.06)",
+    "xl": "0 24px 60px -20px rgba(10,31,68,0.18), 0 8px 20px -8px rgba(10,31,68,0.08)",
+    "focus": "0 0 0 4px rgba(0,51,153,0.18)",
+    "focus-yellow": "0 0 0 4px rgba(255,204,0,0.35)",
+    "focus-danger": "0 0 0 4px rgba(239,68,68,0.18)"
+  },
+  "motion": {
+    "ease": "cubic-bezier(.4,0,.2,1)",
+    "ease-bounce": "cubic-bezier(.34,1.56,.64,1)",
+    "t-fast": "120ms",
+    "t-base": "180ms",
+    "t-slow": "280ms"
+  },
+  "legacyAliases": {
+    "note": "Backwards-compat map for pre-brandbook variable names still referenced across the codebase. Remove these as pages are migrated. Each value must resolve to a brand token above.",
+    "--color-primary": "navy",
+    "--color-primary-container": "navy",
+    "--color-navy-900": "navy",
+    "--color-navy-800": "navy",
+    "--color-navy-700": "navy-800",
+    "--color-navy-600": "eu-blue-700",
+    "--color-navy-500": "eu-blue",
+    "--color-secondary": "eu-blue",
+    "--color-secondary-hover": "eu-blue-700",
+    "--color-blue-600": "eu-blue",
+    "--color-blue-500": "eu-blue-light",
+    "--color-success": "success",
+    "--color-warning": "warning",
+    "--color-error": "danger",
+    "--font-headline": "sans",
+    "--font-sans": "sans",
+    "--font-mono": "mono"
+  }
+}

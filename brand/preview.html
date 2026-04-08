@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EuroSalary.eu — Logo Concepts</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --ink: #0a1f44;
+    --muted: #6b7280;
+    --eu-blue: #003399;
+    --eu-yellow: #ffcc00;
+    --border: #e5e7eb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Inter, -apple-system, Segoe UI, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    padding: 48px 32px;
+  }
+  header {
+    max-width: 1200px;
+    margin: 0 auto 48px;
+  }
+  h1 {
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: -1.2;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 720px;
+  }
+  .grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .variant {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .variant-header {
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .variant-name {
+    font-size: 18px;
+    font-weight: 800;
+  }
+  .variant-tag {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .stage-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+  .stage {
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 180px;
+  }
+  .stage.light { background: #ffffff; border-right: 1px solid var(--border); }
+  .stage.dark  { background: #0a1f44; }
+  .stage svg { width: 100%; max-width: 480px; height: auto; }
+  .stage.dark svg text { fill: #ffffff !important; }
+  .stage.dark svg .yellow-tspan { fill: #ffcc00 !important; }
+
+  .icon-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 20px 28px;
+    gap: 16px;
+    background: #fafbfc;
+  }
+  .icon-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .icon-card .label {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .icon-card .icon-stage {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .icon-card .icon-stage svg {
+    width: 56px;
+    height: 56px;
+  }
+
+  .verdict {
+    padding: 20px 28px;
+    background: #fafbfc;
+    font-size: 14px;
+    color: #374151;
+    border-top: 1px solid var(--border);
+  }
+  .verdict strong { color: var(--ink); }
+
+  footer {
+    max-width: 1200px;
+    margin: 64px auto 0;
+    padding: 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>EuroSalary.eu — Logo Concepts</h1>
+  <p class="subtitle">6 direcciones distintas para el wordmark <strong>3 hexágonos + eurosalary.eu</strong>. Cada variación se muestra sobre fondo claro y oscuro. Elige UNA y refinamos detalles (tipografía exacta, espaciado, color final).</p>
+</header>
+
+<div class="grid">
+
+  <!-- VARIANT 1 -->
+  <section class="variant">
+    <div class="variant-header">
+      <div class="variant-name">01 — Honeycomb Cluster</div>
+      <div class="variant-tag">classic · solid · institucional</div>
+    </div>
+    <div class="stage-row">
+      <div class="stage light">
+        <svg viewBox="0 0 600 140" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="g1a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#003399"/><stop offset="100%" stop-color="#0066CC"/></linearGradient></defs>
+          <g stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round">
+            <polygon points="60,26 79.05,37 79.05,59 60,70 40.95,59 40.95,37" fill="url(#g1a)"/>
+            <polygon points="40.95,59 60,70 60,92 40.95,103 21.9,92 21.9,70" fill="url(#g1a)"/>
+            <polygon points="79.05,59 98.1,70 98.1,92 79.05,103 60,92 60,70" fill="url(#g1a)"/>
+          </g>
+          <text x="130" y="89" font-family="Inter, sans-serif" font-size="54" font-weight="800" fill="#0A1F44" letter-spacing="-1.6">eurosalary<tspan class="yellow-tspan" fill="#FFCC00">.eu</tspan></text>
+        </svg>
+      </div>
+      <div class="stage dark">
+        <svg viewBox="0 0 600 140" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="g1b" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4D8FFF"/><stop offset="100%" stop-color="#8FBFFF"/></linearGradient></defs>
+          <g stroke="#0a1f44" stroke-width="2.5" stroke-linejoin="round">
+            <polygon points="60,26 79.05,37 79.05,59 60,70 40.95,59 40.95,37" fill="url(#g1b)"/>
+            <polygon points="40.95,59 60,70 60,92 40.95,103 21.9,92 21.9,70" fill="url(#g1b)"/>
+            <polygon points="79.05,59 98.1,70 98.1,92 79.05,103 60,92 60,70" fill="url(#g1b)"/>
+          </g>
+          <text x="130" y="89" font-family="Inter, sans-serif" font-size="54" font-weight="800" fill="#ffffff" letter-spacing="-1.6">eurosalary<tspan class="yellow-tspan" fill="#FFCC00">.eu</tspan></text>
+        </svg>
+      </div>
+    </div>
+    <div class="icon-row">
+      <div class="icon-card"><div class="icon-stage"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><g stroke="#ffffff" stroke-width="3" stroke-linejoin="round" transform="translate(60 60) scale(2.4) translate(-60 -65)"><polygon points="60,26 79.05,37 79.05,59 60,70 40.95,59 40.95,37" fill="#003399"/><polygon points="40.95,59 60,70 60,92 40.95,103 21.9,92 21.9,70" fill="#003399"/><polygon points="79.05,59 98.1,70 98.1,92 79.05,103 60,92 60,70" fill="#003399"/></g></svg></div><div class="label">favicon 64</div></div>
+      <div class="icon-card"><div class="icon-stage" style="background:#0a1f44"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><g stroke="#0a1f44" stroke-width="3" stroke-linejoin="round" transform="translate(60 60) scale(2.4) translate(-60 -65)"><polygon points="60,26 79.05,37 79.05,59 60,70 40.95,59 40.95,37" fill="#FFCC00"/><polygon points="40.95,59 60,70 60,92 40.95,103 21.9,92 21.9,70" fill="#FFCC00"/><polygon points="79.05,59 98.1,70 98.1,92 79.05,103 60,92 60,70" fill="#FFCC00"/></g></svg></div><div class="label">app icon dark</div></div>
+      <div class="icon-card"><div class="icon-stage"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#003399" stroke-width="4" stroke-linejoin="round" transform="translate(60 60) scale(2.4) translate(-60 -65)"><polygon points="60,26 79.05,37 79.05,59 60,70 40.95,59 40.95,37"/><polygon points="40.95,59 60,70 60,92 40.95,103 21.9,92 21.9,70"/><polygon points="79.05,59 98.1,70 98.1,92 79.05,103 60,92 60,70"/></g></svg></div><div class="label">outline only</div></div>
+      <div class="icon-card"><div class="icon-stage"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="60" r="56" fill="#003399"/><g stroke="#003399" stroke-width="2" stroke-linejoin="round" transform="translate(60 60) scale(1.5) translate(-60 -65)"><polygon points="60,26 79.05,37 79.05,59 60,70 40.95,59 40.95,37" fill="#FFCC00"/><polygon points="40.95,59 60,70 60,92 40.95,103 21.9,92 21.9,70" fill="#FFCC00"/><polygon points="79.05,59 98.1,70 98.1,92 79.05,103 60,92 60,70" fill="#FFCC00"/></g></svg></div><div class="label">circle badge</div></div>
+    </div>
+    <div class="verdict"><strong>Vibe:</strong> Fuente de datos oficial. Estructura sólida, tipo Eurostat moderno. Es la más segura y reconocible. Funciona bien en cualquier contexto pero quizá demasiado conservadora.</div>
+  </section>
+
+  <!-- VARIANT 2 -->
+  <section class="variant">
+    <div class="variant-header">
+      <div class="variant-name">02 — Cascade Ascending</div>
+      <div class="variant-tag">crecimiento · datos · dinámico</div>
+    </div>
+    <div class="stage-row">
+      <div class="stage light">
+        <svg viewBox="0 0 600 140" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="46,100 37,115.59 19,115.59 10,100 19,84.41 37,84.41" fill="#0A1F44"/>
+          <polygon points="78,75 69,90.59 51,90.59 42,75 51,59.41 69,59.41" fill="#003399"/>
+          <polygon points="110,50 101,65.59 83,65.59 74,50 83,34.41 101,34.41" fill="#FFCC00"/>
+          <text x="135" y="89" font-family="Inter, sans-serif" font-size="54" font-weight="800" fill="#0A1F44" letter-spacing="-1.6">eurosalary<tspan class="yellow-tspan" fill="#FFCC00">.eu</tspan></text>
+        </svg>
+      </div>
+      <div class="stage dark">
+        <svg viewBox="0 0 600 140" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="46,100 37,115.59 19,115.59 10,100 19,84.41 37,84.41" fill="#4D8FFF"/>
+          <polygon points="78,75 69,90.59 51,90.59 42,75 51,59.41 69,59.41" fill="#8FBFFF"/>
+          <polygon points="110,50 101,65.59 83,65.59 74,50 83,34.41 101,34.41" fill="#FFCC00"/>
+          <text x="135" y="89" font-family="Inter, sans-serif" font-size="54" font-weight="800" fill="#ffffff" letter-spacing="-1.6">eurosalary<tspan class="yellow-tspan" fill="#FFCC00">.eu</tspan></text>
+        </svg>
+      </div>
+    </div>
+    <div class="icon-row">
+      <div class="icon-card"><div class="icon-stage"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><g transform="translate(0 0) scale(1)"><polygon points="46,100 37,115.59 19,115.59 10,100 19,84.41 37,84.41" fill="#0A1F44"/><polygon points="78,75 69,90.59 51,90.59 42,75 51,59.41 69,59.41" fill="#003399"/><polygon points="110,50 101,65.59 83,65.59 74,50 83,34.41 101,34.41" fill="#FFCC00"/></g></svg></div><div class="label">favicon 64</div></div>
+      <div class="icon-card"><div class="icon-stage" style="background:#0a1f44"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><polygon points="46,100 37,115.59 19,115.59 10,100 19,84.41 37,84.41" fill="#4D8FFF"/><polygon points="78,75 69,90.59 51,90.59 42,75 51,59.41 69,59.41" fill="#8FBFFF"/><polygon points="110,50 101,65.59 83,65.59 74,50 83,34.41 101,34.41" fill="#FFCC00"/></svg></div><div class="label">app icon dark</div></div>
+      <div class="icon-card"><div class="icon-stage"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke-width="3.5" stroke-linejoin="round"><polygon points="46,100 37,115.59 19,115.59 10,100 19,84.41 37,84.41" stroke="#003399"/><polygon points="78,75 69,90.59 51,90.59 42,75 51,59.41 69,59.41" stroke="#003399"/><polygon points="110,50 101,65.59 83,65.59 74,50 83,34.41 101,34.41" stroke="#003399"/></g></svg></div><div class="label">outline only</div></div>
+      <div class="icon-card"><div class="icon-stage"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="120" height="120" rx="24" fill="#003399"/><polygon points="46,100 37,115.59 19,115.59 10,100 19,84.41 37,84.41" fill="#FFFFFF" opacity="0.4"/><polygon points="78,75 69,90.59 51,90.59 42,75 51,59.41 69,59.41" fill="#FFFFFF" opacity="0.7"/><polygon points="110,50 101,65.59 83,65.59 74,50 83,34.41 101,34.41" fill="#FFCC00"/></svg></div><div class="label">badge</div></div>
+    </div>
+    <div class="verdict"><strong>Vibe:</strong> Crecimiento, salarios al alza, datos en movimiento. La que mejor "cuenta" lo que hace EuroSalary visualmente. Fintech-moderna. Mi favorita para esta marca.</div>
+  </section>
+
+  <!-- VARIANT 3 -->
+  <section class="variant">
+    <div class="variant-header">
+      <div class="variant-name">03 — Overlapping Cards</div>
+      <div class="variant-tag">profundidad · capas · editorial</div>
+    </div>
+    <div class="stage-row">
+      <div class="stage light">
+        <svg viewBox="0 0 600 140" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(50 70) rotate(-12)"><polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13" fill="#003399" opacity="0.85"/></g>
+          <g transform="translate(65 70) rotate(8)"><polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13" fill="#1E40AF" opacity="0.85"/></g>
+          <g transform="translate(80 70) rotate(28)"><polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13" fill="#FFCC00" opacity="0.92"/></g>
+          <text x="125" y="89" font-family="Inter, sans-serif" font-size="54" font-weight="800" fill="#0A1F44" letter-spacing="-1.6">eurosalary<tspan class="yellow-tspan" fill="#FFCC00">.eu</tspan></text>
+        </svg>
+      </div>
+      <div class="stage dark">
+        <svg viewBox="0 0 600 140" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(50 70) rotate(-12)"><polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13" fill="#4D8FFF" opacity="0.85"/></g>
+          <g transform="translate(65 70) rotate(8)"><polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13" fill="#8FBFFF" opacity="0.85"/></g>
+          <g transform="translate(80 70) rotate(28)"><polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13" fill="#FFCC00" opacity="0.92"/></g>
+          <text x="125" y="89" font-family="Inter, sans-serif" font-size="54" font-weight="800" fill="#ffffff" letter-spacing="-1.6">eurosalary<tspan class="yellow-tspan" fill="#FFCC00">.eu</tspan></text>
+        </svg>
+      </div>
+    </div>
+    <div class="icon-row">
+      <div class="icon-card"><div class="icon-stage"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><g transform="translate(60 60)"><g transform="translate(-12 0) rotate(-12)"><polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13" fill="#003399" opacity="0.85"/></g><g transform="translate(0 0) rotate(8)"><polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13" fill="#1E40AF" opacity="0.85"/></g><g transform="translate(12 0) rotate(28)"><polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13" fill="#FFCC00" opacity="0.92"/></g></g></svg></div><div class="label">favicon 64</div></div>
+      <div class="icon-card"><div class="icon-stage" style="background:#0a1f44"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><g transform="translate(60 60)"><g transform="translate(-12 0) rotate(-12)"><polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13" fill="#4D8FFF" opacity="0.85"/></g><g transform="translate(0 0) rotate(8)"><polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13" fill="#8FBFFF" opacity="0.85"/></g><g transform="translate(12 0) rotate(28)"><polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13" fill="#FFCC00" opacity="0.92"/></g></g></svg></div><div class="label">app icon dark</div></div>
+      <div class="icon-card"><div class="icon-stage"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#003399" stroke-width="3" stroke-linejoin="round"><g transform="translate(60 60)"><g transform="translate(-12 0) rotate(-12)"><polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13"/></g><g transform="translate(0 0) rotate(8)"><polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13"/></g><g transform="translate(12 0) rotate(28)"><polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13"/></g></g></g></svg></div><div class="label">outline only</div></div>
+      <div class="icon-card"><div class="icon-stage"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="24" fill="#003399"/><g transform="translate(60 60)"><g transform="translate(-10 0) rotate(-12)"><polygon points="0,-22 19.05,-11 19.05,11 0,22 -19.05,11 -19.05,-11" fill="#FFFFFF" opacity="0.5"/></g><g transform="translate(0 0) rotate(8)"><polygon points="0,-22 19.05,-11 19.05,11 0,22 -19.05,11 -19.05,-11" fill="#FFFFFF" opacity="0.7"/></g><g transform="translate(10 0) rotate(28)"><polygon points="0,-22 19.05,-11 19.05,11 0,22 -19.05,11 -19.05,-11" fill="#FFCC00"/></g></g></svg></div><div class="label">badge</div></div>
+    </div>
+    <div class="verdict"><strong>Vibe:</strong> Capas de información, "datos sobre datos". Más editorial, tipo The Economist. La rotación añade dinamismo pero puede leerse como menos serio en contextos muy formales.</div>
+  </section>
+
+  <!-- VARIANT 4 -->
+  <section class="variant">
+    <div class="variant-header">
+      <div class="variant-name">04 — Monoline Row</div>
+      <div class="variant-tag">minimal · técnico · circuito</div>
+    </div>
+    <div class="stage-row">
+      <div class="stage light">
+        <svg viewBox="0 0 600 140" xmlns="http://www.w3.org/2000/svg">
+          <g fill="none" stroke="#003399" stroke-width="3.5" stroke-linejoin="round">
+            <polygon points="35,48 54.05,59 54.05,81 35,92 15.95,81 15.95,59"/>
+            <polygon points="73.1,48 92.15,59 92.15,81 73.1,92 54.05,81 54.05,59" fill="#FFCC00" stroke="#003399"/>
+            <polygon points="111.2,48 130.25,59 130.25,81 111.2,92 92.15,81 92.15,59"/>
+          </g>
+          <text x="155" y="89" font-family="Inter, sans-serif" font-size="54" font-weight="800" fill="#0A1F44" letter-spacing="-1.6">eurosalary<tspan class="yellow-tspan" fill="#FFCC00">.eu</tspan></text>
+        </svg>
+      </div>
+      <div class="stage dark">
+        <svg viewBox="0 0 600 140" xmlns="http://www.w3.org/2000/svg">
+          <g fill="none" stroke="#8FBFFF" stroke-width="3.5" stroke-linejoin="round">
+            <polygon points="35,48 54.05,59 54.05,81 35,92 15.95,81 15.95,59"/>
+            <polygon points="73.1,48 92.15,59 92.15,81 73.1,92 54.05,81 54.05,59" fill="#FFCC00" stroke="#FFCC00"/>
+            <polygon points="111.2,48 130.25,59 130.25,81 111.2,92 92.15,81 92.15,59"/>
+          </g>
+          <text x="155" y="89" font-family="Inter, sans-serif" font-size="54" font-weight="800" fill="#ffffff" letter-spacing="-1.6">eurosalary<tspan class="yellow-tspan" fill="#FFCC00">.eu</tspan></text>
+        </svg>
+      </div>
+    </div>
+    <div class="icon-row">
+      <div class="icon-card"><div class="icon-stage"><svg viewBox="0 0 145 140" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#003399" stroke-width="4" stroke-linejoin="round"><polygon points="35,48 54.05,59 54.05,81 35,92 15.95,81 15.95,59"/><polygon points="73.1,48 92.15,59 92.15,81 73.1,92 54.05,81 54.05,59" fill="#FFCC00" stroke="#003399"/><polygon points="111.2,48 130.25,59 130.25,81 111.2,92 92.15,81 92.15,59"/></g></svg></div><div class="label">favicon (wide)</div></div>
+      <div class="icon-card"><div class="icon-stage" style="background:#0a1f44"><svg viewBox="0 0 145 140" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#8FBFFF" stroke-width="4" stroke-linejoin="round"><polygon points="35,48 54.05,59 54.05,81 35,92 15.95,81 15.95,59"/><polygon points="73.1,48 92.15,59 92.15,81 73.1,92 54.05,81 54.05,59" fill="#FFCC00" stroke="#FFCC00"/><polygon points="111.2,48 130.25,59 130.25,81 111.2,92 92.15,81 92.15,59"/></g></svg></div><div class="label">dark variant</div></div>
+      <div class="icon-card"><div class="icon-stage"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><g transform="translate(60 60) scale(2.5) translate(-73 -70)" fill="none" stroke="#003399" stroke-width="2" stroke-linejoin="round"><polygon points="35,48 54.05,59 54.05,81 35,92 15.95,81 15.95,59"/><polygon points="73.1,48 92.15,59 92.15,81 73.1,92 54.05,81 54.05,59" fill="#FFCC00" stroke="#003399"/><polygon points="111.2,48 130.25,59 130.25,81 111.2,92 92.15,81 92.15,59"/></g></svg></div><div class="label">square crop</div></div>
+      <div class="icon-card"><div class="icon-stage"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="24" fill="#FFCC00"/><g transform="translate(60 60) scale(1.6) translate(-73 -70)" fill="none" stroke="#003399" stroke-width="3" stroke-linejoin="round"><polygon points="35,48 54.05,59 54.05,81 35,92 15.95,81 15.95,59"/><polygon points="73.1,48 92.15,59 92.15,81 73.1,92 54.05,81 54.05,59" fill="#003399" stroke="#003399"/><polygon points="111.2,48 130.25,59 130.25,81 111.2,92 92.15,81 92.15,59"/></g></svg></div><div class="label">yellow badge</div></div>
+    </div>
+    <div class="verdict"><strong>Vibe:</strong> Tech, circuito, minimalista tipo Stripe/N26. Muy contemporáneo. Único contra del icon-mark: ocupa más ancho horizontal, peor para favicon cuadrado.</div>
+  </section>
+
+  <!-- VARIANT 5 -->
+  <section class="variant">
+    <div class="variant-header">
+      <div class="variant-name">05 — Trinity Rotated</div>
+      <div class="variant-tag">estrella · simbólico · convergencia</div>
+    </div>
+    <div class="stage-row">
+      <div class="stage light">
+        <svg viewBox="0 0 600 140" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(65 70)">
+            <g transform="rotate(0)"><polygon points="0,-28 24.25,-14 24.25,14 0,28 -24.25,14 -24.25,-14" fill="#003399" opacity="0.7"/></g>
+            <g transform="rotate(40)"><polygon points="0,-28 24.25,-14 24.25,14 0,28 -24.25,14 -24.25,-14" fill="#0066CC" opacity="0.7"/></g>
+            <g transform="rotate(80)"><polygon points="0,-28 24.25,-14 24.25,14 0,28 -24.25,14 -24.25,-14" fill="#FFCC00" opacity="0.75"/></g>
+          </g>
+          <text x="125" y="89" font-family="Inter, sans-serif" font-size="54" font-weight="800" fill="#0A1F44" letter-spacing="-1.6">eurosalary<tspan class="yellow-tspan" fill="#FFCC00">.eu</tspan></text>
+        </svg>
+      </div>
+      <div class="stage dark">
+        <svg viewBox="0 0 600 140" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(65 70)">
+            <g transform="rotate(0)"><polygon points="0,-28 24.25,-14 24.25,14 0,28 -24.25,14 -24.25,-14" fill="#4D8FFF" opacity="0.7"/></g>
+            <g transform="rotate(40)"><polygon points="0,-28 24.25,-14 24.25,14 0,28 -24.25,14 -24.25,-14" fill="#8FBFFF" opacity="0.7"/></g>
+            <g transform="rotate(80)"><polygon points="0,-28 24.25,-14 24.25,14 0,28 -24.25,14 -24.25,-14" fill="#FFCC00" opacity="0.75"/></g>
+          </g>
+          <text x="125" y="89" font-family="Inter, sans-serif" font-size="54" font-weight="800" fill="#ffffff" letter-spacing="-1.6">eurosalary<tspan class="yellow-tspan" fill="#FFCC00">.eu</tspan></text>
+        </svg>
+      </div>
+    </div>
+    <div class="icon-row">
+      <div class="icon-card"><div class="icon-stage"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><g transform="translate(60 60)"><g transform="rotate(0)"><polygon points="0,-32 27.71,-16 27.71,16 0,32 -27.71,16 -27.71,-16" fill="#003399" opacity="0.7"/></g><g transform="rotate(40)"><polygon points="0,-32 27.71,-16 27.71,16 0,32 -27.71,16 -27.71,-16" fill="#0066CC" opacity="0.7"/></g><g transform="rotate(80)"><polygon points="0,-32 27.71,-16 27.71,16 0,32 -27.71,16 -27.71,-16" fill="#FFCC00" opacity="0.75"/></g></g></svg></div><div class="label">favicon 64</div></div>
+      <div class="icon-card"><div class="icon-stage" style="background:#0a1f44"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><g transform="translate(60 60)"><g transform="rotate(0)"><polygon points="0,-32 27.71,-16 27.71,16 0,32 -27.71,16 -27.71,-16" fill="#4D8FFF" opacity="0.7"/></g><g transform="rotate(40)"><polygon points="0,-32 27.71,-16 27.71,16 0,32 -27.71,16 -27.71,-16" fill="#8FBFFF" opacity="0.7"/></g><g transform="rotate(80)"><polygon points="0,-32 27.71,-16 27.71,16 0,32 -27.71,16 -27.71,-16" fill="#FFCC00" opacity="0.75"/></g></g></svg></div><div class="label">app icon dark</div></div>
+      <div class="icon-card"><div class="icon-stage"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#003399" stroke-width="3" stroke-linejoin="round" transform="translate(60 60)"><g transform="rotate(0)"><polygon points="0,-32 27.71,-16 27.71,16 0,32 -27.71,16 -27.71,-16"/></g><g transform="rotate(40)"><polygon points="0,-32 27.71,-16 27.71,16 0,32 -27.71,16 -27.71,-16"/></g><g transform="rotate(80)"><polygon points="0,-32 27.71,-16 27.71,16 0,32 -27.71,16 -27.71,-16"/></g></g></svg></div><div class="label">outline only</div></div>
+      <div class="icon-card"><div class="icon-stage"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="60" r="56" fill="#FFCC00"/><g transform="translate(60 60)"><g transform="rotate(0)"><polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13" fill="#003399" opacity="0.85"/></g><g transform="rotate(40)"><polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13" fill="#003399" opacity="0.85"/></g><g transform="rotate(80)"><polygon points="0,-26 22.52,-13 22.52,13 0,26 -22.52,13 -22.52,-13" fill="#003399" opacity="0.85"/></g></g></svg></div><div class="label">yellow badge</div></div>
+    </div>
+    <div class="verdict"><strong>Vibe:</strong> Convergencia, símbolo poderoso, casi como una "huella" gráfica. Muy memorable como icono pero más complejo de leer en tamaños pequeños.</div>
+  </section>
+
+  <!-- VARIANT 6 -->
+  <section class="variant">
+    <div class="variant-header">
+      <div class="variant-name">06 — Mixed Honeycomb</div>
+      <div class="variant-tag">jerarquía · standout · contraste</div>
+    </div>
+    <div class="stage-row">
+      <div class="stage light">
+        <svg viewBox="0 0 600 140" xmlns="http://www.w3.org/2000/svg">
+          <g stroke-linejoin="round">
+            <polygon points="40.95,59 60,70 60,92 40.95,103 21.9,92 21.9,70" fill="none" stroke="#003399" stroke-width="3.5"/>
+            <polygon points="79.05,59 98.1,70 98.1,92 79.05,103 60,92 60,70" fill="#003399"/>
+            <polygon points="60,26 79.05,37 79.05,59 60,70 40.95,59 40.95,37" fill="#FFCC00"/>
+          </g>
+          <text x="130" y="89" font-family="Inter, sans-serif" font-size="54" font-weight="800" fill="#0A1F44" letter-spacing="-1.6">eurosalary<tspan class="yellow-tspan" fill="#FFCC00">.eu</tspan></text>
+        </svg>
+      </div>
+      <div class="stage dark">
+        <svg viewBox="0 0 600 140" xmlns="http://www.w3.org/2000/svg">
+          <g stroke-linejoin="round">
+            <polygon points="40.95,59 60,70 60,92 40.95,103 21.9,92 21.9,70" fill="none" stroke="#8FBFFF" stroke-width="3.5"/>
+            <polygon points="79.05,59 98.1,70 98.1,92 79.05,103 60,92 60,70" fill="#8FBFFF"/>
+            <polygon points="60,26 79.05,37 79.05,59 60,70 40.95,59 40.95,37" fill="#FFCC00"/>
+          </g>
+          <text x="130" y="89" font-family="Inter, sans-serif" font-size="54" font-weight="800" fill="#ffffff" letter-spacing="-1.6">eurosalary<tspan class="yellow-tspan" fill="#FFCC00">.eu</tspan></text>
+        </svg>
+      </div>
+    </div>
+    <div class="icon-row">
+      <div class="icon-card"><div class="icon-stage"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><g stroke-linejoin="round" transform="translate(0 5) scale(1)"><polygon points="40.95,59 60,70 60,92 40.95,103 21.9,92 21.9,70" fill="none" stroke="#003399" stroke-width="3"/><polygon points="79.05,59 98.1,70 98.1,92 79.05,103 60,92 60,70" fill="#003399"/><polygon points="60,26 79.05,37 79.05,59 60,70 40.95,59 40.95,37" fill="#FFCC00"/></g></svg></div><div class="label">favicon 64</div></div>
+      <div class="icon-card"><div class="icon-stage" style="background:#0a1f44"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><g stroke-linejoin="round" transform="translate(0 5) scale(1)"><polygon points="40.95,59 60,70 60,92 40.95,103 21.9,92 21.9,70" fill="none" stroke="#8FBFFF" stroke-width="3"/><polygon points="79.05,59 98.1,70 98.1,92 79.05,103 60,92 60,70" fill="#8FBFFF"/><polygon points="60,26 79.05,37 79.05,59 60,70 40.95,59 40.95,37" fill="#FFCC00"/></g></svg></div><div class="label">app icon dark</div></div>
+      <div class="icon-card"><div class="icon-stage"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#003399" stroke-width="3.5" stroke-linejoin="round" transform="translate(0 5)"><polygon points="40.95,59 60,70 60,92 40.95,103 21.9,92 21.9,70"/><polygon points="79.05,59 98.1,70 98.1,92 79.05,103 60,92 60,70"/><polygon points="60,26 79.05,37 79.05,59 60,70 40.95,59 40.95,37"/></g></svg></div><div class="label">outline only</div></div>
+      <div class="icon-card"><div class="icon-stage"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="120" rx="24" fill="#003399"/><g stroke-linejoin="round" transform="translate(0 5)"><polygon points="40.95,59 60,70 60,92 40.95,103 21.9,92 21.9,70" fill="none" stroke="#FFCC00" stroke-width="3.5"/><polygon points="79.05,59 98.1,70 98.1,92 79.05,103 60,92 60,70" fill="#FFFFFF"/><polygon points="60,26 79.05,37 79.05,59 60,70 40.95,59 40.95,37" fill="#FFCC00"/></g></svg></div><div class="label">badge</div></div>
+    </div>
+    <div class="verdict"><strong>Vibe:</strong> Sentido de jerarquía, "uno destaca". El mix outline+filled+yellow comunica diversidad de datos. Más distintivo que el cluster solo, mantiene la legibilidad.</div>
+  </section>
+
+</div>
+
+<footer>
+  brand/preview.html · 6 conceptos · abre este archivo en tu navegador · cuando elijas uno, refinamos detalles<br>
+  Archivos fuente: <code>brand/logos/01..06.svg</code>
+</footer>
+
+</body>
+</html>

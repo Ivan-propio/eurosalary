@@ -1,0 +1,105 @@
+/*
+ * tokens.css — AUTO-GENERATED from brand/brand-tokens.json
+ * DO NOT EDIT BY HAND. Edit brand/brand-tokens.json and run:
+ *   npm run build:tokens
+ * Generated: 2026-04-08T21:56:16.089Z
+ * Brand version: 1.0.0
+ */
+
+:root {
+  /* ==== Brand colors ==== */
+  --eu-blue: #003399;
+  --eu-blue-light: #0066CC;
+  --eu-blue-50: #E6EBF5;
+  --eu-blue-100: #C2CFE8;
+  --eu-blue-700: #002879;
+  --eu-yellow: #FFCC00;
+  --eu-yellow-50: #FFFAE0;
+  --eu-yellow-600: #E0B400;
+  --navy: #0A1F44;
+  --navy-800: #152C5C;
+
+  /* ==== Ink / text ==== */
+  --ink: #0A1F44;
+  --ink-2: #374151;
+  --muted: #6B7280;
+  --muted-2: #9CA3AF;
+
+  /* ==== Surfaces ==== */
+  --bg: #F5F7FA;
+  --bg-2: #F9FAFB;
+  --card: #FFFFFF;
+  --border: #E5E7EB;
+  --border-strong: #D1D5DB;
+
+  /* ==== Semantic ==== */
+  --success: #10B981;
+  --success-bg: #ECFDF5;
+  --warning: #F59E0B;
+  --warning-bg: #FFFBEB;
+  --danger: #EF4444;
+  --danger-bg: #FEF2F2;
+  --info: #3B82F6;
+  --info-bg: #EFF6FF;
+
+  /* ==== Typography ==== */
+  --font-sans: 'Inter', -apple-system, 'Segoe UI', Roboto, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+
+  /* ==== Spacing (4px base) ==== */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+  --sp-24: 96px;
+
+  /* ==== Radius ==== */
+  --r-sm: 6px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 20px;
+  --r-2xl: 24px;
+  --r-pill: 9999px;
+
+  /* ==== Shadows ==== */
+  --shadow-sm: 0 1px 2px rgba(10,31,68,0.06);
+  --shadow-md: 0 4px 12px -2px rgba(10,31,68,0.08), 0 2px 4px -2px rgba(10,31,68,0.05);
+  --shadow-lg: 0 12px 32px -8px rgba(10,31,68,0.12), 0 4px 8px -4px rgba(10,31,68,0.06);
+  --shadow-xl: 0 24px 60px -20px rgba(10,31,68,0.18), 0 8px 20px -8px rgba(10,31,68,0.08);
+  --shadow-focus: 0 0 0 4px rgba(0,51,153,0.18);
+  --shadow-focus-yellow: 0 0 0 4px rgba(255,204,0,0.35);
+  --shadow-focus-danger: 0 0 0 4px rgba(239,68,68,0.18);
+
+  /* ==== Motion ==== */
+  --ease: cubic-bezier(.4,0,.2,1);
+  --ease-bounce: cubic-bezier(.34,1.56,.64,1);
+  --t-fast: 120ms;
+  --t-base: 180ms;
+  --t-slow: 280ms;
+
+  /* ==== Legacy aliases — backwards compat for pre-brandbook code ====
+   * Remove as pages are migrated. See brand/brand-tokens.json legacyAliases. */
+  --color-primary: var(--navy);
+  --color-primary-container: var(--navy);
+  --color-navy-900: var(--navy);
+  --color-navy-800: var(--navy);
+  --color-navy-700: var(--navy-800);
+  --color-navy-600: var(--eu-blue-700);
+  --color-navy-500: var(--eu-blue);
+  --color-secondary: var(--eu-blue);
+  --color-secondary-hover: var(--eu-blue-700);
+  --color-blue-600: var(--eu-blue);
+  --color-blue-500: var(--eu-blue-light);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--danger);
+  --font-headline: var(--font-sans);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}

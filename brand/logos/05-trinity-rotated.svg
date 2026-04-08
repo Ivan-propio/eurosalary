@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 140">
+  <title>EuroSalary.eu — Trinity Rotated (star-like overlap)</title>
+  <!-- 3 hexagonos pointy-top r=28 superpuestos en mismo centro, rotados 0/40/80 -->
+  <!-- crea una forma estrella de 12 puntas -->
+  <g transform="translate(65 70)">
+    <g transform="rotate(0)">
+      <polygon points="0,-28 24.25,-14 24.25,14 0,28 -24.25,14 -24.25,-14" fill="#003399" opacity="0.7"/>
+    </g>
+    <g transform="rotate(40)">
+      <polygon points="0,-28 24.25,-14 24.25,14 0,28 -24.25,14 -24.25,-14" fill="#0066CC" opacity="0.7"/>
+    </g>
+    <g transform="rotate(80)">
+      <polygon points="0,-28 24.25,-14 24.25,14 0,28 -24.25,14 -24.25,-14" fill="#FFCC00" opacity="0.75"/>
+    </g>
+  </g>
+  <!-- wordmark -->
+  <text x="125" y="89" font-family="Inter, -apple-system, Segoe UI, system-ui, sans-serif" font-size="54" font-weight="800" fill="#0A1F44" letter-spacing="-1.6">eurosalary<tspan fill="#FFCC00">.eu</tspan></text>
+</svg>

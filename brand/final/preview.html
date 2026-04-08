@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EuroSalary.eu — Final Logo System</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --ink: #0a1f44;
+    --muted: #6b7280;
+    --eu-blue: #003399;
+    --eu-yellow: #ffcc00;
+    --border: #e5e7eb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Inter, -apple-system, Segoe UI, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    padding: 48px 32px;
+  }
+  .wrap { max-width: 1200px; margin: 0 auto; }
+  header { margin-bottom: 48px; }
+  h1 { font-size: 36px; font-weight: 900; letter-spacing: -1.2px; margin-bottom: 8px; }
+  .sub { color: var(--muted); font-size: 16px; max-width: 780px; }
+  h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; margin: 48px 0 16px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .section { margin-bottom: 24px; }
+
+  .hero { display: grid; grid-template-columns: 1fr 1fr; }
+  .hero .stage { padding: 56px; display: flex; align-items: center; justify-content: center; min-height: 240px; }
+  .hero .light { background: #ffffff; border-right: 1px solid var(--border); }
+  .hero .dark  { background: #0a1f44; }
+  .hero svg { width: 100%; max-width: 440px; height: auto; }
+
+  .icons-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+    padding: 28px;
+  }
+  .icon-box { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .icon-box .lab { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .icon-box .stage { background: #f7f9fc; border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; align-items: center; justify-content: center; }
+  .icon-box .stage img { height: 72px; width: auto; display: block; }
+  .icon-box .stage.size-16 { padding: 28px; }
+  .icon-box .stage.size-16 img { height: 16px; }
+  .icon-box .stage.size-32 { padding: 24px; }
+  .icon-box .stage.size-32 img { height: 32px; }
+  .icon-box .stage.size-64 img { height: 64px; }
+  .icon-box .stage.size-128 img { height: 110px; }
+  .icon-box .stage.size-256 img { height: 140px; }
+  .icon-box .stage.mono { background: #ffffff; }
+  .icon-box .stage.navy { background: #0a1f44; }
+  .icon-box .stage.yellow { background: #ffcc00; }
+
+  .colors { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 28px; }
+  .color-swatch { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+  .color-swatch .chip { height: 100px; }
+  .color-swatch .meta { padding: 14px; background: #fff; }
+  .color-swatch .name { font-weight: 800; font-size: 14px; }
+  .color-swatch .hex { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .real-contexts { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .context { border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .context .browser { background: #e5e7eb; padding: 10px 14px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+  .context .dots { display: flex; gap: 6px; }
+  .context .dot { width: 10px; height: 10px; border-radius: 50%; background: #cbd5e1; }
+  .context .url { background: #fff; border-radius: 8px; padding: 5px 12px; font-size: 11px; color: #6b7280; font-family: ui-monospace, monospace; flex: 1; display: flex; align-items: center; gap: 6px; }
+  .context .url img { width: 14px; height: 14px; }
+  .context .tab { background: #fff; border-top-left-radius: 8px; border-top-right-radius: 8px; padding: 6px 12px; font-size: 11px; display: flex; align-items: center; gap: 6px; max-width: 200px; }
+  .context .tab img { width: 14px; height: 14px; }
+  .context .body { background: #fff; padding: 32px; min-height: 200px; display: flex; align-items: center; justify-content: center; }
+  .context .body svg { max-width: 320px; width: 100%; }
+
+  .phone { background: #0a1f44; border-radius: 28px; padding: 12px; max-width: 280px; margin: 0 auto; aspect-ratio: 9/19; position: relative; }
+  .phone .screen { background: #003399; border-radius: 20px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+  .phone .notch { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 90px; height: 22px; background: #0a1f44; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; z-index: 2; }
+
+  footer { margin-top: 64px; text-align: center; color: var(--muted); font-size: 13px; }
+  .yellow-tspan { fill: #ffcc00 !important; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header>
+  <h1>EuroSalary.eu — Final Logo System</h1>
+  <p class="sub">Combo elegido: <strong>wordmark honeycomb cluster (01)</strong> + <strong>favicon mixed badge (06)</strong>. Todos los archivos fuente están en <code>brand/final/*.svg</code>.</p>
+</header>
+
+<h2>1. Primary Logo</h2>
+<div class="card hero section">
+  <div class="stage light">
+    <img src="logo-primary.svg" alt="EuroSalary primary logo" style="width:100%; max-width:440px;">
+  </div>
+  <div class="stage dark">
+    <img src="logo-dark.svg" alt="EuroSalary dark variant" style="width:100%; max-width:440px;">
+  </div>
+</div>
+
+<h2>2. Favicon / App Icon</h2>
+<div class="card section">
+  <div class="icons-row">
+    <div class="icon-box">
+      <div class="stage size-16"><img src="favicon-simple.svg" alt="16"></div>
+      <div class="lab">16×16 tab</div>
+    </div>
+    <div class="icon-box">
+      <div class="stage size-32"><img src="favicon-simple.svg" alt="32"></div>
+      <div class="lab">32×32</div>
+    </div>
+    <div class="icon-box">
+      <div class="stage size-64"><img src="favicon.svg" alt="64"></div>
+      <div class="lab">64×64</div>
+    </div>
+    <div class="icon-box">
+      <div class="stage size-128"><img src="favicon.svg" alt="128"></div>
+      <div class="lab">128×128</div>
+    </div>
+    <div class="icon-box">
+      <div class="stage size-256"><img src="favicon.svg" alt="256"></div>
+      <div class="lab">256×256</div>
+    </div>
+    <div class="icon-box">
+      <div class="stage mono size-128"><img src="icon-only.svg" alt="overlay"></div>
+      <div class="lab">Overlay</div>
+    </div>
+  </div>
+</div>
+
+<h2>3. In Context</h2>
+<div class="real-contexts section">
+  <div class="context">
+    <div class="browser">
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div class="tab"><img src="favicon.svg"> EuroSalary.eu — Salarios</div>
+    </div>
+    <div class="browser">
+      <div class="url"><img src="favicon.svg">https://eurosalary.eu</div>
+    </div>
+    <div class="body">
+      <img src="logo-primary.svg" alt="header">
+    </div>
+  </div>
+
+  <div class="context">
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="screen">
+        <img src="favicon.svg" style="width: 100px;">
+        <img src="logo-dark.svg" style="width: 220px;">
+        <div style="color:#FFCC00; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;">The European Salary Index</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2>4. Color Palette</h2>
+<div class="card section">
+  <div class="colors">
+    <div class="color-swatch"><div class="chip" style="background: #003399;"></div><div class="meta"><div class="name">EU Blue</div><div class="hex">#003399</div></div></div>
+    <div class="color-swatch"><div class="chip" style="background: linear-gradient(135deg, #003399, #0066CC);"></div><div class="meta"><div class="name">EU Blue Gradient</div><div class="hex">#003399 → #0066CC</div></div></div>
+    <div class="color-swatch"><div class="chip" style="background: #FFCC00;"></div><div class="meta"><div class="name">EU Yellow</div><div class="hex">#FFCC00</div></div></div>
+    <div class="color-swatch"><div class="chip" style="background: #0A1F44;"></div><div class="meta"><div class="name">Navy Ink</div><div class="hex">#0A1F44</div></div></div>
+  </div>
+</div>
+
+<h2>5. Monochrome (print-safe)</h2>
+<div class="card section">
+  <div class="hero">
+    <div class="stage light">
+      <img src="logo-mono.svg" alt="monochrome" style="width:100%; max-width:440px;">
+    </div>
+    <div class="stage" style="background: #FFCC00;">
+      <img src="logo-mono.svg" alt="monochrome yellow bg" style="width:100%; max-width:440px;">
+    </div>
+  </div>
+</div>
+
+<footer>
+  brand/final/ · logo-primary.svg · logo-dark.svg · logo-mono.svg · favicon.svg · favicon-simple.svg · icon-only.svg
+</footer>
+
+</div>
+</body>
+</html>

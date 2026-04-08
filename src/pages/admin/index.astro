@@ -66,6 +66,10 @@
       <button class="nav-item" data-section="activities">
         <span class="material-symbols-outlined">timeline</span><span class="nav-label">Activity</span>
       </button>
+      <div class="nav-divider"></div>
+      <button class="nav-item" data-section="brand">
+        <span class="material-symbols-outlined">palette</span><span class="nav-label">Brand Assets</span>
+      </button>
       <button class="nav-item" data-section="settings">
         <span class="material-symbols-outlined">settings</span><span class="nav-label">Settings</span>
       </button>
@@ -305,6 +309,47 @@
       </section>
 
       <!-- Settings -->
+      <!-- Brand Assets -->
+      <section class="section-panel" id="sec-brand">
+        <div class="section-head">
+          <h1 class="page-title">Brand Assets</h1>
+          <p class="page-desc">Logos, favicons, color system and typography. Single source of truth: <code>brand/brand-tokens.json</code>. Everything below is auto-generated from it.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Quick links</h2>
+          </div>
+          <div class="card-body" style="display:flex;gap:12px;flex-wrap:wrap;padding:1.25rem">
+            <a class="btn-primary" href="/brand/brandbook.html" target="_blank">Open Brand Book</a>
+            <a class="btn-secondary" href="/brand-tokens.json" target="_blank" id="brand-json-link">brand-tokens.json</a>
+            <a class="btn-secondary" href="/favicon.svg" target="_blank">Favicon SVG</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Logo library</h2>
+            <span class="topbar-meta" id="brand-assets-count"></span>
+          </div>
+          <div class="card-body" id="brand-logos-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;padding:1.25rem"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Color system</h2>
+          </div>
+          <div class="card-body" id="brand-colors-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;padding:1.25rem"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Typography</h2>
+          </div>
+          <div class="card-body" id="brand-typography" style="padding:1.5rem;display:grid;gap:16px"></div>
+        </div>
+      </section>
+
       <section class="section-panel" id="sec-settings">
         <div class="section-head">
           <h1 class="page-title">Settings</h1>
@@ -655,6 +700,98 @@
     $$('.section-panel').forEach(p => p.classList.remove('active'));
     const panel = $(`#sec-${sec}`);
     if (panel) panel.classList.add('active');
+    if (sec === 'brand') loadBrandAssets();
+  }
+
+  // ─── Brand Assets (lazy, cached) ───
+  let brandLoaded = false;
+  async function loadBrandAssets() {
+    if (brandLoaded) return;
+    brandLoaded = true;
+    try {
+      const res = await fetch('/brand-tokens.json', { cache: 'no-cache' });
+      if (!res.ok) throw new Error('brand-tokens.json not found');
+      const tokens = await res.json();
+
+      // ── Logos grid — read file list from public/brand/ via known names
+      const logoFiles = [
+        { file: 'logo-primary.svg', label: 'Logo · Primary', bg: '#fff' },
+        { file: 'logo-dark.svg', label: 'Logo · Dark', bg: '#0A1F44' },
+        { file: 'logo-mono.svg', label: 'Logo · Mono', bg: '#fff' },
+        { file: 'icon-only.svg', label: 'Icon only', bg: '#fff' },
+        { file: 'favicon.svg', label: 'Favicon', bg: '#fff' },
+        { file: 'favicon-simple.svg', label: 'Favicon · Simple', bg: '#fff' },
+      ];
+      const grid = $('#brand-logos-grid');
+      if (grid) {
+        grid.innerHTML = logoFiles.map(l => `
+          <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+            <div style="background:${l.bg};padding:28px;display:flex;align-items:center;justify-content:center;min-height:120px">
+              <img src="/brand/${l.file}" alt="${l.label}" style="max-width:100%;max-height:80px" />
+            </div>
+            <div style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+              <div>
+                <div style="font-size:0.85rem;font-weight:600;color:var(--text)">${l.label}</div>
+                <div style="font-size:0.72rem;color:var(--text-muted);font-family:var(--font-mono,monospace)">${l.file}</div>
+              </div>
+              <a href="/brand/${l.file}" download="${l.file}" class="icon-btn" title="Download"><span class="material-symbols-outlined">download</span></a>
+            </div>
+          </div>
+        `).join('');
+      }
+      const count = $('#brand-assets-count');
+      if (count) count.textContent = `${logoFiles.length} assets · brand v${tokens.meta?.version || '1.0.0'}`;
+
+      // ── Color swatches
+      const cg = $('#brand-colors-grid');
+      if (cg) {
+        const groups = [
+          { title: 'Brand', obj: tokens.color.brand },
+          { title: 'Surface', obj: tokens.color.surface },
+          { title: 'Ink', obj: tokens.color.ink },
+          { title: 'Semantic', obj: tokens.color.semantic },
+        ];
+        cg.innerHTML = groups.map(g => `
+          <div style="grid-column:1/-1;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-top:8px">${g.title}</div>
+        ` + Object.entries(g.obj).map(([k, v]) => `
+          <button type="button" class="brand-swatch" data-copy="${v}" title="Click to copy ${v}" style="text-align:left;background:var(--bg-surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;padding:0">
+            <div style="background:${v};height:56px;border-bottom:1px solid var(--border)"></div>
+            <div style="padding:10px 12px">
+              <div style="font-size:0.8rem;font-weight:600;color:var(--text)">--${k}</div>
+              <div style="font-size:0.72rem;color:var(--text-muted);font-family:var(--font-mono,monospace)">${v}</div>
+            </div>
+          </button>
+        `).join('')).join('');
+        cg.querySelectorAll('.brand-swatch').forEach(el => {
+          el.addEventListener('click', () => {
+            navigator.clipboard.writeText(el.dataset.copy);
+            const old = el.style.outline;
+            el.style.outline = '2px solid #10B981';
+            setTimeout(() => { el.style.outline = old; }, 600);
+          });
+        });
+      }
+
+      // ── Typography
+      const tg = $('#brand-typography');
+      if (tg) {
+        tg.innerHTML = `
+          <div style="padding:16px;background:var(--bg-surface);border:1px solid var(--border);border-radius:12px">
+            <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Sans — body + headlines</div>
+            <div style="font-family:${tokens.font.sans};font-size:2rem;font-weight:800;color:var(--text)">EuroSalary — The European salary index</div>
+            <div style="font-family:${tokens.font.sans};font-size:0.85rem;color:var(--text-muted);margin-top:6px">${tokens.font.sans}</div>
+          </div>
+          <div style="padding:16px;background:var(--bg-surface);border:1px solid var(--border);border-radius:12px">
+            <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Mono — data + code</div>
+            <div style="font-family:${tokens.font.mono};font-size:1.1rem;color:var(--text)">€82,450 · software-engineer · DE · 2026</div>
+            <div style="font-family:${tokens.font.sans};font-size:0.85rem;color:var(--text-muted);margin-top:6px">${tokens.font.mono}</div>
+          </div>
+        `;
+      }
+    } catch (err) {
+      const grid = $('#brand-logos-grid');
+      if (grid) grid.innerHTML = `<div style="color:var(--text-muted);padding:1rem">Failed to load brand tokens: ${err.message}</div>`;
+    }
   }
 
   // ─── Refresh ───

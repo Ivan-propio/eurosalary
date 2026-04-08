@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <title>EuroSalary.eu — Icon Only (no background, for overlays)</title>
+  <g stroke-linejoin="round" transform="translate(0 5)">
+    <polygon points="40.95,59 60,70 60,92 40.95,103 21.9,92 21.9,70" fill="none" stroke="#003399" stroke-width="3.5"/>
+    <polygon points="79.05,59 98.1,70 98.1,92 79.05,103 60,92 60,70" fill="#003399"/>
+    <polygon points="60,26 79.05,37 79.05,59 60,70 40.95,59 40.95,37" fill="#FFCC00"/>
+  </g>
+</svg>
