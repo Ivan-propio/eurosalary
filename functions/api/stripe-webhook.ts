@@ -22,7 +22,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   try {
     const body = await context.request.text();
-    event = stripe.webhooks.constructEvent(body, sig, context.env.STRIPE_WEBHOOK_SECRET);
+    event = await stripe.webhooks.constructEventAsync(body, sig, context.env.STRIPE_WEBHOOK_SECRET);
   } catch (err: any) {
     console.error('Webhook signature verification failed:', err.message);
     return new Response(`Webhook Error: ${err.message}`, { status: 400 });
