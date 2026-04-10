@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EuroSalary - Plan d'Affaires</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, system-ui, sans-serif;
+            line-height: 1.6;
+            color: #0A1F44;
+            background: #F5F7FA;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #FFFFFF;
+            padding: 60px 50px;
+            box-shadow: 0 4px 12px -2px rgba(10, 31, 68, 0.08), 0 2px 4px -2px rgba(10, 31, 68, 0.05);
+            border-radius: 12px;
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 3px solid #003399;
+            padding-bottom: 30px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: #0A1F44;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #6B7280;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .meta {
+            font-size: 0.9em;
+            color: #9CA3AF;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        h2 {
+            color: #0A1F44;
+            font-size: 1.8em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-left: 4px solid #003399;
+            padding-left: 15px;
+            font-weight: 700;
+        }
+
+        h3 {
+            color: #003399;
+            font-size: 1.3em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+            color: #374151;
+        }
+
+        .highlight {
+            background: #E6EBF5;
+            padding: 20px;
+            border-left: 4px solid #003399;
+            margin: 20px 0;
+            border-radius: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95em;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table th {
+            background: #0A1F44;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            border-bottom: 1px solid #E5E7EB;
+            padding: 12px;
+            color: #374151;
+        }
+
+        table tr:nth-child(even) {
+            background: #F9FAFB;
+        }
+
+        .pricing-card {
+            border: 2px solid #003399;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            background: #E6EBF5;
+        }
+
+        .pricing-card h4 {
+            color: #0A1F44;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .pricing-card .price {
+            color: #003399;
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .features {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .features li {
+            padding: 5px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #374151;
+        }
+
+        .features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #003399;
+            font-weight: 700;
+        }
+
+        .features li.no:before {
+            content: "✗";
+            color: #9CA3AF;
+        }
+
+        .section-intro {
+            font-style: italic;
+            color: #6B7280;
+            margin-bottom: 20px;
+        }
+
+        .chart {
+            background: #F9FAFB;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            border: 1px solid #E5E7EB;
+        }
+
+        .roadmap {
+            margin: 20px 0;
+        }
+
+        .roadmap-item {
+            background: #E6EBF5;
+            border-left: 4px solid #003399;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+        }
+
+        .roadmap-item h4 {
+            color: #0A1F44;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .roadmap-item p {
+            color: #374151;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #003399;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin: 2px;
+            font-weight: 500;
+        }
+
+        .divider {
+            border-top: 1px solid #E5E7EB;
+            margin: 40px 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #E5E7EB;
+            color: #9CA3AF;
+            font-size: 0.9em;
+        }
+
+        .print-only {
+            display: none;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+                border-radius: 0;
+            }
+            .print-only {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>EuroSalary.eu</h1>
+            <p class="subtitle">Plan d'Affaires 2025-2026</p>
+            <div class="meta">
+                <span>📍 Europe</span>
+                <span>🌐 24 Langues</span>
+                <span>💼 B2B & B2C</span>
+            </div>
+        </header>
+
+        <section>
+            <h2>1. Résumé Exécutif</h2>
+            <div class="highlight">
+                <p><strong>EuroSalary</strong> est une plateforme SaaS de comparaison salariale pan-européenne qui connecte employeurs, recruteurs, professionnels et partenaires API.</p>
+                <p style="margin-top: 10px;"><strong>Modèle de revenu:</strong> Abonnements Premium (B2C), API (B2B), Rapports pays, Solutions entreprise</p>
+                <p style="margin-top: 10px;"><strong>Cible 2026:</strong> €950k revenue annuel | 2k+ utilisateurs premium | 50+ clients B2B</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>2. Produits & Services</h2>
+
+            <h3>2.1 Plateforme Web Gratuite</h3>
+            <p class="section-intro">Accès public aux données salariales européennes</p>
+            <ul class="features">
+                <li>27 pays (UE + Suisse)</li>
+                <li>21 métiers tech</li>
+                <li>Comparateur salaires par pays/rôle</li>
+                <li>Calculatrice salaire net (impôts inclus)</li>
+                <li>Alertes salaires (notifications)</li>
+                <li>Contenu éducatif (blog, méthodologie)</li>
+            </ul>
+
+            <h3>2.2 Abonnements Premium (B2C)</h3>
+            <p class="section-intro">Pour les professionnels cherchant des analyses approfondies</p>
+
+            <div class="pricing-card">
+                <h4>🌟 Pro</h4>
+                <div class="price">29€/mois (279€/an)</div>
+                <ul class="features">
+                    <li>Rapports de marché complets</li>
+                    <li>Export PDF personnalisé</li>
+                    <li>Historique 12 mois</li>
+                    <li>Support email</li>
+                </ul>
+            </div>
+
+            <div class="pricing-card">
+                <h4>⭐ Business</h4>
+                <div class="price">99€/mois (949€/an)</div>
+                <ul class="features">
+                    <li>Tout Pro +</li>
+                    <li>Export données CSV (brutes)</li>
+                    <li>Analyses sectorielles détaillées</li>
+                    <li>Support prioritaire 24h</li>
+                    <li>Intégration Slack</li>
+                </ul>
+            </div>
+
+            <h3>2.3 API Developer (B2B)</h3>
+            <p class="section-intro">Pour les intégrations logicielles et les startups</p>
+
+            <div class="pricing-card">
+                <h4>👨‍💻 Developer</h4>
+                <div class="price">49€/mois</div>
+                <ul class="features">
+                    <li>10,000 requêtes/mois</li>
+                    <li>Endpoints: salaires, comparaisons, villes</li>
+                    <li>Documentation complète</li>
+                    <li>Support email</li>
+                </ul>
+            </div>
+
+            <div class="pricing-card">
+                <h4>🚀 Business API</h4>
+                <div class="price">149€/mois</div>
+                <ul class="features">
+                    <li>100,000 requêtes/mois</li>
+                    <li>Endpoints custom</li>
+                    <li>SLA 99.9%</li>
+                    <li>Support prioritaire</li>
+                </ul>
+            </div>
+
+            <h3>2.4 Solutions Entreprise (B2B)</h3>
+            <p class="section-intro">Pour les équipes RH et recrutement</p>
+
+            <div class="pricing-card">
+                <h4>🏢 Employer Starter</h4>
+                <div class="price">79€/mois (759€/an)</div>
+                <ul class="features">
+                    <li>Dashboard d'analyse salariale</li>
+                    <li>Benchmarking rôle vs. marché</li>
+                    <li>Rapports de conformité</li>
+                    <li>Support email</li>
+                </ul>
+            </div>
+
+            <div class="pricing-card">
+                <h4>🏆 Employer Pro</h4>
+                <div class="price">199€/mois (1,909€/an)</div>
+                <ul class="features">
+                    <li>Tout Starter +</li>
+                    <li>Alertes temps réel</li>
+                    <li>Intégration Slack & HRIS</li>
+                    <li>Support 24/7 prioritaire</li>
+                    <li>Reports custom</li>
+                </ul>
+            </div>
+
+            <h3>2.5 Rapports Pays</h3>
+            <p class="section-intro">Téléchargement unique par pays</p>
+            <div class="highlight">
+                <strong>29€ par rapport</strong><br>
+                50+ pages | Tous secteurs | Export CSV inclus | Mise à jour annuelle
+            </div>
+        </section>
+
+        <section>
+            <h2>3. Modèle de Revenu</h2>
+
+            <h3>Mix de Revenu (Projection)</h3>
+            <table>
+                <tr>
+                    <th>Source</th>
+                    <th>% Revenu</th>
+                    <th>Type</th>
+                </tr>
+                <tr>
+                    <td>Abonnements Pro/Business</td>
+                    <td>40%</td>
+                    <td>Récurrent (B2C)</td>
+                </tr>
+                <tr>
+                    <td>API Developer/Business</td>
+                    <td>35%</td>
+                    <td>Récurrent (B2B)</td>
+                </tr>
+                <tr>
+                    <td>Rapports Pays</td>
+                    <td>15%</td>
+                    <td>One-time</td>
+                </tr>
+                <tr>
+                    <td>Employer Suite</td>
+                    <td>8%</td>
+                    <td>Récurrent (B2B)</td>
+                </tr>
+                <tr>
+                    <td>Partenariats</td>
+                    <td>2%</td>
+                    <td>Variable</td>
+                </tr>
+            </table>
+
+            <h3>Unit Economics</h3>
+            <div class="highlight">
+                <p><strong>CAC (Cost Acquisition):</strong> 15-20€ (content marketing, SEO)</p>
+                <p><strong>LTV (Lifetime Value):</strong> 480€ (8 mois moyenne)</p>
+                <p><strong>Ratio LTV:CAC:</strong> 24:1 ✅</p>
+            </div>
+
+            <h3>Cibles Revenue</h3>
+            <table>
+                <tr>
+                    <th>Année</th>
+                    <th>Revenu Annuel</th>
+                    <th>Utilisateurs Payants</th>
+                </tr>
+                <tr>
+                    <td>2024 (Y1)</td>
+                    <td>45k€</td>
+                    <td>100</td>
+                </tr>
+                <tr>
+                    <td>2025 (Y2)</td>
+                    <td>280k€</td>
+                    <td>800</td>
+                </tr>
+                <tr>
+                    <td>2026 (Y3)</td>
+                    <td>950k€</td>
+                    <td>2,000+</td>
+                </tr>
+            </table>
+        </section>
+
+        <div class="divider"></div>
+
+        <section>
+            <h2>4. Stratégie Go-To-Market</h2>
+
+            <h3>Canaux d'Acquisition</h3>
+            <table>
+                <tr>
+                    <th>Canaux</th>
+                    <th>% Traffic</th>
+                    <th>Stratégie</th>
+                </tr>
+                <tr>
+                    <td>Organic (SEO)</td>
+                    <td>70%</td>
+                    <td>100 articles blog, keywords haute intention</td>
+                </tr>
+                <tr>
+                    <td>Paid (Google/LinkedIn)</td>
+                    <td>20%</td>
+                    <td>Ads ciblées (RH, Recruteurs, Tech)</td>
+                </tr>
+                <tr>
+                    <td>Partenariats</td>
+                    <td>10%</td>
+                    <td>HRIS, job boards, recommandations</td>
+                </tr>
+            </table>
+
+            <h3>Segments de Marché Primaires</h3>
+
+            <div class="roadmap-item">
+                <h4>👨‍💼 Professionnels Tech (25-45 ans)</h4>
+                <p><strong>Pain:</strong> "Suis-je bien payé?" | <strong>Solution:</strong> Pro subscription pour négociation</p>
+            </div>
+
+            <div class="roadmap-item">
+                <h4>🏢 Équipes RH (50-500 employees)</h4>
+                <p><strong>Pain:</strong> Benchmarking salariale | <strong>Solution:</strong> Employer Suite</p>
+            </div>
+
+            <div class="roadmap-item">
+                <h4>👔 Recruteurs & Staffing</h4>
+                <p><strong>Pain:</strong> Valider niveaux salaire rapidement | <strong>Solution:</strong> API Developer</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>5. Avantage Concurrentiel</h2>
+
+            <table>
+                <tr>
+                    <th>Critère</th>
+                    <th>Glassdoor</th>
+                    <th>Levels.fyi</th>
+                    <th>EuroSalary ✓</th>
+                </tr>
+                <tr>
+                    <td>Couverture</td>
+                    <td>Global</td>
+                    <td>US/Tech</td>
+                    <td><strong>EU complète</strong></td>
+                </tr>
+                <tr>
+                    <td>Langues</td>
+                    <td>15</td>
+                    <td>1</td>
+                    <td><strong>24</strong></td>
+                </tr>
+                <tr>
+                    <td>Calcul impôts</td>
+                    <td>Non</td>
+                    <td>Non</td>
+                    <td><strong>Oui</strong></td>
+                </tr>
+                <tr>
+                    <td>API B2B</td>
+                    <td>Non</td>
+                    <td>Non</td>
+                    <td><strong>Oui</strong></td>
+                </tr>
+                <tr>
+                    <td>Méthodologie</td>
+                    <td>User-generated</td>
+                    <td>Crowdsourced</td>
+                    <td><strong>Eurostat + Job postings</strong></td>
+                </tr>
+            </table>
+
+            <div class="highlight">
+                <h4 style="margin-top: 0;">Notre différenciation:</h4>
+                <ul style="list-style: none; margin-left: 0;">
+                    <li style="padding: 5px 0; padding-left: 25px;"><strong style="color: #2563eb;">✓ 24 langues</strong> avec SEO par langue</li>
+                    <li style="padding: 5px 0; padding-left: 25px;"><strong style="color: #2563eb;">✓ Couverture EU complète</strong> (27 pays + CH)</li>
+                    <li style="padding: 5px 0; padding-left: 25px;"><strong style="color: #2563eb;">✓ Calcul impôts intégré</strong> (fiabilité données)</li>
+                    <li style="padding: 5px 0; padding-left: 25px;"><strong style="color: #2563eb;">✓ API B2B</strong> pour intégrations</li>
+                    <li style="padding: 5px 0; padding-left: 25px;"><strong style="color: #2563eb;">✓ Données fraîches</strong> (Eurostat + job postings)</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <section>
+            <h2>6. Roadmap Produit</h2>
+
+            <div class="roadmap-item">
+                <h4>📌 Phase 1 (Q2-Q3 2025) — Stabilisation Marché</h4>
+                <p><span class="tag">✓ Web 24 langues</span> <span class="tag">✓ Premium subscriptions</span> <span class="tag">✓ API v1</span></p>
+                <p><strong>Cible:</strong> 500 utilisateurs payants</p>
+            </div>
+
+            <div class="roadmap-item">
+                <h4>📌 Phase 2 (Q4 2025 - Q1 2026) — Expansion B2B</h4>
+                <p><span class="tag">Employer Suite</span> <span class="tag">Intégrations HRIS</span> <span class="tag">Alertes temps réel</span></p>
+                <p><strong>Cible:</strong> 20 entreprises (Employer), 50 API users</p>
+            </div>
+
+            <div class="roadmap-item">
+                <h4>📌 Phase 3 (2026) — Scaling & Profitabilité</h4>
+                <p><span class="tag">Rapports sectoriels</span> <span class="tag">Marketplace consultants</span> <span class="tag">Webhooks massifs</span></p>
+                <p><strong>Cible:</strong> €950k revenue | Profitabilité</p>
+            </div>
+
+            <h3>Backlog Futur</h3>
+            <ul class="features">
+                <li>Prévisions salaires (Machine Learning)</li>
+                <li>Application mobile native</li>
+                <li>Intégrations LinkedIn (import profils)</li>
+                <li>Négociation salariale assistée par IA</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>7. Métriques Clés</h2>
+
+            <h3>Acquisition & Rétention</h3>
+            <table>
+                <tr>
+                    <th>Métrique</th>
+                    <th>Cible</th>
+                </tr>
+                <tr>
+                    <td>MAU (Monthly Active Users)</td>
+                    <td>10,000</td>
+                </tr>
+                <tr>
+                    <td>Premium Conversion Rate</td>
+                    <td>2-3%</td>
+                </tr>
+                <tr>
+                    <td>Churn Mensuel (Premium)</td>
+                    <td>&lt; 5%</td>
+                </tr>
+                <tr>
+                    <td>CAC Payback Period</td>
+                    <td>&lt; 3 mois</td>
+                </tr>
+            </table>
+
+            <h3>Engagement</h3>
+            <div class="chart">
+                <p><strong>Avg Session Duration:</strong> 4-6 min</p>
+                <p><strong>Pages/Session:</strong> 2.5-3.5</p>
+                <p><strong>Return Rate (7d):</strong> 35-45%</p>
+                <p><strong>Compare Tool Usage:</strong> 40% of visitors</p>
+            </div>
+
+            <h3>Revenue</h3>
+            <div class="chart">
+                <p><strong>ARPU (Premium):</strong> 60€/mois</p>
+                <p><strong>ARPU (API):</strong> 99€/mois</p>
+                <p><strong>MRR Target (Y2):</strong> 23,000€</p>
+                <p><strong>Gross Margin:</strong> 85%</p>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <section>
+            <h2>8. Contact & Support</h2>
+
+            <div class="highlight">
+                <p><strong>📧 Email:</strong> hello@eurosalary.eu</p>
+                <p><strong>🛟 Support:</strong> support@eurosalary.eu</p>
+                <p><strong>🤝 Partenariats:</strong> partnerships@eurosalary.eu</p>
+                <p><strong>🔌 API Docs:</strong> https://eurosalary.eu/salary-api/</p>
+                <p style="margin-top: 15px;"><strong>🌐 Website:</strong> https://eurosalary.eu</p>
+            </div>
+        </section>
+
+        <footer>
+            <p>EuroSalary - Plan d'Affaires | Version 1.0 | Avril 2026</p>
+            <p style="margin-top: 10px;">Document confidentiel - Pour distribution autorisée uniquement</p>
+        </footer>
+    </div>
+</body>
+</html>
