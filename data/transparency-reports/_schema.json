@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "eurosalary-transparency-report",
+  "title": "EU Pay Transparency Directive Report",
+  "description": "Schema for company-level pay transparency data under Directive 2023/970. Each record represents one company's annual report.",
+  "type": "object",
+  "required": ["country", "reportYear", "_source", "_freshness"],
+  "properties": {
+    "country": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$",
+      "description": "ISO 3166-1 alpha-2 country code"
+    },
+    "company": {
+      "type": "string",
+      "description": "Company name"
+    },
+    "companyId": {
+      "type": "string",
+      "description": "National company registry ID (SIREN for FR, HRB for DE, CIF for ES, etc.)"
+    },
+    "sector": {
+      "type": "string",
+      "description": "NACE/CNAE sector code (first 1-2 characters)"
+    },
+    "employeeCount": {
+      "type": ["integer", "string"],
+      "description": "Number of employees or range (e.g. '250-499')"
+    },
+    "reportYear": {
+      "type": "integer",
+      "description": "The year this report covers"
+    },
+    "genderPayGap": {
+      "type": "object",
+      "description": "Art. 9 — Gender pay gap reporting (companies >100 employees)",
+      "properties": {
+        "mean": {
+          "type": "number",
+          "description": "Mean gender pay gap in % (positive = men earn more)"
+        },
+        "median": {
+          "type": "number",
+          "description": "Median gender pay gap in %"
+        },
+        "bonusGap": {
+          "type": "number",
+          "description": "Gender pay gap in bonus/variable pay in %"
+        },
+        "proportionByQuartile": {
+          "type": "object",
+          "description": "Female % in each pay quartile",
+          "properties": {
+            "q1_lowest": { "type": "number" },
+            "q2": { "type": "number" },
+            "q3": { "type": "number" },
+            "q4_highest": { "type": "number" }
+          }
+        }
+      }
+    },
+    "payByCategory": {
+      "type": "array",
+      "description": "Art. 6 — Pay levels by category of workers",
+      "items": {
+        "type": "object",
+        "required": ["category"],
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Job category (as defined by employer)"
+          },
+          "normalizedJob": {
+            "type": "string",
+            "description": "Mapped to EuroSalary standard job slug"
+          },
+          "level": {
+            "type": "string",
+            "enum": ["junior", "mid", "senior", "lead"],
+            "description": "Experience level (normalized)"
+          },
+          "medianSalary": {
+            "type": "number",
+            "description": "Median annual gross salary in EUR"
+          },
+          "salaryRange": {
+            "type": "object",
+            "properties": {
+              "min": { "type": "number" },
+              "max": { "type": "number" }
+            }
+          },
+          "headcount": {
+            "type": "integer",
+            "description": "Number of employees in this category"
+          },
+          "femalePercentage": {
+            "type": "number",
+            "description": "% of employees who are female"
+          }
+        }
+      }
+    },
+    "jobPostingSalaryRanges": {
+      "type": "array",
+      "description": "Art. 5 — Salary ranges in job postings (collected from company listings)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "jobTitle": {
+            "type": "string",
+            "description": "Job title as posted"
+          },
+          "normalizedJob": {
+            "type": "string",
+            "description": "Mapped to EuroSalary standard job slug"
+          },
+          "salaryRange": {
+            "type": "object",
+            "properties": {
+              "min": { "type": "number" },
+              "max": { "type": "number" },
+              "currency": { "type": "string", "default": "EUR" }
+            }
+          },
+          "postedAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "source": {
+            "type": "string",
+            "description": "Where the posting was found (company site, Indeed, LinkedIn, etc.)"
+          }
+        }
+      }
+    },
+    "equalityActionPlan": {
+      "type": "object",
+      "description": "Art. 10 — Joint pay assessment (if gap >5% in any category)",
+      "properties": {
+        "required": { "type": "boolean" },
+        "gapExceeds5pct": { "type": "boolean" },
+        "planPublished": { "type": "boolean" },
+        "planUrl": { "type": "string" }
+      }
+    },
+    "_source": {
+      "type": "object",
+      "required": ["origin", "agent", "accessedAt", "confidence"],
+      "properties": {
+        "origin": { "type": "string" },
+        "agent": { "type": "string" },
+        "dataset": { "type": "string" },
+        "url": { "type": "string" },
+        "accessedAt": { "type": "string", "format": "date-time" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "_freshness": {
+      "type": "object",
+      "required": ["collectedAt", "validUntil", "staleAfterDays"],
+      "properties": {
+        "collectedAt": { "type": "string", "format": "date-time" },
+        "validUntil": { "type": "string", "format": "date-time" },
+        "staleAfterDays": { "type": "integer" }
+      }
+    },
+    "_lineage": {
+      "type": "object",
+      "properties": {
+        "prevVersionHash": { "type": ["string", "null"] },
+        "promotedAt": { "type": "string", "format": "date-time" },
+        "changedFields": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

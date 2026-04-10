@@ -1,0 +1,746 @@
+[
+  {
+    "country": "DE",
+    "monthly": 2343,
+    "annual": 28116,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 2161,
+    "previousPeriod": "2025-S2",
+    "changePct": 8.42,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=DE&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:24.642Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:24.642Z",
+      "validUntil": "2026-10-07T17:06:24.642Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "FR",
+    "monthly": 1823,
+    "annual": 21876,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 1802,
+    "previousPeriod": "2025-S2",
+    "changePct": 1.17,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=FR&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:24.773Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:24.773Z",
+      "validUntil": "2026-10-07T17:06:24.773Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "ES",
+    "monthly": 1381,
+    "annual": 16572,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 1381,
+    "previousPeriod": "2025-S2",
+    "changePct": 0,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=ES&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:24.830Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:24.830Z",
+      "validUntil": "2026-10-07T17:06:24.830Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "NL",
+    "monthly": 2295,
+    "annual": 27540,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 2246,
+    "previousPeriod": "2025-S2",
+    "changePct": 2.18,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=NL&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:24.888Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:24.888Z",
+      "validUntil": "2026-10-07T17:06:24.888Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "BE",
+    "monthly": 2112,
+    "annual": 25344,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 2112,
+    "previousPeriod": "2025-S2",
+    "changePct": 0,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=BE&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:24.961Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:24.961Z",
+      "validUntil": "2026-10-07T17:06:24.961Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "PT",
+    "monthly": 1073,
+    "annual": 12876,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 1015,
+    "previousPeriod": "2025-S2",
+    "changePct": 5.71,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=PT&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:25.024Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.024Z",
+      "validUntil": "2026-10-07T17:06:25.024Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "PL",
+    "monthly": 1139,
+    "annual": 13668,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 1100,
+    "previousPeriod": "2025-S2",
+    "changePct": 3.55,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=PL&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:25.081Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.081Z",
+      "validUntil": "2026-10-07T17:06:25.081Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "LU",
+    "monthly": 2704,
+    "annual": 32448,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 2704,
+    "previousPeriod": "2025-S2",
+    "changePct": 0,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=LU&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:25.148Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.148Z",
+      "validUntil": "2026-10-07T17:06:25.148Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "IE",
+    "monthly": 2391,
+    "annual": 28692,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 2282,
+    "previousPeriod": "2025-S2",
+    "changePct": 4.78,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=IE&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:25.206Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.206Z",
+      "validUntil": "2026-10-07T17:06:25.206Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "CZ",
+    "monthly": 924,
+    "annual": 11088,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 841,
+    "previousPeriod": "2025-S2",
+    "changePct": 9.87,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=CZ&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:25.280Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.280Z",
+      "validUntil": "2026-10-07T17:06:25.280Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "RO",
+    "monthly": 795,
+    "annual": 9540,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 797,
+    "previousPeriod": "2025-S2",
+    "changePct": -0.25,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=RO&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:25.348Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.348Z",
+      "validUntil": "2026-10-07T17:06:25.348Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "HU",
+    "monthly": 838,
+    "annual": 10056,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 727,
+    "previousPeriod": "2025-S2",
+    "changePct": 15.27,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=HU&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:25.426Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.426Z",
+      "validUntil": "2026-10-07T17:06:25.426Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "BG",
+    "monthly": 620,
+    "annual": 7440,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 551,
+    "previousPeriod": "2025-S2",
+    "changePct": 12.52,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=BG&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:25.486Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.486Z",
+      "validUntil": "2026-10-07T17:06:25.486Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "HR",
+    "monthly": 1050,
+    "annual": 12600,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 970,
+    "previousPeriod": "2025-S2",
+    "changePct": 8.25,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=HR&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:25.556Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.556Z",
+      "validUntil": "2026-10-07T17:06:25.556Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "SK",
+    "monthly": 915,
+    "annual": 10980,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 816,
+    "previousPeriod": "2025-S2",
+    "changePct": 12.13,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=SK&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:25.619Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.619Z",
+      "validUntil": "2026-10-07T17:06:25.619Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "SI",
+    "monthly": 1278,
+    "annual": 15336,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 1278,
+    "previousPeriod": "2025-S2",
+    "changePct": 0,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=SI&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:25.675Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.675Z",
+      "validUntil": "2026-10-07T17:06:25.675Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "LT",
+    "monthly": 1153,
+    "annual": 13836,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 1038,
+    "previousPeriod": "2025-S2",
+    "changePct": 11.08,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=LT&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:25.734Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.734Z",
+      "validUntil": "2026-10-07T17:06:25.734Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "LV",
+    "monthly": 780,
+    "annual": 9360,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 740,
+    "previousPeriod": "2025-S2",
+    "changePct": 5.41,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=LV&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:25.804Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.804Z",
+      "validUntil": "2026-10-07T17:06:25.804Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "EE",
+    "monthly": 886,
+    "annual": 10632,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 886,
+    "previousPeriod": "2025-S2",
+    "changePct": 0,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=EE&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:25.868Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.868Z",
+      "validUntil": "2026-10-07T17:06:25.868Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "MT",
+    "monthly": 994,
+    "annual": 11928,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 961,
+    "previousPeriod": "2025-S2",
+    "changePct": 3.43,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=MT&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:25.924Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.924Z",
+      "validUntil": "2026-10-07T17:06:25.924Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "EL",
+    "monthly": 1027,
+    "annual": 12324,
+    "currency": "EUR",
+    "period": "2026-S1",
+    "previousMonthly": 1027,
+    "previousPeriod": "2025-S2",
+    "changePct": 0,
+    "hasStatutoryMinWage": true,
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur?geo=EL&currency=EUR&format=JSON&lang=en",
+      "accessedAt": "2026-04-10T17:06:25.994Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.994Z",
+      "validUntil": "2026-10-07T17:06:25.994Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "DK",
+    "monthly": null,
+    "annual": null,
+    "currency": "EUR",
+    "period": "2026-04",
+    "hasStatutoryMinWage": false,
+    "note": "No statutory minimum wage. Wages set by collective bargaining agreements.",
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur",
+      "accessedAt": "2026-04-10T17:06:25.994Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.994Z",
+      "validUntil": "2026-10-07T17:06:25.994Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "SE",
+    "monthly": null,
+    "annual": null,
+    "currency": "EUR",
+    "period": "2026-04",
+    "hasStatutoryMinWage": false,
+    "note": "No statutory minimum wage. Wages set by collective bargaining agreements.",
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur",
+      "accessedAt": "2026-04-10T17:06:25.994Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.994Z",
+      "validUntil": "2026-10-07T17:06:25.994Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "FI",
+    "monthly": null,
+    "annual": null,
+    "currency": "EUR",
+    "period": "2026-04",
+    "hasStatutoryMinWage": false,
+    "note": "No statutory minimum wage. Wages set by collective bargaining agreements.",
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur",
+      "accessedAt": "2026-04-10T17:06:25.994Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.994Z",
+      "validUntil": "2026-10-07T17:06:25.994Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "IT",
+    "monthly": null,
+    "annual": null,
+    "currency": "EUR",
+    "period": "2026-04",
+    "hasStatutoryMinWage": false,
+    "note": "No statutory minimum wage. Wages set by collective bargaining agreements.",
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur",
+      "accessedAt": "2026-04-10T17:06:25.994Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.994Z",
+      "validUntil": "2026-10-07T17:06:25.994Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "AT",
+    "monthly": null,
+    "annual": null,
+    "currency": "EUR",
+    "period": "2026-04",
+    "hasStatutoryMinWage": false,
+    "note": "No statutory minimum wage. Wages set by collective bargaining agreements.",
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur",
+      "accessedAt": "2026-04-10T17:06:25.994Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.994Z",
+      "validUntil": "2026-10-07T17:06:25.994Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  },
+  {
+    "country": "CY",
+    "monthly": null,
+    "annual": null,
+    "currency": "EUR",
+    "period": "2026-04",
+    "hasStatutoryMinWage": false,
+    "note": "No statutory minimum wage. Wages set by collective bargaining agreements.",
+    "_source": {
+      "origin": "api",
+      "agent": "collector:minimum-wages",
+      "dataset": "earn_mw_cur",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_mw_cur",
+      "accessedAt": "2026-04-10T17:06:25.995Z",
+      "confidence": 0.97
+    },
+    "_freshness": {
+      "collectedAt": "2026-04-10T17:06:25.995Z",
+      "validUntil": "2026-10-07T17:06:25.995Z",
+      "staleAfterDays": 180
+    },
+    "_lineage": {
+      "prevVersionHash": null,
+      "promotedAt": "2026-04-10T17:06:49.366Z"
+    }
+  }
+]
