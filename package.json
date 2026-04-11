@@ -9,10 +9,18 @@
     "build:tokens": "node scripts/build-tokens.mjs",
     "predev": "node scripts/build-tokens.mjs",
     "dev": "astro dev",
-    "prebuild": "node scripts/build-tokens.mjs",
+    "pipeline:generate": "node scripts/generate-from-pipeline.mjs",
+    "generate:tax": "node scripts/generate-tax-data.mjs",
+    "prebuild": "node scripts/build-tokens.mjs && node scripts/generate-from-pipeline.mjs && node scripts/generate-tax-data.mjs",
     "build": "astro build",
+    "postbuild": "node scripts/segment-sitemap.mjs",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "pipeline:collect": "node scripts/pipeline-collect.mjs",
+    "pipeline:validate": "node scripts/pipeline-validate.mjs",
+    "pipeline:promote": "node scripts/pipeline-promote.mjs",
+    "pipeline:freshness": "node scripts/pipeline-freshness.mjs",
+    "pipeline:run": "node scripts/pipeline-collect.mjs && node scripts/pipeline-validate.mjs && node scripts/pipeline-promote.mjs --auto && node scripts/generate-from-pipeline.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.1.6",
@@ -23,8 +31,11 @@
     "stripe": "^22.0.0"
   },
   "devDependencies": {
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/jetbrains-mono": "^5.2.8",
     "googleapis": "^171.4.0",
     "postgres": "^3.4.9",
-    "puppeteer": "^24.40.0"
+    "puppeteer": "^24.40.0",
+    "sharp": "^0.34.5"
   }
 }

@@ -1,0 +1,143 @@
+{
+  "year": 2026,
+  "lastUpdated": "2026-04-11",
+  "source": "National tax authority publications, 2026 rates",
+  "notes": "Employee-side social contributions only. Brackets simplified (no municipal/church tax). Filing status uses income splitting model.",
+  "countries": {
+    "DE": {
+      "brackets": [[0, 11604, 0], [11604, 17006, 14], [17006, 66761, 24], [66761, 277826, 42], [277826, null, 45]],
+      "socialRate": 20.4,
+      "childDeductionPerChild": 2500
+    },
+    "FR": {
+      "brackets": [[0, 11294, 0], [11294, 28797, 11], [28797, 82341, 30], [82341, 177106, 41], [177106, null, 45]],
+      "socialRate": 22.2,
+      "childDeductionPerChild": 1500
+    },
+    "NL": {
+      "brackets": [[0, 38098, 9.32], [38098, 75518, 36.97], [75518, null, 49.50]],
+      "socialRate": 27.65,
+      "childDeductionPerChild": 2000
+    },
+    "BE": {
+      "brackets": [[0, 15820, 25], [15820, 27920, 40], [27920, 48320, 45], [48320, null, 50]],
+      "socialRate": 13.07,
+      "childDeductionPerChild": 1800
+    },
+    "LU": {
+      "brackets": [[0, 11850, 0], [11850, 13750, 8], [13750, 15750, 10], [15750, 17850, 12], [17850, 200004, 14], [200004, null, 42]],
+      "socialRate": 12.45,
+      "childDeductionPerChild": 2500
+    },
+    "AT": {
+      "brackets": [[0, 12816, 0], [12816, 20818, 20], [20818, 34513, 30], [34513, 66612, 40], [66612, 99266, 48], [99266, 1000000, 50], [1000000, null, 55]],
+      "socialRate": 18.12,
+      "childDeductionPerChild": 2000
+    },
+    "IE": {
+      "brackets": [[0, 42000, 20], [42000, null, 40]],
+      "socialRate": 4.0,
+      "childDeductionPerChild": 1650
+    },
+    "ES": {
+      "brackets": [[0, 12450, 19], [12450, 20200, 24], [20200, 35200, 30], [35200, 60000, 37], [60000, 300000, 45], [300000, null, 47]],
+      "socialRate": 6.35,
+      "childDeductionPerChild": 1200
+    },
+    "IT": {
+      "brackets": [[0, 28000, 23], [28000, 50000, 35], [50000, null, 43]],
+      "socialRate": 9.49,
+      "childDeductionPerChild": 1200
+    },
+    "PT": {
+      "brackets": [[0, 7703, 14.5], [7703, 11623, 21], [11623, 16472, 26.5], [16472, 21321, 28.5], [21321, 27146, 35], [27146, 39791, 37], [39791, 51997, 43.5], [51997, 81199, 45], [81199, null, 48]],
+      "socialRate": 11.0,
+      "childDeductionPerChild": 600
+    },
+    "FI": {
+      "brackets": [[0, 19900, 0], [19900, 29700, 12.64], [29700, 49000, 17.64], [49000, 85800, 21.14], [85800, null, 31.64]],
+      "socialRate": 10.18,
+      "childDeductionPerChild": 1200
+    },
+    "SE": {
+      "brackets": [[0, 46200, 0], [46200, 66800, 20], [66800, null, 25]],
+      "socialRate": 7.0,
+      "childDeductionPerChild": 1500
+    },
+    "DK": {
+      "brackets": [[0, 46700, 12.09], [46700, 552500, 15.09], [552500, null, 15.09]],
+      "socialRate": 8.0,
+      "childDeductionPerChild": 1000
+    },
+    "PL": {
+      "brackets": [[0, 30000, 0], [30000, 120000, 12], [120000, null, 32]],
+      "socialRate": 13.71,
+      "childDeductionPerChild": 1100
+    },
+    "CZ": {
+      "brackets": [[0, 1935552, 15], [1935552, null, 23]],
+      "socialRate": 11.0,
+      "childDeductionPerChild": 1300
+    },
+    "RO": {
+      "brackets": [[0, null, 10]],
+      "socialRate": 25.0,
+      "childDeductionPerChild": 600
+    },
+    "HU": {
+      "brackets": [[0, null, 15]],
+      "socialRate": 18.5,
+      "childDeductionPerChild": 1000
+    },
+    "BG": {
+      "brackets": [[0, null, 10]],
+      "socialRate": 13.78,
+      "childDeductionPerChild": 500
+    },
+    "HR": {
+      "brackets": [[0, 50400, 20], [50400, null, 30]],
+      "socialRate": 20.0,
+      "childDeductionPerChild": 1000
+    },
+    "SK": {
+      "brackets": [[0, 41445, 19], [41445, null, 25]],
+      "socialRate": 13.4,
+      "childDeductionPerChild": 1100
+    },
+    "SI": {
+      "brackets": [[0, 8755, 16], [8755, 25750, 26], [25750, 51500, 33], [51500, 74160, 39], [74160, null, 50]],
+      "socialRate": 22.1,
+      "childDeductionPerChild": 1200
+    },
+    "LT": {
+      "brackets": [[0, 20904, 20], [20904, null, 32]],
+      "socialRate": 19.5,
+      "childDeductionPerChild": 800
+    },
+    "LV": {
+      "brackets": [[0, 20004, 20], [20004, 78100, 23], [78100, null, 31]],
+      "socialRate": 10.5,
+      "childDeductionPerChild": 700
+    },
+    "EE": {
+      "brackets": [[0, null, 20]],
+      "socialRate": 1.6,
+      "childDeductionPerChild": 900
+    },
+    "CY": {
+      "brackets": [[0, 19500, 0], [19500, 28000, 20], [28000, 36300, 25], [36300, 60000, 30], [60000, null, 35]],
+      "socialRate": 8.3,
+      "childDeductionPerChild": 800
+    },
+    "MT": {
+      "brackets": [[0, 9100, 0], [9100, 14500, 15], [14500, 19500, 25], [19500, 60000, 25], [60000, null, 35]],
+      "socialRate": 10.0,
+      "childDeductionPerChild": 700
+    },
+    "EL": {
+      "brackets": [[0, 10000, 9], [10000, 20000, 22], [20000, 30000, 28], [30000, 40000, 36], [40000, null, 44]],
+      "socialRate": 13.87,
+      "childDeductionPerChild": 800
+    }
+  }
+}

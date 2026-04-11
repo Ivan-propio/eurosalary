@@ -1,0 +1,984 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { languages } from '../../../i18n/ui';
+import { fb, useTranslations } from '../../../i18n/utils';
+import { countryNames } from '../../../i18n/translations';
+import { countrySlugsByLang } from '../../../data/slugs';
+import { taxData, TAX_YEAR, TAX_LAST_UPDATED } from '../../../data/generated/tax-data';
+import { countryDataMap } from '../../../data/generated/country-data';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+const t = useTranslations(lang as any);
+
+// ─── Translations ───────────────────────────────────────────────────────────
+
+const homeLabel: Record<string, string> = {
+  en:'Home', fr:'Accueil', de:'Startseite', es:'Inicio', it:'Home', pt:'Início', nl:'Home', pl:'Strona główna',
+  ro:'Acasă', cs:'Domů', sv:'Hem', da:'Hjem', fi:'Etusivu', el:'Αρχική', hu:'Főoldal', sk:'Domov',
+  bg:'Начало', hr:'Početna', sl:'Domov', lt:'Pradžia', lv:'Sākums', et:'Avaleht', mt:'Paġna Ewlenija', ga:'Baile',
+};
+const calcLabel: Record<string, string> = {
+  en:'Calculator', fr:'Calculateur', de:'Rechner', es:'Calculadora', it:'Calcolatore', pt:'Calculadora', nl:'Rekentool', pl:'Kalkulator',
+  ro:'Calculator', cs:'Kalkulačka', sv:'Kalkylator', da:'Beregner', fi:'Laskuri', el:'Υπολογιστής', hu:'Kalkulátor', sk:'Kalkulačka',
+  bg:'Калкулатор', hr:'Kalkulator', sl:'Kalkulator', lt:'Skaičiuoklė', lv:'Kalkulators', et:'Kalkulaator', mt:'Kalkulatur', ga:'Áireamhán',
+};
+const h1Titles: Record<string, string> = {
+  en: 'How Much Will You Take Home After Tax in 27 European Countries?',
+  fr: 'Combien garderez-vous après impôts dans 27 pays européens ?',
+  de: 'Wie viel bleibt Ihnen nach Steuern in 27 europäischen Ländern?',
+  es: '¿Cuánto te quedará después de impuestos en 27 países europeos?',
+  it: 'Quanto guadagnerai netto in 27 paesi europei dopo le tasse?',
+  pt: 'Quanto vai receber líquido em 27 países europeus após impostos?',
+  nl: 'Hoeveel houd je over na belastingen in 27 Europese landen?',
+  pl: 'Ile zarobisz netto w 27 krajach europejskich po podatkach?',
+  ro: 'Cât vei câștiga net în 27 de țări europene după impozite?',
+  cs: 'Kolik vám zbyde po daních ve 27 evropských zemích?',
+  sv: 'Hur mycket tar du hem efter skatt i 27 europeiska länder?',
+  da: 'Hvor meget beholder du efter skat i 27 europæiske lande?',
+  fi: 'Paljonko jää käteen verojen jälkeen 27 Euroopan maassa?',
+  el: 'Πόσα θα παίρνετε στο χέρι μετά τους φόρους σε 27 ευρωπαϊκές χώρες;',
+  hu: 'Mennyi fizetést kap kézhez 27 európai országban adók után?',
+  sk: 'Koľko vám zostane po daniach v 27 európskych krajinách?',
+  bg: 'Колко ще получите нето в 27 европейски страни след данъци?',
+  hr: 'Koliko ćete primiti neto u 27 europskih zemalja nakon poreza?',
+  sl: 'Koliko boste prejeli neto v 27 evropskih državah po davkih?',
+  lt: 'Kiek gausite neto 27 Europos šalyse po mokesčių?',
+  lv: 'Cik saņemsiet neto 27 Eiropas valstīs pēc nodokļiem?',
+  et: 'Kui palju saate neto 27 Euroopa riigis pärast makse?',
+  mt: 'Kemm se tieħu d-dar wara t-taxxa fi 27 pajjiż Ewropew?',
+  ga: 'Cé mhéad a thabharfaidh tú abhaile tar éis cánach i 27 dtír Eorpach?',
+};
+const metaDescs: Record<string, string> = {
+  en: 'Free calculator: compare net salary after income tax and social contributions in all 27 EU countries. Instantly see take-home pay side by side for 2026.',
+  fr: 'Calculateur gratuit : comparez le salaire net dans les 27 pays de l\'UE. Impôt sur le revenu, cotisations sociales et revenu net 2026.',
+  de: 'Kostenloser Rechner: Nettogehalt nach Steuern in allen 27 EU-Ländern vergleichen. Einkommensteuer, Sozialabgaben und Nettolohn 2026.',
+  es: 'Calculadora gratuita: compara el salario neto en los 27 países de la UE. Impuesto sobre la renta, seguridad social y sueldo neto 2026.',
+  it: 'Calcolatore gratuito: confronta lo stipendio netto in tutti i 27 paesi UE. Imposta sul reddito, contributi sociali e retribuzione netta 2026.',
+  pt: 'Calculadora gratuita: compare o salário líquido nos 27 países da UE. Imposto de renda, contribuições sociais e salário líquido 2026.',
+  nl: 'Gratis rekentool: vergelijk nettosalaris in alle 27 EU-landen. Inkomstenbelasting, sociale premies en nettoloon 2026.',
+  pl: 'Bezpłatny kalkulator: porównaj wynagrodzenie netto we wszystkich 27 krajach UE. Podatek dochodowy, składki społeczne i wynagrodzenie netto 2026.',
+  ro: 'Calculator gratuit: comparați salariul net în toate cele 27 țări ale UE. Impozit pe venit, contribuții sociale și salariu net 2026.',
+  cs: 'Bezplatná kalkulačka: porovnejte čistou mzdu ve všech 27 zemích EU. Daň z příjmu, sociální odvody a čistá mzda 2026.',
+  sv: 'Gratis kalkylator: jämför nettolön i alla 27 EU-länder. Inkomstskatt, sociala avgifter och nettolön 2026.',
+  da: 'Gratis beregner: sammenlign nettoløn i alle 27 EU-lande. Indkomstskat, sociale bidrag og nettoløn 2026.',
+  fi: 'Ilmainen laskuri: vertaa nettopalkka kaikissa 27 EU-maassa. Tulovero, sosiaalimaksut ja nettopalkka 2026.',
+  el: 'Δωρεάν υπολογιστής: συγκρίνετε τον καθαρό μισθό σε 27 χώρες της ΕΕ. Φόρος εισοδήματος, κοινωνικές εισφορές και καθαρές αποδοχές 2026.',
+  hu: 'Ingyenes kalkulátor: hasonlítsa össze a nettó fizetést mind a 27 EU-országban. Jövedelemadó, társadalombiztosítás és nettó bér 2026.',
+  sk: 'Bezplatná kalkulačka: porovnajte čistú mzdu vo všetkých 27 krajinách EÚ. Daň z príjmu, sociálne odvody a čistá mzda 2026.',
+  bg: 'Безплатен калкулатор: сравнете нетната заплата в 27 страни на ЕС. Данък върху дохода, социални осигуровки и нетно заплащане 2026.',
+  hr: 'Besplatni kalkulator: usporedite neto plaću u svih 27 zemalja EU. Porez na dohodak, socijalni doprinosi i neto plaća 2026.',
+  sl: 'Brezplačni kalkulator: primerjajte neto plačo v vseh 27 državah EU. Dohodnina, socialni prispevki in neto plača 2026.',
+  lt: 'Nemokamas skaičiuoklis: palyginkite neto atlyginimą visose 27 ES šalyse. Pajamų mokestis, socialinės įmokos ir neto alga 2026.',
+  lv: 'Bezmaksas kalkulators: salīdziniet neto algu visās 27 ES valstīs. Ienākuma nodoklis, sociālās iemaksas un neto alga 2026.',
+  et: 'Tasuta kalkulaator: võrrelge netopalka kõigis 27 EL-i riigis. Tulumaks, sotsiaalmaksed ja netopalk 2026.',
+  mt: 'Kalkulatur b\'xejn: iqabbel is-salarju nett fi 27 pajjiż tal-UE. Taxxa fuq id-dħul, kontribuzzjonijiet soċjali u salarju nett 2026.',
+  ga: 'Áireamhán saor in aisce: cuir tuarastal glan i gcomparáid i 27 dtír AE. Cáin ioncaim, ranníocaíochtaí sóisialta agus tuarastal glan 2026.',
+};
+const introAnswers: Record<string, string> = {
+  en: 'Enter your gross annual salary once and instantly compare your net take-home pay across all 27 EU countries — ranked by what you actually keep. Calculations use 2026 tax brackets and standard employee social contribution rates.',
+  fr: 'Saisissez votre salaire brut annuel une seule fois et comparez instantanément votre salaire net dans les 27 pays de l\'UE, classés par revenu net. Calculs basés sur les barèmes fiscaux 2026.',
+  de: 'Geben Sie Ihr Bruttojahresgehalt einmal ein und vergleichen Sie sofort Ihr Nettogehalt in allen 27 EU-Ländern — sortiert nach dem, was Sie tatsächlich behalten. Berechnungen mit Steuertarifen 2026.',
+  es: 'Introduce tu salario bruto anual una vez y compara al instante tu salario neto en los 27 países de la UE, ordenados por lo que realmente recibes. Cálculos con tramos fiscales 2026.',
+  it: 'Inserisci il tuo stipendio lordo annuale una volta e confronta istantaneamente il tuo stipendio netto in tutti i 27 paesi UE — ordinati per ciò che effettivamente guadagni. Calcoli basati sulle aliquote fiscali 2026.',
+  pt: 'Introduza o seu salário bruto anual uma vez e compare instantaneamente o seu salário líquido em todos os 27 países da UE — ordenados pelo que realmente recebe. Cálculos com tabelas fiscais de 2026.',
+  nl: 'Voer uw brutojaarssalaris eenmalig in en vergelijk direct uw nettosalaris in alle 27 EU-landen — gerangschikt op wat u daadwerkelijk overhoudt. Berekeningen op basis van belastingtarieven 2026.',
+  pl: 'Wprowadź swoje roczne wynagrodzenie brutto raz i od razu porównaj wynagrodzenie netto we wszystkich 27 krajach UE — posortowane według tego, co faktycznie zatrzymujesz. Obliczenia na podstawie stawek podatkowych 2026.',
+  ro: 'Introduceți salariul brut anual o singură dată și comparați instantaneu salariul net în toate cele 27 țări ale UE — clasate după ce rețineti efectiv. Calcule bazate pe cotele de impozitare 2026.',
+  cs: 'Zadejte svou hrubou roční mzdu jednou a okamžitě porovnejte čistou mzdu ve všech 27 zemích EU — seřazeno podle toho, co skutečně dostanete. Výpočty na základě daňových sazeb 2026.',
+  sv: 'Ange din bruttolön en gång och jämför omedelbart din nettolön i alla 27 EU-länder — rankade efter vad du faktiskt får hem. Beräkningar baserade på 2026 års skattesatser.',
+  da: 'Indtast din bruttoårsløn én gang og sammenlign øjeblikkeligt din nettoløn i alle 27 EU-lande — rangeret efter hvad du faktisk beholder. Beregninger baseret på 2026 skattesatser.',
+  fi: 'Syötä bruttovuosipalkkasi kerran ja vertaa heti nettopalkkaasi kaikissa 27 EU-maassa — järjestetty sen mukaan, mitä todella pidät. Laskelmat perustuvat vuoden 2026 veroprosentteihin.',
+  el: 'Εισάγετε τον ακαθάριστο ετήσιο μισθό σας μία φορά και συγκρίνετε αμέσως τον καθαρό μισθό σας σε όλες τις 27 χώρες της ΕΕ — ταξινομημένες κατά αυτό που πραγματικά κρατάτε.',
+  hu: 'Adja meg éves bruttó bérét egyszer, és azonnal hasonlítsa össze nettó fizetését mind a 27 EU-országban — a ténylegesen megtartott összeg szerint rendezve. Számítások a 2026-os adókulcsok alapján.',
+  sk: 'Zadajte svoju hrubú ročnú mzdu raz a okamžite porovnajte čistú mzdu vo všetkých 27 krajinách EÚ — zoradené podľa toho, čo skutočne dostanete.',
+  bg: 'Въведете брутната си годишна заплата веднъж и незабавно сравнете нетната си заплата в 27-те страни на ЕС — класирани по реално получаваното.',
+  hr: 'Unesite svoju bruto godišnju plaću jednom i odmah usporedite neto plaću u svih 27 zemalja EU — poredane prema onome što zaista zadržavate.',
+  sl: 'Vnesite svojo bruto letno plačo enkrat in takoj primerjajte neto plačo v vseh 27 državah EU — razvrščene po tem, kar dejansko obdržite.',
+  lt: 'Įveskite savo metinę bruto algą vieną kartą ir iš karto palyginkite neto atlyginimą visose 27 ES šalyse — reitinguojama pagal tai, ką iš tikrųjų gausite.',
+  lv: 'Ievadiet savu gada bruto algu vienu reizi un uzreiz salīdziniet neto algu visās 27 ES valstīs — sakārtotas pēc tā, ko patiesībā saņemat.',
+  et: 'Sisestage oma aasta brutopalk üks kord ja võrrelge kohe netopalka kõigis 27 EL-i riigis — järjestatud selle järgi, mida tegelikult saate.',
+  mt: 'Daħħal is-salarju gross annwali tiegħek darba u qabbel is-salarju nett tiegħek fil-27 pajjiż kollha tal-UE — klassifikati skont dak li tieħu effettivament.',
+  ga: 'Cuir isteach do thuarastal comhlán bliantúil uair amháin agus cuir tuarastal glan i gcomparáid láithreach i ngach ceann de 27 dtír AE.',
+};
+const tldrItems: Record<string, string[]> = {
+  en: ['Compare net salary after tax across all 27 EU countries with one input', 'Uses 2026 official tax brackets and employee social contribution rates', 'Results are estimates — consult a tax advisor for exact personal figures'],
+  fr: ['Comparez le salaire net dans les 27 pays de l\'UE avec une seule saisie', 'Utilise les barèmes fiscaux officiels 2026 et les taux de cotisations', 'Les résultats sont des estimations — consultez un conseiller fiscal pour des chiffres exacts'],
+  de: ['Nettogehalt in allen 27 EU-Ländern mit einer Eingabe vergleichen', 'Verwendet offizielle Steuertarife 2026 und Sozialabgabensätze', 'Ergebnisse sind Schätzungen — Steuerberater für genaue persönliche Zahlen konsultieren'],
+  es: ['Compara el salario neto en los 27 países de la UE con una sola entrada', 'Usa los tramos fiscales oficiales 2026 y las tasas de cotización social', 'Los resultados son estimaciones — consulta a un asesor fiscal para cifras personales exactas'],
+  it: ['Confronta lo stipendio netto in tutti i 27 paesi UE con un solo dato', 'Utilizza le aliquote fiscali ufficiali 2026 e i contributi sociali', 'I risultati sono stime — consulta un esperto fiscale per cifre personali esatte'],
+  pt: ['Compare o salário líquido nos 27 países da UE com uma só entrada', 'Usa tabelas fiscais oficiais 2026 e taxas de contribuições sociais', 'Os resultados são estimativas — consulte um fiscal para valores pessoais exatos'],
+  nl: ['Vergelijk nettosalaris in alle 27 EU-landen met één invoer', 'Gebruikt officiële belastingtarieven 2026 en sociale premies', 'Resultaten zijn schattingen — raadpleeg een belastingadviseur voor exacte persoonlijke cijfers'],
+  pl: ['Porównaj wynagrodzenie netto we wszystkich 27 krajach UE jednym wpisem', 'Wykorzystuje oficjalne stawki podatkowe 2026 i składki społeczne', 'Wyniki są szacunkowe — skonsultuj się z doradcą podatkowym w celu uzyskania dokładnych danych'],
+  ro: ['Comparați salariul net în toate cele 27 țări ale UE cu o singură intrare', 'Utilizează cotele de impozitare oficiale 2026 și contribuțiile sociale', 'Rezultatele sunt estimări — consultați un expert fiscal pentru cifre exacte'],
+  cs: ['Porovnejte čistou mzdu ve všech 27 zemích EU jedním vstupem', 'Používá oficiální daňové sazby 2026 a odvody sociálního pojištění', 'Výsledky jsou odhady — konzultujte s daňovým poradcem pro přesné osobní údaje'],
+  sv: ['Jämför nettolön i alla 27 EU-länder med en enda inmatning', 'Använder officiella skattesatser 2026 och sociala avgifter', 'Resultaten är uppskattningar — rådgör med en skatterådgivare för exakta personliga siffror'],
+  da: ['Sammenlign nettoløn i alle 27 EU-lande med én input', 'Bruger officielle skattesatser 2026 og sociale bidrag', 'Resultaterne er estimater — kontakt en skatterådgiver for præcise personlige tal'],
+  fi: ['Vertaa nettopalkka kaikissa 27 EU-maassa yhdellä syötteellä', 'Käyttää virallisia 2026 veroprosentteja ja sosiaalimaksuja', 'Tulokset ovat arvioita — konsultoi veroneuvojaa tarkkoja henkilökohtaisia lukuja varten'],
+  el: ['Συγκρίνετε τον καθαρό μισθό σε 27 χώρες της ΕΕ με μία καταχώριση', 'Χρησιμοποιεί επίσημα φορολογικά κλιμάκια 2026 και εισφορές', 'Τα αποτελέσματα είναι εκτιμήσεις — συμβουλευτείτε φοροτεχνικό για ακριβή στοιχεία'],
+  hu: ['Hasonlítsa össze a nettó fizetést mind a 27 EU-országban egyetlen bevitellel', 'Hivatalos 2026-os adókulcsokat és társadalombiztosítási járulékokat használ', 'Az eredmények becslések — forduljon adószakértőhöz pontos személyes adatokért'],
+  sk: ['Porovnajte čistú mzdu vo všetkých 27 krajinách EÚ jedným vstupom', 'Používa oficiálne daňové sadzby 2026 a odvody sociálneho poistenia', 'Výsledky sú odhady — poraďte sa s daňovým poradcom pre presné osobné údaje'],
+  bg: ['Сравнете нетната заплата в 27 страни на ЕС с едно въвеждане', 'Използва официалните данъчни ставки 2026 и социалните осигуровки', 'Резултатите са приблизителни — консултирайте се с данъчен специалист'],
+  hr: ['Usporedite neto plaću u svih 27 zemalja EU s jednim unosom', 'Koristi službene porezne stope 2026 i doprinose za socijalno osiguranje', 'Rezultati su procjene — posavjetujte se s poreznim savjetnikom za točne osobne podatke'],
+  sl: ['Primerjajte neto plačo v vseh 27 državah EU z enim vnosom', 'Uporablja uradne davčne stopnje 2026 in prispevke za socialno varnost', 'Rezultati so ocene — posvetujte se z davčnim svetovalcem za točne osebne podatke'],
+  lt: ['Palyginkite neto atlyginimą visose 27 ES šalyse su vienu įvedimu', 'Naudoja oficialius 2026 m. mokesčių tarifus ir socialinio draudimo įmokas', 'Rezultatai yra orientaciniai — kreipkitės į mokesčių konsultantą tiksliai informacijai'],
+  lv: ['Salīdziniet neto algu visās 27 ES valstīs ar vienu ievadi', 'Izmanto oficiālās 2026. gada nodokļu likmes un sociālās iemaksas', 'Rezultāti ir aplēses — konsultējieties ar nodokļu speciālistu precīziem datiem'],
+  et: ['Võrrelge netopalka kõigis 27 EL-i riigis ühe sisendiga', 'Kasutab ametlikke 2026. aasta maksumäärasid ja sotsiaalmakseid', 'Tulemused on hinnangulised — täpsete andmete saamiseks pöörduge maksunõustaja poole'],
+  mt: ['Iqabbel is-salarju nett fi 27 pajjiż tal-UE b\'input wieħed', 'Juża rati tat-taxxa uffiċjali 2026 u kontribuzzjonijiet soċjali', 'Ir-riżultati huma stimi — ikkonsulta professjonist tat-taxxa għal ċifri eżatti'],
+  ga: ['Cuir tuarastal glan i gcomparáid i 27 dtír AE le hionchur amháin', 'Úsáideann rátaí cánach oifigiúla 2026 agus ranníocaíochtaí sóisialta', 'Is meastacháin iad na torthaí — téigh i gcomhairle le gairmí cánach le haghaidh figiúirí beachta'],
+};
+
+// UI labels
+const grossLabel: Record<string, string> = {
+  en:'Gross Annual Salary', fr:'Salaire brut annuel', de:'Bruttojahresgehalt', es:'Salario bruto anual',
+  it:'Stipendio lordo annuale', pt:'Salário bruto anual', nl:'Bruto jaarsalaris', pl:'Wynagrodzenie brutto roczne',
+  ro:'Salariu brut anual', cs:'Hrubá roční mzda', sv:'Brutto årslön', da:'Brutto årsløn',
+  fi:'Bruttovuosipalkka', el:'Ετήσιος μεικτός μισθός', hu:'Bruttó éves fizetés', sk:'Hrubá ročná mzda',
+  bg:'Брутна годишна заплата', hr:'Bruto godišnja plaća', sl:'Bruto letna plača', lt:'Bruto metinis atlyginimas',
+  lv:'Bruto gada alga', et:'Bruto aastapalk', mt:'Salarju gross annwali', ga:'Tuarastal comhlán bliantúil',
+};
+const statusLabel: Record<string, string> = {
+  en:'Filing Status', fr:'Situation familiale', de:'Familienstand', es:'Estado civil',
+  it:'Stato civile', pt:'Estado civil', nl:'Burgerlijke staat', pl:'Stan cywilny',
+  ro:'Stare civilă', cs:'Rodinný stav', sv:'Civilstånd', da:'Civilstand',
+  fi:'Siviilisääty', el:'Οικογενειακή κατάσταση', hu:'Családi állapot', sk:'Rodinný stav',
+  bg:'Семейно положение', hr:'Bračni status', sl:'Zakonski stan', lt:'Šeimyninė padėtis',
+  lv:'Ģimenes stāvoklis', et:'Perekonnaseis', mt:'Stat ċivili', ga:'Stádas pósta',
+};
+const statusSingle: Record<string, string> = {
+  en:'Single', fr:'Célibataire', de:'Ledig', es:'Soltero/a',
+  it:'Celibe/Nubile', pt:'Solteiro/a', nl:'Alleenstaand', pl:'Wolny/a',
+  ro:'Necăsătorit/ă', cs:'Svobodný/á', sv:'Ensamstående', da:'Enlig',
+  fi:'Naimaton', el:'Άγαμος/η', hu:'Egyedülálló', sk:'Slobodný/á',
+  bg:'Неженен/а', hr:'Neoženjen/a', sl:'Samski/a', lt:'Nevedęs/a',
+  lv:'Neprecējies/ies', et:'Vallaline', mt:'Single', ga:'Singil',
+};
+const statusMarried: Record<string, string> = {
+  en:'Married', fr:'Marié(e)', de:'Verheiratet', es:'Casado/a',
+  it:'Sposato/a', pt:'Casado/a', nl:'Gehuwd', pl:'Żonaty/Zamężna',
+  ro:'Căsătorit/ă', cs:'Ženatý/Vdaná', sv:'Gift', da:'Gift',
+  fi:'Naimisissa', el:'Παντρεμένος/η', hu:'Házas', sk:'Ženatý/Vydatá',
+  bg:'Женен/Омъжена', hr:'Oženjen/Udana', sl:'Poročen/a', lt:'Vedęs/Ištekėjusi',
+  lv:'Precējies/ies', et:'Abielus', mt:'Miżżewweġ/a', ga:'Pósta',
+};
+const statusMarriedChildren: Record<string, string> = {
+  en:'Married + children', fr:'Marié(e) + enfants', de:'Verheiratet + Kinder', es:'Casado/a + hijos',
+  it:'Sposato/a + figli', pt:'Casado/a + filhos', nl:'Gehuwd + kinderen', pl:'Żonaty/Zamężna + dzieci',
+  ro:'Căsătorit/ă + copii', cs:'Ženatý/Vdaná + děti', sv:'Gift + barn', da:'Gift + børn',
+  fi:'Naimisissa + lapsia', el:'Παντρεμένος/η + παιδιά', hu:'Házas + gyermekek', sk:'Ženatý/Vydatá + deti',
+  bg:'Женен/а + деца', hr:'Oženjen/a + djeca', sl:'Poročen/a + otroci', lt:'Vedęs/usi + vaikai',
+  lv:'Precējies/ies + bērni', et:'Abielus + lapsed', mt:'Miżżewweġ/a + tfal', ga:'Pósta + leanaí',
+};
+const yourCountryLabel: Record<string, string> = {
+  en:'Highlight my country', fr:'Mettre en avant mon pays', de:'Mein Land hervorheben', es:'Destacar mi país',
+  it:'Evidenzia il mio paese', pt:'Destacar o meu país', nl:'Mijn land markeren', pl:'Podświetl mój kraj',
+  ro:'Evidențiați țara mea', cs:'Zvýraznit mou zemi', sv:'Markera mitt land', da:'Fremhæv mit land',
+  fi:'Korosta maani', el:'Επισήμανση της χώρας μου', hu:'Saját ország kiemelése', sk:'Zvýrazniť moju krajinu',
+  bg:'Открой моята страна', hr:'Istakni moju zemlju', sl:'Označi mojo državo', lt:'Paryškinti mano šalį',
+  lv:'Izcelt manu valsti', et:'Tõsta esile minu riik', mt:'Evidenzja l-pajjiż tiegħi', ga:'Aibhsigh mo thír',
+};
+const optionalLabel: Record<string, string> = {
+  en:'optional', fr:'optionnel', de:'optional', es:'opcional',
+  it:'opzionale', pt:'opcional', nl:'optioneel', pl:'opcjonalne',
+  ro:'opțional', cs:'volitelné', sv:'valfritt', da:'valgfrit',
+  fi:'valinnainen', el:'προαιρετικό', hu:'opcionális', sk:'voliteľné',
+  bg:'незадължително', hr:'neobavezno', sl:'neobvezno', lt:'neprivaloma',
+  lv:'neobligāti', et:'valikuline', mt:'mhux obbligatorju', ga:'roghnach',
+};
+const calculateBtn: Record<string, string> = {
+  en:'Calculate', fr:'Calculer', de:'Berechnen', es:'Calcular',
+  it:'Calcola', pt:'Calcular', nl:'Berekenen', pl:'Oblicz',
+  ro:'Calculează', cs:'Vypočítat', sv:'Beräkna', da:'Beregn',
+  fi:'Laske', el:'Υπολογισμός', hu:'Számítás', sk:'Vypočítať',
+  bg:'Изчисли', hr:'Izračunaj', sl:'Izračunaj', lt:'Apskaičiuoti',
+  lv:'Aprēķināt', et:'Arvuta', mt:'Ikkalkula', ga:'Ríomh',
+};
+// Table column labels
+const colCountry: Record<string, string> = {
+  en:'Country', fr:'Pays', de:'Land', es:'País', it:'Paese', pt:'País', nl:'Land', pl:'Kraj',
+  ro:'Țara', cs:'Země', sv:'Land', da:'Land', fi:'Maa', el:'Χώρα', hu:'Ország', sk:'Krajina',
+  bg:'Държава', hr:'Država', sl:'Država', lt:'Šalis', lv:'Valsts', et:'Riik', mt:'Pajjiż', ga:'Tír',
+};
+const colGross: Record<string, string> = {
+  en:'Gross', fr:'Brut', de:'Brutto', es:'Bruto', it:'Lordo', pt:'Bruto', nl:'Bruto', pl:'Brutto',
+  ro:'Brut', cs:'Hrubá', sv:'Brutto', da:'Brutto', fi:'Brutto', el:'Μεικτός', hu:'Bruttó', sk:'Hrubá',
+  bg:'Брутна', hr:'Bruto', sl:'Bruto', lt:'Bruto', lv:'Bruto', et:'Bruto', mt:'Gross', ga:'Comhlán',
+};
+const colTax: Record<string, string> = {
+  en:'Income Tax', fr:'Impôt', de:'Steuer', es:'IRPF', it:'IRPEF', pt:'IRS', nl:'Belasting', pl:'Podatek',
+  ro:'Impozit', cs:'Daň', sv:'Inkomstskatt', da:'Skat', fi:'Vero', el:'Φόρος', hu:'Adó', sk:'Daň',
+  bg:'Данък', hr:'Porez', sl:'Davek', lt:'Mokestis', lv:'Nodoklis', et:'Maks', mt:'Taxxa', ga:'Cáin',
+};
+const colSocial: Record<string, string> = {
+  en:'Social', fr:'Social', de:'Sozial', es:'S.Social', it:'Previdenza', pt:'Seg.Social', nl:'Sociaal', pl:'ZUS',
+  ro:'Social', cs:'Soc.pojiš.', sv:'Socialt', da:'Social', fi:'Sosiaali', el:'Ασφάλιση', hu:'TB', sk:'Soc.poistenie',
+  bg:'Осигуровки', hr:'Doprinosi', sl:'Prispevki', lt:'Soc.draud.', lv:'Soc.iemaksas', et:'Sots.maks', mt:'Soċjali', ga:'Sóisialach',
+};
+const colNet: Record<string, string> = {
+  en:'Net Salary', fr:'Salaire Net', de:'Nettogehalt', es:'Salario Neto', it:'Stipendio Netto', pt:'Salário Líquido', nl:'Nettosalaris', pl:'Wynagrodzenie Netto',
+  ro:'Salariu Net', cs:'Čistá Mzda', sv:'Nettolön', da:'Nettoløn', fi:'Nettopalkka', el:'Καθαρός Μισθός', hu:'Nettó Bér', sk:'Čistá Mzda',
+  bg:'Нетна Заплата', hr:'Neto Plaća', sl:'Neto Plača', lt:'Neto Alga', lv:'Neto Alga', et:'Netopalk', mt:'Salarju Nett', ga:'Tuarastal Glan',
+};
+const colRate: Record<string, string> = {
+  en:'Eff. Rate', fr:'Taux Eff.', de:'Eff. Rate', es:'Tasa Ef.', it:'Aliquota Eff.', pt:'Taxa Ef.', nl:'Eff. Tarief', pl:'Stawka Ef.',
+  ro:'Rată Ef.', cs:'Ef. sazba', sv:'Eff. Sats', da:'Eff. Sats', fi:'Ef. Vero', el:'Eff. Συντελ.', hu:'Eff. Ráta', sk:'Ef. Sadzba',
+  bg:'Еф. Ставка', hr:'Ef. Stopa', sl:'Ef. Stopnja', lt:'Ef. Tarifas', lv:'Ef. Likme', et:'Ef. Määr', mt:'Rata Eff.', ga:'Ráta Ef.',
+};
+const colNetPct: Record<string, string> = {
+  en:'Net %', fr:'Net %', de:'Netto %', es:'Neto %', it:'Netto %', pt:'Líquido %', nl:'Netto %', pl:'Netto %',
+  ro:'Net %', cs:'Čistá %', sv:'Netto %', da:'Netto %', fi:'Netto %', el:'Καθαρό %', hu:'Nettó %', sk:'Čistá %',
+  bg:'Нето %', hr:'Neto %', sl:'Neto %', lt:'Neto %', lv:'Neto %', et:'Neto %', mt:'Nett %', ga:'Glan %',
+};
+const bestLabel: Record<string, string> = {
+  en:'Best', fr:'Meilleur', de:'Beste', es:'Mejor', it:'Migliore', pt:'Melhor', nl:'Beste', pl:'Najlepszy',
+  ro:'Cel mai bun', cs:'Nejlepší', sv:'Bäst', da:'Bedst', fi:'Paras', el:'Καλύτερο', hu:'Legjobb', sk:'Najlepší',
+  bg:'Най-добро', hr:'Najbolje', sl:'Najboljše', lt:'Geriausias', lv:'Labākais', et:'Parim', mt:'L-aħjar', ga:'Is fearr',
+};
+const worstLabel: Record<string, string> = {
+  en:'Lowest', fr:'Plus bas', de:'Niedrigste', es:'Menor', it:'Minore', pt:'Menor', nl:'Laagste', pl:'Najniższy',
+  ro:'Cel mai mic', cs:'Nejnižší', sv:'Lägst', da:'Lavest', fi:'Matalin', el:'Χαμηλότερο', hu:'Legkisebb', sk:'Najnižší',
+  bg:'Най-ниско', hr:'Najniže', sl:'Najnižje', lt:'Mažiausias', lv:'Zemākais', et:'Madalaim', mt:'L-inqas', ga:'Is ísle',
+};
+const yourResultLabel: Record<string, string> = {
+  en:'Your country', fr:'Votre pays', de:'Ihr Land', es:'Tu país', it:'Il tuo paese', pt:'O seu país', nl:'Uw land', pl:'Twój kraj',
+  ro:'Țara dvs.', cs:'Vaše země', sv:'Ditt land', da:'Dit land', fi:'Maasi', el:'Η χώρα σου', hu:'Az ön országa', sk:'Vaša krajina',
+  bg:'Вашата страна', hr:'Vaša zemlja', sl:'Vaša država', lt:'Jūsų šalis', lv:'Jūsu valsts', et:'Teie riik', mt:'Il-pajjiż tiegħek', ga:'Do thír',
+};
+const monthlyLabel: Record<string, string> = {
+  en:'Monthly net', fr:'Net mensuel', de:'Monatlich netto', es:'Neto mensual', it:'Netto mensile', pt:'Líquido mensal', nl:'Maandelijks netto', pl:'Netto miesięcznie',
+  ro:'Net lunar', cs:'Čistá měsíčně', sv:'Netto per månad', da:'Netto pr. måned', fi:'Netto kuukausittain', el:'Καθαρά μηνιαία', hu:'Havi nettó', sk:'Čistá mesačne',
+  bg:'Нетно месечно', hr:'Neto mjesečno', sl:'Neto mesečno', lt:'Neto per mėnesį', lv:'Neto mēnesī', et:'Neto kuus', mt:'Nett fix-xahar', ga:'Glan míosúil',
+};
+const vsAvgLabel: Record<string, string> = {
+  en:'Country avg.', fr:'Moy. nationale', de:'Land-Ø', es:'Media nacional', it:'Media naz.', pt:'Média nacional', nl:'Landgemiddelde', pl:'Śr. krajowa',
+  ro:'Media țării', cs:'Průměr země', sv:'Landssnitt', da:'Landsgennemsnit', fi:'Maan keskiarvo', el:'Εθνικός μέσος', hu:'Ország átlag', sk:'Priemer krajiny',
+  bg:'Ср. за страната', hr:'Prosjek države', sl:'Državno povprečje', lt:'Šalies vidurkis', lv:'Valsts vidējais', et:'Riigi keskmine', mt:'Medja nazzjonali', ga:'Meán náisiúnta',
+};
+const viewCountryLabel: Record<string, string> = {
+  en:'View country →', fr:'Voir le pays →', de:'Land ansehen →', es:'Ver país →', it:'Vedi paese →', pt:'Ver país →', nl:'Land bekijken →', pl:'Pokaż kraj →',
+  ro:'Vezi țara →', cs:'Zobrazit zemi →', sv:'Visa land →', da:'Se land →', fi:'Näytä maa →', el:'Δείτε χώρα →', hu:'Ország megtekintése →', sk:'Zobraziť krajinu →',
+  bg:'Виж страната →', hr:'Pogledaj zemlju →', sl:'Poglej državo →', lt:'Žiūrėti šalį →', lv:'Skatīt valsti →', et:'Vaata riiki →', mt:'Ara l-pajjiż →', ga:'Féach tír →',
+};
+const methodologyTitle: Record<string, string> = {
+  en:'Methodology', fr:'Méthodologie', de:'Methodik', es:'Metodología', it:'Metodologia', pt:'Metodologia', nl:'Methodologie', pl:'Metodologia',
+  ro:'Metodologie', cs:'Metodika', sv:'Metodik', da:'Metode', fi:'Metodologia', el:'Μεθοδολογία', hu:'Módszertan', sk:'Metodika',
+  bg:'Методология', hr:'Metodologija', sl:'Metodologija', lt:'Metodologija', lv:'Metodoloģija', et:'Metoodika', mt:'Metodoloġija', ga:'Modheolaíocht',
+};
+const methodologyText: Record<string, string> = {
+  en: `Calculations use 2026 progressive income tax brackets and standard employee-side social contribution rates for each country. Filing status applies income splitting (married) or family quotient (married with children). Results are estimates — they exclude local surcharges, church tax, municipal taxes, and personal deductions. For precise figures, consult a certified tax advisor.`,
+  fr: `Les calculs utilisent les barèmes fiscaux progressifs 2026 et les taux standard de cotisations sociales employé. Le statut marital applique le quotient familial. Les résultats sont des estimations — ils excluent les taxes locales, l'impôt religieux et les déductions personnelles.`,
+  de: `Berechnungen verwenden progressive Steuertarife 2026 und Standard-Sozialabgaben. Verheiratete profitieren vom Ehegattensplitting. Ergebnisse sind Schätzungen — ohne Kirchensteuer, kommunale Steuern und persönliche Freibeträge.`,
+  es: `Los cálculos usan tramos del IRPF 2026 y cotizaciones sociales estándar. El estado civil aplica tributación conjunta. Los resultados son estimaciones — excluyen recargos locales e impuestos regionales.`,
+  it: `I calcoli utilizzano le aliquote IRPEF progressive 2026 e i contributi previdenziali standard. I risultati sono stime — escludono addizionali locali e deduzioni personali.`,
+  pt: `Os cálculos usam os escalões do IRS progressivos 2026 e as taxas de Segurança Social padrão. Os resultados são estimativas — excluem sobretaxas locais e deduções pessoais.`,
+  nl: `Berekeningen gebruiken progressieve belastingtarieven 2026 en standaard sociale premies. Resultaten zijn schattingen — zonder lokale toeslagen en persoonlijke aftrekken.`,
+  pl: `Obliczenia wykorzystują progresywne progi podatkowe 2026 i standardowe składki ZUS. Wyniki są szacunkowe — bez lokalnych podatków i ulg osobistych.`,
+  ro: `Calculele folosesc cotele de impozit progresive 2026 și contribuțiile sociale standard. Rezultatele sunt estimări — fără taxe locale și deduceri personale.`,
+  cs: `Výpočty používají progresivní daňové sazby 2026 a standardní odvody. Výsledky jsou odhady — bez místních daní a osobních odpočtů.`,
+  sv: `Beräkningarna använder progressiva skattesatser 2026 och standardsociala avgifter. Resultaten är uppskattningar — utan lokala skatter och personliga avdrag.`,
+};
+const disclaimerTitle: Record<string, string> = {
+  en:'Important disclaimer', fr:'Avertissement important', de:'Wichtiger Hinweis', es:'Aviso importante',
+  it:'Avviso importante', pt:'Aviso importante', nl:'Belangrijke disclaimer', pl:'Ważna informacja',
+  ro:'Notă importantă', cs:'Důležité upozornění', sv:'Viktig information', da:'Vigtig ansvarsfraskrivelse',
+  fi:'Tärkeä huomautus', el:'Σημαντική ανακοίνωση', hu:'Fontos nyilatkozat', sk:'Dôležité upozornenie',
+  bg:'Важна бележка', hr:'Važna napomena', sl:'Pomembna opomba', lt:'Svarbus pranešimas',
+  lv:'Svarīgs paziņojums', et:'Oluline märkus', mt:'Avviż importanti', ga:'Séanadh tábhachtach',
+};
+const disclaimerText: Record<string, string> = {
+  en: 'This calculator provides estimates only. Results are based on simplified 2026 tax brackets and standard employee social contribution rates. Actual take-home pay may differ due to local surcharges, church tax, municipal taxes, personal deductions, non-standard employment contracts, or employer-specific arrangements. EuroSalary does not provide tax, legal, or financial advice. Always consult a qualified tax professional for decisions based on exact net income.',
+  fr: 'Ce calculateur fournit des estimations uniquement. Les résultats sont basés sur des barèmes fiscaux simplifiés 2026. Le revenu net réel peut différer en raison de taxes locales, de l\'impôt religieux, de déductions personnelles ou de contrats spécifiques. EuroSalary ne fournit pas de conseil fiscal, juridique ou financier.',
+  de: 'Dieser Rechner liefert nur Schätzungen. Ergebnisse basieren auf vereinfachten Steuertarifen 2026. Das tatsächliche Nettogehalt kann aufgrund von Kirchensteuer, kommunalen Steuern, persönlichen Freibeträgen oder spezifischen Arbeitsverträgen abweichen. EuroSalary bietet keine Steuer- oder Rechtsberatung.',
+  es: 'Esta calculadora proporciona solo estimaciones. Los resultados se basan en tramos fiscales simplificados de 2026. El sueldo neto real puede diferir por recargos locales, deducciones personales o contratos específicos. EuroSalary no ofrece asesoramiento fiscal, jurídico o financiero.',
+  it: 'Questo calcolatore fornisce solo stime basate su aliquote fiscali semplificate 2026. Lo stipendio netto effettivo può differire per addizionali locali, deduzioni personali o contratti specifici. EuroSalary non fornisce consulenza fiscale, legale o finanziaria.',
+  pt: 'Esta calculadora fornece apenas estimativas baseadas em escalões fiscais simplificados de 2026. O salário líquido real pode diferir devido a sobretaxas locais, deduções pessoais ou contratos específicos. A EuroSalary não presta aconselhamento fiscal, jurídico ou financeiro.',
+  nl: 'Deze rekentool geeft alleen schattingen op basis van vereenvoudigde belastingtarieven 2026. Het werkelijke nettosalaris kan afwijken door lokale toeslagen, persoonlijke aftrekken of specifieke contracten. EuroSalary biedt geen belasting- of juridisch advies.',
+  pl: 'Ten kalkulator podaje jedynie szacunki oparte na uproszczonych stawkach podatkowych 2026. Rzeczywiste wynagrodzenie netto może się różnić z powodu lokalnych podatków, ulg osobistych lub specyficznych umów. EuroSalary nie udziela porad podatkowych ani prawnych.',
+  ro: 'Acest calculator oferă doar estimări bazate pe cote de impozitare simplificate 2026. Salariul net real poate diferi din cauza taxelor locale, deducerilor personale sau contractelor specifice. EuroSalary nu oferă consiliere fiscală, juridică sau financiară.',
+  cs: 'Tato kalkulačka poskytuje pouze odhady na základě zjednodušených daňových sazeb 2026. Skutečná čistá mzda se může lišit kvůli místním daním, osobním odpočtům nebo specifickým smlouvám. EuroSalary neposkytuje daňové ani právní poradenství.',
+  sv: 'Denna kalkylator ger endast uppskattningar baserade på förenklade skattesatser 2026. Den faktiska nettolönen kan skilja sig åt på grund av lokala skatter, personliga avdrag eller specifika avtal. EuroSalary ger inte skatte- eller juridisk rådgivning.',
+};
+
+// FAQ
+const faqData: Record<string, { question: string; answer: string }[]> = {
+  en: [
+    { question: 'How accurate is this salary calculator?', answer: 'The calculator uses 2026 official tax brackets and standard employee social contribution rates. It provides reliable estimates for career planning and country comparison, but does not account for local surcharges, church tax, municipal taxes, or individual deductions. For precise figures, consult a certified tax advisor in the relevant country.' },
+    { question: 'Which countries are included in the comparison?', answer: 'The calculator covers all 27 European Union member states: Germany, France, Netherlands, Belgium, Luxembourg, Austria, Ireland, Spain, Italy, Portugal, Finland, Sweden, Denmark, Poland, Czech Republic, Romania, Hungary, Bulgaria, Croatia, Slovakia, Slovenia, Lithuania, Latvia, Estonia, Cyprus, Malta, and Greece. Switzerland is excluded due to the complexity of its cantonal tax system.' },
+    { question: 'Does marital status affect the calculation?', answer: 'Yes. In most EU countries, married filers benefit from income splitting — the combined income is divided between spouses, which can significantly lower the effective tax rate. The "married with children" option applies additional deductions per child. The exact benefit varies by country: it is very significant in Germany (Splittingverfahren) and France (quotient familial), and less impactful in flat-tax countries like Romania or Bulgaria.' },
+    { question: 'Why does the same gross salary give very different net pay across countries?', answer: 'European tax systems differ fundamentally. Some countries (Denmark, Belgium, Sweden) have high income tax but moderate social contributions. Others (France, Netherlands) have high social security rates. Eastern European countries (Romania, Bulgaria, Hungary) apply flat income tax rates of 10–15%, often resulting in higher net pay from the same gross. Tax-free allowances, deductions, and the mix of income tax vs. social contributions create large differences.' },
+    { question: 'How is the effective tax rate calculated?', answer: 'The effective tax rate shown is the total percentage of gross salary lost to both income tax and social security contributions combined: (income tax + social security) ÷ gross salary × 100. This is different from the marginal tax rate, which only applies to the highest income bracket.' },
+  ],
+  fr: [
+    { question: 'Quelle est la précision de ce calculateur de salaire ?', answer: 'Le calculateur utilise les barèmes fiscaux officiels 2026 et les taux standard de cotisations sociales employé. Il fournit des estimations fiables pour la planification de carrière, mais ne tient pas compte des taxes locales, de l\'impôt religieux ni des déductions personnelles.' },
+    { question: 'Quels pays sont inclus dans la comparaison ?', answer: 'Le calculateur couvre les 27 États membres de l\'Union européenne. La Suisse est exclue en raison de la complexité de son système fiscal cantonal.' },
+    { question: 'Le statut marital affecte-t-il le calcul ?', answer: 'Oui. Dans la plupart des pays de l\'UE, les couples mariés bénéficient du quotient conjugal ou de l\'imposition conjointe. L\'option "marié avec enfants" applique des déductions supplémentaires par enfant.' },
+    { question: 'Pourquoi le même salaire brut donne-t-il un net très différent selon les pays ?', answer: 'Les systèmes fiscaux européens diffèrent fondamentalement. Certains pays ont des impôts élevés mais des cotisations modérées. D\'autres ont des charges sociales très élevées. Les pays d\'Europe de l\'Est appliquent souvent des taux forfaitaires bas, résultant en un net plus élevé.' },
+    { question: 'Comment le taux d\'imposition effectif est-il calculé ?', answer: 'Le taux effectif représente le pourcentage total du salaire brut perdu en impôt sur le revenu et cotisations sociales combinés : (impôt + cotisations) ÷ salaire brut × 100.' },
+  ],
+  de: [
+    { question: 'Wie genau ist dieser Gehaltsrechner?', answer: 'Der Rechner verwendet die offiziellen Steuertarife 2026 und Standard-Sozialversicherungssätze. Er liefert zuverlässige Schätzungen für die Karriereplanung, berücksichtigt jedoch keine Kirchensteuer, kommunalen Steuern oder persönlichen Abzüge.' },
+    { question: 'Welche Länder sind im Vergleich enthalten?', answer: 'Der Rechner umfasst alle 27 EU-Mitgliedstaaten. Die Schweiz ist aufgrund der Komplexität des Kantonssteuersystems ausgeschlossen.' },
+    { question: 'Beeinflusst der Familienstand die Berechnung?', answer: 'Ja. In den meisten EU-Ländern profitieren Verheiratete vom Ehegattensplitting. Die Option "Verheiratet mit Kindern" berücksichtigt zusätzliche Kinderfreibeträge.' },
+    { question: 'Warum ergibt das gleiche Bruttogehalt sehr unterschiedliche Nettogehälter?', answer: 'Europäische Steuersysteme unterscheiden sich grundlegend. Einige Länder haben hohe Einkommensteuern, andere hohe Sozialabgaben. Osteuropäische Länder wenden oft niedrige Pauschalsteuersätze an.' },
+    { question: 'Wie wird der effektive Steuersatz berechnet?', answer: 'Der effektive Steuersatz ist der Gesamtprozentsatz des Bruttogehalts, der für Einkommensteuer und Sozialabgaben abgeführt wird: (Steuer + Sozialabgaben) ÷ Bruttolohn × 100.' },
+  ],
+  es: [
+    { question: '¿Qué tan precisa es esta calculadora de salario?', answer: 'La calculadora usa tramos fiscales oficiales 2026 y cotizaciones sociales estándar. Proporciona estimaciones fiables para planificación de carrera, pero no incluye recargos locales ni deducciones personales.' },
+    { question: '¿Qué países se incluyen en la comparación?', answer: 'La calculadora cubre los 27 estados miembros de la Unión Europea. Suiza está excluida debido a la complejidad de su sistema cantonal.' },
+    { question: '¿Afecta el estado civil al cálculo?', answer: 'Sí. En la mayoría de países de la UE, los casados se benefician de tributación conjunta. La opción "casado con hijos" aplica deducciones adicionales por hijo.' },
+    { question: '¿Por qué el mismo salario bruto da un neto tan diferente en distintos países?', answer: 'Los sistemas fiscales europeos difieren fundamentalmente. Algunos países tienen impuestos altos pero cotizaciones moderadas. Los países del este de Europa aplican tipos planos bajos, resultando en mayor neto.' },
+    { question: '¿Cómo se calcula la tasa impositiva efectiva?', answer: 'La tasa efectiva es el porcentaje total del salario bruto destinado a IRPF y cotizaciones: (impuesto + cotizaciones) ÷ salario bruto × 100.' },
+  ],
+};
+
+// ─── Data preparation ────────────────────────────────────────────────────────
+
+const taxCodes = Object.keys(taxData);
+const langSlugs = (countrySlugsByLang as Record<string, Record<string, string>>)[lang] || {};
+const clientCountryNames: Record<string, string> = {};
+const clientCountrySlugs: Record<string, string> = {};
+const clientAvgSalaries: Record<string, number> = {};
+
+for (const code of taxCodes) {
+  clientCountryNames[code] = fb(countryNames[code] || {en: code}, lang) as string;
+  clientCountrySlugs[code] = langSlugs[code] || code.toLowerCase();
+  clientAvgSalaries[code] = countryDataMap[code]?.avgSalary || 0;
+}
+
+const clientLabels = {
+  netLabel: fb(colNet, lang),
+  monthlyLabel: fb(monthlyLabel, lang),
+  vsAvgLabel: fb(vsAvgLabel, lang),
+  viewCountryLabel: fb(viewCountryLabel, lang),
+};
+
+// Country select options (all 27, sorted by name in current language)
+const countryOptions = taxCodes
+  .map(code => ({ code, name: clientCountryNames[code] }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+const faqItems = fb(faqData, lang) as { question: string; answer: string }[];
+
+// ─── Schema ──────────────────────────────────────────────────────────────────
+
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: fb(h1Titles, lang),
+    url: `https://eurosalary.eu/${lang}/calculator/`,
+    applicationCategory: 'FinanceApplication',
+    operatingSystem: 'All',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    author: { '@type': 'Organization', name: 'EuroSalary.eu', url: 'https://eurosalary.eu' },
+    inLanguage: lang,
+    description: fb(metaDescs, lang),
+  },
+];
+---
+
+<BaseLayout
+  title={`${fb(h1Titles, lang)} | EuroSalary.eu`}
+  description={fb(metaDescs, lang)}
+  datePublished="2026-04-12"
+  dateModified={TAX_LAST_UPDATED}
+  schema={pageSchema}
+>
+  <!-- ── Hero ── -->
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{fb(homeLabel, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">{fb(calcLabel, lang)}</span>
+      </nav>
+      <h1 class="page-hero__title">{fb(h1Titles, lang)}</h1>
+      <p class="page-hero__desc">{fb(introAnswers, lang)}</p>
+    </div>
+  </section>
+
+  <div class="container calc-page">
+
+    <!-- ── TL;DR ── -->
+    <TLDRBox items={fb(tldrItems, lang) as string[]} />
+
+    <!-- ── Form ── -->
+    <section class="calc-form-section">
+      <div class="calc-form-card">
+        <div class="calc-form-fields">
+          <div class="calc-field calc-field--salary">
+            <label class="calc-label" for="calcGross">{fb(grossLabel, lang)}</label>
+            <div class="calc-input-wrap">
+              <span class="calc-currency-symbol">€</span>
+              <input
+                type="number"
+                id="calcGross"
+                class="calc-input"
+                value="50000"
+                min="1000"
+                max="1000000"
+                step="1000"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+          <div class="calc-field">
+            <label class="calc-label" for="calcStatus">{fb(statusLabel, lang)}</label>
+            <select id="calcStatus" class="calc-select">
+              <option value="single">{fb(statusSingle, lang)}</option>
+              <option value="married">{fb(statusMarried, lang)}</option>
+              <option value="married_children">{fb(statusMarriedChildren, lang)}</option>
+            </select>
+          </div>
+          <div class="calc-field">
+            <label class="calc-label" for="calcCountry">
+              {fb(yourCountryLabel, lang)}
+              <span class="calc-optional">({fb(optionalLabel, lang)})</span>
+            </label>
+            <select id="calcCountry" class="calc-select">
+              <option value="">—</option>
+              {countryOptions.map(({ code, name }) => (
+                <option value={code}>{name}</option>
+              ))}
+            </select>
+          </div>
+          <div class="calc-field calc-field--btn">
+            <button id="calcBtn" class="btn btn--primary calc-btn">
+              {fb(calculateBtn, lang)}
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Summary cards ── -->
+    <div class="calc-summary" id="calcSummary" style="display:none">
+      <div class="calc-summary-card calc-summary-card--best">
+        <div class="calc-summary-badge">{fb(bestLabel, lang)}</div>
+        <div class="calc-summary-flag" id="sumBestFlag"></div>
+        <div class="calc-summary-name" id="sumBestName"></div>
+        <div class="calc-summary-net" id="sumBestNet"></div>
+      </div>
+      <div class="calc-summary-card calc-summary-card--worst">
+        <div class="calc-summary-badge">{fb(worstLabel, lang)}</div>
+        <div class="calc-summary-flag" id="sumWorstFlag"></div>
+        <div class="calc-summary-name" id="sumWorstName"></div>
+        <div class="calc-summary-net" id="sumWorstNet"></div>
+      </div>
+      <div class="calc-summary-card calc-summary-card--yours" id="sumYours" style="display:none">
+        <div class="calc-summary-badge">{fb(yourResultLabel, lang)}</div>
+        <div class="calc-summary-flag" id="sumYoursFlag"></div>
+        <div class="calc-summary-name" id="sumYoursName"></div>
+        <div class="calc-summary-net" id="sumYoursNet"></div>
+      </div>
+    </div>
+
+    <!-- ── Comparison Table ── -->
+    <section class="calc-table-section">
+      <div class="calc-table-wrap">
+        <table class="calc-table" id="calcTable">
+          <thead>
+            <tr>
+              <th class="calc-th calc-th--rank">#</th>
+              <th class="calc-th calc-th--country" data-col="name">{fb(colCountry, lang)}</th>
+              <th class="calc-th calc-th--num" data-col="gross">{fb(colGross, lang)}</th>
+              <th class="calc-th calc-th--num" data-col="incomeTax">{fb(colTax, lang)}</th>
+              <th class="calc-th calc-th--num" data-col="socialSecurity">{fb(colSocial, lang)}</th>
+              <th class="calc-th calc-th--num calc-th--net" data-col="netSalary">{fb(colNet, lang)}</th>
+              <th class="calc-th calc-th--num" data-col="effectiveRate">{fb(colRate, lang)}</th>
+              <th class="calc-th calc-th--bar" data-col="netPct">{fb(colNetPct, lang)}</th>
+            </tr>
+          </thead>
+          <tbody id="calcTbody">
+            <tr class="calc-loading-row">
+              <td colspan="8" class="calc-loading-cell">
+                <div class="calc-loading-dots"><span></span><span></span><span></span></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── Methodology ── -->
+    <section class="calc-methodology">
+      <h2 class="calc-section-title">{fb(methodologyTitle, lang)}</h2>
+      <p class="calc-methodology-text">{fb(methodologyText, lang)}</p>
+    </section>
+
+    <!-- ── FAQ ── -->
+    {faqItems && faqItems.length > 0 && <FAQSection items={faqItems} />}
+
+    <!-- ── Disclaimer ── -->
+    <section class="calc-disclaimer">
+      <h2 class="calc-disclaimer-title">{fb(disclaimerTitle, lang)}</h2>
+      <p class="calc-disclaimer-text">{fb(disclaimerText, lang)}</p>
+    </section>
+
+  </div>
+</BaseLayout>
+
+<script is:inline define:vars={{
+  taxDataStr: JSON.stringify(taxData),
+  countryNamesMap: clientCountryNames,
+  avgSalaries: clientAvgSalaries,
+  labels: clientLabels,
+  countrySlugs: clientCountrySlugs,
+  currentLang: lang,
+}}>
+  const taxData = JSON.parse(taxDataStr);
+
+  const flags = {
+    DE:'🇩🇪', FR:'🇫🇷', NL:'🇳🇱', BE:'🇧🇪', LU:'🇱🇺', AT:'🇦🇹', IE:'🇮🇪',
+    ES:'🇪🇸', IT:'🇮🇹', PT:'🇵🇹', FI:'🇫🇮', SE:'🇸🇪', DK:'🇩🇰', PL:'🇵🇱',
+    CZ:'🇨🇿', RO:'🇷🇴', HU:'🇭🇺', BG:'🇧🇬', HR:'🇭🇷', SK:'🇸🇰', SI:'🇸🇮',
+    LT:'🇱🇹', LV:'🇱🇻', EE:'🇪🇪', CY:'🇨🇾', MT:'🇲🇹', EL:'🇬🇷',
+  };
+
+  function calculateTax(gross, brackets) {
+    let tax = 0;
+    for (const [low, high, rate] of brackets) {
+      if (gross <= low) break;
+      const taxable = Math.min(gross, high) - low;
+      tax += taxable * (rate / 100);
+    }
+    return tax;
+  }
+
+  function calculateCountry(gross, status, code) {
+    const data = taxData[code];
+    if (!data) return null;
+    const socialSecurity = Math.round(gross * (data.socialRate / 100));
+    let taxableIncome = gross;
+    let taxReduction = 1.0;
+    if (status === 'married') {
+      taxableIncome = gross / 2;
+      taxReduction = 2.0;
+    } else if (status === 'married_children') {
+      const childDeduction = (data.childDeductionPerChild || 0) * 2;
+      taxableIncome = Math.max(0, (gross - childDeduction) / 2.5);
+      taxReduction = 2.5;
+    }
+    const incomeTax = Math.round(calculateTax(taxableIncome, data.brackets) * taxReduction);
+    const netSalary = Math.max(0, gross - incomeTax - socialSecurity);
+    const effectiveRate = gross > 0 ? (incomeTax + socialSecurity) / gross * 100 : 0;
+    const netPct = gross > 0 ? netSalary / gross * 100 : 0;
+    return { code, gross, incomeTax, socialSecurity, netSalary, effectiveRate, netPct };
+  }
+
+  function fmt(n) {
+    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n);
+  }
+
+  let currentSort = { col: 'netSalary', dir: 'desc' };
+  let openDetail = null;
+  let allResults = [];
+
+  function recalculate() {
+    const gross = parseFloat(document.getElementById('calcGross').value) || 50000;
+    const status = document.getElementById('calcStatus').value || 'single';
+    allResults = Object.keys(taxData).map(code => calculateCountry(gross, status, code)).filter(Boolean);
+    sortAndRender();
+    updateSummary();
+    syncToURL();
+  }
+
+  function sortAndRender() {
+    const col = currentSort.col;
+    const sorted = [...allResults].sort((a, b) => {
+      const av = typeof a[col] === 'string' ? a[col].localeCompare(b[col]) : (a[col] || 0) - (b[col] || 0);
+      return currentSort.dir === 'asc' ? av : -av;
+    });
+    const selectedCode = document.getElementById('calcCountry').value;
+    renderTable(sorted, selectedCode);
+  }
+
+  function renderTable(results, selectedCode) {
+    const tbody = document.getElementById('calcTbody');
+    if (!tbody) return;
+    tbody.innerHTML = results.map((r, i) => {
+      const isSelected = r.code === selectedCode;
+      const pct = r.netPct;
+      const barColor = pct >= 70 ? '#16a34a' : pct >= 50 ? '#ca8a04' : '#dc2626';
+      const rowClass = 'calc-row' + (isSelected ? ' calc-row--selected' : '');
+      return `<tr class="${rowClass}" data-code="${r.code}" onclick="toggleDetail('${r.code}')">
+        <td class="calc-td calc-td--rank">${i + 1}</td>
+        <td class="calc-td calc-td--country"><span class="calc-flag" aria-hidden="true">${flags[r.code] || ''}</span><span class="calc-cname">${countryNamesMap[r.code] || r.code}</span></td>
+        <td class="calc-td calc-td--num">${fmt(r.gross)}</td>
+        <td class="calc-td calc-td--num calc-td--tax">−${fmt(r.incomeTax)}</td>
+        <td class="calc-td calc-td--num calc-td--soc">−${fmt(r.socialSecurity)}</td>
+        <td class="calc-td calc-td--num calc-td--net">${fmt(r.netSalary)}</td>
+        <td class="calc-td calc-td--num">${r.effectiveRate.toFixed(1)}%</td>
+        <td class="calc-td calc-td--bar"><div class="calc-bar-wrap"><div class="calc-bar-fill" style="width:${pct.toFixed(1)}%;background:${barColor}"></div><span class="calc-bar-label">${pct.toFixed(0)}%</span></div></td>
+      </tr>
+      <tr class="calc-detail-row" id="detail-${r.code}" style="display:none"><td colspan="8" class="calc-detail-cell">${buildDetail(r)}</td></tr>`;
+    }).join('');
+
+    document.querySelectorAll('.calc-th[data-col]').forEach(th => {
+      const col = th.getAttribute('data-col');
+      const isActive = col === currentSort.col;
+      th.classList.toggle('calc-th--asc', isActive && currentSort.dir === 'asc');
+      th.classList.toggle('calc-th--desc', isActive && currentSort.dir === 'desc');
+      th.onclick = () => handleSort(col);
+      th.style.cursor = 'pointer';
+    });
+  }
+
+  function buildDetail(r) {
+    const taxPct = r.gross > 0 ? r.incomeTax / r.gross * 100 : 0;
+    const socialPct = r.gross > 0 ? r.socialSecurity / r.gross * 100 : 0;
+    const netPct = r.netPct;
+    const donut = `conic-gradient(#dc2626 0deg ${taxPct*3.6}deg,#f97316 ${taxPct*3.6}deg ${(taxPct+socialPct)*3.6}deg,#16a34a ${(taxPct+socialPct)*3.6}deg 360deg)`;
+    const avg = avgSalaries[r.code] || 0;
+    const slug = countrySlugs[r.code] || r.code.toLowerCase();
+    return `<div class="calc-detail">
+      <div class="calc-detail-chart">
+        <div class="calc-donut" style="background:${donut}">
+          <div class="calc-donut-inner"><span class="calc-donut-pct">${netPct.toFixed(0)}%</span><span class="calc-donut-lbl">${labels.netLabel}</span></div>
+        </div>
+        <div class="calc-donut-legend">
+          <span class="cdl cdl--tax">▪ Tax ${taxPct.toFixed(0)}%</span>
+          <span class="cdl cdl--soc">▪ Social ${socialPct.toFixed(0)}%</span>
+          <span class="cdl cdl--net">▪ Net ${netPct.toFixed(0)}%</span>
+        </div>
+      </div>
+      <div class="calc-detail-info">
+        <div class="calc-di-row"><span>${labels.monthlyLabel}</span><strong>${fmt(r.netSalary/12)}</strong></div>
+        ${avg > 0 ? `<div class="calc-di-row"><span>${labels.vsAvgLabel}</span><strong>${fmt(avg)}</strong></div>` : ''}
+        <a href="/${currentLang}/country/${slug}/" class="calc-detail-link">${labels.viewCountryLabel}</a>
+      </div>
+    </div>`;
+  }
+
+  function toggleDetail(code) {
+    if (openDetail && openDetail !== code) {
+      const prev = document.getElementById('detail-' + openDetail);
+      if (prev) prev.style.display = 'none';
+    }
+    const row = document.getElementById('detail-' + code);
+    if (!row) return;
+    if (openDetail === code) {
+      row.style.display = 'none';
+      openDetail = null;
+    } else {
+      row.style.display = 'table-row';
+      openDetail = code;
+    }
+  }
+
+  function updateSummary() {
+    if (!allResults.length) return;
+    const byNet = [...allResults].sort((a, b) => b.netSalary - a.netSalary);
+    const best = byNet[0];
+    const worst = byNet[byNet.length - 1];
+    const selCode = document.getElementById('calcCountry').value;
+    const yours = selCode ? allResults.find(r => r.code === selCode) : null;
+    const el = document.getElementById('calcSummary');
+    if (!el) return;
+    el.style.display = 'flex';
+    document.getElementById('sumBestFlag').textContent = flags[best.code] || '';
+    document.getElementById('sumBestName').textContent = countryNamesMap[best.code] || best.code;
+    document.getElementById('sumBestNet').textContent = fmt(best.netSalary);
+    document.getElementById('sumWorstFlag').textContent = flags[worst.code] || '';
+    document.getElementById('sumWorstName').textContent = countryNamesMap[worst.code] || worst.code;
+    document.getElementById('sumWorstNet').textContent = fmt(worst.netSalary);
+    const yoursCard = document.getElementById('sumYours');
+    if (yours && yoursCard) {
+      yoursCard.style.display = 'flex';
+      document.getElementById('sumYoursFlag').textContent = flags[yours.code] || '';
+      document.getElementById('sumYoursName').textContent = countryNamesMap[yours.code] || yours.code;
+      document.getElementById('sumYoursNet').textContent = fmt(yours.netSalary);
+    } else if (yoursCard) {
+      yoursCard.style.display = 'none';
+    }
+  }
+
+  function handleSort(col) {
+    if (currentSort.col === col) {
+      currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+      currentSort.col = col;
+      currentSort.dir = col === 'name' ? 'asc' : 'desc';
+    }
+    sortAndRender();
+  }
+
+  let debounceTimer;
+  function onFormChange() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(recalculate, 120);
+  }
+
+  function syncToURL() {
+    const gross = document.getElementById('calcGross').value;
+    const status = document.getElementById('calcStatus').value;
+    const country = document.getElementById('calcCountry').value;
+    const p = new URLSearchParams({ gross, status });
+    if (country) p.set('country', country);
+    history.replaceState(null, '', '?' + p.toString());
+  }
+
+  function readFromURL() {
+    const p = new URLSearchParams(window.location.search);
+    if (p.get('gross')) document.getElementById('calcGross').value = p.get('gross');
+    if (p.get('status')) document.getElementById('calcStatus').value = p.get('status');
+    if (p.get('country')) document.getElementById('calcCountry').value = p.get('country');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    readFromURL();
+    document.getElementById('calcGross').addEventListener('input', onFormChange);
+    document.getElementById('calcStatus').addEventListener('change', onFormChange);
+    document.getElementById('calcCountry').addEventListener('change', onFormChange);
+    document.getElementById('calcBtn').addEventListener('click', recalculate);
+    recalculate();
+  });
+</script>
+
+<style is:global>
+  /* ── Layout ── */
+  .calc-page { padding: var(--space-8) 0 var(--space-16); }
+
+  /* ── Form card ── */
+  .calc-form-section { margin-bottom: var(--space-8); }
+  .calc-form-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-md);
+  }
+  .calc-form-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    align-items: flex-end;
+  }
+  .calc-field { display: flex; flex-direction: column; gap: var(--space-1); flex: 1; min-width: 160px; }
+  .calc-field--salary { flex: 2; min-width: 200px; }
+  .calc-field--btn { flex: 0 0 auto; min-width: auto; }
+  .calc-label {
+    font-size: var(--type-label-size);
+    font-weight: var(--type-label-weight);
+    letter-spacing: var(--type-label-spacing);
+    color: var(--ink-2);
+    text-transform: uppercase;
+  }
+  .calc-optional { font-weight: 400; text-transform: none; color: var(--muted); margin-left: var(--space-1); }
+  .calc-input-wrap { position: relative; display: flex; align-items: center; }
+  .calc-currency-symbol {
+    position: absolute; left: var(--space-3);
+    font-size: var(--type-body-size); color: var(--muted); pointer-events: none; font-weight: 600;
+  }
+  .calc-input {
+    width: 100%;
+    padding: var(--space-3) var(--space-3) var(--space-3) var(--space-7);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: var(--type-body-size);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--bg);
+    transition: border-color var(--t-fast) var(--ease-out), box-shadow var(--t-fast) var(--ease-out);
+  }
+  .calc-input:focus {
+    outline: none; border-color: var(--eu-blue);
+    box-shadow: 0 0 0 3px rgba(0, 51, 153, 0.12);
+  }
+  .calc-select {
+    width: 100%;
+    padding: var(--space-3) var(--space-3);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: var(--type-body-size);
+    color: var(--ink);
+    background: var(--bg);
+    transition: border-color var(--t-fast) var(--ease-out);
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right var(--space-3) center;
+    padding-right: var(--space-8);
+  }
+  .calc-select:focus { outline: none; border-color: var(--eu-blue); box-shadow: 0 0 0 3px rgba(0, 51, 153, 0.12); }
+  .calc-btn { padding: var(--space-3) var(--space-6); white-space: nowrap; height: 100%; }
+
+  /* ── Summary cards ── */
+  .calc-summary {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+    flex-wrap: wrap;
+  }
+  .calc-summary-card {
+    flex: 1;
+    min-width: 180px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4) var(--space-5);
+    box-shadow: var(--shadow-sm);
+    border-top: 3px solid transparent;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .calc-summary-card--best { border-top-color: #16a34a; }
+  .calc-summary-card--worst { border-top-color: #dc2626; }
+  .calc-summary-card--yours { border-top-color: var(--eu-yellow); }
+  .calc-summary-badge {
+    font-size: var(--type-label-sm-size);
+    font-weight: var(--type-label-sm-weight);
+    letter-spacing: var(--type-label-sm-spacing);
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .calc-summary-flag { font-size: 1.75rem; line-height: 1; }
+  .calc-summary-name { font-size: var(--type-body-sm-size); color: var(--ink-2); font-weight: 500; }
+  .calc-summary-net { font-size: var(--type-subheading-size); font-weight: var(--type-subheading-weight); color: var(--ink); font-family: var(--font-mono); }
+
+  /* ── Table ── */
+  .calc-table-section { margin-bottom: var(--space-10); }
+  .calc-table-wrap { overflow-x: auto; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--border); }
+  .calc-table { width: 100%; border-collapse: collapse; font-size: var(--type-body-sm-size); }
+
+  .calc-th {
+    background: var(--navy);
+    color: #fff;
+    padding: var(--space-3) var(--space-4);
+    text-align: left;
+    font-size: var(--type-label-sm-size);
+    font-weight: var(--type-label-sm-weight);
+    letter-spacing: var(--type-label-sm-spacing);
+    text-transform: uppercase;
+    white-space: nowrap;
+    user-select: none;
+    transition: background var(--t-fast);
+    position: relative;
+  }
+  .calc-th:hover { background: rgba(255,255,255,0.12) /* overlay on navy */; }
+  .calc-th[data-col]:hover { background: #162d5a; }
+  .calc-th--num, .calc-td--num { text-align: right; }
+  .calc-th--bar, .calc-td--bar { text-align: left; min-width: 120px; }
+  .calc-th--net { color: var(--eu-yellow); }
+
+  /* Sort indicators */
+  .calc-th[data-col]::after { content: ''; display: inline-block; width: 0; height: 0; margin-left: var(--space-1); vertical-align: middle; }
+  .calc-th--asc::after { border-left: 4px solid transparent; border-right: 4px solid transparent; border-bottom: 5px solid rgba(255,255,255,0.7); }
+  .calc-th--desc::after { border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid rgba(255,255,255,0.7); }
+
+  /* Rows */
+  .calc-row { border-bottom: 1px solid var(--border); cursor: pointer; transition: background var(--t-fast); }
+  .calc-row:nth-child(even) .calc-td { background: var(--bg); }
+  .calc-row:hover .calc-td { background: #eef2ff; }
+  .calc-row--selected .calc-td { background: #fffbeb !important; }
+  .calc-row--selected { border-left: 3px solid var(--eu-yellow); }
+  .calc-row--selected .calc-td--rank { padding-left: calc(var(--space-3) - 3px); }
+
+  .calc-td { padding: var(--space-3) var(--space-4); color: var(--ink); vertical-align: middle; background: var(--card); }
+  .calc-td--rank { color: var(--muted); font-size: var(--type-label-size); font-weight: 600; width: 40px; }
+  .calc-td--country { white-space: nowrap; font-weight: 500; }
+  .calc-td--num { font-family: var(--font-mono); font-size: var(--type-body-sm-size); white-space: nowrap; }
+  .calc-td--tax { color: #dc2626; }
+  .calc-td--soc { color: #d97706; }
+  .calc-td--net { color: #16a34a; font-weight: 700; }
+
+  .calc-flag { font-size: 1.3em; margin-right: var(--space-2); vertical-align: middle; }
+  .calc-cname { vertical-align: middle; }
+
+  /* Progress bar */
+  .calc-bar-wrap { display: flex; align-items: center; gap: var(--space-2); }
+  .calc-bar-fill { height: 8px; border-radius: var(--radius-sm); min-width: 2px; transition: width var(--t-base) var(--ease-out); }
+  .calc-bar-label { font-size: var(--type-label-sm-size); font-weight: 700; color: var(--ink-2); white-space: nowrap; min-width: 36px; }
+
+  /* Loading state */
+  .calc-loading-cell { padding: var(--space-10); text-align: center; }
+  .calc-loading-dots { display: inline-flex; gap: var(--space-2); }
+  .calc-loading-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--eu-blue); animation: calcDot 1.2s ease-in-out infinite; }
+  .calc-loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .calc-loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes calcDot { 0%,80%,100%{opacity:.2;transform:scale(0.7)} 40%{opacity:1;transform:scale(1)} }
+
+  /* Detail panel */
+  .calc-detail-row { background: #f0f4ff; }
+  .calc-detail-cell { padding: 0; }
+  .calc-detail {
+    display: flex;
+    gap: var(--space-6);
+    padding: var(--space-5) var(--space-6);
+    align-items: flex-start;
+    background: linear-gradient(135deg, #f0f4ff 0%, #f8faff 100%);
+    border-top: 1px solid #dde4f5;
+    border-bottom: 2px solid var(--eu-blue);
+  }
+
+  /* Donut chart */
+  .calc-detail-chart { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); flex-shrink: 0; }
+  .calc-donut {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .calc-donut-inner {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--card);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .calc-donut-pct { font-size: 16px; font-weight: 800; color: var(--ink); font-family: var(--font-mono); line-height: 1; }
+  .calc-donut-lbl { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+  .calc-donut-legend { display: flex; flex-direction: column; gap: 2px; }
+  .cdl { font-size: var(--type-label-sm-size); font-weight: 600; }
+  .cdl--tax { color: #dc2626; }
+  .cdl--soc { color: #f97316; }
+  .cdl--net { color: #16a34a; }
+
+  .calc-detail-info { display: flex; flex-direction: column; gap: var(--space-3); flex: 1; }
+  .calc-di-row { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); }
+  .calc-di-row span { font-size: var(--type-body-sm-size); color: var(--muted); }
+  .calc-di-row strong { font-size: var(--type-body-size); font-weight: 700; font-family: var(--font-mono); color: var(--ink); }
+  .calc-detail-link {
+    display: inline-flex; align-items: center;
+    font-size: var(--type-body-sm-size); font-weight: 600;
+    color: var(--eu-blue); text-decoration: none;
+    padding: var(--space-2) var(--space-3);
+    border: 1.5px solid var(--eu-blue);
+    border-radius: var(--radius-sm);
+    transition: all var(--t-fast);
+    align-self: flex-start;
+    margin-top: var(--space-1);
+  }
+  .calc-detail-link:hover { background: var(--eu-blue); color: #fff; }
+
+  /* Methodology / Disclaimer */
+  .calc-methodology, .calc-disclaimer { margin-top: var(--space-10); padding-top: var(--space-8); border-top: 1px solid var(--border); }
+  .calc-section-title { font-size: var(--type-subheading-size); font-weight: var(--type-subheading-weight); color: var(--ink); margin-bottom: var(--space-3); }
+  .calc-methodology-text { font-size: var(--type-body-size); color: var(--ink-2); line-height: var(--type-body-height); max-width: 760px; }
+  .calc-disclaimer-title { font-size: var(--type-body-size); font-weight: 700; color: var(--ink); margin-bottom: var(--space-2); }
+  .calc-disclaimer-text { font-size: var(--type-body-sm-size); color: var(--muted); line-height: 1.6; max-width: 760px; }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .calc-form-fields { flex-direction: column; }
+    .calc-field, .calc-field--salary { min-width: 100%; flex: none; }
+    .calc-field--btn { align-items: stretch; }
+    .calc-btn { width: 100%; justify-content: center; }
+    .calc-summary { flex-direction: column; }
+    .calc-detail { flex-direction: column; }
+    .calc-detail-chart { flex-direction: row; gap: var(--space-4); }
+  }
+  @media (max-width: 640px) {
+    .calc-th--num:nth-child(3),
+    .calc-td:nth-child(3) { display: none; }
+  }
+</style>
