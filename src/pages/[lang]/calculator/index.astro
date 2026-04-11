@@ -545,7 +545,7 @@ const pageSchema = [
     let tax = 0;
     for (const [low, high, rate] of brackets) {
       if (gross <= low) break;
-      const taxable = Math.min(gross, high) - low;
+      const taxable = Math.min(gross, high == null ? Infinity : high) - low;
       tax += taxable * (rate / 100);
     }
     return tax;
@@ -609,7 +609,7 @@ const pageSchema = [
       const rowClass = 'calc-row' + (isSelected ? ' calc-row--selected' : '');
       return `<tr class="${rowClass}" data-code="${r.code}" onclick="toggleDetail('${r.code}')">
         <td class="calc-td calc-td--rank">${i + 1}</td>
-        <td class="calc-td calc-td--country"><span class="calc-flag" aria-hidden="true">${flags[r.code] || ''}</span><span class="calc-cname">${countryNamesMap[r.code] || r.code}</span></td>
+        <td class="calc-td calc-td--country"><span class="calc-ccode">${r.code}</span><span class="calc-cname">${countryNamesMap[r.code] || r.code}</span></td>
         <td class="calc-td calc-td--num">${fmt(r.gross)}</td>
         <td class="calc-td calc-td--num calc-td--tax">−${fmt(r.incomeTax)}</td>
         <td class="calc-td calc-td--num calc-td--soc">−${fmt(r.socialSecurity)}</td>
@@ -892,7 +892,7 @@ const pageSchema = [
   .calc-td--soc { color: #d97706; }
   .calc-td--net { color: #16a34a; font-weight: 700; }
 
-  .calc-flag { font-size: 1.3em; margin-right: var(--space-2); vertical-align: middle; }
+  .calc-ccode { display: inline-block; font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--muted); background: var(--border); border-radius: 3px; padding: 1px 4px; margin-right: var(--space-2); letter-spacing: 0.05em; vertical-align: middle; }
   .calc-cname { vertical-align: middle; }
 
   /* Progress bar */
