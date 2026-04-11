@@ -1,0 +1,191 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../../components/TLDRBox.astro';
+import { countrySlugsByLang } from '../../../../data/slugs';
+import { languages, type Lang } from '../../../../i18n/ui';
+import { fb, useTranslations } from '../../../../i18n/utils';
+import { countryNames } from '../../../../i18n/translations';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+const { lang } = Astro.props as { lang: Lang };
+const t = useTranslations(lang as Lang);
+
+const slugs = countrySlugsByLang[lang] || countrySlugsByLang.en;
+const countries = Object.entries(slugs).map(([code, slug]) => ({
+  code,
+  slug,
+  name: fb(countryNames[code], lang) || code,
+})).sort((a, b) => a.name.localeCompare(b.name, lang));
+
+const i18n: Record<string, {
+  h1: string;
+  metaTitle: string;
+  metaDesc: string;
+  home: string;
+  premium: string;
+  breadcrumb: string;
+  intro: string;
+  tldr: string[];
+}> = {
+  en: {
+    h1: 'Premium Salary Reports by Country',
+    metaTitle: 'Premium Salary Reports | EuroSalary.eu',
+    metaDesc: 'Browse premium salary reports for all 27 EU countries. Detailed salary bands, city-level data, net calculations, and quarterly updates.',
+    home: 'Home',
+    premium: 'Premium',
+    breadcrumb: 'Reports',
+    intro: 'Access institutional-grade salary intelligence for every EU member state. Each report covers 50+ job roles across 4 experience levels, city-level breakdowns, and net salary calculations.',
+    tldr: [
+      'Premium reports available for all 27 EU member states plus Switzerland',
+      'Each report includes 50+ roles, city data, net salary calculations, and quarterly updates',
+      'Single country reports or full bundle with significant savings',
+    ],
+  },
+  fr: {
+    h1: 'Rapports salariaux premium par pays',
+    metaTitle: 'Rapports salariaux premium | EuroSalary.eu',
+    metaDesc: 'Consultez les rapports salariaux premium pour les 27 pays de l\u2019UE.',
+    home: 'Accueil',
+    premium: 'Premium',
+    breadcrumb: 'Rapports',
+    intro: 'Intelligence salariale de niveau institutionnel pour chaque \u00c9tat membre de l\u2019UE.',
+    tldr: ['Rapports premium pour les 27 \u00c9tats membres plus la Suisse', 'Chaque rapport inclut 50+ m\u00e9tiers et donn\u00e9es par ville', 'Rapports individuels ou pack complet'],
+  },
+  de: {
+    h1: 'Premium-Gehaltsberichte nach Land',
+    metaTitle: 'Premium-Gehaltsberichte | EuroSalary.eu',
+    metaDesc: 'Premium-Gehaltsberichte f\u00fcr alle 27 EU-L\u00e4nder.',
+    home: 'Startseite',
+    premium: 'Premium',
+    breadcrumb: 'Berichte',
+    intro: 'Zugang zu institutioneller Gehaltsintelligenz f\u00fcr jeden EU-Mitgliedstaat.',
+    tldr: ['Premium-Berichte f\u00fcr alle 27 EU-Mitgliedstaaten plus Schweiz', 'Jeder Bericht enth\u00e4lt 50+ Berufe und Stadtdaten', 'Einzelne L\u00e4nderberichte oder Gesamtpaket'],
+  },
+  es: {
+    h1: 'Informes salariales premium por pa\u00eds',
+    metaTitle: 'Informes salariales premium | EuroSalary.eu',
+    metaDesc: 'Consulte informes salariales premium para los 27 pa\u00edses de la UE.',
+    home: 'Inicio',
+    premium: 'Premium',
+    breadcrumb: 'Informes',
+    intro: 'Inteligencia salarial de nivel institucional para cada Estado miembro de la UE.',
+    tldr: ['Informes premium para los 27 Estados miembros m\u00e1s Suiza', 'Cada informe incluye 50+ puestos y datos por ciudad', 'Informes individuales o paquete completo'],
+  },
+};
+
+const defaultContent = i18n.en;
+const c = i18n[lang] || defaultContent;
+---
+
+<BaseLayout
+  title={c.metaTitle}
+  description={c.metaDesc}
+  lang={lang}
+>
+  <section class="reports-hero">
+    <div class="container">
+      <nav class="reports-bc" aria-label="breadcrumb">
+        <a href={`/${lang}/`}>{c.home}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a href={`/${lang}/premium/`}>{c.premium}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span>{c.breadcrumb}</span>
+      </nav>
+      <h1 class="reports-h1">{c.h1}</h1>
+      <p class="reports-intro">{c.intro}</p>
+    </div>
+  </section>
+
+  <section class="reports-tldr">
+    <div class="container container--narrow">
+      <TLDRBox items={c.tldr} />
+    </div>
+  </section>
+
+  <section class="reports-grid-section">
+    <div class="container">
+      <div class="reports-grid">
+        {countries.map(({ code, slug, name }) => (
+          <a href={`/${lang}/premium/reports/${slug}/`} class="report-card">
+            <span class="report-card__flag">{code === 'EL' ? '\u{1F1EC}\u{1F1F7}' : code === 'CZ' ? '\u{1F1E8}\u{1F1FF}' : String.fromCodePoint(...[...code].map(c => 0x1F1E6 + c.charCodeAt(0) - 65))}</span>
+            <span class="report-card__name">{name}</span>
+            <span class="report-card__arrow material-symbols-outlined">arrow_forward</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .reports-hero {
+    background: var(--color-primary-container, var(--navy));
+    color: white;
+    padding: 5.5rem 0 2.5rem;
+  }
+  .reports-bc {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: rgba(203,213,225,0.5);
+    margin-bottom: 1.25rem;
+  }
+  .reports-bc a { color: rgba(203,213,225,0.5); text-decoration: none; }
+  .reports-bc a:hover { color: white; }
+  .reports-bc .material-symbols-outlined { font-size: 14px; }
+  .reports-h1 {
+    font-family: var(--font-headline);
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-weight: 800; letter-spacing: -0.025em;
+    line-height: 1.15; margin-bottom: 0.75rem;
+  }
+  .reports-intro {
+    font-size: 0.95rem; line-height: 1.6;
+    color: rgba(203,213,225,0.8);
+    max-width: 640px;
+  }
+  .reports-tldr {
+    padding: 2rem 0;
+    background: var(--color-surface, #f7f9fb);
+  }
+  .reports-grid-section {
+    padding: 2rem 0 4rem;
+    background: var(--color-surface, #f7f9fb);
+  }
+  .reports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.75rem;
+  }
+  .report-card {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--color-primary-container, var(--navy));
+    font-weight: 600; font-size: 14px;
+    transition: all 0.15s;
+  }
+  .report-card:hover {
+    border-color: var(--color-secondary);
+    box-shadow: 0 2px 8px rgba(0,81,213,0.08);
+    transform: translateY(-1px);
+  }
+  .report-card__flag { font-size: 24px; }
+  .report-card__name { flex: 1; }
+  .report-card__arrow {
+    font-size: 18px; color: #94a3b8;
+    transition: color 0.15s;
+  }
+  .report-card:hover .report-card__arrow { color: var(--color-secondary); }
+
+  @media (max-width: 640px) {
+    .reports-grid { grid-template-columns: 1fr; }
+  }
+</style>

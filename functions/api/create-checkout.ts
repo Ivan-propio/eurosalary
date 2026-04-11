@@ -17,6 +17,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       cancelUrl?: string;
       customerEmail?: string;
       lang?: string;
+      metadata?: Record<string, string>;
     };
 
     if (!body.priceId) {
@@ -39,7 +40,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       payment_method_collection: 'if_required',
       billing_address_collection: 'required',
       tax_id_collection: { enabled: true },
-      metadata: { lang, source: 'eurosalary_pricing' },
+      metadata: { lang, source: 'eurosalary_pricing', ...(body.metadata || {}) },
     };
 
     if (body.customerEmail) {
@@ -69,13 +70,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     if (mode === 'subscription') {
       sessionParams.subscription_data = {
-        metadata: { lang, source: 'eurosalary_pricing' },
+        metadata: { lang, source: 'eurosalary_pricing', ...(body.metadata || {}) },
       };
     }
 
     if (mode === 'payment') {
       sessionParams.payment_intent_data = {
-        metadata: { lang, source: 'eurosalary_pricing' },
+        metadata: { lang, source: 'eurosalary_pricing', ...(body.metadata || {}) },
       };
     }
 

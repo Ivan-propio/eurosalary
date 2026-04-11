@@ -96,28 +96,28 @@ function welcomeEmailHtml(lang: Lang): string {
   const content: Record<Lang, { heading: string; body: string; cta: string; ctaUrl: string; footer: string }> = {
     en: {
       heading: 'Welcome to Salary Pulse Europe!',
-      body: `You're now subscribed to the most comprehensive European salary data newsletter. Every Tuesday, you'll receive:<br><br><strong>What to expect:</strong><br>• Salary trends across 15 EU countries<br>• Job market insights by sector<br>• Country spotlights with tax comparisons<br>• New data releases from Eurostat<br><br>In the meantime, explore our salary data:`,
+      body: `You're now subscribed to the most comprehensive European salary data newsletter. Every Tuesday, you'll receive:<br><br><strong>What to expect:</strong><br>• Salary trends across 27 EU countries<br>• Job market insights by sector<br>• Country spotlights with tax comparisons<br>• New data releases from Eurostat<br><br>In the meantime, explore our salary data:`,
       cta: 'Explore Salaries',
       ctaUrl: 'https://eurosalary.eu/en/',
       footer: 'You received this because you subscribed at EuroSalary.eu. Unsubscribe anytime.',
     },
     fr: {
       heading: 'Bienvenue à Salary Pulse Europe !',
-      body: `Vous êtes maintenant abonné à la newsletter la plus complète sur les salaires européens. Chaque mardi :<br><br><strong>Ce qui vous attend :</strong><br>• Tendances salariales dans 15 pays de l'UE<br>• Analyses du marché par secteur<br>• Focus pays avec comparaisons fiscales<br>• Nouvelles données Eurostat<br><br>En attendant, explorez nos données :`,
+      body: `Vous êtes maintenant abonné à la newsletter la plus complète sur les salaires européens. Chaque mardi :<br><br><strong>Ce qui vous attend :</strong><br>• Tendances salariales dans 27 pays de l'UE<br>• Analyses du marché par secteur<br>• Focus pays avec comparaisons fiscales<br>• Nouvelles données Eurostat<br><br>En attendant, explorez nos données :`,
       cta: 'Explorer les salaires',
       ctaUrl: 'https://eurosalary.eu/fr/',
       footer: 'Vous recevez cet email car vous vous êtes inscrit sur EuroSalary.eu.',
     },
     de: {
       heading: 'Willkommen bei Salary Pulse Europe!',
-      body: `Sie sind jetzt für den umfassendsten europäischen Gehaltsdaten-Newsletter angemeldet. Jeden Dienstag erhalten Sie:<br><br><strong>Was Sie erwartet:</strong><br>• Gehaltstrends in 15 EU-Ländern<br>• Arbeitsmarktanalysen nach Branche<br>• Länderfokus mit Steuervergleichen<br>• Neue Eurostat-Datenveröffentlichungen<br><br>Erkunden Sie unsere Gehaltsdaten:`,
+      body: `Sie sind jetzt für den umfassendsten europäischen Gehaltsdaten-Newsletter angemeldet. Jeden Dienstag erhalten Sie:<br><br><strong>Was Sie erwartet:</strong><br>• Gehaltstrends in 27 EU-Ländern<br>• Arbeitsmarktanalysen nach Branche<br>• Länderfokus mit Steuervergleichen<br>• Neue Eurostat-Datenveröffentlichungen<br><br>Erkunden Sie unsere Gehaltsdaten:`,
       cta: 'Gehälter erkunden',
       ctaUrl: 'https://eurosalary.eu/de/',
       footer: 'Sie erhalten diese E-Mail, weil Sie sich bei EuroSalary.eu angemeldet haben.',
     },
     es: {
       heading: '¡Bienvenido a Salary Pulse Europe!',
-      body: `Ahora estás suscrito al newsletter más completo sobre salarios europeos. Cada martes recibirás:<br><br><strong>Qué esperar:</strong><br>• Tendencias salariales en 15 países de la UE<br>• Análisis del mercado laboral por sector<br>• Foco por país con comparaciones fiscales<br>• Nuevos datos de Eurostat<br><br>Mientras tanto, explora nuestros datos:`,
+      body: `Ahora estás suscrito al newsletter más completo sobre salarios europeos. Cada martes recibirás:<br><br><strong>Qué esperar:</strong><br>• Tendencias salariales en 27 países de la UE<br>• Análisis del mercado laboral por sector<br>• Foco por país con comparaciones fiscales<br>• Nuevos datos de Eurostat<br><br>Mientras tanto, explora nuestros datos:`,
       cta: 'Explorar salarios',
       ctaUrl: 'https://eurosalary.eu/es/',
       footer: 'Recibes este email porque te suscribiste en EuroSalary.eu.',
