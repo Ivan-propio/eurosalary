@@ -415,16 +415,14 @@ const pageSchema = [
           <div class="calc-field calc-field--salary">
             <label class="calc-label" for="calcGross">{fb(grossLabel, lang)}</label>
             <div class="calc-input-wrap">
-              <span class="calc-currency-symbol">€</span>
               <input
-                type="number"
+                type="text"
+                inputmode="numeric"
                 id="calcGross"
                 class="calc-input"
-                value="50000"
-                min="1000"
-                max="1000000"
-                step="1000"
+                value="50.000 €"
                 autocomplete="off"
+                spellcheck="false"
               />
             </div>
           </div>
@@ -534,6 +532,13 @@ const pageSchema = [
 }}>
   const taxData = JSON.parse(taxDataStr);
 
+  const cs = getComputedStyle(document.documentElement);
+  const C = {
+    success: cs.getPropertyValue('--success').trim() || '#16a34a',
+    warning: cs.getPropertyValue('--warning').trim() || '#ca8a04',
+    danger:  cs.getPropertyValue('--danger').trim()  || '#dc2626',
+  };
+
   const flags = {
     DE:'🇩🇪', FR:'🇫🇷', NL:'🇳🇱', BE:'🇧🇪', LU:'🇱🇺', AT:'🇦🇹', IE:'🇮🇪',
     ES:'🇪🇸', IT:'🇮🇹', PT:'🇵🇹', FI:'🇫🇮', SE:'🇸🇪', DK:'🇩🇰', PL:'🇵🇱',
@@ -580,8 +585,17 @@ const pageSchema = [
   let openDetail = null;
   let allResults = [];
 
+  function parseGross() {
+    const raw = document.getElementById('calcGross').value.replace(/[^\d]/g, '');
+    return parseInt(raw, 10) || 50000;
+  }
+
+  function formatGross(n) {
+    return new Intl.NumberFormat('de-DE').format(n) + ' €';
+  }
+
   function recalculate() {
-    const gross = parseFloat(document.getElementById('calcGross').value) || 50000;
+    const gross = parseGross();
     const status = document.getElementById('calcStatus').value || 'single';
     allResults = Object.keys(taxData).map(code => calculateCountry(gross, status, code)).filter(Boolean);
     sortAndRender();
@@ -605,7 +619,7 @@ const pageSchema = [
     tbody.innerHTML = results.map((r, i) => {
       const isSelected = r.code === selectedCode;
       const pct = r.netPct;
-      const barColor = pct >= 70 ? '#16a34a' : pct >= 50 ? '#ca8a04' : '#dc2626';
+      const barColor = pct >= 70 ? C.success : pct >= 50 ? C.warning : C.danger;
       const rowClass = 'calc-row' + (isSelected ? ' calc-row--selected' : '');
       return `<tr class="${rowClass}" data-code="${r.code}" onclick="toggleDetail('${r.code}')">
         <td class="calc-td calc-td--rank">${i + 1}</td>
@@ -634,7 +648,7 @@ const pageSchema = [
     const taxPct = r.gross > 0 ? r.incomeTax / r.gross * 100 : 0;
     const socialPct = r.gross > 0 ? r.socialSecurity / r.gross * 100 : 0;
     const netPct = r.netPct;
-    const donut = `conic-gradient(#dc2626 0deg ${taxPct*3.6}deg,#f97316 ${taxPct*3.6}deg ${(taxPct+socialPct)*3.6}deg,#16a34a ${(taxPct+socialPct)*3.6}deg 360deg)`;
+    const donut = `conic-gradient(${C.danger} 0deg ${taxPct*3.6}deg,${C.warning} ${taxPct*3.6}deg ${(taxPct+socialPct)*3.6}deg,${C.success} ${(taxPct+socialPct)*3.6}deg 360deg)`;
     const avg = avgSalaries[r.code] || 0;
     const slug = countrySlugs[r.code] || r.code.toLowerCase();
     return `<div class="calc-detail">
@@ -716,7 +730,7 @@ const pageSchema = [
   }
 
   function syncToURL() {
-    const gross = document.getElementById('calcGross').value;
+    const gross = parseGross();
     const status = document.getElementById('calcStatus').value;
     const country = document.getElementById('calcCountry').value;
     const p = new URLSearchParams({ gross, status });
@@ -726,14 +740,28 @@ const pageSchema = [
 
   function readFromURL() {
     const p = new URLSearchParams(window.location.search);
-    if (p.get('gross')) document.getElementById('calcGross').value = p.get('gross');
+    if (p.get('gross')) document.getElementById('calcGross').value = formatGross(parseInt(p.get('gross'), 10));
     if (p.get('status')) document.getElementById('calcStatus').value = p.get('status');
     if (p.get('country')) document.getElementById('calcCountry').value = p.get('country');
   }
 
+  function onGrossInput(e) {
+    const el = e.target;
+    const pos = el.selectionStart;
+    const raw = el.value.replace(/[^\d]/g, '');
+    if (!raw) return;
+    const n = parseInt(raw, 10);
+    const formatted = formatGross(n);
+    el.value = formatted;
+    // restore cursor before ' €'
+    const newPos = Math.min(pos, formatted.length - 2);
+    el.setSelectionRange(newPos, newPos);
+    onFormChange();
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     readFromURL();
-    document.getElementById('calcGross').addEventListener('input', onFormChange);
+    document.getElementById('calcGross').addEventListener('input', onGrossInput);
     document.getElementById('calcStatus').addEventListener('change', onFormChange);
     document.getElementById('calcCountry').addEventListener('change', onFormChange);
     document.getElementById('calcBtn').addEventListener('click', recalculate);
@@ -772,13 +800,9 @@ const pageSchema = [
   }
   .calc-optional { font-weight: 400; text-transform: none; color: var(--muted); margin-left: var(--space-1); }
   .calc-input-wrap { position: relative; display: flex; align-items: center; }
-  .calc-currency-symbol {
-    position: absolute; left: var(--space-3);
-    font-size: var(--type-body-size); color: var(--muted); pointer-events: none; font-weight: 600;
-  }
   .calc-input {
     width: 100%;
-    padding: var(--space-3) var(--space-3) var(--space-3) var(--space-7);
+    padding: var(--space-3) var(--space-4);
     border: 1.5px solid var(--border);
     border-radius: var(--radius-md);
     font-size: var(--type-body-size);
@@ -832,8 +856,8 @@ const pageSchema = [
     flex-direction: column;
     gap: var(--space-1);
   }
-  .calc-summary-card--best { border-top-color: #16a34a; }
-  .calc-summary-card--worst { border-top-color: #dc2626; }
+  .calc-summary-card--best { border-top-color: var(--success); }
+  .calc-summary-card--worst { border-top-color: var(--danger); }
   .calc-summary-card--yours { border-top-color: var(--eu-yellow); }
   .calc-summary-badge {
     font-size: var(--type-label-sm-size);
@@ -844,7 +868,7 @@ const pageSchema = [
   }
   .calc-summary-flag { font-size: 1.75rem; line-height: 1; }
   .calc-summary-name { font-size: var(--type-body-sm-size); color: var(--ink-2); font-weight: 500; }
-  .calc-summary-net { font-size: var(--type-subheading-size); font-weight: var(--type-subheading-weight); color: var(--ink); font-family: var(--font-mono); }
+  .calc-summary-net { font-size: var(--type-subheading-size); font-weight: 600; letter-spacing: 0; color: var(--ink); font-family: var(--font-mono); }
 
   /* ── Table ── */
   .calc-table-section { margin-bottom: var(--space-10); }
@@ -887,12 +911,12 @@ const pageSchema = [
   .calc-td { padding: var(--space-3) var(--space-4); color: var(--ink); vertical-align: middle; background: var(--card); }
   .calc-td--rank { color: var(--muted); font-size: var(--type-label-size); font-weight: 600; width: 40px; }
   .calc-td--country { white-space: nowrap; font-weight: 500; }
-  .calc-td--num { font-family: var(--font-mono); font-size: var(--type-body-sm-size); white-space: nowrap; }
-  .calc-td--tax { color: #dc2626; }
-  .calc-td--soc { color: #d97706; }
-  .calc-td--net { color: #16a34a; font-weight: 700; }
+  .calc-td--num { font-family: var(--font-mono); font-size: var(--type-body-sm-size); font-weight: 600; letter-spacing: 0; white-space: nowrap; }
+  .calc-td--tax { color: var(--danger); }
+  .calc-td--soc { color: var(--warning); }
+  .calc-td--net { color: var(--success); font-weight: 600; }
 
-  .calc-ccode { display: inline-block; font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--muted); background: var(--border); border-radius: 3px; padding: 1px 4px; margin-right: var(--space-2); letter-spacing: 0.05em; vertical-align: middle; }
+  .calc-ccode { display: inline-block; font-family: var(--font-mono); font-size: var(--type-label-sm-size); font-weight: 600; letter-spacing: 0; color: var(--muted); background: var(--border); border-radius: 3px; padding: 1px 4px; margin-right: var(--space-2); vertical-align: middle; }
   .calc-cname { vertical-align: middle; }
 
   /* Progress bar */
@@ -935,18 +959,18 @@ const pageSchema = [
     background: var(--card);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
   }
-  .calc-donut-pct { font-size: 16px; font-weight: 800; color: var(--ink); font-family: var(--font-mono); line-height: 1; }
-  .calc-donut-lbl { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+  .calc-donut-pct { font-size: var(--type-body-size); font-weight: 600; letter-spacing: 0; color: var(--ink); font-family: var(--font-mono); line-height: 1; }
+  .calc-donut-lbl { font-size: var(--type-label-sm-size); font-weight: var(--type-label-sm-weight); text-transform: uppercase; letter-spacing: var(--type-label-sm-spacing); color: var(--muted); }
   .calc-donut-legend { display: flex; flex-direction: column; gap: 2px; }
   .cdl { font-size: var(--type-label-sm-size); font-weight: 600; }
-  .cdl--tax { color: #dc2626; }
-  .cdl--soc { color: #f97316; }
-  .cdl--net { color: #16a34a; }
+  .cdl--tax { color: var(--danger); }
+  .cdl--soc { color: var(--warning); }
+  .cdl--net { color: var(--success); }
 
   .calc-detail-info { display: flex; flex-direction: column; gap: var(--space-3); flex: 1; }
   .calc-di-row { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); }
   .calc-di-row span { font-size: var(--type-body-sm-size); color: var(--muted); }
-  .calc-di-row strong { font-size: var(--type-body-size); font-weight: 700; font-family: var(--font-mono); color: var(--ink); }
+  .calc-di-row strong { font-size: var(--type-body-size); font-weight: 600; letter-spacing: 0; font-family: var(--font-mono); color: var(--ink); }
   .calc-detail-link {
     display: inline-flex; align-items: center;
     font-size: var(--type-body-sm-size); font-weight: 600;
