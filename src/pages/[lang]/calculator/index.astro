@@ -623,7 +623,7 @@ const pageSchema = [
       const rowClass = 'calc-row' + (isSelected ? ' calc-row--selected' : '');
       return `<tr class="${rowClass}" data-code="${r.code}" onclick="toggleDetail('${r.code}')">
         <td class="calc-td calc-td--rank">${i + 1}</td>
-        <td class="calc-td calc-td--country"><span class="calc-ccode">${r.code}</span><span class="calc-cname">${countryNamesMap[r.code] || r.code}</span></td>
+        <td class="calc-td calc-td--country"><span class="calc-cname">${countryNamesMap[r.code] || r.code}</span></td>
         <td class="calc-td calc-td--num">${fmt(r.gross)}</td>
         <td class="calc-td calc-td--num calc-td--tax">−${fmt(r.incomeTax)}</td>
         <td class="calc-td calc-td--num calc-td--soc">−${fmt(r.socialSecurity)}</td>
