@@ -1,0 +1,1128 @@
+---
+// Admin Email Engine — Unified design system with main admin dashboard
+// Manages: Workflows (sequences), Campaigns (newsletters), Analytics, Subscribers, Settings
+---
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>EuroSalary — Email Engine</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon-admin.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- Login -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <svg width="28" height="28" viewBox="0 0 120 120"><g stroke-linejoin="round" transform="translate(0 5)"><polygon points="40.95,59 60,70 60,92 40.95,103 21.9,92 21.9,70" fill="none" stroke="#4D8FFF" stroke-width="3.5"/><polygon points="79.05,59 98.1,70 98.1,92 79.05,103 60,92 60,70" fill="#4D8FFF"/><polygon points="60,26 79.05,37 79.05,59 60,70 40.95,59 40.95,37" fill="#FFCC00"/></g></svg>
+      <span>EuroSalary</span>
+    </div>
+    <p class="login-sub">Email Engine</p>
+    <input type="password" id="pwd-input" placeholder="Password" autofocus />
+    <button id="login-btn">Sign in</button>
+    <p id="login-error"></p>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard" style="display:none">
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- Sidebar — identical structure to main admin -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <img src="/favicon.svg" alt="" width="28" height="28" class="sb-icon" />
+      <span class="sb-brand">Email Engine</span>
+    </div>
+    <nav class="sb-nav" id="sidebar-nav">
+      <a href="/admin/" class="sb-item sb-back">
+        <span class="material-symbols-outlined">arrow_back</span>Back to Admin
+      </a>
+      <div class="sb-sep"></div>
+      <button class="sb-item active" data-section="workflows">
+        <span class="material-symbols-outlined">account_tree</span>Workflows
+        <span class="sb-count" id="nav-count-workflows"></span>
+      </button>
+      <button class="sb-item" data-section="campaigns">
+        <span class="material-symbols-outlined">campaign</span>Campaigns
+        <span class="sb-count" id="nav-count-campaigns"></span>
+      </button>
+      <div class="sb-sep"></div>
+      <button class="sb-item" data-section="analytics">
+        <span class="material-symbols-outlined">monitoring</span>Analytics
+      </button>
+      <button class="sb-item" data-section="subscribers">
+        <span class="material-symbols-outlined">people</span>Subscribers
+      </button>
+      <div class="sb-sep"></div>
+      <button class="sb-item" data-section="settings">
+        <span class="material-symbols-outlined">tune</span>Settings
+      </button>
+    </nav>
+    <div class="sb-foot">
+      <a href="https://eurosalary.eu" target="_blank" class="sb-link">
+        <span class="material-symbols-outlined">open_in_new</span>View site
+      </a>
+      <button class="sb-link" id="logout-btn" style="border:none;background:none;cursor:pointer;width:100%;text-align:left">
+        <span class="material-symbols-outlined">logout</span>Sign out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-l">
+        <button class="hamburger" id="hamburger"><span class="material-symbols-outlined">menu</span></button>
+        <h2 class="topbar-title" id="topbar-title">Workflows</h2>
+      </div>
+      <div class="topbar-r">
+        <span id="last-refresh" class="meta-text"></span>
+        <button class="icon-btn" id="refresh-btn" title="Refresh"><span class="material-symbols-outlined">refresh</span></button>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ═══════ WORKFLOWS ═══════ -->
+      <section class="panel active" id="sec-workflows">
+        <div id="wf-list-view">
+          <div class="sec-head">
+            <div class="sec-head-row">
+              <div>
+                <h1 class="sec-title">Workflows</h1>
+                <p class="sec-desc">Automated email sequences triggered by user actions</p>
+              </div>
+              <button class="btn-primary" id="btn-new-workflow">
+                <span class="material-symbols-outlined">add</span> New Workflow
+              </button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="tbl scroll-y-lg" id="wf-table"></div>
+          </div>
+        </div>
+
+        <div id="wf-detail-view" style="display:none">
+          <div class="sec-head">
+            <div class="sec-head-row">
+              <div>
+                <button class="btn-ghost" id="btn-back-workflows">
+                  <span class="material-symbols-outlined">arrow_back</span> Back
+                </button>
+                <h1 class="sec-title" id="wf-detail-name"></h1>
+                <p class="sec-desc" id="wf-detail-meta"></p>
+              </div>
+              <div class="btn-group">
+                <button class="btn-outline" id="btn-toggle-wf">
+                  <span class="material-symbols-outlined">pause</span> <span id="btn-toggle-wf-label">Pause</span>
+                </button>
+                <button class="btn-outline btn-danger" id="btn-delete-wf">
+                  <span class="material-symbols-outlined">delete</span> Delete
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="kpi-row kpi-4" id="wf-kpis"></div>
+          <div class="sec-head-row" style="margin:16px 0 10px">
+            <h3 style="font-size:.8rem;font-weight:600">Steps</h3>
+            <button class="btn-primary btn-sm" id="btn-add-step">
+              <span class="material-symbols-outlined">add</span> Add Step
+            </button>
+          </div>
+          <div id="wf-steps-list"></div>
+        </div>
+      </section>
+
+      <!-- ═══════ CAMPAIGNS ═══════ -->
+      <section class="panel" id="sec-campaigns">
+        <div id="camp-list-view">
+          <div class="sec-head">
+            <div class="sec-head-row">
+              <div>
+                <h1 class="sec-title">Campaigns</h1>
+                <p class="sec-desc">Newsletters, one-time blasts, recurring sends</p>
+              </div>
+              <button class="btn-primary" id="btn-new-campaign">
+                <span class="material-symbols-outlined">add</span> New Campaign
+              </button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="tbl scroll-y-lg" id="camp-table"></div>
+          </div>
+        </div>
+        <div id="camp-detail-view" style="display:none">
+          <div class="sec-head">
+            <div class="sec-head-row">
+              <div>
+                <button class="btn-ghost" id="btn-back-campaigns">
+                  <span class="material-symbols-outlined">arrow_back</span> Back
+                </button>
+                <h1 class="sec-title" id="camp-detail-name"></h1>
+              </div>
+              <div class="btn-group">
+                <button class="btn-outline" id="btn-toggle-camp">
+                  <span class="material-symbols-outlined">pause</span> <span id="btn-toggle-camp-label">Pause</span>
+                </button>
+                <button class="btn-outline btn-danger" id="btn-delete-camp">
+                  <span class="material-symbols-outlined">delete</span> Delete
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="padding:20px" id="camp-editor"></div>
+        </div>
+      </section>
+
+      <!-- ═══════ ANALYTICS ═══════ -->
+      <section class="panel" id="sec-analytics">
+        <div class="sec-head">
+          <h1 class="sec-title">Analytics</h1>
+          <p class="sec-desc">Email performance across all workflows and campaigns</p>
+        </div>
+        <div class="kpi-row kpi-4" id="analytics-kpis"></div>
+        <div class="card">
+          <div class="card-h"><h3>Recent Sends</h3></div>
+          <div class="tbl scroll-y-lg" id="analytics-table"></div>
+        </div>
+      </section>
+
+      <!-- ═══════ SUBSCRIBERS ═══════ -->
+      <section class="panel" id="sec-subscribers">
+        <div class="sec-head">
+          <h1 class="sec-title">Subscribers</h1>
+          <p class="sec-desc">Leads with email preferences and consent</p>
+        </div>
+        <div style="margin-bottom:12px">
+          <div class="filter-bar" id="subs-filters">
+            <button class="f-btn active" data-filter="all">All</button>
+            <button class="f-btn" data-filter="subscribed">Subscribed</button>
+            <button class="f-btn" data-filter="unsubscribed">Unsubscribed</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="tbl scroll-y-lg" id="subs-table"></div>
+        </div>
+      </section>
+
+      <!-- ═══════ SETTINGS ═══════ -->
+      <section class="panel" id="sec-settings">
+        <div class="sec-head">
+          <h1 class="sec-title">Settings</h1>
+          <p class="sec-desc">Email engine configuration</p>
+        </div>
+        <div class="card" style="padding:20px">
+          <h3 style="font-size:.8rem;font-weight:600;margin-bottom:12px">Brand Tokens</h3>
+          <p class="sec-desc" style="margin-bottom:12px">These values are injected into every email. Edit <code>src/data/brand-tokens.json</code> and redeploy.</p>
+          <div id="settings-brand"></div>
+        </div>
+        <div class="card" style="padding:20px;margin-top:12px">
+          <h3 style="font-size:.8rem;font-weight:600;margin-bottom:12px">Supported Languages</h3>
+          <div style="display:flex;gap:6px">
+            <span class="b b-blue">EN</span>
+            <span class="b b-blue">FR</span>
+            <span class="b b-blue">DE</span>
+            <span class="b b-blue">ES</span>
+          </div>
+          <p class="sec-desc" style="margin-top:8px">All workflows and campaigns support these 4 languages. Each lead receives emails in their preferred language.</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MODALS ═══════ -->
+<div class="modal-overlay" id="modal-new-wf" style="display:none">
+  <div class="modal">
+    <div class="modal-head"><h2>New Workflow</h2><button class="modal-x" data-close="modal-new-wf"><span class="material-symbols-outlined">close</span></button></div>
+    <div class="modal-body">
+      <div class="fg"><label>Name</label><input type="text" id="nwf-name" placeholder="e.g. newsletter_welcome" /></div>
+      <div class="fg"><label>Description</label><input type="text" id="nwf-desc" placeholder="Welcome sequence for newsletter subscribers" /></div>
+      <div class="fg"><label>Trigger Event</label>
+        <select id="nwf-trigger">
+          <option value="newsletter_signup">Newsletter Signup</option>
+          <option value="report_download">Report Download</option>
+          <option value="checkout_started">Checkout Started</option>
+          <option value="subscription_created">Subscription Created</option>
+          <option value="subscription_cancelled">Subscription Cancelled</option>
+          <option value="api_key_created">API Key Created</option>
+          <option value="manual">Manual (Outreach)</option>
+        </select>
+      </div>
+      <div class="fg"><label>Target Type</label>
+        <select id="nwf-target">
+          <option value="general">General</option>
+          <option value="employer">Employer</option>
+          <option value="recruiter">Recruiter</option>
+          <option value="enterprise">Enterprise</option>
+          <option value="api_user">API User</option>
+          <option value="partner">Partner</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn-outline" data-close="modal-new-wf">Cancel</button><button class="btn-primary" id="btn-create-wf">Create Workflow</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-new-camp" style="display:none">
+  <div class="modal">
+    <div class="modal-head"><h2>New Campaign</h2><button class="modal-x" data-close="modal-new-camp"><span class="material-symbols-outlined">close</span></button></div>
+    <div class="modal-body">
+      <div class="fg"><label>Name</label><input type="text" id="ncamp-name" placeholder="e.g. Weekly Salary Digest" /></div>
+      <div class="fg"><label>Description</label><input type="text" id="ncamp-desc" placeholder="Tuesday newsletter with salary trends" /></div>
+      <div class="fg"><label>Type</label>
+        <select id="ncamp-type">
+          <option value="recurring">Recurring</option>
+          <option value="one_time">One-time</option>
+        </select>
+      </div>
+      <div class="fg" id="ncamp-cron-group"><label>Schedule</label>
+        <select id="ncamp-cron">
+          <option value="0 9 * * 2">Every Tuesday 9 AM UTC</option>
+          <option value="0 9 * * 1">Every Monday 9 AM UTC</option>
+          <option value="0 9 * * 5">Every Friday 9 AM UTC</option>
+          <option value="0 9 1 * *">1st of every month 9 AM UTC</option>
+        </select>
+      </div>
+      <div class="fg"><label>Target Segment</label>
+        <select id="ncamp-segment">
+          <option value="newsletter_subscribers">Newsletter Subscribers</option>
+          <option value="all_leads">All Leads (with consent)</option>
+          <option value="pro_users">Pro Users</option>
+          <option value="churned">Churned Users</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn-outline" data-close="modal-new-camp">Cancel</button><button class="btn-primary" id="btn-create-camp">Create Campaign</button></div>
+  </div>
+</div>
+
+<!-- Step Editor Modal -->
+<div class="modal-overlay" id="modal-step-editor" style="display:none">
+  <div class="modal modal-wide">
+    <div class="modal-head"><h2 id="step-editor-title">Edit Step</h2><button class="modal-x" data-close="modal-step-editor"><span class="material-symbols-outlined">close</span></button></div>
+    <div class="modal-body">
+      <div style="display:flex;gap:12px">
+        <div class="fg" style="flex:1"><label>Step Order</label><input type="number" id="step-order" min="1" value="1" /></div>
+        <div class="fg" style="flex:1"><label>Delay (hours)</label><input type="number" id="step-delay" min="0" value="0" placeholder="0 = immediate" /></div>
+      </div>
+      <div class="lang-tabs" id="step-lang-tabs">
+        <button class="lang-tab active" data-lang="en">EN</button>
+        <button class="lang-tab" data-lang="fr">FR</button>
+        <button class="lang-tab" data-lang="de">DE</button>
+        <button class="lang-tab" data-lang="es">ES</button>
+      </div>
+      <div id="step-lang-panes">
+        <div class="lang-pane active" data-lang="en">
+          <div class="fg"><label>Subject <span class="hint">(EN)</span></label><input type="text" class="step-subject" data-lang="en" placeholder="Email subject line..." /></div>
+          <div class="fg">
+            <div class="editor-bar"><label>Body <span class="hint">(EN)</span></label><div class="mode-toggle"><button class="mode-btn active" data-mode="text" data-lang="en">Text</button><button class="mode-btn" data-mode="html" data-lang="en">&lt;/&gt; HTML</button></div></div>
+            <textarea class="step-body" data-lang="en" data-mode="text" rows="14" placeholder={"Write your email content here...\n\nUse **bold**, *italic*, [link text](url)\nVariables: {name}, {company}, {country}, {price}, {product}"}></textarea>
+            <div class="editor-help"><strong>Formatting:</strong> <code>**bold**</code> <code>*italic*</code> <code>[link](url)</code> &bull; <strong>Variables:</strong> <code>&#123;name&#125;</code> <code>&#123;company&#125;</code> <code>&#123;country&#125;</code></div>
+          </div>
+        </div>
+        <div class="lang-pane" data-lang="fr">
+          <div class="fg"><label>Subject <span class="hint">(FR)</span></label><input type="text" class="step-subject" data-lang="fr" placeholder="Objet de l'email..." /></div>
+          <div class="fg"><div class="editor-bar"><label>Body <span class="hint">(FR)</span></label><div class="mode-toggle"><button class="mode-btn active" data-mode="text" data-lang="fr">Text</button><button class="mode-btn" data-mode="html" data-lang="fr">&lt;/&gt; HTML</button></div></div><textarea class="step-body" data-lang="fr" data-mode="text" rows="14" placeholder="Contenu de l'email..."></textarea></div>
+        </div>
+        <div class="lang-pane" data-lang="de">
+          <div class="fg"><label>Subject <span class="hint">(DE)</span></label><input type="text" class="step-subject" data-lang="de" placeholder="Betreff..." /></div>
+          <div class="fg"><div class="editor-bar"><label>Body <span class="hint">(DE)</span></label><div class="mode-toggle"><button class="mode-btn active" data-mode="text" data-lang="de">Text</button><button class="mode-btn" data-mode="html" data-lang="de">&lt;/&gt; HTML</button></div></div><textarea class="step-body" data-lang="de" data-mode="text" rows="14" placeholder="E-Mail-Inhalt..."></textarea></div>
+        </div>
+        <div class="lang-pane" data-lang="es">
+          <div class="fg"><label>Subject <span class="hint">(ES)</span></label><input type="text" class="step-subject" data-lang="es" placeholder="Asunto del email..." /></div>
+          <div class="fg"><div class="editor-bar"><label>Body <span class="hint">(ES)</span></label><div class="mode-toggle"><button class="mode-btn active" data-mode="text" data-lang="es">Text</button><button class="mode-btn" data-mode="html" data-lang="es">&lt;/&gt; HTML</button></div></div><textarea class="step-body" data-lang="es" data-mode="text" rows="14" placeholder="Contenido del email..."></textarea></div>
+        </div>
+      </div>
+      <details class="preview-details"><summary>Preview Email</summary><div class="preview-frame" id="step-preview"></div></details>
+    </div>
+    <div class="modal-foot"><button class="btn-outline" data-close="modal-step-editor">Cancel</button><button class="btn-outline" id="btn-step-preview">Preview</button><button class="btn-primary" id="btn-save-step">Save Step</button></div>
+  </div>
+</div>
+
+<style is:global>
+  /* ══════════ UNIFIED DESIGN SYSTEM — matches admin/index.astro exactly ══════════ */
+  :root {
+    --bg: #09090b; --bg-card: #111113; --bg-surface: #18181b; --bg-hover: #1f1f23;
+    --border: #232328; --border-h: #333338;
+    --text: #fafafa; --text-2: #a1a1aa; --text-3: #71717a; --text-4: #52525b;
+    --blue: #3b82f6; --blue-d: rgba(59,130,246,.14);
+    --purple: #8b5cf6; --purple-d: rgba(139,92,246,.14);
+    --amber: #f59e0b; --amber-d: rgba(245,158,11,.14);
+    --green: #10b981; --green-d: rgba(16,185,129,.14);
+    --rose: #f43f5e; --rose-d: rgba(244,63,94,.14);
+    --teal: #14b8a6; --teal-d: rgba(20,184,166,.14);
+    --cyan: #06b6d4; --cyan-d: rgba(6,182,212,.14);
+    --sidebar-w: 220px; --topbar-h: 52px; --r: 10px; --r-sm: 6px;
+    --mono: 'JetBrains Mono', 'SF Mono', monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; scrollbar-width:thin; scrollbar-color:var(--border) transparent; }
+  body { font-family:'Inter',system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow:hidden; font-size:13px; -webkit-font-smoothing:antialiased; }
+  :focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
+  :focus:not(:focus-visible) { outline:none; }
+
+  /* Login — identical to main admin */
+  #login-screen { display:flex; align-items:center; justify-content:center; min-height:100vh; }
+  .login-box { background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:2.5rem 2rem; width:360px; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,.5); }
+  .login-logo { display:flex; align-items:center; justify-content:center; gap:8px; font-size:1.4rem; font-weight:800; letter-spacing:-.02em; }
+  .login-sub { color:var(--text-4); font-size:.8rem; margin:4px 0 1.5rem; }
+  .login-box input { width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--r-sm); background:var(--bg); color:var(--text); font-size:.85rem; margin-bottom:.75rem; outline:none; font-family:inherit; transition:border-color .15s; }
+  .login-box input:focus { border-color:var(--blue); }
+  .login-box button { width:100%; padding:10px; background:var(--blue); color:#fff; border:none; border-radius:var(--r-sm); font-size:.85rem; font-weight:600; cursor:pointer; font-family:inherit; }
+  .login-box button:hover { background:#2563eb; }
+  #login-error { color:var(--rose); font-size:.75rem; margin-top:.5rem; min-height:1em; }
+
+  /* Sidebar — identical to main admin */
+  .sidebar { position:fixed; top:0; left:0; width:var(--sidebar-w); height:100vh; background:var(--bg-card); border-right:1px solid var(--border); display:flex; flex-direction:column; z-index:100; transition:transform .2s ease; }
+  .sb-head { padding:14px 16px; display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--border); }
+  .sb-icon { width:28px; height:28px; border-radius:6px; }
+  .sb-brand { font-weight:700; font-size:.85rem; flex:1; }
+  .sb-nav { flex:1; padding:8px 6px; overflow-y:auto; display:flex; flex-direction:column; gap:1px; }
+  .sb-item { display:flex; align-items:center; gap:8px; padding:8px 10px; border:none; background:none; color:var(--text-3); font-size:.8rem; font-weight:500; border-radius:var(--r-sm); cursor:pointer; width:100%; text-align:left; transition:all .12s; font-family:inherit; text-decoration:none; }
+  .sb-item:hover { background:var(--bg-hover); color:var(--text-2); }
+  .sb-item.active { background:var(--blue-d); color:var(--blue); font-weight:600; }
+  .sb-item .material-symbols-outlined { font-size:18px; }
+  .sb-back { color:var(--text-4); font-weight:500; }
+  .sb-back:hover { color:var(--text-2); background:var(--bg-hover); }
+  .sb-count { margin-left:auto; font-size:.65rem; background:var(--border); padding:1px 6px; border-radius:8px; color:var(--text-3); }
+  .sb-sep { height:1px; background:var(--border); margin:6px 10px; }
+  .sb-foot { padding:10px 12px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:2px; }
+  .sb-link { display:flex; align-items:center; gap:6px; color:var(--text-4); font-size:.75rem; text-decoration:none; padding:5px 4px; font-family:inherit; }
+  .sb-link:hover { color:var(--text-3); }
+  .sb-link .material-symbols-outlined { font-size:15px; }
+  .sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:90; backdrop-filter:blur(2px); }
+
+  /* Main */
+  .main { margin-left:var(--sidebar-w); height:100vh; display:flex; flex-direction:column; }
+
+  /* Topbar — identical */
+  .topbar { height:var(--topbar-h); border-bottom:1px solid var(--border); padding:0 24px; display:flex; align-items:center; justify-content:space-between; background:var(--bg-card); flex-shrink:0; }
+  .topbar-l { display:flex; align-items:center; gap:10px; }
+  .topbar-r { display:flex; align-items:center; gap:8px; }
+  .topbar-title { font-size:1rem; font-weight:600; }
+  .hamburger { display:none; background:none; border:none; color:var(--text-3); cursor:pointer; }
+  .hamburger .material-symbols-outlined { font-size:22px; }
+  .meta-text { font-size:.7rem; color:var(--text-3); white-space:nowrap; font-family:var(--mono); }
+  .icon-btn { background:none; border:1px solid var(--border); color:var(--text-3); width:32px; height:32px; border-radius:var(--r-sm); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .12s; }
+  .icon-btn:hover { border-color:var(--border-h); color:var(--text); background:var(--bg-hover); }
+  .icon-btn .material-symbols-outlined { font-size:16px; }
+
+  /* Content */
+  .content { flex:1; overflow-y:auto; padding:24px 28px 60px; }
+  .panel { display:none; }
+  .panel.active { display:block; animation:fadeIn .2s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* Section headings */
+  .sec-head { margin-bottom:16px; }
+  .sec-head-row { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .sec-title { font-size:1.2rem; font-weight:700; letter-spacing:-.02em; }
+  .sec-desc { color:var(--text-4); font-size:.78rem; margin-top:3px; }
+  .sec-desc code { background:var(--bg); padding:1px 6px; border-radius:3px; font-size:.7rem; color:var(--text-3); font-family:var(--mono); }
+
+  /* KPI Row */
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:20px; max-width:1400px; }
+  .kpi-4 { grid-template-columns:repeat(4,1fr); }
+  .kpi { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--r); padding:18px 20px; transition:border-color .15s; }
+  .kpi:hover { border-color:var(--border-h); }
+  .kpi-val { font-size:1.5rem; font-weight:800; letter-spacing:-.03em; line-height:1.2; font-family:var(--mono); margin:10px 0 4px; }
+  .kpi-label { font-size:.6875rem; color:var(--text-3); text-transform:uppercase; letter-spacing:.05em; font-weight:600; }
+
+  /* Cards */
+  .card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--r); margin-bottom:16px; overflow:hidden; transition:border-color .15s; }
+  .card:hover { border-color:var(--border-h); }
+  .card-h { padding:14px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .card-h h3 { font-size:.8125rem; font-weight:600; letter-spacing:-.01em; }
+
+  /* Tables — identical */
+  .tbl { overflow-x:auto; }
+  .scroll-y-lg { max-height:520px; overflow-y:auto; }
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; padding:10px 16px; background:var(--bg-surface); color:var(--text-3); font-size:.6875rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:2; white-space:nowrap; box-shadow:0 1px 0 var(--border); }
+  td { padding:10px 16px; border-bottom:1px solid var(--border); font-size:.78rem; color:var(--text-2); white-space:nowrap; }
+  tr { transition:background .08s; }
+  tbody tr:nth-child(even) { background:rgba(255,255,255,.015); }
+  tr:hover { background:var(--bg-hover); }
+  td:first-child { color:var(--text); font-weight:500; }
+  .clickable-row { cursor:pointer; }
+
+  /* Badges — identical */
+  .b { display:inline-flex; align-items:center; padding:2px 8px; border-radius:4px; font-size:.625rem; font-weight:600; text-transform:uppercase; letter-spacing:.03em; white-space:nowrap; line-height:1.5; }
+  .b-blue { background:var(--blue-d); color:var(--blue); }
+  .b-purple { background:var(--purple-d); color:var(--purple); }
+  .b-amber { background:var(--amber-d); color:var(--amber); }
+  .b-green { background:var(--green-d); color:var(--green); }
+  .b-rose { background:var(--rose-d); color:var(--rose); }
+  .b-gray { background:rgba(100,116,139,.08); color:var(--text-3); }
+
+  /* Filter bar — identical */
+  .filter-bar { display:inline-flex; gap:2px; background:var(--bg); border:1px solid var(--border); border-radius:var(--r-sm); padding:2px; }
+  .f-btn { padding:4px 10px; border:none; background:none; color:var(--text-4); font-size:.7rem; font-weight:500; border-radius:4px; cursor:pointer; font-family:inherit; white-space:nowrap; transition:all .1s; }
+  .f-btn:hover { color:var(--text-2); }
+  .f-btn.active { background:var(--bg-surface); color:var(--text); }
+
+  /* Buttons — identical */
+  .btn-primary { display:inline-flex; align-items:center; gap:5px; padding:8px 16px; background:var(--blue); color:#fff; border:none; border-radius:var(--r-sm); font-size:.78rem; font-weight:600; cursor:pointer; font-family:inherit; }
+  .btn-primary:hover { background:#2563eb; }
+  .btn-primary .material-symbols-outlined { font-size:16px; }
+  .btn-primary.btn-sm { padding:6px 12px; font-size:.72rem; }
+  .btn-outline { display:inline-flex; align-items:center; gap:5px; padding:7px 14px; background:none; border:1px solid var(--border); color:var(--text-2); border-radius:var(--r-sm); font-size:.78rem; font-weight:500; cursor:pointer; font-family:inherit; transition:all .12s; }
+  .btn-outline:hover { border-color:var(--border-h); color:var(--text); }
+  .btn-outline.btn-danger { color:var(--rose); border-color:rgba(244,63,94,.2); }
+  .btn-outline.btn-danger:hover { background:var(--rose-d); border-color:var(--rose); }
+  .btn-ghost { display:inline-flex; align-items:center; gap:4px; padding:5px 6px; background:none; border:none; color:var(--text-3); font-size:.78rem; cursor:pointer; font-family:inherit; margin-bottom:6px; }
+  .btn-ghost:hover { color:var(--text); }
+  .btn-ghost .material-symbols-outlined { font-size:16px; }
+  .btn-group { display:flex; gap:6px; }
+
+  code { background:var(--bg); padding:1px 6px; border-radius:3px; font-size:.7rem; color:var(--text-3); font-family:var(--mono); }
+
+  /* Modals */
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:200; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(2px); }
+  .modal { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--r); width:480px; max-height:90vh; display:flex; flex-direction:column; box-shadow:0 20px 50px rgba(0,0,0,.5); }
+  .modal-wide { width:860px; }
+  .modal-head { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .modal-head h2 { font-size:.95rem; font-weight:600; }
+  .modal-x { background:none; border:none; color:var(--text-4); cursor:pointer; padding:4px; }
+  .modal-x:hover { color:var(--text); }
+  .modal-body { padding:20px; overflow-y:auto; flex:1; }
+  .modal-foot { padding:14px 20px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:6px; }
+
+  /* Forms */
+  .fg { margin-bottom:14px; }
+  .fg label { display:block; font-size:.72rem; font-weight:600; color:var(--text-3); margin-bottom:5px; }
+  .hint { font-weight:400; color:var(--text-4); }
+  .fg input, .fg select, .fg textarea {
+    width:100%; padding:8px 12px; border:1px solid var(--border); border-radius:var(--r-sm);
+    background:var(--bg); color:var(--text); font-size:.78rem; outline:none; font-family:inherit; transition:border-color .15s;
+  }
+  .fg input:focus, .fg select:focus, .fg textarea:focus { border-color:var(--blue); }
+  .fg textarea { font-family:var(--mono); resize:vertical; line-height:1.6; }
+
+  /* Language tabs */
+  .lang-tabs { display:flex; gap:3px; margin-bottom:14px; }
+  .lang-tab { padding:6px 14px; border:1px solid var(--border); background:none; color:var(--text-4); font-size:.72rem; font-weight:600; border-radius:var(--r-sm); cursor:pointer; font-family:inherit; transition:all .12s; }
+  .lang-tab.active { background:var(--blue-d); color:var(--blue); border-color:rgba(59,130,246,.2); }
+  .lang-pane { display:none; }
+  .lang-pane.active { display:block; }
+
+  /* Editor */
+  .editor-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:5px; }
+  .mode-toggle { display:flex; gap:0; }
+  .mode-btn { padding:3px 10px; border:1px solid var(--border); background:none; color:var(--text-4); font-size:.68rem; font-weight:600; cursor:pointer; font-family:inherit; }
+  .mode-btn:first-child { border-radius:var(--r-sm) 0 0 var(--r-sm); }
+  .mode-btn:last-child { border-radius:0 var(--r-sm) var(--r-sm) 0; border-left:0; }
+  .mode-btn.active { background:var(--blue-d); color:var(--blue); border-color:rgba(59,130,246,.2); }
+  .editor-help { font-size:.65rem; color:var(--text-4); margin-top:6px; line-height:1.8; }
+  .editor-help code { font-size:.62rem; }
+
+  /* Preview */
+  .preview-details { margin-top:14px; }
+  .preview-details summary { cursor:pointer; font-size:.78rem; font-weight:600; color:var(--text-3); padding:6px 0; }
+  .preview-frame { background:#fff; border-radius:var(--r-sm); padding:0; margin-top:6px; max-height:400px; overflow-y:auto; }
+
+  /* Step cards */
+  .step-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--r); padding:16px; margin-bottom:8px; display:flex; align-items:flex-start; gap:12px; transition:border-color .15s; cursor:pointer; }
+  .step-card:hover { border-color:var(--border-h); }
+  .step-num { width:32px; height:32px; border-radius:50%; background:var(--blue-d); color:var(--blue); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.78rem; flex-shrink:0; font-family:var(--mono); }
+  .step-content { flex:1; min-width:0; }
+  .step-subject { font-weight:600; font-size:.8rem; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .step-meta { font-size:.68rem; color:var(--text-4); display:flex; gap:10px; flex-wrap:wrap; }
+  .step-actions { display:flex; gap:3px; flex-shrink:0; }
+  .step-actions button { background:none; border:none; color:var(--text-4); cursor:pointer; padding:3px; border-radius:4px; }
+  .step-actions button:hover { color:var(--text); background:rgba(255,255,255,.05); }
+  .step-actions button .material-symbols-outlined { font-size:16px; }
+  .step-arrow { color:var(--text-4); display:flex; justify-content:center; padding:2px 0; }
+
+  /* Scrollbar — identical */
+  ::-webkit-scrollbar { width:5px; height:5px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+  ::-webkit-scrollbar-thumb:hover { background:var(--border-h); }
+
+  /* Responsive — identical */
+  @media (max-width:1024px) {
+    .kpi-row { grid-template-columns:repeat(2,1fr); }
+    .kpi-4 { grid-template-columns:repeat(2,1fr); }
+  }
+  @media (max-width:768px) {
+    .sidebar { transform:translateX(-100%); }
+    .sidebar.open { transform:translateX(0); }
+    .sidebar-overlay.open { display:block; }
+    .main { margin-left:0; }
+    .hamburger { display:flex; }
+    .content { padding:16px 12px 60px; }
+    .topbar { padding:0 12px; }
+    .kpi-4 { grid-template-columns:1fr 1fr; }
+    .modal-wide { width:95vw; }
+  }
+</style>
+
+<script is:inline define:vars={{ supabaseUrl: import.meta.env.PUBLIC_SUPABASE_URL, supabaseAnon: import.meta.env.PUBLIC_SUPABASE_ANON_KEY }}>
+  const SUPA = supabaseUrl;
+  const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtbXBtYnFiZmdjeGhiY2ZqcWlyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NTA3Mjk3MSwiZXhwIjoyMDkwNjQ4OTcxfQ.v9F49sKk9zsenjPzKsqscsrB_Tgz_4ek1TdlbvjyJYk';
+  const PWD = 'Adelantesalary1!';
+  const LANGS = ['en', 'fr', 'de', 'es'];
+
+  let currentSection = 'workflows';
+  let sequences = [];
+  let campaigns = [];
+  let currentWorkflow = null;
+  let currentCampaign = null;
+  let editingStep = null;
+  let subsFilter = 'all';
+
+  const $ = s => document.querySelector(s);
+  const $$ = s => document.querySelectorAll(s);
+
+  async function supa(table) {
+    return {
+      async select(query = '*', filters = {}) {
+        let url = `${SUPA}/rest/v1/${table}?select=${encodeURIComponent(query)}`;
+        for (const [k, v] of Object.entries(filters)) url += `&${k}=${encodeURIComponent(v)}`;
+        const r = await fetch(url, { headers: { apikey: KEY, Authorization: `Bearer ${KEY}` } });
+        return r.json();
+      },
+      async insert(data) {
+        const r = await fetch(`${SUPA}/rest/v1/${table}`, {
+          method: 'POST',
+          headers: { apikey: KEY, Authorization: `Bearer ${KEY}`, 'Content-Type': 'application/json', Prefer: 'return=representation' },
+          body: JSON.stringify(data)
+        });
+        return r.json();
+      },
+      async update(data, filters = {}) {
+        let url = `${SUPA}/rest/v1/${table}?`;
+        for (const [k, v] of Object.entries(filters)) url += `${k}=eq.${encodeURIComponent(v)}&`;
+        const r = await fetch(url, {
+          method: 'PATCH',
+          headers: { apikey: KEY, Authorization: `Bearer ${KEY}`, 'Content-Type': 'application/json', Prefer: 'return=representation' },
+          body: JSON.stringify(data)
+        });
+        return r.json();
+      },
+      async delete(filters = {}) {
+        let url = `${SUPA}/rest/v1/${table}?`;
+        for (const [k, v] of Object.entries(filters)) url += `${k}=eq.${encodeURIComponent(v)}&`;
+        return fetch(url, { method: 'DELETE', headers: { apikey: KEY, Authorization: `Bearer ${KEY}` } });
+      }
+    };
+  }
+
+  const dt = s => s ? new Date(s).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : '\u2014';
+  const dtT = s => s ? new Date(s).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '\u2014';
+  const esc = s => { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; };
+  const badge = (t, v) => `<span class="b b-${v}">${t}</span>`;
+
+  // Auth
+  function checkAuth() {
+    if (sessionStorage.getItem('es_admin') === '1') { show(); return; }
+  }
+  function show() {
+    $('#login-screen').style.display = 'none';
+    $('#dashboard').style.display = 'block';
+    loadAll();
+  }
+
+  $('#login-btn').onclick = tryLogin;
+  $('#pwd-input').onkeydown = e => { if (e.key === 'Enter') tryLogin(); };
+
+  function tryLogin() {
+    if ($('#pwd-input').value.trim() !== PWD) { $('#login-error').textContent = 'Wrong password'; return; }
+    sessionStorage.setItem('es_admin', '1');
+    show();
+  }
+
+  $('#logout-btn').onclick = () => { sessionStorage.removeItem('es_admin'); location.reload(); };
+
+  // Nav
+  const sectionTitles = { workflows:'Workflows', campaigns:'Campaigns', analytics:'Analytics', subscribers:'Subscribers', settings:'Settings' };
+
+  $('#sidebar-nav').onclick = e => {
+    const btn = e.target.closest('.sb-item[data-section]');
+    if (!btn) return;
+    switchSection(btn.dataset.section);
+    $('#sidebar').classList.remove('open');
+    $('#sidebar-overlay').classList.remove('open');
+  };
+
+  $('#hamburger').onclick = () => { $('#sidebar').classList.toggle('open'); $('#sidebar-overlay').classList.toggle('open'); };
+  $('#sidebar-overlay').onclick = () => { $('#sidebar').classList.remove('open'); $('#sidebar-overlay').classList.remove('open'); };
+
+  function switchSection(sec) {
+    currentSection = sec;
+    $$('.sb-item[data-section]').forEach(n => n.classList.toggle('active', n.dataset.section === sec));
+    $$('.panel').forEach(p => p.classList.remove('active'));
+    $(`#sec-${sec}`).classList.add('active');
+    $('#topbar-title').textContent = sectionTitles[sec] || sec;
+    if (sec === 'workflows') { $('#wf-list-view').style.display = ''; $('#wf-detail-view').style.display = 'none'; }
+    if (sec === 'campaigns') { $('#camp-list-view').style.display = ''; $('#camp-detail-view').style.display = 'none'; }
+  }
+
+  // Load all
+  async function loadAll() {
+    $('#last-refresh').textContent = 'Loading...';
+    await Promise.all([loadWorkflows(), loadCampaigns(), loadAnalytics(), loadSubscribers(), loadSettings()]);
+    $('#last-refresh').textContent = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  }
+
+  $('#refresh-btn').onclick = loadAll;
+
+  // ═══ WORKFLOWS ═══
+  async function loadWorkflows() {
+    const db = await supa('crm_email_sequences');
+    sequences = await db.select('*', { order: 'created_at.desc' });
+    const stepsDb = await supa('crm_sequence_steps');
+    const allSteps = await stepsDb.select('sequence_id,step_order,language');
+    const enrollDb = await supa('crm_sequence_enrollments');
+    const enrollments = await enrollDb.select('sequence_id,status');
+
+    const stepCounts = {}, enrollCounts = {};
+    for (const s of allSteps) { if (s.language === 'en') stepCounts[s.sequence_id] = (stepCounts[s.sequence_id]||0) + 1; }
+    for (const e of enrollments) { enrollCounts[e.sequence_id] = (enrollCounts[e.sequence_id]||0) + 1; }
+
+    $('#nav-count-workflows').textContent = sequences.length;
+
+    if (!sequences.length) { $('#wf-table').innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-4)">No workflows yet. Create your first one.</div>'; return; }
+    $('#wf-table').innerHTML = `<table><thead><tr><th>Name</th><th>Trigger</th><th>Target</th><th>Steps</th><th>Enrolled</th><th>Status</th><th>Created</th><th></th></tr></thead>
+      <tbody>${sequences.map(seq => `<tr class="clickable-row" data-id="${seq.id}">
+        <td><strong>${esc(seq.name)}</strong>${seq.description ? `<br><span style="font-size:.68rem;color:var(--text-4)">${esc(seq.description)}</span>` : ''}</td>
+        <td><code>${esc(seq.trigger_event||'\u2014')}</code></td>
+        <td>${esc(seq.target_type||'\u2014')}</td>
+        <td style="font-family:var(--mono)">${stepCounts[seq.id]||0}</td>
+        <td style="font-family:var(--mono)">${enrollCounts[seq.id]||0}</td>
+        <td>${seq.is_active ? badge('active','green') : badge('paused','rose')}</td>
+        <td style="font-family:var(--mono)">${dt(seq.created_at)}</td>
+        <td><button class="icon-btn btn-open-wf" data-id="${seq.id}" title="Edit"><span class="material-symbols-outlined">edit</span></button></td>
+      </tr>`).join('')}</tbody></table>`;
+
+    $$('.btn-open-wf').forEach(btn => btn.onclick = e => { e.stopPropagation(); openWorkflow(btn.dataset.id); });
+    $$('.clickable-row').forEach(row => row.onclick = () => openWorkflow(row.dataset.id));
+  }
+
+  async function openWorkflow(id) {
+    currentWorkflow = sequences.find(s => s.id === id);
+    if (!currentWorkflow) return;
+
+    $('#wf-list-view').style.display = 'none';
+    $('#wf-detail-view').style.display = '';
+    $('#wf-detail-name').textContent = currentWorkflow.name;
+    $('#wf-detail-meta').textContent = `Trigger: ${currentWorkflow.trigger_event||'\u2014'} \xb7 Target: ${currentWorkflow.target_type||'\u2014'}`;
+    $('#btn-toggle-wf-label').textContent = currentWorkflow.is_active ? 'Pause' : 'Activate';
+
+    const stepsDb = await supa('crm_sequence_steps');
+    const steps = await stepsDb.select('*', { sequence_id: `eq.${id}`, order: 'step_order.asc,language.asc' });
+    const sendsDb = await supa('crm_sequence_sends');
+    const sends = await sendsDb.select('step_id,opened_at,clicked_at', { 'enrollment_id': 'not.is.null' });
+    const enrollDb = await supa('crm_sequence_enrollments');
+    const enrollments = await enrollDb.select('*', { sequence_id: `eq.${id}` });
+
+    const totalEnrolled = enrollments.length;
+    const activeEnrolled = enrollments.filter(e => e.status === 'active').length;
+    const completedEnrolled = enrollments.filter(e => e.status === 'completed').length;
+
+    $('#wf-kpis').innerHTML = `
+      <div class="kpi"><div class="kpi-val">${totalEnrolled}</div><div class="kpi-label">Total Enrolled</div></div>
+      <div class="kpi"><div class="kpi-val">${activeEnrolled}</div><div class="kpi-label">Active</div></div>
+      <div class="kpi"><div class="kpi-val">${completedEnrolled}</div><div class="kpi-label">Completed</div></div>
+      <div class="kpi"><div class="kpi-val">${sends.length}</div><div class="kpi-label">Emails Sent</div></div>`;
+
+    const grouped = {};
+    for (const step of steps) { if (!grouped[step.step_order]) grouped[step.step_order] = {}; grouped[step.step_order][step.language] = step; }
+
+    const sortedOrders = Object.keys(grouped).sort((a,b) => a - b);
+    let stepsHtml = '';
+    for (let i = 0; i < sortedOrders.length; i++) {
+      const order = sortedOrders[i];
+      const langs = grouped[order];
+      const enStep = langs.en || langs.fr || langs.de || langs.es || Object.values(langs)[0];
+      const langBadges = LANGS.map(l => `<span class="b b-blue" style="${langs[l]?'':'opacity:.25'}">${l.toUpperCase()}</span>`).join(' ');
+      const delayLabel = enStep.delay_hours === 0 ? 'Immediate' : `${enStep.delay_hours}h delay`;
+
+      stepsHtml += `<div class="step-card" data-order="${order}">
+        <div class="step-num">${order}</div>
+        <div class="step-content">
+          <div class="step-subject">${esc(enStep.subject_template)}</div>
+          <div class="step-meta"><span>${delayLabel}</span><span>${langBadges}</span><span>${enStep.edit_mode === 'html' ? 'HTML' : 'Text'}</span></div>
+        </div>
+        <div class="step-actions">
+          <button class="btn-edit-step" data-order="${order}" title="Edit"><span class="material-symbols-outlined">edit</span></button>
+          <button class="btn-delete-step" data-order="${order}" title="Delete"><span class="material-symbols-outlined">delete</span></button>
+        </div>
+      </div>`;
+      if (i < sortedOrders.length - 1) stepsHtml += '<div class="step-arrow"><span class="material-symbols-outlined" style="font-size:18px">arrow_downward</span></div>';
+    }
+
+    if (!sortedOrders.length) stepsHtml = '<div style="padding:40px;text-align:center;color:var(--text-4);background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r)">No steps yet. Add your first step.</div>';
+    $('#wf-steps-list').innerHTML = stepsHtml;
+    currentWorkflow._steps = grouped;
+
+    $$('.btn-edit-step').forEach(btn => btn.onclick = e => { e.stopPropagation(); openStepEditor(parseInt(btn.dataset.order), false); });
+    $$('.btn-delete-step').forEach(btn => btn.onclick = async e => {
+      e.stopPropagation();
+      if (!confirm('Delete this step and all its language versions?')) return;
+      const db = await supa('crm_sequence_steps');
+      await db.delete({ sequence_id: currentWorkflow.id, step_order: parseInt(btn.dataset.order) });
+      openWorkflow(currentWorkflow.id);
+    });
+    $$('.step-card').forEach(card => card.onclick = () => openStepEditor(parseInt(card.dataset.order), false));
+  }
+
+  $('#btn-back-workflows').onclick = () => { $('#wf-list-view').style.display = ''; $('#wf-detail-view').style.display = 'none'; currentWorkflow = null; };
+
+  $('#btn-toggle-wf').onclick = async () => {
+    if (!currentWorkflow) return;
+    const db = await supa('crm_email_sequences');
+    await db.update({ is_active: !currentWorkflow.is_active }, { id: currentWorkflow.id });
+    currentWorkflow.is_active = !currentWorkflow.is_active;
+    $('#btn-toggle-wf-label').textContent = currentWorkflow.is_active ? 'Pause' : 'Activate';
+    await loadWorkflows();
+  };
+
+  $('#btn-delete-wf').onclick = async () => {
+    if (!currentWorkflow) return;
+    if (!confirm(`Delete "${currentWorkflow.name}" and all its steps?`)) return;
+    const db = await supa('crm_email_sequences');
+    await db.delete({ id: currentWorkflow.id });
+    $('#wf-list-view').style.display = ''; $('#wf-detail-view').style.display = 'none';
+    currentWorkflow = null;
+    await loadWorkflows();
+  };
+
+  $('#btn-new-workflow').onclick = () => { $('#nwf-name').value = ''; $('#nwf-desc').value = ''; $('#modal-new-wf').style.display = ''; };
+
+  $('#btn-create-wf').onclick = async () => {
+    const name = $('#nwf-name').value.trim();
+    if (!name) return alert('Name is required');
+    const db = await supa('crm_email_sequences');
+    await db.insert({ name, description: $('#nwf-desc').value.trim()||null, trigger_event: $('#nwf-trigger').value, target_type: $('#nwf-target').value, is_active: true });
+    $('#modal-new-wf').style.display = 'none';
+    await loadWorkflows();
+  };
+
+  $('#btn-add-step').onclick = () => {
+    const orders = Object.keys(currentWorkflow._steps||{}).map(Number);
+    openStepEditor(orders.length > 0 ? Math.max(...orders) + 1 : 1, true);
+  };
+
+  // ═══ STEP EDITOR ═══
+  function openStepEditor(order, isNew) {
+    const langs = isNew ? {} : (currentWorkflow._steps[order]||{});
+    editingStep = { sequenceId: currentWorkflow.id, order, isNew, langs };
+    $('#step-editor-title').textContent = isNew ? `New Step ${order}` : `Edit Step ${order}`;
+    $('#step-order').value = order;
+    $('#step-delay').value = (langs.en||langs.fr||langs.de||langs.es||{delay_hours:0}).delay_hours||0;
+
+    for (const lang of LANGS) {
+      const step = langs[lang];
+      $(`.step-subject[data-lang="${lang}"]`).value = step ? step.subject_template : '';
+      const ta = $(`.step-body[data-lang="${lang}"]`);
+      const mode = step ? (step.edit_mode||'text') : 'text';
+      ta.value = mode === 'text' ? (step?(step.body_text||''):'') : (step?(step.body_html||''):'');
+      ta.dataset.mode = mode;
+      ta.dataset.savedText = step ? (step.body_text||'') : '';
+      ta.dataset.savedHtml = step ? (step.body_html||'') : '';
+      $$(`.mode-btn[data-lang="${lang}"]`).forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    }
+
+    $$('.lang-tab').forEach(t => t.classList.toggle('active', t.dataset.lang === 'en'));
+    $$('.lang-pane').forEach(p => p.classList.toggle('active', p.dataset.lang === 'en'));
+    $('#modal-step-editor').style.display = '';
+  }
+
+  $('#step-lang-tabs').onclick = e => {
+    const tab = e.target.closest('.lang-tab');
+    if (!tab) return;
+    $$('.lang-tab').forEach(t => t.classList.toggle('active', t.dataset.lang === tab.dataset.lang));
+    $$('.lang-pane').forEach(p => p.classList.toggle('active', p.dataset.lang === tab.dataset.lang));
+  };
+
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('.mode-btn');
+    if (!btn) return;
+    const lang = btn.dataset.lang, newMode = btn.dataset.mode;
+    const ta = $(`.step-body[data-lang="${lang}"]`);
+    const oldMode = ta.dataset.mode;
+    if (oldMode === 'text') { ta.dataset.savedText = ta.value; if (!ta.dataset.savedHtml && ta.value.trim()) ta.dataset.savedHtml = textToHtml(ta.value); }
+    else { ta.dataset.savedHtml = ta.value; }
+    ta.value = newMode === 'text' ? (ta.dataset.savedText||'') : (ta.dataset.savedHtml||'');
+    ta.dataset.mode = newMode;
+    $$(`.mode-btn[data-lang="${lang}"]`).forEach(b => b.classList.toggle('active', b.dataset.mode === newMode));
+  });
+
+  function textToHtml(text) {
+    if (!text) return '';
+    return text
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g,'<em>$1</em>')
+      .replace(/\[(.*?)\]\((.*?)\)/g,'<a href="$2" style="color:#3b82f6;text-decoration:underline;">$1</a>')
+      .split('\n\n').map(para => {
+        const t = para.trim();
+        if (!t) return '';
+        if (t.startsWith('- ')) return `<ul style="padding-left:20px;margin:0 0 16px">${t.split('\n').map(l=>`<li>${l.replace(/^- /,'')}</li>`).join('')}</ul>`;
+        return `<p style="margin:0 0 16px;color:#1e293b;font-size:15px;line-height:1.6">${t.replace(/\n/g,'<br>')}</p>`;
+      }).filter(Boolean).join('\n');
+  }
+
+  $('#btn-step-preview').onclick = () => {
+    const lang = $('.lang-tab.active').dataset.lang;
+    const body = $(`.step-body[data-lang="${lang}"]`).value;
+    const mode = $(`.step-body[data-lang="${lang}"]`).dataset.mode;
+    const html = mode === 'html' ? body : textToHtml(body);
+    const rendered = html.replace(/\{name\}/g,'John').replace(/\{company\}/g,'Acme Inc').replace(/\{country\}/g,'Germany').replace(/\{price\}/g,'29').replace(/\{product\}/g,'Pro');
+
+    $('#step-preview').innerHTML = `
+      <div style="background:#0A1F44;padding:0"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto"><tr><td style="padding:26px 32px"><span style="color:white;font-family:Inter,Helvetica,sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.5px">Euro<span style="color:#0066CC">Salary</span><span style="color:#FFCC00">.eu</span></span></td></tr></table></div>
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:white"><tr><td style="padding:32px;font-family:Inter,Helvetica,sans-serif">${rendered}</td></tr></table>
+      <div style="background:#F9FAFB;border-top:1px solid #E5E7EB"><table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto"><tr><td style="padding:20px 28px;text-align:center"><p style="margin:0;font-size:12px;color:#9CA3AF;font-family:Inter,Helvetica,sans-serif">EuroSalary.eu \u2014 European Salary Intelligence<br><span style="font-size:11px;font-weight:600;letter-spacing:0.05em;color:#6B7280">Precision. Integrity. Sovereignty.</span></p></td></tr></table></div>`;
+    $('.preview-details').open = true;
+  };
+
+  $('#btn-save-step').onclick = async () => {
+    const order = parseInt($('#step-order').value);
+    const delay = parseInt($('#step-delay').value)||0;
+    const db = await supa('crm_sequence_steps');
+    for (const lang of LANGS) {
+      const subject = $(`.step-subject[data-lang="${lang}"]`).value.trim();
+      const bodyRaw = $(`.step-body[data-lang="${lang}"]`).value.trim();
+      const mode = $(`.step-body[data-lang="${lang}"]`).dataset.mode;
+      if (!subject && !bodyRaw) continue;
+      const bodyHtml = mode === 'html' ? bodyRaw : textToHtml(bodyRaw);
+      const bodyText = mode === 'text' ? bodyRaw : null;
+      const existing = editingStep.langs[lang];
+      if (existing) {
+        await db.update({ step_order:order, delay_hours:delay, subject_template:subject, body_html:bodyHtml, body_text:bodyText, edit_mode:mode }, { id:existing.id });
+      } else {
+        await db.insert({ sequence_id:editingStep.sequenceId, step_order:order, delay_hours:delay, language:lang, subject_template:subject, body_html:bodyHtml, body_text:bodyText, edit_mode:mode, is_active:true });
+      }
+    }
+    $('#modal-step-editor').style.display = 'none';
+    openWorkflow(currentWorkflow.id);
+  };
+
+  // ═══ CAMPAIGNS ═══
+  async function loadCampaigns() {
+    const db = await supa('crm_campaigns');
+    campaigns = await db.select('*', { order: 'created_at.desc' });
+    $('#nav-count-campaigns').textContent = campaigns.length;
+
+    if (!campaigns.length) { $('#camp-table').innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-4)">No campaigns yet.</div>'; return; }
+    $('#camp-table').innerHTML = `<table><thead><tr><th>Name</th><th>Type</th><th>Schedule</th><th>Segment</th><th>Sends</th><th>Status</th><th>Last Sent</th><th></th></tr></thead>
+      <tbody>${campaigns.map(c => `<tr class="clickable-row" data-id="${c.id}">
+        <td><strong>${esc(c.name)}</strong>${c.description?`<br><span style="font-size:.68rem;color:var(--text-4)">${esc(c.description)}</span>`:''}</td>
+        <td>${c.campaign_type==='recurring'?badge('recurring','blue'):badge('one-time','amber')}</td>
+        <td><code>${esc(c.cron_schedule||'\u2014')}</code></td>
+        <td>${esc(c.target_segment)}</td>
+        <td style="font-family:var(--mono)">${c.send_count||0}</td>
+        <td>${c.is_active?badge('active','green'):badge('paused','rose')}</td>
+        <td style="font-family:var(--mono)">${dtT(c.last_sent_at)}</td>
+        <td><button class="icon-btn btn-open-camp" data-id="${c.id}" title="Edit"><span class="material-symbols-outlined">edit</span></button></td>
+      </tr>`).join('')}</tbody></table>`;
+
+    $$('.btn-open-camp').forEach(btn => btn.onclick = e => { e.stopPropagation(); openCampaign(btn.dataset.id); });
+    $$('#sec-campaigns .clickable-row').forEach(row => row.onclick = () => openCampaign(row.dataset.id));
+  }
+
+  async function openCampaign(id) {
+    currentCampaign = campaigns.find(c => c.id === id);
+    if (!currentCampaign) return;
+    $('#camp-list-view').style.display = 'none';
+    $('#camp-detail-view').style.display = '';
+    $('#camp-detail-name').textContent = currentCampaign.name;
+    $('#btn-toggle-camp-label').textContent = currentCampaign.is_active ? 'Pause' : 'Activate';
+
+    const subjects = currentCampaign.subject||{};
+    const bodies = currentCampaign.body_html||{};
+    const bodiesText = currentCampaign.body_text||{};
+    const mode = currentCampaign.edit_mode||'text';
+
+    let html = `<div class="fg"><label>Target Segment</label>
+      <select id="camp-edit-segment">
+        <option value="newsletter_subscribers" ${currentCampaign.target_segment==='newsletter_subscribers'?'selected':''}>Newsletter Subscribers</option>
+        <option value="all_leads" ${currentCampaign.target_segment==='all_leads'?'selected':''}>All Leads (with consent)</option>
+        <option value="pro_users" ${currentCampaign.target_segment==='pro_users'?'selected':''}>Pro Users</option>
+        <option value="churned" ${currentCampaign.target_segment==='churned'?'selected':''}>Churned Users</option>
+      </select></div>
+      <div class="lang-tabs" id="camp-lang-tabs">${LANGS.map((l,i)=>`<button class="lang-tab ${i===0?'active':''}" data-lang="${l}">${l.toUpperCase()}</button>`).join('')}</div>`;
+
+    for (const lang of LANGS) {
+      html += `<div class="lang-pane camp-lang-pane ${lang==='en'?'active':''}" data-lang="${lang}">
+        <div class="fg"><label>Subject <span class="hint">(${lang.toUpperCase()})</span></label><input type="text" class="camp-subject" data-lang="${lang}" value="${esc(subjects[lang]||'')}" /></div>
+        <div class="fg"><div class="editor-bar"><label>Body <span class="hint">(${lang.toUpperCase()})</span></label><div class="mode-toggle"><button class="mode-btn camp-mode-btn ${mode==='text'?'active':''}" data-mode="text" data-lang="${lang}">Text</button><button class="mode-btn camp-mode-btn ${mode==='html'?'active':''}" data-mode="html" data-lang="${lang}">&lt;/&gt; HTML</button></div></div>
+        <textarea class="camp-body" data-lang="${lang}" rows="14">${esc(bodiesText[lang]||bodies[lang]||'')}</textarea></div>
+      </div>`;
+    }
+
+    html += `<div style="display:flex;gap:6px;justify-content:flex-end;margin-top:14px">
+      <button class="btn-outline" id="btn-camp-preview">Preview</button>
+      <button class="btn-primary" id="btn-save-camp">Save Campaign</button>
+    </div>
+    <details class="preview-details" style="margin-top:14px"><summary>Preview Email</summary><div class="preview-frame" id="camp-preview"></div></details>`;
+
+    $('#camp-editor').innerHTML = html;
+
+    $('#camp-lang-tabs').onclick = e => {
+      const tab = e.target.closest('.lang-tab');
+      if (!tab) return;
+      $$('#camp-lang-tabs .lang-tab').forEach(t => t.classList.toggle('active', t.dataset.lang === tab.dataset.lang));
+      $$('.camp-lang-pane').forEach(p => p.classList.toggle('active', p.dataset.lang === tab.dataset.lang));
+    };
+
+    $('#btn-save-camp').onclick = async () => {
+      const subject = {}, bodyHtml = {}, bodyText = {};
+      let editMode = 'text';
+      for (const lang of LANGS) {
+        subject[lang] = $(`.camp-subject[data-lang="${lang}"]`).value.trim();
+        const raw = $(`.camp-body[data-lang="${lang}"]`).value.trim();
+        const mBtn = $(`.camp-mode-btn.active[data-lang="${lang}"]`);
+        const m = mBtn ? mBtn.dataset.mode : 'text';
+        editMode = m;
+        bodyHtml[lang] = m === 'html' ? raw : textToHtml(raw);
+        bodyText[lang] = m === 'text' ? raw : null;
+      }
+      const db = await supa('crm_campaigns');
+      await db.update({ subject, body_html:bodyHtml, body_text:bodyText, edit_mode:editMode, target_segment:$('#camp-edit-segment').value }, { id:currentCampaign.id });
+      alert('Campaign saved');
+      await loadCampaigns();
+    };
+  }
+
+  $('#btn-back-campaigns').onclick = () => { $('#camp-list-view').style.display = ''; $('#camp-detail-view').style.display = 'none'; currentCampaign = null; };
+
+  $('#btn-toggle-camp').onclick = async () => {
+    if (!currentCampaign) return;
+    const db = await supa('crm_campaigns');
+    await db.update({ is_active: !currentCampaign.is_active }, { id: currentCampaign.id });
+    currentCampaign.is_active = !currentCampaign.is_active;
+    $('#btn-toggle-camp-label').textContent = currentCampaign.is_active ? 'Pause' : 'Activate';
+    await loadCampaigns();
+  };
+
+  $('#btn-delete-camp').onclick = async () => {
+    if (!currentCampaign) return;
+    if (!confirm(`Delete "${currentCampaign.name}"?`)) return;
+    const db = await supa('crm_campaigns');
+    await db.delete({ id: currentCampaign.id });
+    $('#camp-list-view').style.display = ''; $('#camp-detail-view').style.display = 'none';
+    currentCampaign = null;
+    await loadCampaigns();
+  };
+
+  $('#btn-new-campaign').onclick = () => { $('#ncamp-name').value = ''; $('#ncamp-desc').value = ''; $('#modal-new-camp').style.display = ''; };
+
+  $('#btn-create-camp').onclick = async () => {
+    const name = $('#ncamp-name').value.trim();
+    if (!name) return alert('Name is required');
+    const db = await supa('crm_campaigns');
+    await db.insert({ name, description:$('#ncamp-desc').value.trim()||null, campaign_type:$('#ncamp-type').value, cron_schedule:$('#ncamp-type').value==='recurring'?$('#ncamp-cron').value:null, target_segment:$('#ncamp-segment').value, is_active:false, subject:{}, body_html:{}, body_text:{} });
+    $('#modal-new-camp').style.display = 'none';
+    await loadCampaigns();
+  };
+
+  // ═══ ANALYTICS ═══
+  async function loadAnalytics() {
+    const seqSendsDb = await supa('crm_sequence_sends');
+    const seqSends = await seqSendsDb.select('*', { order:'sent_at.desc', limit:50 });
+    const campSendsDb = await supa('crm_campaign_sends');
+    const campSends = await campSendsDb.select('*', { order:'sent_at.desc', limit:50 });
+    const allSends = [...(seqSends||[]), ...(campSends||[])].sort((a,b) => new Date(b.sent_at) - new Date(a.sent_at));
+
+    const totalSent = allSends.length;
+    const totalOpened = allSends.filter(s => s.opened_at).length;
+    const totalClicked = allSends.filter(s => s.clicked_at).length;
+    const totalBounced = allSends.filter(s => s.bounced).length;
+    const openRate = totalSent > 0 ? ((totalOpened/totalSent)*100).toFixed(1) : '0';
+    const clickRate = totalSent > 0 ? ((totalClicked/totalSent)*100).toFixed(1) : '0';
+
+    $('#analytics-kpis').innerHTML = `
+      <div class="kpi"><div class="kpi-val">${totalSent}</div><div class="kpi-label">Total Sent</div></div>
+      <div class="kpi"><div class="kpi-val">${openRate}%</div><div class="kpi-label">Open Rate</div></div>
+      <div class="kpi"><div class="kpi-val">${clickRate}%</div><div class="kpi-label">Click Rate</div></div>
+      <div class="kpi"><div class="kpi-val">${totalBounced}</div><div class="kpi-label">Bounced</div></div>`;
+
+    if (!allSends.length) { $('#analytics-table').innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-4)">No emails sent yet.</div>'; return; }
+    $('#analytics-table').innerHTML = `<table><thead><tr><th>Lead</th><th>Type</th><th>Lang</th><th>Sent</th><th>Opened</th><th>Clicked</th></tr></thead>
+      <tbody>${allSends.slice(0,30).map(s => `<tr>
+        <td style="font-family:var(--mono)">${esc(s.lead_id?.substring(0,8))}...</td>
+        <td>${s.campaign_id ? badge('campaign','blue') : badge('sequence','amber')}</td>
+        <td><span class="b b-blue">${(s.language||'en').toUpperCase()}</span></td>
+        <td style="font-family:var(--mono)">${dtT(s.sent_at)}</td>
+        <td>${s.opened_at ? '<span style="color:var(--green)">Yes</span>' : '\u2014'}</td>
+        <td>${s.clicked_at ? '<span style="color:var(--green)">Yes</span>' : '\u2014'}</td>
+      </tr>`).join('')}</tbody></table>`;
+  }
+
+  // ═══ SUBSCRIBERS ═══
+  async function loadSubscribers() {
+    const db = await supa('crm_leads');
+    const leads = await db.select('id,email,name,language,status,gdpr_consent,unsubscribed,created_at', { order:'created_at.desc', limit:100 });
+    let filtered = leads;
+    if (subsFilter === 'subscribed') filtered = leads.filter(l => !l.unsubscribed && l.gdpr_consent);
+    if (subsFilter === 'unsubscribed') filtered = leads.filter(l => l.unsubscribed);
+
+    if (!filtered.length) { $('#subs-table').innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-4)">No leads found.</div>'; return; }
+    $('#subs-table').innerHTML = `<table><thead><tr><th>Email</th><th>Name</th><th>Lang</th><th>Consent</th><th>Status</th><th>Since</th><th></th></tr></thead>
+      <tbody>${filtered.map(l => `<tr>
+        <td>${esc(l.email)}</td>
+        <td>${esc(l.name||'\u2014')}</td>
+        <td><span class="b b-blue">${(l.language||'en').toUpperCase()}</span></td>
+        <td>${l.gdpr_consent ? '<span style="color:var(--green)">Yes</span>' : '<span style="color:var(--rose)">No</span>'}</td>
+        <td>${l.unsubscribed ? badge('unsubscribed','rose') : badge('subscribed','green')}</td>
+        <td style="font-family:var(--mono)">${dt(l.created_at)}</td>
+        <td>${!l.unsubscribed
+          ? `<button class="btn-outline btn-danger" style="padding:3px 8px;font-size:.65rem" onclick="unsubLead('${l.id}')">Unsub</button>`
+          : `<button class="btn-outline" style="padding:3px 8px;font-size:.65rem" onclick="resubLead('${l.id}')">Re-sub</button>`
+        }</td>
+      </tr>`).join('')}</tbody></table>`;
+  }
+
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('#subs-filters .f-btn');
+    if (!btn) return;
+    subsFilter = btn.dataset.filter;
+    $$('#subs-filters .f-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === subsFilter));
+    loadSubscribers();
+  });
+
+  window.unsubLead = async function(id) {
+    if (!confirm('Unsubscribe this lead?')) return;
+    const db = await supa('crm_leads');
+    await db.update({ unsubscribed: true }, { id });
+    const enrollDb = await supa('crm_sequence_enrollments');
+    await enrollDb.update({ status:'cancelled', cancelled_at:new Date().toISOString() }, { lead_id:id, status:'active' });
+    loadSubscribers();
+  };
+  window.resubLead = async function(id) {
+    const db = await supa('crm_leads');
+    await db.update({ unsubscribed: false }, { id });
+    loadSubscribers();
+  };
+
+  // ═══ SETTINGS ═══
+  async function loadSettings() {
+    const brand = { company_name:'EuroSalary', from_address:'hello@eurosalary.eu', website:'https://eurosalary.eu', primary_color:'#3b82f6', navy:'#0A1F44', languages:'EN, FR, DE, ES' };
+    $('#settings-brand').innerHTML = `<table>${Object.entries(brand).map(([k,v]) =>
+      `<tr><td style="padding:6px 14px;color:var(--text-3);font-weight:600;font-size:.72rem">${k}</td><td style="padding:6px 14px;font-size:.78rem">${k.includes('color')||k==='navy' ? `<span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:${v};vertical-align:middle;margin-right:6px"></span>${v}` : v}</td></tr>`
+    ).join('')}</table>`;
+  }
+
+  // Modal close
+  document.addEventListener('click', e => {
+    const close = e.target.closest('[data-close]');
+    if (close) $(`#${close.dataset.close}`).style.display = 'none';
+    if (e.target.classList.contains('modal-overlay')) e.target.style.display = 'none';
+  });
+
+  checkAuth();
+</script>
+
+</body>
+</html>
