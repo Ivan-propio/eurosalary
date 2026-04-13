@@ -2,7 +2,7 @@
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import TLDRBox from '../../../../components/TLDRBox.astro';
 import FAQSection from '../../../../components/FAQSection.astro';
-import { countrySlugsByLang, countryFlags } from '../../../../data/slugs';
+import { countrySlugsByLang } from '../../../../data/slugs';
 import { languages, type Lang } from '../../../../i18n/ui';
 import { fb, useTranslations } from '../../../../i18n/utils';
 import { countryNames, uiLabels } from '../../../../i18n/translations';
@@ -23,7 +23,6 @@ export function getStaticPaths() {
 
 const { countryCode, lang } = Astro.props as { countryCode: string; lang: Lang };
 const t = useTranslations(lang as Lang);
-const flag = countryFlags[countryCode] || '';
 const countryName = fb(countryNames[countryCode], lang) || countryCode;
 
 // --------------- Sample salary data (teaser) ---------------
@@ -208,7 +207,7 @@ const i18n: Record<string, {
     singleCountryLabel: 'Einzelnes Land',
     singleCountryDesc: `Vollst\u00e4ndiger Gehaltsbericht f\u00fcr ${countryName} mit allen Berufen, St\u00e4dten und Nettoberechnungen.`,
     allCountriesLabel: 'Alle L\u00e4nder',
-    allCountriesDesc: 'Premium-Berichte f\u00fcr alle 15 europ\u00e4ischen L\u00e4nder. Bestes Preis-Leistungs-Verh\u00e4ltnis.',
+    allCountriesDesc: 'Premium-Berichte f\u00fcr alle 27 europ\u00e4ischen L\u00e4nder. Bestes Preis-Leistungs-Verh\u00e4ltnis.',
     buyReport: 'Bericht kaufen',
     buyAll: 'Alle L\u00e4nder kaufen',
     bestValue: 'Bester Preis',
@@ -259,7 +258,7 @@ const i18n: Record<string, {
     singleCountryLabel: 'Pa\u00eds individual',
     singleCountryDesc: `Informe salarial completo para ${countryName} con todos los puestos, ciudades y c\u00e1lculos netos.`,
     allCountriesLabel: 'Todos los pa\u00edses',
-    allCountriesDesc: 'Informes premium para los 15 pa\u00edses europeos. Mejor relaci\u00f3n calidad-precio.',
+    allCountriesDesc: 'Informes premium para los 27 pa\u00edses europeos. Mejor relaci\u00f3n calidad-precio.',
     buyReport: 'Comprar informe',
     buyAll: 'Comprar todos los pa\u00edses',
     bestValue: 'Mejor precio',
@@ -327,7 +326,7 @@ const pageSchema = [
         <span class="material-symbols-outlined">workspace_premium</span>
         Premium Report
       </div>
-      <h1>{flag} {c.h1}</h1>
+      <h1>{c.h1}</h1>
       <p class="report-hero__answer">{c.introAnswer}</p>
     </div>
   </section>
@@ -396,10 +395,10 @@ const pageSchema = [
             <span class="report-pricing__period">one-time</span>
           </div>
           <p class="report-pricing__desc">{c.singleCountryDesc}</p>
-          <a href="#" class="report-pricing__cta">{c.buyReport}</a>
+          <a href="#" class="report-pricing__cta" data-checkout="report-single" data-price="price_1TJZ3wFVaIUkPsQCuM9IP19N">{c.buyReport}</a>
         </div>
-        <div class="report-pricing__card report-pricing__card--featured">
-          <div class="report-pricing__best-value">{c.bestValue}</div>
+        <div class="report-pricing__card report-pricing__card--featured report-pricing__card--soon">
+          <div class="report-pricing__best-value">Coming Soon</div>
           <div class="report-pricing__card-header">
             <span class="material-symbols-outlined">public</span>
             <h3>{c.allCountriesLabel}</h3>
@@ -409,7 +408,7 @@ const pageSchema = [
             <span class="report-pricing__period">one-time</span>
           </div>
           <p class="report-pricing__desc">{c.allCountriesDesc}</p>
-          <a href="#" class="report-pricing__cta report-pricing__cta--featured">{c.buyAll}</a>
+          <button disabled class="report-pricing__cta report-pricing__cta--disabled">Coming Soon</button>
         </div>
       </div>
       <div class="report-guarantee">
@@ -436,7 +435,7 @@ const pageSchema = [
 <style>
   /* ===== Hero ===== */
   .report-hero {
-    background: var(--color-primary-container, #0F1F3D);
+    background: var(--color-primary-container, var(--navy));
     color: white;
     padding: var(--space-16) 0 var(--space-12);
     position: relative;
@@ -471,7 +470,7 @@ const pageSchema = [
     background: rgba(37, 99, 235, 0.2);
     border: 1px solid rgba(37, 99, 235, 0.3);
     padding: 4px 12px;
-    border-radius: 20px;
+    border-radius: var(--radius-xl);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -480,7 +479,7 @@ const pageSchema = [
   }
   .report-hero__badge .material-symbols-outlined { font-size: 14px; }
   .report-hero h1 {
-    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-family: var(--font-sans);
     font-size: clamp(1.75rem, 4vw, 2.5rem);
     font-weight: 800;
     letter-spacing: -0.02em;
@@ -497,10 +496,10 @@ const pageSchema = [
   .report-body { padding: var(--space-10) 0 var(--space-16); }
   .report-section { margin-top: var(--space-12); }
   .report-section h2 {
-    font-family: var(--font-headline, 'Public Sans', sans-serif);
+    font-family: var(--font-sans);
     font-size: 1.75rem;
     font-weight: 800;
-    color: var(--color-primary-container, #0F1F3D);
+    color: var(--color-primary-container, var(--navy));
     letter-spacing: -0.02em;
     margin-bottom: var(--space-4);
   }
@@ -523,7 +522,7 @@ const pageSchema = [
     font-size: 14px;
   }
   .report-table thead {
-    background: var(--color-primary-container, #0F1F3D);
+    background: var(--color-primary-container, var(--navy));
     color: white;
   }
   .report-table th {
@@ -540,7 +539,7 @@ const pageSchema = [
   }
   .report-table__role {
     font-weight: 600;
-    color: var(--color-primary-container, #0F1F3D);
+    color: var(--color-primary-container, var(--navy));
   }
   .report-table tbody tr:hover {
     background: #f8fafc;
@@ -564,7 +563,7 @@ const pageSchema = [
     justify-content: center;
     gap: 8px;
     padding-bottom: 16px;
-    color: var(--color-secondary, #2563EB);
+    color: var(--color-secondary);
     font-weight: 700;
     font-size: 14px;
   }
@@ -593,7 +592,7 @@ const pageSchema = [
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-secondary, #2563EB);
+    background: var(--color-secondary);
     color: white;
     border-radius: 50%;
     font-size: 13px;
@@ -621,7 +620,7 @@ const pageSchema = [
     position: relative;
   }
   .report-pricing__card--featured {
-    border-color: var(--color-secondary, #2563EB);
+    border-color: var(--color-secondary);
     border-width: 2px;
     box-shadow: 0 4px 24px rgba(37, 99, 235, 0.12);
   }
@@ -630,14 +629,14 @@ const pageSchema = [
     top: -12px;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--color-secondary, #2563EB);
+    background: var(--color-secondary);
     color: white;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     padding: 4px 16px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
   }
   .report-pricing__card-header {
     display: flex;
@@ -647,12 +646,12 @@ const pageSchema = [
   }
   .report-pricing__card-header .material-symbols-outlined {
     font-size: 24px;
-    color: var(--color-secondary, #2563EB);
+    color: var(--color-secondary);
   }
   .report-pricing__card-header h3 {
     font-size: 1.1rem;
     font-weight: 700;
-    color: var(--color-primary-container, #0F1F3D);
+    color: var(--color-primary-container, var(--navy));
   }
   .report-pricing__price {
     display: flex;
@@ -663,7 +662,7 @@ const pageSchema = [
   .report-pricing__amount {
     font-size: 2.5rem;
     font-weight: 800;
-    color: var(--color-primary-container, #0F1F3D);
+    color: var(--color-primary-container, var(--navy));
     letter-spacing: -0.02em;
   }
   .report-pricing__period {
@@ -680,8 +679,8 @@ const pageSchema = [
     display: block;
     text-align: center;
     padding: 12px 24px;
-    border: 2px solid var(--color-secondary, #2563EB);
-    color: var(--color-secondary, #2563EB);
+    border: 2px solid var(--color-secondary);
+    color: var(--color-secondary);
     font-weight: 700;
     font-size: 14px;
     border-radius: 6px;
@@ -689,16 +688,27 @@ const pageSchema = [
     transition: all 0.15s;
   }
   .report-pricing__cta:hover {
-    background: var(--color-secondary, #2563EB);
+    background: var(--color-secondary);
     color: white;
   }
   .report-pricing__cta--featured {
-    background: var(--color-secondary, #2563EB);
+    background: var(--color-secondary);
     color: white;
   }
   .report-pricing__cta--featured:hover {
     background: #1d4ed8;
     border-color: #1d4ed8;
+  }
+  .report-pricing__cta--disabled {
+    background: var(--border);
+    color: var(--muted);
+    border-color: var(--border);
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  .report-pricing__cta--disabled:hover {
+    background: var(--border);
+    color: var(--muted);
   }
 
   /* ===== Guarantee ===== */
@@ -739,10 +749,10 @@ const pageSchema = [
   }
   .report-methodology__link .material-symbols-outlined {
     font-size: 18px;
-    color: var(--color-secondary, #2563EB);
+    color: var(--color-secondary);
   }
   .report-methodology__link a {
-    color: var(--color-secondary, #2563EB);
+    color: var(--color-secondary);
     font-weight: 600;
   }
 
@@ -754,3 +764,39 @@ const pageSchema = [
     .report-table th, .report-table td { padding: 8px 10px; }
   }
 </style>
+
+<script is:inline>
+  // Stripe Checkout for Country Reports (one-time payment)
+  document.querySelectorAll('[data-checkout]').forEach((btn) => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const el = btn;
+      const priceId = el.getAttribute('data-price');
+      if (!priceId) return;
+      el.style.pointerEvents = 'none';
+      el.style.opacity = '0.6';
+      const origText = el.textContent;
+      el.textContent = '...';
+      try {
+        const lang = window.location.pathname.split('/')[1] || 'en';
+        const pathParts = window.location.pathname.split('/');
+        const country = pathParts[pathParts.length - 2] || 'all';
+        const reportType = el.getAttribute('data-checkout');
+        const res = await fetch('/api/create-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            priceId,
+            mode: 'payment',
+            lang,
+            metadata: { country: reportType === 'report-all' ? 'all' : country },
+            referralCode: window.EuroSalary?.getReferralCode?.() || undefined,
+          }),
+        });
+        const data = await res.json();
+        if (data.url) window.location.href = data.url;
+        else { el.textContent = origText; el.style.pointerEvents = ''; el.style.opacity = ''; }
+      } catch { el.textContent = origText; el.style.pointerEvents = ''; el.style.opacity = ''; }
+    });
+  });
+</script>
