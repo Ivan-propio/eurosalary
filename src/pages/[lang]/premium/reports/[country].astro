@@ -397,8 +397,8 @@ const pageSchema = [
           <p class="report-pricing__desc">{c.singleCountryDesc}</p>
           <a href="#" class="report-pricing__cta" data-checkout="report-single" data-price="price_1TJZ3wFVaIUkPsQCuM9IP19N">{c.buyReport}</a>
         </div>
-        <div class="report-pricing__card report-pricing__card--featured report-pricing__card--soon">
-          <div class="report-pricing__best-value">Coming Soon</div>
+        <div class="report-pricing__card report-pricing__card--featured">
+          <div class="report-pricing__best-value">{c.bestValue}</div>
           <div class="report-pricing__card-header">
             <span class="material-symbols-outlined">public</span>
             <h3>{c.allCountriesLabel}</h3>
@@ -408,7 +408,7 @@ const pageSchema = [
             <span class="report-pricing__period">one-time</span>
           </div>
           <p class="report-pricing__desc">{c.allCountriesDesc}</p>
-          <button disabled class="report-pricing__cta report-pricing__cta--disabled">Coming Soon</button>
+          <a href="#" class="report-pricing__cta report-pricing__cta--featured" data-checkout="report-all" data-price="price_1TLfTsFVaIUkPsQC8uaAG76f">{c.buyAll}</a>
         </div>
       </div>
       <div class="report-guarantee">
@@ -699,18 +699,6 @@ const pageSchema = [
     background: #1d4ed8;
     border-color: #1d4ed8;
   }
-  .report-pricing__cta--disabled {
-    background: var(--border);
-    color: var(--muted);
-    border-color: var(--border);
-    cursor: not-allowed;
-    opacity: 0.7;
-  }
-  .report-pricing__cta--disabled:hover {
-    background: var(--border);
-    color: var(--muted);
-  }
-
   /* ===== Guarantee ===== */
   .report-guarantee {
     display: flex;

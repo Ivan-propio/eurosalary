@@ -848,6 +848,28 @@ const c = fb(i18n, lang);
           </div>
         </div>
 
+        <!-- Billing History (loaded client-side, paid plans only) -->
+        <div class="dash__section" id="billing-section" style="display:none">
+          <h2 class="dash__section-title">
+            <span class="material-symbols-outlined">receipt_long</span>
+            <span id="billing-title">Billing History</span>
+          </h2>
+          <div id="billing-list" class="dash__billing-list">
+            <p class="dash__section-desc" id="billing-empty">No payments yet.</p>
+          </div>
+        </div>
+
+        <!-- Purchased Reports (loaded client-side, paid plans only) -->
+        <div class="dash__section" id="reports-section" style="display:none">
+          <h2 class="dash__section-title">
+            <span class="material-symbols-outlined">description</span>
+            <span id="reports-title">Your Reports</span>
+          </h2>
+          <div id="reports-list" class="dash__reports-list">
+            <p class="dash__section-desc" id="reports-empty">No reports purchased.</p>
+          </div>
+        </div>
+
         <!-- Quick Links -->
         <div class="dash__section">
           <h2 class="dash__section-title">
@@ -956,11 +978,27 @@ const c = fb(i18n, lang);
         if (pct > 80) document.getElementById('usage-fill').classList.add('dash__usage-fill--warn');
       }
 
-      // Hide upgrade section for paid plans
+      // Hide upgrade section for paid plans + show paid sections
       if (plan !== 'free') {
         document.getElementById('upgrade-btn').style.display = 'none';
         document.getElementById('upgrade-desc').style.display = 'none';
+        // Load billing history & reports for paid users
+        loadBillingHistory();
+        loadReports();
       }
+
+      // i18n for dynamic sections
+      const dashI18n = {
+        en: { billing: 'Billing History', reports: 'Your Reports', noPayments: 'No payments yet.', noReports: 'No reports purchased.', download: 'Download', expired: 'Expired', amount: 'Amount', date: 'Date', status: 'Status' },
+        fr: { billing: 'Historique de facturation', reports: 'Vos rapports', noPayments: 'Aucun paiement.', noReports: 'Aucun rapport acheté.', download: 'Télécharger', expired: 'Expiré', amount: 'Montant', date: 'Date', status: 'Statut' },
+        de: { billing: 'Abrechnungsverlauf', reports: 'Ihre Berichte', noPayments: 'Keine Zahlungen.', noReports: 'Keine Berichte gekauft.', download: 'Herunterladen', expired: 'Abgelaufen', amount: 'Betrag', date: 'Datum', status: 'Status' },
+        es: { billing: 'Historial de facturación', reports: 'Tus informes', noPayments: 'Sin pagos.', noReports: 'Sin informes comprados.', download: 'Descargar', expired: 'Expirado', amount: 'Importe', date: 'Fecha', status: 'Estado' },
+      };
+      const di = dashI18n[lang] || dashI18n.en;
+      document.getElementById('billing-title').textContent = di.billing;
+      document.getElementById('reports-title').textContent = di.reports;
+      document.getElementById('billing-empty').textContent = di.noPayments;
+      document.getElementById('reports-empty').textContent = di.noReports;
 
       loadingEl.style.display = 'none';
       contentEl.style.display = 'block';
@@ -1018,6 +1056,68 @@ const c = fb(i18n, lang);
     } catch (e) { /* logout error */ }
     window.location.href = `/${lang}/login/`;
   });
+
+  // Load billing history for paid users
+  async function loadBillingHistory() {
+    try {
+      const res = await fetch('/api/dashboard/billing-history');
+      if (!res.ok) return;
+      const { data } = await res.json();
+      const section = document.getElementById('billing-section');
+      const list = document.getElementById('billing-list');
+      if (!data || data.length === 0) {
+        section.style.display = 'block';
+        return;
+      }
+      const emptyEl = document.getElementById('billing-empty');
+      if (emptyEl) emptyEl.remove();
+      list.innerHTML = data.slice(0, 10).map(p => {
+        const amt = (p.amount_eur / 100).toFixed(2);
+        const date = new Date(p.created_at).toLocaleDateString();
+        const statusClass = p.status === 'succeeded' ? 'dash__status--active' : 'dash__status--inactive';
+        return `<div class="dash__billing-row">
+          <span class="dash__billing-desc">${p.description || 'Payment'}</span>
+          <span class="dash__billing-amount">€${amt}</span>
+          <span class="dash__billing-date">${date}</span>
+          <span class="dash__status ${statusClass}">${p.status}</span>
+        </div>`;
+      }).join('');
+      section.style.display = 'block';
+    } catch (e) { /* billing load failed silently */ }
+  }
+
+  // Load purchased reports for paid users
+  async function loadReports() {
+    try {
+      const res = await fetch('/api/dashboard/reports');
+      if (!res.ok) return;
+      const { data } = await res.json();
+      const section = document.getElementById('reports-section');
+      const list = document.getElementById('reports-list');
+      if (!data || data.length === 0) {
+        section.style.display = 'block';
+        return;
+      }
+      const emptyEl = document.getElementById('reports-empty');
+      if (emptyEl) emptyEl.remove();
+      list.innerHTML = data.map(r => {
+        const date = new Date(r.created_at).toLocaleDateString();
+        const country = r.country_code ? r.country_code.toUpperCase() : 'ALL';
+        const isAvailable = r.status === 'available';
+        const downloadBtn = isAvailable
+          ? `<a href="/api/dashboard/reports/download?token=${r.download_token}" class="dash__report-dl" target="_blank">
+               <span class="material-symbols-outlined" style="font-size:14px">download</span> PDF
+             </a>`
+          : `<span class="dash__status dash__status--inactive">${r.status}</span>`;
+        return `<div class="dash__report-row">
+          <span class="dash__report-country">${country}</span>
+          <span class="dash__report-date">${date}</span>
+          ${downloadBtn}
+        </div>`;
+      }).join('');
+      section.style.display = 'block';
+    } catch (e) { /* reports load failed silently */ }
+  }
 </script>
 
 <style>
@@ -1131,7 +1231,7 @@ const c = fb(i18n, lang);
     letter-spacing: 0.06em;
     padding: 2px 8px;
     border-radius: 4px;
-    background: rgba(37, 99, 235, 0.15);
+    background: rgba(0, 51, 153, 0.15);
     color: var(--color-secondary);
   }
 
@@ -1190,7 +1290,7 @@ const c = fb(i18n, lang);
     display: flex;
     align-items: center;
     gap: 0.3rem;
-    background: rgba(37, 99, 235, 0.15);
+    background: rgba(0, 51, 153, 0.15);
     border: 1px solid rgba(37, 99, 235, 0.3);
     color: var(--color-secondary);
     padding: 0.4rem 0.65rem;
@@ -1202,7 +1302,7 @@ const c = fb(i18n, lang);
     transition: all 0.15s;
     white-space: nowrap;
   }
-  .dash__copy-btn:hover { background: rgba(37, 99, 235, 0.25); }
+  .dash__copy-btn:hover { background: rgba(0, 51, 153, 0.25); }
   .dash__copy-btn .material-symbols-outlined { font-size: 14px; }
 
   /* Usage bar */
@@ -1254,6 +1354,58 @@ const c = fb(i18n, lang);
     border-color: rgba(37, 99, 235, 0.3);
   }
   .dash__link-card .material-symbols-outlined { font-size: 18px; color: var(--color-secondary); }
+
+  /* Billing history rows */
+  .dash__billing-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.82rem;
+  }
+  .dash__billing-row:last-child { border-bottom: none; }
+  .dash__billing-desc { color: rgba(203, 213, 225, 0.85); }
+  .dash__billing-amount { color: var(--color-white, #fff); font-weight: 600; }
+  .dash__billing-date { color: rgba(148, 163, 184, 0.6); }
+
+  /* Report rows */
+  .dash__report-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.82rem;
+  }
+  .dash__report-row:last-child { border-bottom: none; }
+  .dash__report-country {
+    font-weight: 700;
+    color: var(--color-secondary);
+    background: rgba(0, 51, 153, 0.15);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+  }
+  .dash__report-date { color: rgba(148, 163, 184, 0.6); }
+  .dash__report-dl {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(0, 51, 153, 0.15);
+    border: 1px solid rgba(37, 99, 235, 0.3);
+    color: var(--color-secondary);
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .dash__report-dl:hover { background: rgba(0, 51, 153, 0.25); }
 
   /* Action buttons */
   .dash__actions { display: flex; gap: 1rem; margin-top: 2rem; }
