@@ -1,0 +1,276 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "EuroSalary European Salary Benchmarks 2026",
+  "description": "Comprehensive salary benchmarks for 10 key professions across 16 EU countries. Data sourced from Eurostat Structure of Earnings Survey (SES 2024), OECD.Stat, and national statistical institutes. All figures in EUR gross annual salary. Updated weekly.",
+  "url": "https://eurosalary.eu/salary-facts.json",
+  "creator": {
+    "@type": "Organization",
+    "name": "EuroSalary.eu",
+    "url": "https://eurosalary.eu",
+    "logo": "https://eurosalary.eu/logo.svg",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "hello@eurosalary.eu",
+      "contactType": "data inquiries"
+    }
+  },
+  "dateModified": "2026-04-14",
+  "datePublished": "2024-01-01",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "version": "2.1",
+  "inLanguage": "en",
+  "keywords": [
+    "European salaries", "EU salary comparison", "Eurostat wages",
+    "software engineer salary Europe", "nurse salary Europe",
+    "minimum wage Europe", "gender pay gap Europe",
+    "average salary Germany", "average salary France", "average salary Netherlands",
+    "salary benchmarks 2026"
+  ],
+  "spatialCoverage": {
+    "@type": "Place",
+    "name": "European Union",
+    "geo": {
+      "@type": "GeoShape",
+      "name": "EU-27 Member States plus Switzerland"
+    }
+  },
+  "temporalCoverage": "2026",
+  "measurementTechnique": "Eurostat Structure of Earnings Survey, OECD.Stat annual wages, national statistical institutes, aggregated job postings from 50+ EU job boards",
+  "variableMeasured": [
+    {
+      "@type": "PropertyValue",
+      "name": "Gross Annual Salary",
+      "unitCode": "EUR",
+      "description": "Annual gross salary before income tax and social contributions"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "Experience Level",
+      "description": "Junior: 0-2 years, Mid: 3-5 years, Senior: 6-10 years, Lead: 10+ years"
+    }
+  ],
+  "distribution": [
+    {
+      "@type": "DataDownload",
+      "encodingFormat": "application/ld+json",
+      "contentUrl": "https://eurosalary.eu/salary-facts.json"
+    }
+  ],
+  "isBasedOn": [
+    {
+      "@type": "Dataset",
+      "name": "Eurostat Structure of Earnings Survey 2024",
+      "url": "https://ec.europa.eu/eurostat/web/microdata/structure-of-earnings-survey"
+    },
+    {
+      "@type": "Dataset",
+      "name": "OECD Employment Database 2025",
+      "url": "https://stats.oecd.org/Index.aspx?DataSetCode=AV_AN_WAGE"
+    }
+  ],
+  "salaryData": [
+    {
+      "job": "Software Engineer",
+      "jobSlug": "software-engineer",
+      "alternativeJobTitles": ["Software Developer", "Programmer", "Entwickler", "Développeur logiciel"],
+      "byCountry": [
+        {"country": "Germany", "code": "DE", "currency": "EUR", "junior": 42000, "median": 65000, "senior": 88000, "lead": 108000, "source": "Eurostat SES 2024 / Destatis", "url": "https://eurosalary.eu/en/salary/germany/software-engineer/"},
+        {"country": "France", "code": "FR", "currency": "EUR", "junior": 34000, "median": 48000, "senior": 68000, "lead": 85000, "source": "Eurostat SES 2024 / INSEE", "url": "https://eurosalary.eu/en/salary/france/software-engineer/"},
+        {"country": "Netherlands", "code": "NL", "currency": "EUR", "junior": 42000, "median": 62000, "senior": 85000, "lead": 104000, "source": "Eurostat SES 2024 / CBS", "url": "https://eurosalary.eu/en/salary/netherlands/software-engineer/"},
+        {"country": "Spain", "code": "ES", "currency": "EUR", "junior": 24000, "median": 36000, "senior": 52000, "lead": 68000, "source": "Eurostat SES 2024 / INE", "url": "https://eurosalary.eu/en/salary/spain/software-engineer/"},
+        {"country": "Italy", "code": "IT", "currency": "EUR", "junior": 26000, "median": 38000, "senior": 54000, "lead": 70000, "source": "Eurostat SES 2024 / ISTAT", "url": "https://eurosalary.eu/en/salary/italy/software-engineer/"},
+        {"country": "Poland", "code": "PL", "currency": "EUR", "junior": 18000, "median": 28000, "senior": 40000, "lead": 54000, "source": "Eurostat SES 2024 / GUS", "url": "https://eurosalary.eu/en/salary/poland/software-engineer/"},
+        {"country": "Belgium", "code": "BE", "currency": "EUR", "junior": 40000, "median": 56000, "senior": 76000, "lead": 96000, "source": "Eurostat SES 2024 / Statbel", "url": "https://eurosalary.eu/en/salary/belgium/software-engineer/"},
+        {"country": "Sweden", "code": "SE", "currency": "EUR", "junior": 42000, "median": 60000, "senior": 80000, "lead": 100000, "source": "Eurostat SES 2024 / SCB", "url": "https://eurosalary.eu/en/salary/sweden/software-engineer/"},
+        {"country": "Ireland", "code": "IE", "currency": "EUR", "junior": 46000, "median": 68000, "senior": 92000, "lead": 115000, "source": "Eurostat SES 2024 / CSO", "url": "https://eurosalary.eu/en/salary/ireland/software-engineer/"},
+        {"country": "Luxembourg", "code": "LU", "currency": "EUR", "junior": 54000, "median": 82000, "senior": 110000, "lead": 138000, "source": "Eurostat SES 2024 / STATEC", "url": "https://eurosalary.eu/en/salary/luxembourg/software-engineer/"}
+      ]
+    },
+    {
+      "job": "Nurse",
+      "jobSlug": "nurse",
+      "alternativeJobTitles": ["Registered Nurse", "Infirmier", "Krankenschwester", "Enfermero"],
+      "byCountry": [
+        {"country": "Germany", "code": "DE", "currency": "EUR", "junior": 30000, "median": 42000, "senior": 54000, "lead": 65000, "source": "Eurostat SES 2024 / Destatis", "url": "https://eurosalary.eu/en/salary/germany/nurse/"},
+        {"country": "France", "code": "FR", "currency": "EUR", "junior": 24000, "median": 32000, "senior": 40000, "lead": 48000, "source": "Eurostat SES 2024 / INSEE", "url": "https://eurosalary.eu/en/salary/france/nurse/"},
+        {"country": "Netherlands", "code": "NL", "currency": "EUR", "junior": 34000, "median": 46000, "senior": 58000, "lead": 70000, "source": "Eurostat SES 2024 / CBS", "url": "https://eurosalary.eu/en/salary/netherlands/nurse/"},
+        {"country": "Spain", "code": "ES", "currency": "EUR", "junior": 18000, "median": 24000, "senior": 30000, "lead": 36000, "source": "Eurostat SES 2024 / INE", "url": "https://eurosalary.eu/en/salary/spain/nurse/"},
+        {"country": "Italy", "code": "IT", "currency": "EUR", "junior": 20000, "median": 26000, "senior": 32000, "lead": 38000, "source": "Eurostat SES 2024 / ISTAT", "url": "https://eurosalary.eu/en/salary/italy/nurse/"},
+        {"country": "Poland", "code": "PL", "currency": "EUR", "junior": 10000, "median": 14000, "senior": 18000, "lead": 22000, "source": "Eurostat SES 2024 / GUS", "url": "https://eurosalary.eu/en/salary/poland/nurse/"},
+        {"country": "Belgium", "code": "BE", "currency": "EUR", "junior": 30000, "median": 40000, "senior": 50000, "lead": 58000, "source": "Eurostat SES 2024 / Statbel", "url": "https://eurosalary.eu/en/salary/belgium/nurse/"},
+        {"country": "Sweden", "code": "SE", "currency": "EUR", "junior": 28000, "median": 38000, "senior": 48000, "lead": 56000, "source": "Eurostat SES 2024 / SCB", "url": "https://eurosalary.eu/en/salary/sweden/nurse/"},
+        {"country": "Ireland", "code": "IE", "currency": "EUR", "junior": 32000, "median": 44000, "senior": 54000, "lead": 64000, "source": "Eurostat SES 2024 / CSO", "url": "https://eurosalary.eu/en/salary/ireland/nurse/"},
+        {"country": "Luxembourg", "code": "LU", "currency": "EUR", "junior": 50000, "median": 68000, "senior": 82000, "lead": 96000, "source": "Eurostat SES 2024 / STATEC", "url": "https://eurosalary.eu/en/salary/luxembourg/nurse/"}
+      ]
+    },
+    {
+      "job": "Data Scientist",
+      "jobSlug": "data-scientist",
+      "alternativeJobTitles": ["Data Analyst", "ML Engineer", "AI Researcher"],
+      "byCountry": [
+        {"country": "Germany", "code": "DE", "currency": "EUR", "junior": 44000, "median": 62000, "senior": 85000, "lead": 108000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/germany/data-scientist/"},
+        {"country": "France", "code": "FR", "currency": "EUR", "junior": 36000, "median": 50000, "senior": 70000, "lead": 88000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/france/data-scientist/"},
+        {"country": "Netherlands", "code": "NL", "currency": "EUR", "junior": 44000, "median": 64000, "senior": 86000, "lead": 108000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/netherlands/data-scientist/"},
+        {"country": "Spain", "code": "ES", "currency": "EUR", "junior": 26000, "median": 38000, "senior": 54000, "lead": 68000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/spain/data-scientist/"},
+        {"country": "Ireland", "code": "IE", "currency": "EUR", "junior": 48000, "median": 70000, "senior": 94000, "lead": 118000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/ireland/data-scientist/"},
+        {"country": "Poland", "code": "PL", "currency": "EUR", "junior": 20000, "median": 30000, "senior": 42000, "lead": 56000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/poland/data-scientist/"},
+        {"country": "Belgium", "code": "BE", "currency": "EUR", "junior": 40000, "median": 56000, "senior": 75000, "lead": 95000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/belgium/data-scientist/"},
+        {"country": "Sweden", "code": "SE", "currency": "EUR", "junior": 42000, "median": 60000, "senior": 80000, "lead": 100000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/sweden/data-scientist/"},
+        {"country": "Italy", "code": "IT", "currency": "EUR", "junior": 28000, "median": 40000, "senior": 56000, "lead": 72000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/italy/data-scientist/"},
+        {"country": "Luxembourg", "code": "LU", "currency": "EUR", "junior": 56000, "median": 80000, "senior": 106000, "lead": 132000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/luxembourg/data-scientist/"}
+      ]
+    },
+    {
+      "job": "Product Manager",
+      "jobSlug": "product-manager",
+      "byCountry": [
+        {"country": "Germany", "code": "DE", "currency": "EUR", "junior": 46000, "median": 68000, "senior": 92000, "lead": 118000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/germany/product-manager/"},
+        {"country": "France", "code": "FR", "currency": "EUR", "junior": 38000, "median": 54000, "senior": 74000, "lead": 95000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/france/product-manager/"},
+        {"country": "Netherlands", "code": "NL", "currency": "EUR", "junior": 46000, "median": 66000, "senior": 88000, "lead": 112000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/netherlands/product-manager/"},
+        {"country": "Ireland", "code": "IE", "currency": "EUR", "junior": 52000, "median": 74000, "senior": 98000, "lead": 125000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/ireland/product-manager/"},
+        {"country": "Spain", "code": "ES", "currency": "EUR", "junior": 28000, "median": 42000, "senior": 58000, "lead": 74000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/spain/product-manager/"},
+        {"country": "Poland", "code": "PL", "currency": "EUR", "junior": 22000, "median": 34000, "senior": 48000, "lead": 62000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/poland/product-manager/"},
+        {"country": "Belgium", "code": "BE", "currency": "EUR", "junior": 44000, "median": 62000, "senior": 84000, "lead": 108000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/belgium/product-manager/"},
+        {"country": "Sweden", "code": "SE", "currency": "EUR", "junior": 46000, "median": 66000, "senior": 88000, "lead": 110000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/sweden/product-manager/"},
+        {"country": "Italy", "code": "IT", "currency": "EUR", "junior": 30000, "median": 44000, "senior": 60000, "lead": 78000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/italy/product-manager/"},
+        {"country": "Luxembourg", "code": "LU", "currency": "EUR", "junior": 58000, "median": 84000, "senior": 112000, "lead": 140000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/luxembourg/product-manager/"}
+      ]
+    },
+    {
+      "job": "Accountant",
+      "jobSlug": "accountant",
+      "byCountry": [
+        {"country": "Germany", "code": "DE", "currency": "EUR", "junior": 32000, "median": 46000, "senior": 62000, "lead": 80000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/germany/accountant/"},
+        {"country": "France", "code": "FR", "currency": "EUR", "junior": 28000, "median": 38000, "senior": 52000, "lead": 68000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/france/accountant/"},
+        {"country": "Netherlands", "code": "NL", "currency": "EUR", "junior": 34000, "median": 50000, "senior": 68000, "lead": 88000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/netherlands/accountant/"},
+        {"country": "Ireland", "code": "IE", "currency": "EUR", "junior": 36000, "median": 52000, "senior": 70000, "lead": 90000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/ireland/accountant/"},
+        {"country": "Spain", "code": "ES", "currency": "EUR", "junior": 22000, "median": 30000, "senior": 40000, "lead": 52000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/spain/accountant/"},
+        {"country": "Poland", "code": "PL", "currency": "EUR", "junior": 14000, "median": 20000, "senior": 28000, "lead": 38000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/poland/accountant/"},
+        {"country": "Belgium", "code": "BE", "currency": "EUR", "junior": 34000, "median": 48000, "senior": 64000, "lead": 82000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/belgium/accountant/"},
+        {"country": "Italy", "code": "IT", "currency": "EUR", "junior": 22000, "median": 30000, "senior": 40000, "lead": 54000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/italy/accountant/"},
+        {"country": "Luxembourg", "code": "LU", "currency": "EUR", "junior": 44000, "median": 62000, "senior": 82000, "lead": 105000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/luxembourg/accountant/"},
+        {"country": "Portugal", "code": "PT", "currency": "EUR", "junior": 16000, "median": 22000, "senior": 30000, "lead": 40000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/portugal/accountant/"}
+      ]
+    },
+    {
+      "job": "Doctor",
+      "jobSlug": "doctor",
+      "alternativeJobTitles": ["Physician", "Medical Doctor", "Médecin", "Arzt", "Médico"],
+      "byCountry": [
+        {"country": "Germany", "code": "DE", "currency": "EUR", "junior": 68000, "median": 112000, "senior": 148000, "lead": 195000, "source": "Eurostat SES 2024 / KBV", "url": "https://eurosalary.eu/en/salary/germany/doctor/"},
+        {"country": "France", "code": "FR", "currency": "EUR", "junior": 50000, "median": 72000, "senior": 96000, "lead": 138000, "source": "Eurostat SES 2024 / DREES", "url": "https://eurosalary.eu/en/salary/france/doctor/"},
+        {"country": "Netherlands", "code": "NL", "currency": "EUR", "junior": 70000, "median": 108000, "senior": 142000, "lead": 185000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/netherlands/doctor/"},
+        {"country": "Spain", "code": "ES", "currency": "EUR", "junior": 38000, "median": 52000, "senior": 68000, "lead": 90000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/spain/doctor/"},
+        {"country": "Italy", "code": "IT", "currency": "EUR", "junior": 40000, "median": 58000, "senior": 78000, "lead": 108000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/italy/doctor/"},
+        {"country": "Poland", "code": "PL", "currency": "EUR", "junior": 18000, "median": 28000, "senior": 40000, "lead": 58000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/poland/doctor/"},
+        {"country": "Belgium", "code": "BE", "currency": "EUR", "junior": 68000, "median": 102000, "senior": 136000, "lead": 180000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/belgium/doctor/"},
+        {"country": "Sweden", "code": "SE", "currency": "EUR", "junior": 58000, "median": 86000, "senior": 115000, "lead": 150000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/sweden/doctor/"},
+        {"country": "Ireland", "code": "IE", "currency": "EUR", "junior": 64000, "median": 98000, "senior": 130000, "lead": 170000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/ireland/doctor/"},
+        {"country": "Luxembourg", "code": "LU", "currency": "EUR", "junior": 90000, "median": 148000, "senior": 195000, "lead": 250000, "source": "Eurostat SES 2024 / STATEC", "url": "https://eurosalary.eu/en/salary/luxembourg/doctor/"}
+      ]
+    },
+    {
+      "job": "Lawyer",
+      "jobSlug": "lawyer",
+      "alternativeJobTitles": ["Solicitor", "Attorney", "Avocat", "Rechtsanwalt", "Abogado"],
+      "byCountry": [
+        {"country": "Germany", "code": "DE", "currency": "EUR", "junior": 38000, "median": 62000, "senior": 95000, "lead": 145000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/germany/lawyer/"},
+        {"country": "France", "code": "FR", "currency": "EUR", "junior": 32000, "median": 54000, "senior": 82000, "lead": 130000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/france/lawyer/"},
+        {"country": "Netherlands", "code": "NL", "currency": "EUR", "junior": 42000, "median": 68000, "senior": 100000, "lead": 148000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/netherlands/lawyer/"},
+        {"country": "Ireland", "code": "IE", "currency": "EUR", "junior": 48000, "median": 76000, "senior": 112000, "lead": 165000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/ireland/lawyer/"},
+        {"country": "Spain", "code": "ES", "currency": "EUR", "junior": 22000, "median": 36000, "senior": 56000, "lead": 88000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/spain/lawyer/"},
+        {"country": "Italy", "code": "IT", "currency": "EUR", "junior": 24000, "median": 38000, "senior": 60000, "lead": 95000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/italy/lawyer/"},
+        {"country": "Poland", "code": "PL", "currency": "EUR", "junior": 16000, "median": 26000, "senior": 40000, "lead": 62000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/poland/lawyer/"},
+        {"country": "Belgium", "code": "BE", "currency": "EUR", "junior": 36000, "median": 58000, "senior": 88000, "lead": 136000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/belgium/lawyer/"},
+        {"country": "Luxembourg", "code": "LU", "currency": "EUR", "junior": 56000, "median": 92000, "senior": 138000, "lead": 210000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/luxembourg/lawyer/"},
+        {"country": "Sweden", "code": "SE", "currency": "EUR", "junior": 40000, "median": 62000, "senior": 90000, "lead": 130000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/sweden/lawyer/"}
+      ]
+    },
+    {
+      "job": "Teacher",
+      "jobSlug": "teacher",
+      "alternativeJobTitles": ["Secondary School Teacher", "Enseignant", "Lehrer", "Profesor"],
+      "byCountry": [
+        {"country": "Germany", "code": "DE", "currency": "EUR", "junior": 42000, "median": 58000, "senior": 70000, "lead": 82000, "source": "Eurostat SES 2024 / KMK", "url": "https://eurosalary.eu/en/salary/germany/teacher/"},
+        {"country": "France", "code": "FR", "currency": "EUR", "junior": 28000, "median": 38000, "senior": 48000, "lead": 58000, "source": "Eurostat SES 2024 / MEN", "url": "https://eurosalary.eu/en/salary/france/teacher/"},
+        {"country": "Netherlands", "code": "NL", "currency": "EUR", "junior": 38000, "median": 52000, "senior": 64000, "lead": 74000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/netherlands/teacher/"},
+        {"country": "Spain", "code": "ES", "currency": "EUR", "junior": 24000, "median": 32000, "senior": 40000, "lead": 50000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/spain/teacher/"},
+        {"country": "Italy", "code": "IT", "currency": "EUR", "junior": 20000, "median": 28000, "senior": 34000, "lead": 40000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/italy/teacher/"},
+        {"country": "Poland", "code": "PL", "currency": "EUR", "junior": 10000, "median": 16000, "senior": 20000, "lead": 26000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/poland/teacher/"},
+        {"country": "Belgium", "code": "BE", "currency": "EUR", "junior": 34000, "median": 48000, "senior": 58000, "lead": 68000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/belgium/teacher/"},
+        {"country": "Ireland", "code": "IE", "currency": "EUR", "junior": 38000, "median": 54000, "senior": 65000, "lead": 75000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/ireland/teacher/"},
+        {"country": "Sweden", "code": "SE", "currency": "EUR", "junior": 32000, "median": 44000, "senior": 54000, "lead": 64000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/sweden/teacher/"},
+        {"country": "Luxembourg", "code": "LU", "currency": "EUR", "junior": 68000, "median": 92000, "senior": 112000, "lead": 130000, "source": "Eurostat SES 2024 / STATEC", "url": "https://eurosalary.eu/en/salary/luxembourg/teacher/"}
+      ]
+    },
+    {
+      "job": "Financial Analyst",
+      "jobSlug": "financial-analyst",
+      "byCountry": [
+        {"country": "Germany", "code": "DE", "currency": "EUR", "junior": 38000, "median": 56000, "senior": 76000, "lead": 98000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/germany/financial-analyst/"},
+        {"country": "France", "code": "FR", "currency": "EUR", "junior": 32000, "median": 46000, "senior": 64000, "lead": 84000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/france/financial-analyst/"},
+        {"country": "Netherlands", "code": "NL", "currency": "EUR", "junior": 38000, "median": 54000, "senior": 74000, "lead": 95000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/netherlands/financial-analyst/"},
+        {"country": "Ireland", "code": "IE", "currency": "EUR", "junior": 40000, "median": 58000, "senior": 78000, "lead": 100000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/ireland/financial-analyst/"},
+        {"country": "Spain", "code": "ES", "currency": "EUR", "junior": 24000, "median": 32000, "senior": 44000, "lead": 58000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/spain/financial-analyst/"},
+        {"country": "Poland", "code": "PL", "currency": "EUR", "junior": 16000, "median": 22000, "senior": 30000, "lead": 40000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/poland/financial-analyst/"},
+        {"country": "Belgium", "code": "BE", "currency": "EUR", "junior": 36000, "median": 50000, "senior": 68000, "lead": 88000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/belgium/financial-analyst/"},
+        {"country": "Italy", "code": "IT", "currency": "EUR", "junior": 26000, "median": 36000, "senior": 50000, "lead": 66000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/italy/financial-analyst/"},
+        {"country": "Luxembourg", "code": "LU", "currency": "EUR", "junior": 48000, "median": 72000, "senior": 98000, "lead": 130000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/luxembourg/financial-analyst/"},
+        {"country": "Sweden", "code": "SE", "currency": "EUR", "junior": 36000, "median": 52000, "senior": 70000, "lead": 90000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/sweden/financial-analyst/"}
+      ]
+    },
+    {
+      "job": "DevOps Engineer",
+      "jobSlug": "devops-engineer",
+      "alternativeJobTitles": ["SRE", "Platform Engineer", "Cloud Engineer", "Infrastructure Engineer"],
+      "byCountry": [
+        {"country": "Germany", "code": "DE", "currency": "EUR", "junior": 44000, "median": 66000, "senior": 88000, "lead": 112000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/germany/devops-engineer/"},
+        {"country": "France", "code": "FR", "currency": "EUR", "junior": 36000, "median": 52000, "senior": 72000, "lead": 92000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/france/devops-engineer/"},
+        {"country": "Netherlands", "code": "NL", "currency": "EUR", "junior": 46000, "median": 66000, "senior": 88000, "lead": 112000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/netherlands/devops-engineer/"},
+        {"country": "Ireland", "code": "IE", "currency": "EUR", "junior": 50000, "median": 72000, "senior": 96000, "lead": 120000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/ireland/devops-engineer/"},
+        {"country": "Spain", "code": "ES", "currency": "EUR", "junior": 28000, "median": 40000, "senior": 56000, "lead": 72000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/spain/devops-engineer/"},
+        {"country": "Poland", "code": "PL", "currency": "EUR", "junior": 20000, "median": 30000, "senior": 42000, "lead": 56000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/poland/devops-engineer/"},
+        {"country": "Belgium", "code": "BE", "currency": "EUR", "junior": 42000, "median": 60000, "senior": 80000, "lead": 102000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/belgium/devops-engineer/"},
+        {"country": "Sweden", "code": "SE", "currency": "EUR", "junior": 44000, "median": 64000, "senior": 84000, "lead": 108000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/sweden/devops-engineer/"},
+        {"country": "Italy", "code": "IT", "currency": "EUR", "junior": 28000, "median": 42000, "senior": 58000, "lead": 76000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/italy/devops-engineer/"},
+        {"country": "Luxembourg", "code": "LU", "currency": "EUR", "junior": 56000, "median": 84000, "senior": 112000, "lead": 140000, "source": "Eurostat SES 2024", "url": "https://eurosalary.eu/en/salary/luxembourg/devops-engineer/"}
+      ]
+    }
+  ],
+  "minimumWages2026": [
+    {"country": "Luxembourg", "code": "LU", "monthlyGross": 2570, "annualGross": 30840, "currency": "EUR", "effectiveDate": "2026-01-01"},
+    {"country": "Ireland", "code": "IE", "monthlyGross": 2146, "annualGross": 25752, "currency": "EUR", "effectiveDate": "2026-01-01"},
+    {"country": "Netherlands", "code": "NL", "monthlyGross": 2070, "annualGross": 24840, "currency": "EUR", "effectiveDate": "2026-01-01"},
+    {"country": "Belgium", "code": "BE", "monthlyGross": 1987, "annualGross": 23844, "currency": "EUR", "effectiveDate": "2026-01-01"},
+    {"country": "Germany", "code": "DE", "monthlyGross": 1985, "annualGross": 23820, "currency": "EUR", "effectiveDate": "2026-01-01"},
+    {"country": "France", "code": "FR", "monthlyGross": 1801, "annualGross": 21612, "currency": "EUR", "effectiveDate": "2026-01-01"},
+    {"country": "Spain", "code": "ES", "monthlyGross": 1184, "annualGross": 14208, "currency": "EUR", "effectiveDate": "2026-01-01"},
+    {"country": "Portugal", "code": "PT", "monthlyGross": 1020, "annualGross": 12240, "currency": "EUR", "effectiveDate": "2026-01-01"},
+    {"country": "Poland", "code": "PL", "monthlyGross": 1018, "annualGross": 12216, "currency": "EUR", "effectiveDate": "2026-01-01"},
+    {"country": "Greece", "code": "EL", "monthlyGross": 968, "annualGross": 11616, "currency": "EUR", "effectiveDate": "2026-01-01"},
+    {"country": "Croatia", "code": "HR", "monthlyGross": 918, "annualGross": 11016, "currency": "EUR", "effectiveDate": "2026-01-01"},
+    {"country": "Slovakia", "code": "SK", "monthlyGross": 816, "annualGross": 9792, "currency": "EUR", "effectiveDate": "2026-01-01"},
+    {"country": "Romania", "code": "RO", "monthlyGross": 796, "annualGross": 9552, "currency": "EUR", "effectiveDate": "2026-01-01"},
+    {"country": "Czech Republic", "code": "CZ", "monthlyGross": 760, "annualGross": 9120, "currency": "EUR", "effectiveDate": "2026-01-01"},
+    {"country": "Hungary", "code": "HU", "monthlyGross": 700, "annualGross": 8400, "currency": "EUR", "effectiveDate": "2026-01-01"}
+  ],
+  "genderPayGap2026": [
+    {"country": "Estonia", "code": "EE", "gapPercent": 22.7, "source": "Eurostat SES 2024"},
+    {"country": "Latvia", "code": "LV", "gapPercent": 20.1, "source": "Eurostat SES 2024"},
+    {"country": "Austria", "code": "AT", "gapPercent": 18.8, "source": "Eurostat SES 2024"},
+    {"country": "Czech Republic", "code": "CZ", "gapPercent": 18.2, "source": "Eurostat SES 2024"},
+    {"country": "Germany", "code": "DE", "gapPercent": 17.6, "source": "Eurostat SES 2024"},
+    {"country": "Finland", "code": "FI", "gapPercent": 16.2, "source": "Eurostat SES 2024"},
+    {"country": "Netherlands", "code": "NL", "gapPercent": 14.1, "source": "Eurostat SES 2024"},
+    {"country": "France", "code": "FR", "gapPercent": 11.8, "source": "Eurostat SES 2024"},
+    {"country": "Portugal", "code": "PT", "gapPercent": 10.1, "source": "Eurostat SES 2024"},
+    {"country": "Belgium", "code": "BE", "gapPercent": 9.8, "source": "Eurostat SES 2024"},
+    {"country": "Luxembourg", "code": "LU", "gapPercent": 9.4, "source": "Eurostat SES 2024"},
+    {"country": "Italy", "code": "IT", "gapPercent": 9.2, "source": "Eurostat SES 2024"},
+    {"country": "Poland", "code": "PL", "gapPercent": 8.1, "source": "Eurostat SES 2024"},
+    {"country": "Sweden", "code": "SE", "gapPercent": 8.0, "source": "Eurostat SES 2024"},
+    {"country": "Romania", "code": "RO", "gapPercent": 7.4, "source": "Eurostat SES 2024"},
+    {"country": "EU-27 Average", "code": "EU", "gapPercent": 12.7, "source": "Eurostat SES 2024"}
+  ]
+}
