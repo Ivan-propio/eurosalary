@@ -1,0 +1,432 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { languages } from '../../../i18n/ui';
+import { fb } from '../../../i18n/utils';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+
+// --------------- Meta ---------------
+const pageTitle: Record<string, string> = {
+  en: 'Salary Negotiation in Europe: Country-by-Country Guide 2026',
+  fr: 'Négociation salariale en Europe : guide par pays 2026',
+  de: 'Gehaltsverhandlung in Europa: Länderspezifischer Leitfaden 2026',
+  es: 'Negociación salarial en Europa: guía por país 2026',
+  it: 'Negoziazione salariale in Europa: guida per paese 2026',
+  pt: 'Negociação salarial na Europa: guia por país 2026',
+  nl: 'Salarisonderhandeling in Europa: gids per land 2026',
+  pl: 'Negocjacje wynagrodzeń w Europie: przewodnik po krajach 2026',
+  ro: 'Negocierea salariului în Europa: ghid pe țări 2026',
+  cs: 'Vyjednávání o platu v Evropě: průvodce podle zemí 2026',
+  sv: 'Löneförhandling i Europa: guide per land 2026',
+  da: 'Lønforhandling i Europa: guide per land 2026',
+  fi: 'PalkkaNeuvottelu Euroopassa: maakohtainen opas 2026',
+  el: 'Διαπραγμάτευση μισθού στην Ευρώπη: οδηγός ανά χώρα 2026',
+  hu: 'Bértárgyalás Európában: országonkénti útmutató 2026',
+  sk: 'Vyjednávanie o plate v Európe: sprievodca podľa krajín 2026',
+  bg: 'Договаряне на заплата в Европа: ръководство по страни 2026',
+  hr: 'Pregovaranje o plaći u Europi: vodič po zemljama 2026',
+  sl: 'Pogajanje o plači v Evropi: vodnik po državah 2026',
+  lt: 'Atlyginimo derybos Europoje: vadovas pagal šalis 2026',
+  lv: 'Algu sarunas Eiropā: ceļvedis pa valstīm 2026',
+  et: 'Palgaläbirääkimised Euroopas: riigiti juhend 2026',
+  mt: 'Negozjati tas-salarju fl-Ewropa: gwida skont il-pajjiż 2026',
+  ga: 'Caibidlíocht pá san Eoraip: treoir tír ar thír 2026',
+};
+
+const pageDescription: Record<string, string> = {
+  en: 'How to negotiate salary in Europe — cultural norms by country (DE, FR, NL, ES, UK, and more), proven scripts, timing tips, and what to ask for beyond base pay.',
+  fr: 'Comment négocier son salaire en Europe — normes culturelles par pays, scripts éprouvés, conseils sur le timing et ce qu\'il faut demander au-delà du salaire de base.',
+  de: 'Wie man in Europa Gehalt verhandelt — kulturelle Normen nach Land, bewährte Gesprächsleitfäden, Timing-Tipps und was man über das Grundgehalt hinaus fordern kann.',
+  es: 'Cómo negociar el salario en Europa — normas culturales por país, guiones probados, consejos de timing y qué pedir más allá del salario base.',
+  it: 'Come negoziare lo stipendio in Europa — norme culturali per paese, script collaudati, consigli sul timing e cosa chiedere oltre alla paga base.',
+  pt: 'Como negociar salário na Europa — normas culturais por país, scripts comprovados, dicas de timing e o que pedir além do salário base.',
+  nl: 'Hoe onderhandel je over salaris in Europa — culturele normen per land, bewezen scripts, timing tips en wat je kunt vragen naast het basissalaris.',
+  pl: 'Jak negocjować wynagrodzenie w Europie — normy kulturowe według kraju, sprawdzone skrypty, wskazówki dotyczące czasu i o co pytać poza podstawowym wynagrodzeniem.',
+  ro: 'Cum să negociezi salariul în Europa — norme culturale pe țări, scripturi dovedite, sfaturi de timing și ce să ceri dincolo de salariul de bază.',
+  cs: 'Jak vyjednávat plat v Evropě — kulturní normy podle zemí, osvědčené scénáře, tipy na načasování a o co žádat nad rámec základního platu.',
+  sv: 'Hur du förhandlar lön i Europa — kulturella normer per land, beprövade manus, timing-tips och vad du ska fråga efter utöver grundlön.',
+  da: 'Sådan forhandler du løn i Europa — kulturelle normer per land, afprøvede manuskripter, timing-tips og hvad du skal bede om ud over grundlønnen.',
+  fi: 'Kuinka neuvotella palkasta Euroopassa — kulttuuriset normit maittain, testattuja skriptejä, ajoitusvinkkejä ja mitä pyytää peruskiinnityksen lisäksi.',
+  el: 'Πώς να διαπραγματευτείτε μισθό στην Ευρώπη — πολιτισμικές νόρμες ανά χώρα, σενάρια, συμβουλές χρονισμού.',
+  hu: 'Hogyan tárgyaljon fizetésről Európában — kulturális normák országonként, bevált szkriptek, időzítési tippek.',
+  sk: 'Ako vyjednávať plat v Európe — kultúrne normy podľa krajín, overené scenáre, tipy na načasovanie.',
+  bg: 'Как да договаряте заплата в Европа — културни норми по страни, доказани скриптове, съвети за времето.',
+  hr: 'Kako pregovarati o plaći u Europi — kulturne norme po zemljama, provjereni skripti, savjeti o vremenu.',
+  sl: 'Kako se pogajati o plači v Evropi — kulturne norme po državah, preizkušeni skripti, nasveti o času.',
+  lt: 'Kaip derėtis dėl atlyginimo Europoje — kultūrinės normos pagal šalis, patikrinti scenarijai, patarimai dėl laiko.',
+  lv: 'Kā sarunu vest par algu Eiropā — kultūras normas pa valstīm, pārbaudīti skripti, laika padomi.',
+  et: 'Kuidas pidada palgaläbirääkimisi Euroopas — kultuurilised normid riigiti, testitud skriptid, ajastuse nõuanded.',
+  mt: 'Kif tinnegozja salarju fl-Ewropa — normi kulturali skont il-pajjiż, skripts ippruvati, pariri dwar il-ħin.',
+  ga: 'Conas pá a chaibidliú san Eoraip — gnásanna cultúrtha tír ar thír, scripteanna cruthaithe, leideanna ama.',
+};
+
+// --------------- TLDR ---------------
+const tldrItems: Record<string, string[]> = {
+  en: [
+    'Research your market rate before negotiating — use EuroSalary salary data for your country and role',
+    'Cultural norms vary hugely: Germany values data, France values formality, Netherlands is direct, Spain is relationship-first',
+    'The best time to negotiate is after receiving a job offer, or during annual reviews',
+    'Never anchor to your current salary — anchor to market data instead',
+    'Always negotiate the full package: pension, remote days, training budget, not just base salary',
+  ],
+  fr: [
+    'Recherchez votre taux du marché avant de négocier — utilisez les données EuroSalary',
+    'Les normes culturelles varient : l\'Allemagne valorise les données, la France la formalité, les Pays-Bas la franchise',
+    'Le meilleur moment pour négocier est après avoir reçu une offre d\'emploi, ou lors des évaluations annuelles',
+    'Ne vous ancrez jamais à votre salaire actuel — ancrez-vous aux données du marché',
+    'Négociez toujours le package complet : retraite, télétravail, formation, pas seulement le salaire de base',
+  ],
+  de: [
+    'Recherchieren Sie Ihren Marktwert, bevor Sie verhandeln — nutzen Sie EuroSalary-Gehaltsdaten',
+    'Kulturelle Normen variieren stark: Deutschland schätzt Daten, Frankreich Formalität, Niederlande Direktheit',
+    'Der beste Zeitpunkt für Verhandlungen ist nach einem Jobangebot oder bei Jahresgesprächen',
+    'Verankern Sie sich nie am aktuellen Gehalt — verankern Sie sich an Marktdaten',
+    'Verhandeln Sie immer das Gesamtpaket: Rente, Homeoffice, Weiterbildung',
+  ],
+  es: [
+    'Investiga tu valor de mercado antes de negociar — usa los datos de EuroSalary',
+    'Las normas culturales varían: Alemania valora datos, Francia la formalidad, Países Bajos la franqueza',
+    'El mejor momento para negociar es tras recibir una oferta de trabajo o en las revisiones anuales',
+    'Nunca te ancles a tu salario actual — ancla a los datos del mercado',
+    'Siempre negocia el paquete completo: pensión, teletrabajo, formación, no solo el salario base',
+  ],
+  it: ['Ricerca il tuo valore di mercato prima di negoziare', 'Le norme culturali variano molto da paese a paese', 'Il momento migliore per negoziare è dopo un\'offerta di lavoro o nelle revisioni annuali', 'Non ancorarti mai al tuo stipendio attuale — usa i dati di mercato', 'Negozia sempre il pacchetto completo'],
+  pt: ['Pesquise o seu valor de mercado antes de negociar', 'As normas culturais variam muito: Alemanha valoriza dados, França formalidade, Países Baixos direto', 'O melhor momento para negociar é após receber uma proposta ou nas avaliações anuais', 'Nunca se ancore ao salário atual — use dados de mercado', 'Negocie sempre o pacote completo'],
+  nl: ['Onderzoek je marktwaarde voordat je onderhandelt', 'Culturele normen variëren sterk per land', 'Het beste moment om te onderhandelen is na een aanbod of bij jaarlijkse beoordelingen', 'Verankeer nooit aan je huidige salaris — gebruik marktgegevens', 'Onderhandel altijd over het totale pakket'],
+  pl: ['Sprawdź swój rynek przed negocjacjami', 'Normy kulturowe różnią się znacznie w zależności od kraju', 'Najlepszy czas na negocjacje to po otrzymaniu oferty pracy lub podczas rocznych przeglądów', 'Nigdy nie zakotwiczaj do obecnego wynagrodzenia — użyj danych rynkowych', 'Zawsze negocjuj cały pakiet'],
+  ro: ['Cercetează-ți valoarea de piață înainte de negociere', 'Normele culturale variază enorm de la o țară la alta', 'Cel mai bun moment de negociere este după primirea ofertei sau în revizuirile anuale', 'Nu te ancora niciodată la salariul actual — folosește date de piață', 'Negociază întotdeauna pachetul complet'],
+  cs: ['Zjistěte si tržní cenu před vyjednáváním', 'Kulturní normy se velmi liší podle zemí', 'Nejlepší čas na vyjednávání je po přijetí nabídky nebo při ročních hodnoceních', 'Nikdy se neopírejte o současný plat — opírejte se o tržní data', 'Vždy vyjednávejte celý balíček'],
+  sv: ['Undersök ditt marknadsvärde innan du förhandlar', 'Kulturella normer varierar kraftigt per land', 'Bästa tid att förhandla är efter en jobboffert eller vid årliga utvärderingar', 'Förankra aldrig vid din nuvarande lön — använd marknadsdata', 'Förhandla alltid om hela paketet'],
+  da: ['Undersøg din markedsværdi inden forhandling', 'Kulturelle normer varierer meget fra land til land', 'Det bedste tidspunkt er efter et jobtilbud eller ved årlige vurderinger', 'Forankre aldrig ved din nuværende løn — brug markedsdata', 'Forhandl altid om hele pakken'],
+  fi: ['Tutki markkinaarvosi ennen neuvottelua', 'Kulttuuriset normit vaihtelevat suuresti maittain', 'Paras aika neuvotella on työtarjouksen jälkeen tai vuosiarvioinnissa', 'Älä koskaan ankkuroi nykyiseen palkkaan — käytä markkinatietoja', 'Neuvottele aina koko paketista'],
+  el: ['Ερευνήστε την αγοραία αξία σας πριν τη διαπραγμάτευση', 'Οι πολιτισμικές νόρμες διαφέρουν πολύ ανά χώρα', 'Ο καλύτερος χρόνος είναι μετά από μια προσφορά εργασίας', 'Μην αγκυρώνετε ποτέ στο τρέχον μισθό σας', 'Πάντα διαπραγματευτείτε το πλήρες πακέτο'],
+  hu: ['Kutassa fel piaci értékét tárgyalás előtt', 'A kulturális normák országonként nagyon eltérnek', 'Legjobb tárgyalási idő: ajánlat után vagy éves felülvizsgálatkor', 'Soha ne horgonyozza a jelenlegi fizetéshez — használjon piaci adatokat', 'Mindig tárgyalja a teljes csomagot'],
+  sk: ['Zistite svoju trhovú hodnotu pred vyjednávaním', 'Kultúrne normy sa veľmi líšia podľa krajín', 'Najlepší čas na vyjednávanie je po ponuke práce alebo pri ročných hodnoteniach', 'Nikdy sa neopierajte o súčasný plat — použite trhové dáta', 'Vždy vyjednávajte celý balíček'],
+  bg: ['Проучете пазарната си стойност преди преговорите', 'Културните норми варират значително по страни', 'Най-добрият момент за преговори е след получаване на оферта', 'Никога не се закотвяйте към текущата заплата', 'Винаги договаряйте целия пакет'],
+  hr: ['Istražite svoju tržišnu vrijednost prije pregovaranja', 'Kulturne norme uvelike variraju po zemljama', 'Najbolje vrijeme za pregovaranje je nakon ponude ili pri godišnjim pregledima', 'Nikada se ne sidrite na trenutnoj plaći', 'Uvijek pregovarajte o cijelom paketu'],
+  sl: ['Raziščite svojo tržno vrednost pred pogajanjem', 'Kulturne norme se zelo razlikujejo po državah', 'Najboljši čas za pogajanje je po ponudbi ali pri letnih pregledih', 'Nikoli se ne sidrujte na trenutni plači', 'Vedno se pogajajte o celotnem paketu'],
+  lt: ['Ištirkite savo rinkos vertę prieš derybas', 'Kultūrinės normos labai skiriasi pagal šalis', 'Geriausias laikas derėtis yra po pasiūlymo arba metinių apžvalgų', 'Niekada nesirinkite dabartinio atlyginimo', 'Visada derėkitės dėl viso paketo'],
+  lv: ['Izpētiet savu tirgus vērtību pirms sarunu vešanas', 'Kultūras normas ievērojami atšķiras pa valstīm', 'Labākais laiks sarunām ir pēc piedāvājuma saņemšanas', 'Nekad nesienas pie pašreizējās algas', 'Vienmēr sarunājiet visu pakotni'],
+  et: ['Uurige oma turuväärtust enne läbirääkimisi', 'Kultuurilised normid erinevad riigiti märkimisväärselt', 'Parim aeg läbirääkimisteks on pärast pakkumise saamist', 'Ärge kunagi ankurdage praeguse palgaga', 'Alati läbirääkige kogu paketi üle'],
+  mt: ['Ibħes il-valur tas-suq tiegħek qabel in-negozjati', 'In-normi kulturali jvarjaw ħafna skont il-pajjiż', 'L-aħjar ħin biex tinnegozja huwa wara offerta ta\' xogħol', 'Qatt m\'għandek torbotok mas-salarju attwali tiegħek', 'Innegozja dejjem il-pakkett kollu'],
+  ga: ['Taighde a dhéanamh ar do luach margaidh roimh chaibidlíocht', 'Athraíonn gnásanna cultúrtha go mór ó thír go tír', 'Is é an t-am is fearr ná tar éis tairiscint nó le linn athbhreithnithe bliantúla', 'Ná hincirigh go deo ar do phá reatha', 'Caibidligh an pacáiste iomlán i gcónaí'],
+};
+
+// --------------- FAQ ---------------
+const faqItems: Record<string, Array<{question: string; answer: string}>> = {
+  en: [
+    { question: 'How do I negotiate salary in Germany?', answer: 'In Germany, salary negotiations are data-driven and formal. Research market rates thoroughly using sources like EuroSalary, Gehalt.de, and Bundesagentur für Arbeit data. Present your case with specific numbers and justifications. Avoid emotional appeals — Germans respect preparation and facts. The best time to negotiate is after receiving a written offer. Expect to negotiate once; multiple counter-offers are less common than in the UK or US.' },
+    { question: 'Is it normal to negotiate salary in France?', answer: 'Yes, but with nuance. French workplace culture is hierarchical, so how you negotiate matters. Frame requests in terms of the value you bring to the organisation rather than personal need. Large companies (grandes entreprises) have more rigid salary scales; startups and SMEs offer more flexibility. Avoid negotiating too aggressively — subtlety and diplomacy are valued. Many French employers expect a token negotiation but have a firm upper limit.' },
+    { question: 'How do Dutch employers approach salary negotiation?', answer: 'The Netherlands has a direct negotiation culture — you are generally expected to negotiate. Dutch employers will often give a salary range rather than a fixed figure, explicitly inviting negotiation. Be straightforward, present market data, and make a clear counter-offer. Benefits like extra holiday days (above the 20-day legal minimum), NS business card for commuting, and pension contributions are also negotiable and valuable.' },
+    { question: 'Is salary negotiation common in Spain?', answer: 'Spain has a relationship-oriented work culture, and salary negotiations often happen after you\'ve established some rapport. In smaller companies and startups, negotiation is standard. In larger corporations, salary scales are often set by collective agreements (convenios colectivos), leaving less room. The concept of "complementos salariales" (salary supplements like productivity bonuses and transport allowances) is important to understand — these often exceed the base salary in practice.' },
+    { question: 'When is the best time to negotiate a salary increase?', answer: 'The optimal time is during or just after your annual performance review, when your contributions are fresh in your manager\'s mind. Another strong moment is when you take on additional responsibilities. In job offer negotiations, always negotiate before accepting — companies expect it and rarely rescind offers due to counter-proposals. Avoid raising salary right after a company has announced layoffs, restructuring, or poor financial results.' },
+    { question: 'What should I ask for beyond base salary?', answer: 'Beyond base salary, consider negotiating: additional pension contributions, extra holiday days (even 2-3 extra days has significant value), home office days per week, annual training or conference budget, health insurance upgrades, a signing bonus to offset any loss from leaving your current employer, and performance review dates (earlier first review means earlier pay increase opportunity). In some countries, company cars, meal vouchers, and transport subsidies are standard parts of the package.' },
+    { question: 'How do I use salary data to negotiate?', answer: 'Present market data as third-party evidence, not personal demands. Say: "Based on EuroSalary data and industry reports, the market rate for this role in [city] is €X–€Y. My experience and qualifications position me in the upper range. I\'d like to discuss aligning my compensation accordingly." This frames the conversation as a market correction, not a personal ask. Use data from EuroSalary\'s salary check tool to benchmark your specific role, experience level, and location.' },
+  ],
+  fr: [
+    { question: 'Comment négocier son salaire en Allemagne ?', answer: 'En Allemagne, les négociations salariales sont axées sur les données et formelles. Recherchez les taux du marché et présentez des chiffres concrets. Évitez les arguments émotionnels — les Allemands respectent la préparation et les faits. Le meilleur moment est après avoir reçu une offre écrite.' },
+    { question: 'Est-il normal de négocier son salaire en France ?', answer: 'Oui, mais avec nuance. La culture française est hiérarchique, donc la manière de négocier compte. Cadrez les demandes en termes de valeur apportée à l\'organisation. Les grandes entreprises ont des grilles salariales rigides ; les startups offrent plus de flexibilité.' },
+    { question: 'Comment les employeurs néerlandais abordent-ils la négociation salariale ?', answer: 'Les Pays-Bas ont une culture de négociation directe — vous êtes généralement censé négocier. Les employeurs donnent souvent une fourchette salariale plutôt qu\'un chiffre fixe.' },
+    { question: 'La négociation salariale est-elle courante en Espagne ?', answer: 'L\'Espagne a une culture de travail axée sur les relations. Dans les petites entreprises et les startups, la négociation est standard. Dans les grandes corporations, les grilles sont souvent fixées par des conventions collectives.' },
+    { question: 'Quand est-il préférable de négocier une augmentation ?', answer: 'Le moment optimal est pendant ou juste après votre évaluation annuelle de performance. Évitez de soulever le sujet des salaires juste après des licenciements ou de mauvais résultats financiers.' },
+    { question: 'Que demander au-delà du salaire de base ?', answer: 'Au-delà du salaire de base, envisagez de négocier : cotisations retraite supplémentaires, jours de congé supplémentaires, jours de télétravail, budget formation, assurance santé améliorée, prime de signature.' },
+    { question: 'Comment utiliser les données salariales pour négocier ?', answer: 'Présentez les données du marché comme preuve tierce, pas comme des demandes personnelles. Utilisez les données d\'EuroSalary comme référence.' },
+  ],
+  de: [
+    { question: 'Wie verhandelt man in Deutschland über Gehalt?', answer: 'In Deutschland sind Gehaltsverhandlungen datengetrieben und formal. Recherchieren Sie Marktgehälter gründlich und präsentieren Sie Ihren Fall mit konkreten Zahlen. Deutsche schätzen Vorbereitung und Fakten.' },
+    { question: 'Ist Gehaltsverhandlung in Frankreich normal?', answer: 'Ja, aber mit Fingerspitzengefühl. Die französische Arbeitskultur ist hierarchisch. Formulieren Sie Anfragen in Bezug auf den Mehrwert, den Sie der Organisation bringen.' },
+    { question: 'Wie gehen niederländische Arbeitgeber mit Gehaltsverhandlungen um?', answer: 'Die Niederlande haben eine direkte Verhandlungskultur — es wird erwartet, dass Sie verhandeln. Arbeitgeber geben oft eine Gehaltsspanne statt einer festen Zahl an.' },
+    { question: 'Ist Gehaltsverhandlung in Spanien üblich?', answer: 'Spanien hat eine beziehungsorientierte Arbeitskultur. In kleineren Unternehmen und Startups ist Verhandlung Standard. In großen Konzernen werden Gehälter oft durch Tarifverträge festgelegt.' },
+    { question: 'Wann ist der beste Zeitpunkt für eine Gehaltserhöhung?', answer: 'Der optimale Zeitpunkt ist während oder kurz nach Ihrer jährlichen Leistungsbeurteilung. Vermeiden Sie das Thema Gehalt kurz nach Entlassungen oder schlechten Finanzergebnissen.' },
+    { question: 'Was sollte ich über das Grundgehalt hinaus fordern?', answer: 'Verhandeln Sie über: zusätzliche Rentenleistungen, Urlaubstage, Homeoffice-Tage, Weiterbildungsbudget, Krankenversicherung, Antrittsprämie.' },
+    { question: 'Wie nutze ich Gehaltsdaten für Verhandlungen?', answer: 'Präsentieren Sie Marktdaten als Drittanbieter-Beweise. Nutzen Sie EuroSalary-Daten als Benchmark für Ihre spezifische Rolle.' },
+  ],
+  es: [
+    { question: '¿Cómo negocio el salario en Alemania?', answer: 'En Alemania, las negociaciones salariales se basan en datos y son formales. Investiga los salarios del mercado exhaustivamente y presenta tu caso con cifras concretas.' },
+    { question: '¿Es normal negociar el salario en Francia?', answer: 'Sí, pero con matices. La cultura laboral francesa es jerárquica. Formula las solicitudes en términos del valor que aportas a la organización.' },
+    { question: '¿Cómo abordan los empleadores neerlandeses la negociación salarial?', answer: 'Los Países Bajos tienen una cultura de negociación directa — generalmente se espera que negocies. Los empleadores suelen dar un rango salarial, invitando explícitamente a la negociación.' },
+    { question: '¿Es común negociar el salario en España?', answer: 'España tiene una cultura laboral orientada a las relaciones. En empresas más pequeñas, la negociación es estándar. En grandes corporaciones, los salarios suelen estar fijados por convenios colectivos.' },
+    { question: '¿Cuándo es el mejor momento para negociar un aumento?', answer: 'El momento óptimo es durante o justo después de tu evaluación anual de desempeño. Evita plantear el tema del salario después de despidos o malos resultados financieros.' },
+    { question: '¿Qué debo pedir más allá del salario base?', answer: 'Más allá del salario base, considera negociar: contribuciones adicionales a pensión, días de vacaciones extra, días de trabajo remoto, presupuesto de formación, mejoras de seguro médico.' },
+    { question: '¿Cómo usar los datos salariales para negociar?', answer: 'Presenta los datos del mercado como evidencia de terceros. Usa los datos de EuroSalary como referencia para tu rol específico.' },
+  ],
+  it: [{ question: 'Come negozio lo stipendio in Germania?', answer: 'In Germania le trattative sono formali e basate sui dati. Presenta il tuo caso con cifre concrete.' }, { question: 'È normale negoziare lo stipendio in Francia?', answer: 'Sì, ma con delicatezza. La cultura francese è gerarchica: inquadra le richieste in termini di valore portato.' }, { question: 'Come si approccia la negoziazione in Olanda?', answer: 'I Paesi Bassi hanno una cultura di negoziazione diretta — ci si aspetta che tu negozi.' }, { question: 'La negoziazione è comune in Spagna?', answer: 'La Spagna ha una cultura lavorativa orientata alle relazioni. Nelle grandi aziende i salari sono spesso fissati da contratti collettivi.' }, { question: 'Quando è meglio chiedere un aumento?', answer: 'Il momento ottimale è durante o subito dopo la valutazione annuale delle performance.' }, { question: 'Cosa chiedere oltre alla paga base?', answer: 'Considera: contributi pensione aggiuntivi, giorni ferie extra, smart working, budget formazione.' }, { question: 'Come usare i dati salariali per negoziare?', answer: 'Presenta i dati di mercato come prova di terze parti, non come richieste personali.' }],
+  pt: [{ question: 'Como negocio salário na Alemanha?', answer: 'Na Alemanha, as negociações são formais e baseadas em dados. Apresente o seu caso com números concretos.' }, { question: 'É normal negociar salário em França?', answer: 'Sim, mas com nuance. A cultura francesa é hierárquica; enquadre pedidos em termos de valor que traz.' }, { question: 'Como abordam os empregadores neerlandeses a negociação?', answer: 'Os Países Baixos têm uma cultura de negociação direta — espera-se que negocie.' }, { question: 'É comum negociar salário em Espanha?', answer: 'Espanha tem uma cultura de trabalho orientada para as relações. Nas grandes empresas os salários são frequentemente fixados por convenções coletivas.' }, { question: 'Quando é o melhor momento para negociar?', answer: 'O momento ideal é durante ou imediatamente após a avaliação anual de desempenho.' }, { question: 'O que pedir além do salário base?', answer: 'Considere: contribuições adicionais para pensão, dias de férias extra, dias de teletrabalho, orçamento de formação.' }, { question: 'Como usar dados salariais para negociar?', answer: 'Apresente dados de mercado como evidência de terceiros. Use os dados do EuroSalary como referência.' }],
+  nl: [{ question: 'Hoe onderhandel ik over salaris in Duitsland?', answer: 'In Duitsland zijn salarisonderhandelingen datagestuurd en formeel. Presenteer je zaak met concrete cijfers.' }, { question: 'Is salarisnegociatie normaal in Frankrijk?', answer: 'Ja, maar met nuance. De Franse werkcultuur is hiërarchisch; formuleer verzoeken in termen van toegevoegde waarde.' }, { question: 'Hoe benaderen Nederlandse werkgevers salarisonderhandeling?', answer: 'Nederland heeft een directe onderhandelingscultuur — je wordt verwacht te onderhandelen.' }, { question: 'Is salarisnegociatie gebruikelijk in Spanje?', answer: 'Spanje heeft een relatiegerichte werkcultuur. Bij grote bedrijven zijn salarissen vaak vastgelegd in cao\'s.' }, { question: 'Wanneer is het beste moment om te onderhandelen?', answer: 'Het optimale moment is tijdens of kort na je jaarlijkse beoordeling.' }, { question: 'Wat te vragen naast het basissalaris?', answer: 'Overweeg: extra pensioenbijdragen, extra vakantiedagen, thuiswerkdagen, trainingsbudget.' }, { question: 'Hoe gebruik ik salarisdata bij onderhandelen?', answer: 'Presenteer marktdata als onafhankelijk bewijs. Gebruik EuroSalary-data als benchmark.' }],
+  pl: [{ question: 'Jak negocjować wynagrodzenie w Niemczech?', answer: 'W Niemczech negocjacje są formalne i oparte na danych. Przedstaw swój przypadek z konkretnymi liczbami.' }, { question: 'Czy negocjowanie wynagrodzenia jest normalne we Francji?', answer: 'Tak, ale z niuansami. Kultura pracy we Francji jest hierarchiczna; formułuj prośby w kategoriach wartości.' }, { question: 'Jak holenderscy pracodawcy podchodzą do negocjacji?', answer: 'Holandia ma bezpośrednią kulturę negocjacji — oczekuje się, że będziesz negocjować.' }, { question: 'Czy negocjacje są powszechne w Hiszpanii?', answer: 'Hiszpania ma zorientowaną na relacje kulturę pracy. W dużych firmach wynagrodzenia są często ustalane w zbiorowych umowach.' }, { question: 'Kiedy najlepiej negocjować podwyżkę?', answer: 'Optymalny czas to podczas lub zaraz po rocznej ocenie wyników.' }, { question: 'O co pytać poza wynagrodzeniem podstawowym?', answer: 'Rozważ: dodatkowe składki emerytalne, dodatkowe dni urlopu, dni pracy zdalnej, budżet szkoleniowy.' }, { question: 'Jak używać danych o wynagrodzeniach do negocjacji?', answer: 'Przedstaw dane rynkowe jako dowód stron trzecich. Użyj danych EuroSalary jako wzorca.' }],
+  ro: [{ question: 'Cum negociez salariul în Germania?', answer: 'În Germania negocierile sunt formale și bazate pe date. Prezintă-ți cazul cu cifre concrete.' }, { question: 'Este normal să negociezi salariul în Franța?', answer: 'Da, dar cu nuanță. Cultura muncii din Franța este ierarhică; formulează solicitările în termeni de valoare adusă.' }, { question: 'Cum abordează angajatorii olandezi negocierea salariului?', answer: 'Olanda are o cultură directă de negociere — se așteaptă să negociezi.' }, { question: 'Negocierea salariului este obișnuită în Spania?', answer: 'Spania are o cultură de muncă orientată spre relații. La marile companii salariile sunt adesea fixate prin convenții colective.' }, { question: 'Când este cel mai bun moment să negociezi?', answer: 'Momentul optim este în timpul sau imediat după evaluarea anuală de performanță.' }, { question: 'Ce să ceri dincolo de salariul de bază?', answer: 'Ia în considerare: contribuții suplimentare la pensie, zile extra de concediu, zile de telemuncă, buget de formare.' }, { question: 'Cum să folosești datele salariale pentru negociere?', answer: 'Prezintă datele de piață ca dovezi terțe. Folosește datele EuroSalary ca reper.' }],
+  cs: [{ question: 'Jak vyjednávám plat v Německu?', answer: 'V Německu jsou jednání formální a datově orientovaná. Předložte svůj případ s konkrétními čísly.' }, { question: 'Je normální vyjednávat plat ve Francii?', answer: 'Ano, ale s nuancemi. Francouzská pracovní kultura je hierarchická; formulujte požadavky v termínech přidané hodnoty.' }, { question: 'Jak přistupují holandští zaměstnavatelé k vyjednávání?', answer: 'Nizozemsko má přímou kulturu vyjednávání — očekává se, že budete vyjednávat.' }, { question: 'Je vyjednávání běžné ve Španělsku?', answer: 'Španělsko má pracovní kulturu orientovanou na vztahy. Ve velkých firmách jsou platy často stanoveny kolektivními smlouvami.' }, { question: 'Kdy je nejlepší čas vyjednávat zvýšení?', answer: 'Optimální čas je při nebo krátce po ročním hodnocení výkonu.' }, { question: 'O co žádat nad základní plat?', answer: 'Zvažte: další příspěvky do důchodu, extra dny dovolené, dny práce z domova, tréninkový rozpočet.' }, { question: 'Jak používat platová data k vyjednávání?', answer: 'Prezentujte tržní data jako důkaz třetí strany. Použijte data EuroSalary jako benchmark.' }],
+  sv: [{ question: 'Hur förhandlar jag lön i Tyskland?', answer: 'I Tyskland är löneförhandlingar datadrivna och formella. Presentera ditt ärende med konkreta siffror.' }, { question: 'Är löneförhandling normalt i Frankrike?', answer: 'Ja, men med nyans. Fransk arbetskultur är hierarkisk; formulera förfrågningar i termer av värde.' }, { question: 'Hur hanterar nederländska arbetsgivare löneförhandling?', answer: 'Nederländerna har en direkt förhandlingskultur — man förväntas förhandla.' }, { question: 'Är löneförhandling vanligt i Spanien?', answer: 'Spanien har en relationsorienterad arbetskultur. Hos stora företag är löner ofta fastställda i kollektivavtal.' }, { question: 'När är bäst tid att förhandla?', answer: 'Optimalt tillfälle är under eller strax efter din årliga utvärdering.' }, { question: 'Vad ska man be om utöver grundlönen?', answer: 'Förhandla om: extra pensionsavsättningar, extra semesterdagar, hemarbetsdagar, utbildningsbudget.' }, { question: 'Hur använder jag lönedata för förhandling?', answer: 'Presentera marknadsdata som tredjeparts bevis. Använd EuroSalarys data som riktmärke.' }],
+  da: [{ question: 'Hvordan forhandler jeg løn i Tyskland?', answer: 'I Tyskland er lønforhandlinger datadrevne og formelle. Præsenter din sag med konkrete tal.' }, { question: 'Er lønforhandling normalt i Frankrig?', answer: 'Ja, men med nuance. Fransk arbejdskultur er hierarkisk; formuler anmodninger i termer af tilføjet værdi.' }, { question: 'Hvordan håndterer hollandske arbejdsgivere lønforhandling?', answer: 'Holland har en direkte forhandlingskultur — man forventes at forhandle.' }, { question: 'Er lønforhandling udbredt i Spanien?', answer: 'Spanien har en relationsorienteret arbejdskultur. Hos store virksomheder er løn ofte fastsat i overenskomster.' }, { question: 'Hvornår er det bedste tidspunkt at forhandle?', answer: 'Optimalt tidspunkt er under eller kort efter din årlige evaluering.' }, { question: 'Hvad skal man bede om ud over grundlønnen?', answer: 'Forhandl om: ekstra pensionsbidrag, ekstra feriedage, hjemmearbejdsdage, uddannelsesbudget.' }, { question: 'Hvordan bruger jeg løndata til forhandling?', answer: 'Præsenter markedsdata som tredjepartsbeviser. Brug EuroSalarys data som benchmark.' }],
+  fi: [{ question: 'Kuinka neuvottelen palkasta Saksassa?', answer: 'Saksassa palkkaNeuvottelut ovat datavetoisia ja muodollisia. Esitä tapauksesi konkreettisilla luvuilla.' }, { question: 'Onko palkkaNeuvottelu normaalia Ranskassa?', answer: 'Kyllä, mutta vivahteilla. Ranskalainen työkulttuuri on hierarkkinen; muotoile pyynnöt tuoman arvon näkökulmasta.' }, { question: 'Kuinka hollantilaiset työnantajat lähestyvät palkkaneuvotteluita?', answer: 'Alankomaissa on suora neuvottelukulttuuri — sinun odotetaan neuvottelevan.' }, { question: 'Onko palkkaneuvottelu yleistä Espanjassa?', answer: 'Espanjassa on suhdekeskeinen työkulttuuri. Suurissa yrityksissä palkat ovat usein työehtosopimusten mukaisia.' }, { question: 'Milloin on paras aika neuvotella?', answer: 'Optimaalinen aika on vuosiarvioinnin aikana tai heti sen jälkeen.' }, { question: 'Mitä pyytää peruspalkkan lisäksi?', answer: 'Neuvottele: lisäeläkemaksut, ylimääräiset lomapäivät, etätyöpäivät, koulutusbudjetti.' }, { question: 'Kuinka käyttää palkkatietoja neuvotteluissa?', answer: 'Esitä markkinatiedot kolmannen osapuolen todisteina. Käytä EuroSalaryn tietoja vertailukohteena.' }],
+  el: [{ question: 'Πώς διαπραγματεύομαι μισθό στη Γερμανία;', answer: 'Στη Γερμανία οι διαπραγματεύσεις είναι δεδομενοκεντρικές και επίσημες. Παρουσιάστε την υπόθεσή σας με συγκεκριμένους αριθμούς.' }, { question: 'Είναι φυσιολογικό να διαπραγματεύομαι στη Γαλλία;', answer: 'Ναι, αλλά με αποχρώσεις. Η γαλλική κουλτούρα είναι ιεραρχική.' }, { question: 'Πώς προσεγγίζουν οι Ολλανδοί εργοδότες τη διαπραγμάτευση;', answer: 'Η Ολλανδία έχει άμεση κουλτούρα διαπραγμάτευσης.' }, { question: 'Είναι συνηθισμένη η διαπραγμάτευση στην Ισπανία;', answer: 'Η Ισπανία έχει σχεσιοστραμμένη εργασιακή κουλτούρα.' }, { question: 'Πότε είναι ο καλύτερος χρόνος να διαπραγματευτώ;', answer: 'Κατά ή αμέσως μετά την ετήσια αξιολόγηση.' }, { question: 'Τι να ζητήσω πέρα από τον βασικό μισθό;', answer: 'Συντάξεις, επιπλέον άδειες, τηλεργασία, εκπαιδευτικό προϋπολογισμό.' }, { question: 'Πώς να χρησιμοποιήσω δεδομένα μισθού;', answer: 'Παρουσιάστε δεδομένα αγοράς ως απόδειξη τρίτου μέρους.' }],
+  hu: [{ question: 'Hogyan tárgyalok fizetésről Németországban?', answer: 'Németországban a tárgyalások adatvezéreltek és formálisak. Konkrét számokkal mutassa be esetét.' }, { question: 'Normális a fizetési tárgyalás Franciaországban?', answer: 'Igen, de árnyaltan. A francia munkakultúra hierarchikus.' }, { question: 'Hogyan közelítik meg a holland munkáltatók a tárgyalást?', answer: 'Hollandiában közvetlen tárgyalási kultúra van — elvárják, hogy tárgyaljon.' }, { question: 'Spanyolországban szokásos a fizetési tárgyalás?', answer: 'Spanyolországban kapcsolatorientált munkakultúra van. Nagy cégeknél a fizetéseket kollektív szerződések rögzítik.' }, { question: 'Mikor a legjobb tárgyalni?', answer: 'Az optimális idő az éves teljesítményértékelés alatt vagy után.' }, { question: 'Mit kérjek az alapbéren felül?', answer: 'Tárgyaljon: kiegészítő nyugdíjjárulék, extra szabadnapok, otthoni munkavégzési napok, képzési keret.' }, { question: 'Hogyan használjam a béradatokat a tárgyalásnál?', answer: 'Mutassa be a piaci adatokat harmadik fél bizonyítékaként. Használja az EuroSalary adatait referenciaként.' }],
+  sk: [{ question: 'Ako vyjednávam plat v Nemecku?', answer: 'V Nemecku sú rokovania formálne a datovo orientované. Predložte svoju vec s konkrétnymi číslami.' }, { question: 'Je vyjednávanie platu bežné vo Francúzsku?', answer: 'Áno, ale s nuansami. Francúzska pracovná kultúra je hierarchická.' }, { question: 'Ako pristupujú holandskí zamestnávatelia k vyjednávaniu?', answer: 'Holandsko má priamu kultúru vyjednávania — od vás sa očakáva, že budete vyjednávať.' }, { question: 'Je vyjednávanie bežné v Španielsku?', answer: 'Španielsko má pracovnú kultúru orientovanú na vzťahy.' }, { question: 'Kedy je najlepší čas vyjednávať?', answer: 'Optimálny čas je počas ročného hodnotenia výkonu alebo krátko po ňom.' }, { question: 'O čo žiadať nad základný plat?', answer: 'Zvažte: dôchodkové príspevky, extra dni dovolenky, dni práce z domu, tréningový rozpočet.' }, { question: 'Ako využiť platové dáta pri vyjednávaní?', answer: 'Prezentujte trhové dáta ako dôkaz tretej strany. Použite dáta EuroSalary ako referenčné.' }],
+  bg: [{ question: 'Как договарям заплата в Германия?', answer: 'В Германия преговорите са формални и базирани на данни. Представете случая си с конкретни числа.' }, { question: 'Нормално ли е да се договаря заплата във Франция?', answer: 'Да, но с нюанси. Французката работна култура е йерархична.' }, { question: 'Как нидерландските работодатели подхождат към преговорите?', answer: 'Нидерландия има пряка преговорна култура — очаква се да преговаряте.' }, { question: 'Обичайно ли е договарянето на заплата в Испания?', answer: 'Испания има работна култура, ориентирана към взаимоотношения.' }, { question: 'Кога е най-доброто време за преговори?', answer: 'Оптималното времето е по време на или след годишната оценка на изпълнението.' }, { question: 'Какво да искам освен основната заплата?', answer: 'Помислете за: допълнителни пенсионни вноски, допълнителни отпускни дни, дни за работа от вкъщи, бюджет за обучение.' }, { question: 'Как да използвам данни за заплатите при преговори?', answer: 'Представяйте пазарните данни като доказателства от трета страна.' }],
+  hr: [{ question: 'Kako pregovaram o plaći u Njemačkoj?', answer: 'U Njemačkoj su pregovori formalni i temeljeni na podacima. Predstavite slučaj s konkretnim brojevima.' }, { question: 'Je li normalno pregovarati o plaći u Francuskoj?', answer: 'Da, ali s nijansama. Francuska radna kultura je hijerarhična.' }, { question: 'Kako nizozemski poslodavci pristupaju pregovorima?', answer: 'Nizozemska ima izravnu kulturu pregovaranja — od vas se očekuje da pregovarate.' }, { question: 'Je li pregovaranje uobičajeno u Španjolskoj?', answer: 'Španjolska ima radno-kulturni odnos orijentiran na odnose.' }, { question: 'Kada je najbolje pregovarati?', answer: 'Optimalno vrijeme je za vrijeme ili neposredno nakon godišnje ocjene učinka.' }, { question: 'Što tražiti osim osnovne plaće?', answer: 'Razmotrite: dodatne mirovinske doprinose, extra dane godišnjeg odmora, dane rada od kuće, budžet za obuku.' }, { question: 'Kako koristiti podatke o plaćama za pregovaranje?', answer: 'Predstavljajte tržišne podatke kao dokaze treće strane.' }],
+  sl: [{ question: 'Kako se pogajam o plači v Nemčiji?', answer: 'V Nemčiji so pogajanja formalna in podatkovno usmerjena. Predstavite primer s konkretnimi številkami.' }, { question: 'Je normalno pogajanje o plači v Franciji?', answer: 'Da, a z odtenki. Francoska delovna kultura je hierarhična.' }, { question: 'Kako se nizozemski delodajalci lotijo pogajanj?', answer: 'Nizozemska ima neposredno kulturo pogajanj — od vas se pričakuje, da se pogajate.' }, { question: 'Je pogajanje o plači pogosto v Španiji?', answer: 'Španija ima delovno kulturo, usmerjeno v odnose.' }, { question: 'Kdaj je najboljši čas za pogajanje?', answer: 'Optimalni čas je med ali takoj po letni oceni uspešnosti.' }, { question: 'Kaj zahtevati poleg osnovne plače?', answer: 'Premislite: dodatne pokojninske prispevke, dodatne dni dopusta, dneve dela od doma, izobraževalni proračun.' }, { question: 'Kako uporabiti podatke o plačah za pogajanje?', answer: 'Predstavljajte tržne podatke kot dokaze tretjih oseb.' }],
+  lt: [{ question: 'Kaip derėtis dėl atlyginimo Vokietijoje?', answer: 'Vokietijoje derybos yra formalios ir duomenimis pagrįstos. Pateikite savo atvejį konkrečiais skaičiais.' }, { question: 'Ar normalu derėtis dėl atlyginimo Prancūzijoje?', answer: 'Taip, bet su niuansais. Prancūzų darbo kultūra yra hierarchinė.' }, { question: 'Kaip olandų darbdaviai požiūriu į derybas?', answer: 'Nyderlanduose tiesioginio derybų kultūra — tikimasi, kad derėsitės.' }, { question: 'Ar derybos dėl atlyginimo įprastos Ispanijoje?', answer: 'Ispanija turi santykiais orientuotą darbo kultūrą.' }, { question: 'Kada geriausia derėtis?', answer: 'Optimalus laikas yra metinės veiklos vertinimo metu arba iš karto po jo.' }, { question: 'Ko prašyti be bazinio atlyginimo?', answer: 'Apsvarstykite: papildomus pensijų įnašus, papildomas atostogų dienas, nuotolinio darbo dienas, mokymo biudžetą.' }, { question: 'Kaip naudoti atlyginimų duomenis derybose?', answer: 'Pateikite rinkos duomenis kaip trečiosios šalies įrodymus.' }],
+  lv: [{ question: 'Kā es sarunu vedu par algu Vācijā?', answer: 'Vācijā sarunas ir formālas un datoriski orientētas. Prezentējiet savu gadījumu ar konkrētiem skaitļiem.' }, { question: 'Vai sarunu vešana par algu ir normāla Francijā?', answer: 'Jā, bet ar niansēm. Francijas darba kultūra ir hierarhiska.' }, { question: 'Kā Nīderlandes darba devēji pieiet sarunām?', answer: 'Nīderlandē ir tieša sarunu kultūra — tiek gaidīts, ka sarunu vedat.' }, { question: 'Vai sarunu vešana par algu ir izplatīta Spānijā?', answer: 'Spānijai ir attiecībās orientēta darba kultūra.' }, { question: 'Kad ir labākais laiks sarunām?', answer: 'Optimālais laiks ir gada darbības pārskata laikā vai tūlīt pēc tā.' }, { question: 'Ko pieprasīt papildus pamatalgu?', answer: 'Apsveriet: papildu pensijas iemaksas, papildu atvaļinājuma dienas, attālinātā darba dienas, apmācību budžetu.' }, { question: 'Kā izmantot algu datus sarunās?', answer: 'Prezentējiet tirgus datus kā trešās puses pierādījumus.' }],
+  et: [{ question: 'Kuidas pean läbirääkimisi Saksamaal?', answer: 'Saksamaal on läbirääkimised formaalsed ja andmepõhised. Esitage oma juhtum konkreetsete numbritega.' }, { question: 'Kas Prantsusmaal on palgaläbirääkimised normaalsed?', answer: 'Jah, kuid nüanssidega. Prantsuse töökultuur on hierarhiline.' }, { question: 'Kuidas Hollandi tööandjad läbirääkimistele lähenevad?', answer: 'Hollandil on otsene läbirääkimiskultuur — eeldatakse, et peate läbirääkimisi.' }, { question: 'Kas Hispaanias on palgaläbirääkimised levinud?', answer: 'Hispaanial on suhetele orienteeritud töökultuur.' }, { question: 'Millal on parim aeg läbirääkimisteks?', answer: 'Optimaalne aeg on aastase tulemuslikkuse hindamise ajal või kohe pärast seda.' }, { question: 'Mida küsida põhipalga kõrval?', answer: 'Kaaluge: lisapensioni sissemakseid, lisapuhkusepäevi, kaugtöö päevi, koolituseelarvet.' }, { question: 'Kuidas kasutada palgaandmeid läbirääkimistel?', answer: 'Esitage turuandmed kolmanda osapoole tõenditena.' }],
+  mt: [{ question: 'Kif tinnegozja salarju fil-Ġermanja?', answer: 'Fil-Ġermanja n-negozjati huma formali u bbażati fuq data. Ippreżenta l-każ tiegħek b\'numri konkreti.' }, { question: 'Huwa normali li tinnegozja salarju fi Franza?', answer: 'Iva, iżda b\'nuances. Il-kultura tax-xogħol Franċiża hija ġerarkika.' }, { question: 'Kif jittrattaw l-impjegaturi Olandiżi n-negozjati?', answer: 'L-Olanda għandha kultura diretta ta\' negozjati — mistennija li tinnegozja.' }, { question: 'N-negozjati huma komuni fi Spanja?', answer: 'Spanja għandha kultura tax-xogħol orjentata lejn ir-relazzjonijiet.' }, { question: 'Meta hija l-aħjar ħin biex tinnegozja?', answer: 'Il-ħin ottimali huwa waqt jew wara l-valutazzjoni annwali tal-prestazzjoni.' }, { question: 'X\'titlob lil hinn mill-paga bażika?', answer: 'Ikkunsidra: kontribuzzjonijiet tal-pensjoni addizzjonali, jiem tal-vaganzi extra, jiem ta\' xogħol mid-dar, baġit tat-taħriġ.' }, { question: 'Kif tuża data tal-pagi biex tinnegozja?', answer: 'Ippreżenta data tas-suq bħala evidenza ta\' parti terza.' }],
+  ga: [{ question: 'Conas a chaibidlím pá sa Ghearmáin?', answer: 'Sa Ghearmáin tá caibidlíochtaí pá foirmiúil agus bunaithe ar shonraí. Cuir i láthair do chás le figiúirí sonracha.' }, { question: 'An gnách caibidlíocht pá sa Fhrainc?', answer: 'Sea, ach le mionuaireanta. Is cineál ordlathach í cultúr oibre na Fraince.' }, { question: 'Conas a dhéileálann fostóirí Ollainnise le caibidlíocht?', answer: 'Tá cultúr díreach caibidlíochta ag an Ísiltír — bítear ag súil go gcaibidleoidh tú.' }, { question: 'An coitianta í caibidlíocht pá sa Spáinn?', answer: 'Tá cultúr oibre caidreamh-dhírithe ag an Spáinn.' }, { question: 'Cathain is fearr caibidliú?', answer: 'Is é an t-am is fearr ná le linn nó díreach i ndiaidh do mheasúnaithe bliantúla feidhmíochta.' }, { question: 'Cad a iarrtar thar an bpá bunúsach?', answer: 'Smaoinigh ar: ranníocaíochtaí breise pinsin, laethanta saoire breise, laethanta oibre sa bhaile, buiséad oiliúna.' }, { question: 'Conas sonraí pá a úsáid le caibidliú?', answer: 'Cuir sonraí margaidh i láthair mar fhianaise tríú páirtí.' }],
+};
+
+// --------------- Schema ---------------
+const currentFaq = fb(faqItems, lang);
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: fb(pageTitle, lang),
+    description: fb(pageDescription, lang),
+    url: `https://eurosalary.eu/${lang}/guides/salary-negotiation-europe/`,
+    inLanguage: lang,
+    datePublished: '2026-04-18',
+    dateModified: '2026-04-18',
+    author: { '@type': 'Organization', name: 'EuroSalary', url: 'https://eurosalary.eu' },
+    publisher: {
+      '@type': 'Organization',
+      name: 'EuroSalary',
+      url: 'https://eurosalary.eu',
+      logo: { '@type': 'ImageObject', url: 'https://eurosalary.eu/logo.svg' },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://eurosalary.eu/${lang}/guides/salary-negotiation-europe/` },
+    keywords: 'salary negotiation Europe, how to negotiate salary Europe, salary negotiation tips, salary negotiation Germany France Netherlands Spain',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: currentFaq.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `https://eurosalary.eu/${lang}/` },
+      { '@type': 'ListItem', position: 2, name: 'Guides', item: `https://eurosalary.eu/${lang}/guides/` },
+      { '@type': 'ListItem', position: 3, name: fb(pageTitle, lang), item: `https://eurosalary.eu/${lang}/guides/salary-negotiation-europe/` },
+    ],
+  },
+];
+
+const homeCrumb: Record<string, string> = { en: 'Home', fr: 'Accueil', de: 'Startseite', es: 'Inicio', it: 'Home', pt: 'Início', nl: 'Home', pl: 'Strona główna', ro: 'Acasă', cs: 'Domů', sv: 'Hem', da: 'Hjem', fi: 'Koti', el: 'Αρχική', hu: 'Főoldal', sk: 'Domov', bg: 'Начало', hr: 'Početna', sl: 'Domov', lt: 'Pagrindinis', lv: 'Sākums', et: 'Avaleht', mt: 'Paġna ewlenija', ga: 'Baile' };
+const guidesCrumb: Record<string, string> = { en: 'Guides', fr: 'Guides', de: 'Leitfäden', es: 'Guías', it: 'Guide', pt: 'Guias', nl: 'Gidsen', pl: 'Przewodniki', ro: 'Ghiduri', cs: 'Průvodci', sv: 'Guider', da: 'Guider', fi: 'Oppaat', el: 'Οδηγοί', hu: 'Útmutatók', sk: 'Sprievodcovia', bg: 'Ръководства', hr: 'Vodiči', sl: 'Vodniki', lt: 'Vadovai', lv: 'Ceļveži', et: 'Juhendid', mt: 'Gwidi', ga: 'Treoracha' };
+---
+
+<BaseLayout
+  title={fb(pageTitle, lang)}
+  description={fb(pageDescription, lang)}
+  datePublished="2026-04-18"
+  schema={pageSchema}
+>
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{fb(homeCrumb, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a href={`/${lang}/guides/`}>{fb(guidesCrumb, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">Salary Negotiation Europe</span>
+      </nav>
+      <h1 class="page-hero__title">{fb(pageTitle, lang)}</h1>
+      <p class="page-hero__meta">
+        <span class="page-hero__date">Updated April 2026</span>
+        <span class="page-hero__tags">
+          <span class="page-hero__tag">Salary Tips</span>
+          <span class="page-hero__tag">Career</span>
+          <span class="page-hero__tag">Europe</span>
+        </span>
+      </p>
+    </div>
+  </section>
+
+  <div class="container page-body">
+    <TLDRBox items={fb(tldrItems, lang)} />
+
+    <div class="guide-content">
+      <h2>Why Salary Negotiation Is Different in Europe</h2>
+      <p>Salary negotiation in Europe is not one-size-fits-all. The continent spans cultures with radically different attitudes towards money, hierarchy, and self-advocacy in the workplace. What works brilliantly in Amsterdam — being direct, citing market data, expecting a straightforward counter-offer — can seriously backfire in Madrid, where trust and relationship-building must come first.</p>
+
+      <p>Research consistently shows that fewer than 40% of European workers negotiate their starting salary, compared to over 60% in the United States. The good news: employers in Europe generally expect some negotiation, and a well-prepared, culturally-aware candidate almost always gets a better outcome. Studies suggest that negotiating adds an average of 7-10% to starting salary — money that compounds over an entire career.</p>
+
+      <p>Before any negotiation, the foundation is the same: know your number. Use EuroSalary's <a href={`/${lang}/salary-check/`}>salary check tool</a> to benchmark your role, experience level, and location against real market data.</p>
+
+      <h2>Country-by-Country Negotiation Culture</h2>
+
+      <h3>Germany — Data-Driven and Formal</h3>
+      <p>German workplace culture values preparation, directness, and facts. Salary negotiation is expected, but it should be grounded in research rather than emotion or vague comparisons.</p>
+      <p><strong>What works:</strong></p>
+      <ul>
+        <li>Come with specific market salary data from credible sources (Gehalt.de, StepStone Gehaltsreport, EuroSalary)</li>
+        <li>Present your qualifications and achievements concisely and factually</li>
+        <li>Negotiate once, firmly and professionally — German employers respect decisiveness</li>
+        <li>Consider the full package: Altersvorsorge (company pension), Weiterbildungsbudget (training allowance), and Urlaub (holiday days) are all negotiable</li>
+      </ul>
+      <p><strong>Script:</strong> "Based on my research of the current market, and considering my [X years of experience in Y], I believe a salary of €[amount] would reflect my value accurately. This is consistent with what EuroSalary data shows for this role in [city]."</p>
+      <p><strong>Gender pay gap:</strong> Germany has one of the EU's highest gender pay gaps at 18%. If you're a woman negotiating in Germany, don't undervalue yourself — use market data to anchor firmly.</p>
+
+      <h3>France — Hierarchical but Negotiable</h3>
+      <p>French workplace culture is built on hierarchy and respect for seniority. Salary is not a taboo topic, but how you raise it matters enormously. Large French companies (CAC 40, grands groupes) have more rigid salary grids; smaller firms and startups offer much more flexibility.</p>
+      <p><strong>What works:</strong></p>
+      <ul>
+        <li>Frame your ask in terms of value to the organisation, not personal financial need</li>
+        <li>Reference industry context: "The market for this role in Île-de-France has moved significantly"</li>
+        <li>Be diplomatic — aggressive tactics can permanently damage working relationships</li>
+        <li>Know the difference between salaire brut (gross) and salaire net (net) — French contracts cite gross, but you live on net</li>
+      </ul>
+      <p>The <em>Index égalité professionnelle</em> means larger French companies must publish pay equity scores. If a company scores below 75/100, they are legally required to take corrective action — useful context if you're negotiating at such a firm.</p>
+
+      <h3>Netherlands — Direct and Transparent</h3>
+      <p>The Dutch are famously direct in all business communication, and salary negotiation is no exception. Dutch employers typically give a salary range in job postings, and candidates are expected to negotiate within or above that range.</p>
+      <p><strong>What works:</strong></p>
+      <ul>
+        <li>Ask directly: "The range shown is €55,000–€65,000. Based on my experience, I'm targeting the upper end at €65,000 — can we work with that?"</li>
+        <li>NS Businesscard (rail commuting costs), extra ADV days, and pension contributions above the minimum are standard negotiating points</li>
+        <li>Dutch culture respects honesty — if you have a competing offer, say so</li>
+      </ul>
+      <p>The Netherlands ranks among Europe's most progressive countries for pay transparency, with new legislation aligning with the EU directive ahead of schedule.</p>
+
+      <h3>Spain — Relationship-First</h3>
+      <p>Spanish professional culture places enormous value on relationships and personalismo. Salary negotiations happen, but often only after a level of personal connection has been established. Be patient and do not rush to the number.</p>
+      <p><strong>What works:</strong></p>
+      <ul>
+        <li>Build rapport first — show genuine interest in the role and organisation before discussing compensation</li>
+        <li>Understand convenios colectivos (collective agreements): many sectors have minimum salary floors set by union agreements, which determine your starting point</li>
+        <li>Negotiate complementos salariales — supplements like transport allowances, meal vouchers (tickets restaurante), and productivity bonuses are significant and often worth as much as 20-30% of total compensation</li>
+        <li>Timing: Spain has a strong culture of extended job interviews; negotiate after a second or third meeting when there's clear mutual interest</li>
+      </ul>
+
+      <h3>United Kingdom — Market-Focused</h3>
+      <p>While not an EU member, the UK is home to many European workers and sets important benchmarks. UK salary negotiation is transactional and market-focused, more similar to American practice than continental Europe.</p>
+      <ul>
+        <li>Negotiation is universally expected and respected</li>
+        <li>Cite market data clearly and confidently</li>
+        <li>Benefits like annual bonus, pension (employers often match contributions up to 8-10%), private health insurance, and flexible working are all significant</li>
+      </ul>
+
+      <h3>Nordic Countries (Sweden, Denmark, Finland, Norway)</h3>
+      <p>Nordic salary culture is unique in Europe. In Sweden and Denmark, large proportions of workers are covered by collective bargaining agreements (up to 90% in Sweden), which set minimum salary levels. Individual negotiation above the collective floor is common and expected.</p>
+      <ul>
+        <li>Reference Lön (salary) data from industry associations</li>
+        <li>Friskvårdsbidrag (wellness allowance), flexibla arbetstider (flexible hours), and generous parental leave top-ups are valuable negotiating points</li>
+        <li>The egalitarian culture means extreme salary gaps are socially uncomfortable — calibrate your ask accordingly</li>
+      </ul>
+
+      <h2>Universal Negotiation Scripts and Phrases</h2>
+      <p>These formulas work across European cultures, adapted for local tone:</p>
+
+      <div class="scripts-block">
+        <div class="script-item">
+          <div class="script-label">Opening Anchor</div>
+          <div class="script-text">"I've done thorough research on the market rate for this role. Based on EuroSalary data and my [X] years of experience in [specific skills], I believe €[amount] reflects the market accurately. Is that something we can work with?"</div>
+        </div>
+        <div class="script-item">
+          <div class="script-label">Counter-Offer</div>
+          <div class="script-text">"I appreciate the offer. The package is close, but I was hoping we could reach €[amount], which is more in line with market benchmarks. Is there flexibility there?"</div>
+        </div>
+        <div class="script-item">
+          <div class="script-label">If Base Won't Move — Negotiate Extras</div>
+          <div class="script-text">"I understand the salary band is fixed. Could we discuss [extra holiday days / earlier performance review / training budget / remote days] to make the overall package work?"</div>
+        </div>
+        <div class="script-item">
+          <div class="script-label">Closing with Confidence</div>
+          <div class="script-text">"I'm genuinely excited about this role and the team. I'd like to accept once we align on [specific point]. Can we confirm €[amount]?"</div>
+        </div>
+      </div>
+
+      <h2>What to Negotiate Beyond Base Salary</h2>
+      <p>Base salary is just one component of your total compensation. Across Europe, the following benefits are commonly negotiable:</p>
+      <ul>
+        <li><strong>Pension contributions:</strong> Employer match above the legal minimum — a 1% improvement on a €60K salary adds €600/year directly to your retirement pot</li>
+        <li><strong>Extra holiday days:</strong> The EU minimum is 20 days; many employers offer 25-30. Even two extra days per year is 8 hours of paid time you wouldn't otherwise have</li>
+        <li><strong>Remote work days:</strong> Post-pandemic, 2-3 days working from home is standard in many sectors — if not offered, ask</li>
+        <li><strong>Training and certification budget:</strong> €2,000-5,000/year for courses, conferences, and certifications is reasonable in tech and professional services</li>
+        <li><strong>Signing bonus:</strong> Particularly useful if you're giving up unvested equity or a bonus at your current employer</li>
+        <li><strong>Early performance review:</strong> If the salary offer is below target, negotiate a 6-month review with a commitment to reach the target salary contingent on performance</li>
+        <li><strong>Transport allowance:</strong> In France (prime transport), Netherlands (NS card), Belgium (mobiliteitsbudget) — ask if not offered</li>
+      </ul>
+
+      <h2>Using EuroSalary Data in Your Negotiation</h2>
+      <p>The most powerful shift in any salary negotiation is moving from "I want more" to "the market says more." EuroSalary provides free salary benchmarks for all 27 EU countries and major job categories.</p>
+      <ul class="internal-links">
+        <li><a href={`/${lang}/salary-check/`}>Salary Check — Benchmark Your Pay</a></li>
+        <li><a href={`/${lang}/compare/`}>Compare Salaries Across Europe</a></li>
+        <li><a href={`/${lang}/guides/eu-pay-transparency-directive/`}>EU Pay Transparency Directive Guide</a></li>
+        <li><a href={`/${lang}/guides/average-salary-europe/`}>Average Salaries in Europe 2026</a></li>
+        <li><a href={`/${lang}/countries/`}>Salary Data by Country</a></li>
+      </ul>
+    </div>
+
+    <FAQSection items={fb(faqItems, lang)} />
+  </div>
+</BaseLayout>
+
+<style>
+  .page-hero {
+    background: #0F1F3D; color: white;
+    padding: 5rem 0 3.5rem; position: relative; overflow: hidden;
+  }
+  .page-hero__dots {
+    position: absolute; inset: 0; opacity: 0.07; pointer-events: none;
+    background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 32px 32px;
+  }
+  .page-hero__inner { position: relative; z-index: 1; }
+  .page-hero__breadcrumbs {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 500; margin-bottom: 2rem;
+  }
+  .page-hero__breadcrumbs a { color: rgba(120,135,171,0.9); text-decoration: none; }
+  .page-hero__breadcrumbs a:hover { color: white; }
+  .page-hero__breadcrumbs .material-symbols-outlined { font-size: 14px; color: rgba(120,135,171,0.5); }
+  .page-hero__breadcrumbs-current { color: rgba(120,135,171,0.7); font-weight: 500; }
+  .page-hero__title {
+    font-family: 'Public Sans', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 1.5rem;
+    max-width: 820px;
+  }
+  .page-hero__meta { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .page-hero__date { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(120,135,171,0.9); font-weight: 500; }
+  .page-hero__tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .page-hero__tag { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 8px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border-radius: 2px; }
+
+  .page-body { padding: 2.5rem 0 4rem; max-width: 860px; }
+
+  .guide-content h2 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.65rem; font-weight: 800; letter-spacing: -0.02em;
+    color: #0F1F3D; margin-top: 2.5rem; margin-bottom: 1rem;
+    border-bottom: 2px solid #eef0f5; padding-bottom: 0.5rem;
+  }
+  .guide-content h3 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.2rem; font-weight: 700; color: #1a2f5a; margin-top: 1.75rem; margin-bottom: 0.75rem;
+  }
+  .guide-content p { font-size: 1rem; line-height: 1.8; color: #374151; margin-bottom: 1rem; }
+  .guide-content ul, .guide-content ol { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+  .guide-content li { font-size: 1rem; line-height: 1.7; color: #374151; margin-bottom: 0.4rem; }
+  .guide-content a { color: #0051d5; text-decoration: none; }
+  .guide-content a:hover { text-decoration: underline; }
+
+  .scripts-block { margin: 1.5rem 0; display: flex; flex-direction: column; gap: 1rem; }
+  .script-item { background: #f0f4ff; border-left: 4px solid #0051d5; padding: 1rem 1.25rem; border-radius: 0 6px 6px 0; }
+  .script-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: #0051d5; margin-bottom: 0.5rem; }
+  .script-text { font-size: 0.95rem; line-height: 1.6; color: #1a2f5a; font-style: italic; }
+
+  .internal-links { list-style: none; padding: 0; background: #f8f9fc; border-radius: 6px; padding: 1.25rem 1.5rem; }
+  .internal-links li { margin-bottom: 0.5rem; }
+  .internal-links a { color: #0051d5; text-decoration: none; font-weight: 500; font-size: 0.95rem; }
+  .internal-links a:hover { text-decoration: underline; }
+</style>
