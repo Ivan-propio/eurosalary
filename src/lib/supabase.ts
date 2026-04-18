@@ -1,9 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './database.types';
 
-const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL ?? 'https://placeholder.supabase.co';
+const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? 'placeholder-key';
 
+// Client is safe at build time — actual calls only happen at request time via Cloudflare Functions
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
 // ============================================
