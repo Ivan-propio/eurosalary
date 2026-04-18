@@ -1,0 +1,461 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { languages } from '../../../i18n/ui';
+import { fb } from '../../../i18n/utils';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+
+// --------------- Meta ---------------
+const pageTitle: Record<string, string> = {
+  en: 'Average Salary in Europe 2026: Complete Country Comparison',
+  fr: 'Salaire moyen en Europe 2026 : comparaison complète par pays',
+  de: 'Durchschnittliches Gehalt in Europa 2026: Vollständiger Ländervergleich',
+  es: 'Salario promedio en Europa 2026: comparación completa por país',
+  it: 'Stipendio medio in Europa 2026: confronto completo per paese',
+  pt: 'Salário médio na Europa 2026: comparação completa por país',
+  nl: 'Gemiddeld salaris in Europa 2026: volledig landenvergelijking',
+  pl: 'Przeciętne wynagrodzenie w Europie 2026: pełne porównanie krajów',
+  ro: 'Salariu mediu în Europa 2026: comparație completă pe țări',
+  cs: 'Průměrný plat v Evropě 2026: úplné srovnání zemí',
+  sv: 'Genomsnittlig lön i Europa 2026: komplett länderjämförelse',
+  da: 'Gennemsnitsløn i Europa 2026: komplet landesammenligning',
+  fi: 'Keskipalkka Euroopassa 2026: täydellinen maavertailu',
+  el: 'Μέσος μισθός στην Ευρώπη 2026: πλήρης σύγκριση χωρών',
+  hu: 'Átlagfizetés Európában 2026: teljes országösszehasonlítás',
+  sk: 'Priemerný plat v Európe 2026: úplné porovnanie krajín',
+  bg: 'Средна заплата в Европа 2026: пълно сравнение по страни',
+  hr: 'Prosječna plaća u Europi 2026: potpuna usporedba zemalja',
+  sl: 'Povprečna plača v Evropi 2026: popolna primerjava držav',
+  lt: 'Vidutinis atlyginimas Europoje 2026: išsami šalių palyginimas',
+  lv: 'Vidējā alga Eiropā 2026: pilnīgs valstu salīdzinājums',
+  et: 'Keskmine palk Euroopas 2026: täielik riikide võrdlus',
+  mt: 'Salarju medju fl-Ewropa 2026: paragun sħiħ tal-pajjiżi',
+  ga: 'Meánphá san Eoraip 2026: comparáid iomlán tír ar thír',
+};
+
+const pageDescription: Record<string, string> = {
+  en: 'Average salaries across all EU countries in 2026 — data by country, sector, and cost of living adjusted. Compare what you earn to European benchmarks.',
+  fr: 'Salaires moyens dans tous les pays de l\'UE en 2026 — données par pays, secteur, et ajustés au coût de la vie. Comparez vos revenus aux références européennes.',
+  de: 'Durchschnittsgehälter in allen EU-Ländern 2026 — Daten nach Land, Sektor, und kaufkraftbereinigt. Vergleichen Sie Ihr Gehalt mit europäischen Benchmarks.',
+  es: 'Salarios promedio en todos los países de la UE en 2026 — datos por país, sector y ajustados al coste de vida. Compare sus ingresos con los benchmarks europeos.',
+  it: 'Stipendi medi in tutti i paesi UE nel 2026 — dati per paese, settore e corretti per il costo della vita. Confronta le tue entrate con i benchmark europei.',
+  pt: 'Salários médios em todos os países da UE em 2026 — dados por país, setor e ajustados ao custo de vida. Compare os seus rendimentos com os benchmarks europeus.',
+  nl: 'Gemiddelde salarissen in alle EU-landen in 2026 — data per land, sector en gecorrigeerd voor levenskosten. Vergelijk uw inkomen met Europese benchmarks.',
+  pl: 'Średnie wynagrodzenia we wszystkich krajach UE w 2026 r. — dane według kraju, sektora i korekty kosztów życia. Porównaj swoje zarobki z europejskimi benchmarkami.',
+  ro: 'Salarii medii în toate țările UE în 2026 — date pe țară, sector și ajustate la costul vieții. Comparați-vă veniturile cu repere europene.',
+  cs: 'Průměrné platy ve všech zemích EU v roce 2026 — data podle zemí, sektorů a upravená o životní náklady. Porovnejte svůj plat s evropskými benchmarky.',
+  sv: 'Genomsnittliga löner i alla EU-länder 2026 — data per land, sektor och justerat för levnadskostnader. Jämför din lön med europeiska riktmärken.',
+  da: 'Gennemsnitslønninger i alle EU-lande i 2026 — data per land, sektor og justeret for leveomkostninger. Sammenlign din løn med europæiske benchmarks.',
+  fi: 'Keskipalkat kaikissa EU-maissa 2026 — data maittain, sektoreittain ja elinkustannuksilla oikaistu. Vertaa palkkaasi eurooppalaisiin vertailuarvoihin.',
+  el: 'Μέσοι μισθοί σε όλες τις χώρες της ΕΕ το 2026 — δεδομένα ανά χώρα, τομέα και διορθωμένα για το κόστος ζωής.',
+  hu: 'Átlagos bérek az összes EU-országban 2026-ban — adatok ország, szektor szerint és megélhetési költségekkel korrigálva.',
+  sk: 'Priemerné platy vo všetkých krajinách EÚ v roku 2026 — údaje podľa krajín, sektorov a upravené o náklady na život.',
+  bg: 'Средни заплати в страните от ЕС за 2026 г. — данни по страна, сектор и коригирани за разходите за живот.',
+  hr: 'Prosječne plaće u svim zemljama EU-a 2026. — podaci po zemlji, sektoru i korigirani za troškove života.',
+  sl: 'Povprečne plače v vseh državah EU 2026 — podatki po državah, sektorjih in korigirani za stroške življenja.',
+  lt: 'Vidutiniai atlyginimai visose ES šalyse 2026 m. — duomenys pagal šalį, sektorių ir pakoreguoti pragyvenimo išlaidoms.',
+  lv: 'Vidējās algas visās ES valstīs 2026. gadā — dati pa valstīm, nozarēm un koriģēti ar dzīves dārdzību.',
+  et: 'Keskmised palgad kõikides EL-i riikides 2026. aastal — andmed riigi, sektori järgi ja elukallidusega kohandatud.',
+  mt: 'Salarji medji fil-pajjiżi kollha tal-UE fl-2026 — data skont il-pajjiż, is-settur u aġġustata għall-ispiża tal-għajxien.',
+  ga: 'Meánphá i ngach tír AE in 2026 — sonraí de réir tír, earnáil agus coigeartaithe le haghaidh costas maireachtála.',
+};
+
+// --------------- TLDR ---------------
+const tldrItems: Record<string, string[]> = {
+  en: [
+    'Highest average salaries in Europe: Luxembourg (€66,000), Switzerland (€78,000), Denmark (€61,000)',
+    'Lowest EU average salaries: Bulgaria (€13,500), Romania (€14,200), Latvia (€16,800)',
+    'Adjusted for purchasing power, the gap narrows significantly — Eastern Europe often delivers better real living standards than raw numbers suggest',
+    'Technology, finance, and engineering sectors pay 40-80% above national averages across all EU countries',
+    'The EU average gross annual salary stands at approximately €33,500 (2026 estimate)',
+  ],
+  fr: [
+    'Salaires moyens les plus élevés en Europe : Luxembourg (66 000 €), Suisse (78 000 €), Danemark (61 000 €)',
+    'Salaires moyens UE les plus bas : Bulgarie (13 500 €), Roumanie (14 200 €), Lettonie (16 800 €)',
+    'Ajusté à la parité de pouvoir d\'achat, l\'écart se réduit considérablement',
+    'La technologie, la finance et l\'ingénierie paient 40 à 80 % au-dessus des moyennes nationales',
+    'Le salaire annuel brut moyen de l\'UE est d\'environ 33 500 € (estimation 2026)',
+  ],
+  de: [
+    'Höchste Durchschnittsgehälter in Europa: Luxemburg (66.000 €), Schweiz (78.000 €), Dänemark (61.000 €)',
+    'Niedrigste EU-Durchschnittsgehälter: Bulgarien (13.500 €), Rumänien (14.200 €), Lettland (16.800 €)',
+    'Kaufkraftbereinigt verringert sich der Unterschied erheblich',
+    'Technologie, Finanzen und Ingenieurwesen zahlen 40–80 % über dem nationalen Durchschnitt',
+    'Das durchschnittliche Bruttojahresgehalt in der EU beträgt ca. 33.500 € (Schätzung 2026)',
+  ],
+  es: [
+    'Salarios promedio más altos en Europa: Luxemburgo (66.000 €), Suiza (78.000 €), Dinamarca (61.000 €)',
+    'Salarios promedio de la UE más bajos: Bulgaria (13.500 €), Rumanía (14.200 €), Letonia (16.800 €)',
+    'Ajustados por paridad de poder adquisitivo, la brecha se reduce significativamente',
+    'Tecnología, finanzas e ingeniería pagan entre un 40-80% por encima de los promedios nacionales',
+    'El salario bruto anual promedio de la UE es de aproximadamente 33.500 € (estimación 2026)',
+  ],
+  it: ['Stipendi medi più alti: Lussemburgo (66.000€), Svizzera (78.000€), Danimarca (61.000€)', 'Stipendi medi UE più bassi: Bulgaria (13.500€), Romania (14.200€)', 'Corretti per la parità del potere d\'acquisto, il divario si riduce notevolmente', 'Tecnologia, finanza e ingegneria pagano il 40-80% in più delle medie nazionali', 'Lo stipendio lordo medio UE è di circa 33.500€ (stima 2026)'],
+  pt: ['Salários médios mais altos: Luxemburgo (€66.000), Suíça (€78.000), Dinamarca (€61.000)', 'Salários médios UE mais baixos: Bulgária (€13.500), Roménia (€14.200)', 'Ajustados por paridade de poder de compra, a diferença reduz-se significativamente', 'Tecnologia, finanças e engenharia pagam 40-80% acima das médias nacionais', 'O salário bruto médio anual da UE é de cerca de €33.500 (estimativa 2026)'],
+  nl: ['Hoogste gemiddelde salarissen: Luxemburg (€66.000), Zwitserland (€78.000), Denemarken (€61.000)', 'Laagste EU-gemiddelde salarissen: Bulgarije (€13.500), Roemenië (€14.200)', 'Gecorrigeerd voor koopkrachtpariteit wordt het verschil aanzienlijk kleiner', 'Technologie, financiën en engineering betalen 40-80% boven nationale gemiddelden', 'Het gemiddeld bruto jaarsalaris in de EU bedraagt circa €33.500 (schatting 2026)'],
+  pl: ['Najwyższe średnie wynagrodzenia: Luksemburg (66 000 €), Szwajcaria (78 000 €), Dania (61 000 €)', 'Najniższe średnie wynagrodzenia UE: Bułgaria (13 500 €), Rumunia (14 200 €)', 'Po korekcie o parytet siły nabywczej różnica znacznie się zmniejsza', 'Technologia, finanse i inżynieria płacą 40-80% powyżej krajowych średnich', 'Średnie roczne wynagrodzenie brutto w UE wynosi ok. 33 500 € (szacunek 2026)'],
+  ro: ['Salariile medii cele mai mari: Luxemburg (66.000€), Elveția (78.000€), Danemarca (61.000€)', 'Cele mai mici salarii medii UE: Bulgaria (13.500€), România (14.200€)', 'Ajustate la paritatea puterii de cumpărare, diferența se micșorează semnificativ', 'Tehnologia, finanțele și ingineria plătesc 40-80% peste mediile naționale', 'Salariul brut mediu anual în UE este de aproximativ 33.500€ (estimare 2026)'],
+  cs: ['Nejvyšší průměrné platy: Lucembursko (66 000 €), Švýcarsko (78 000 €), Dánsko (61 000 €)', 'Nejnižší průměrné platy EU: Bulharsko (13 500 €), Rumunsko (14 200 €)', 'Po úpravě o paritu kupní síly se rozdíl výrazně zmenšuje', 'Technologie, finance a strojírenství platí 40–80 % nad národními průměry', 'Průměrný hrubý roční plat v EU je přibližně 33 500 € (odhad 2026)'],
+  sv: ['Högsta genomsnittslöner: Luxemburg (€66 000), Schweiz (€78 000), Danmark (€61 000)', 'Lägsta EU-genomsnittslöner: Bulgarien (€13 500), Rumänien (€14 200)', 'Justerat för köpkraftsparitet minskar klyftan avsevärt', 'Teknik, finans och ingenjörskonst betalar 40-80% över nationella genomsnitt', 'Den genomsnittliga bruttolönen i EU är cirka €33 500 (uppskattning 2026)'],
+  da: ['Højeste gennemsnitslønninger: Luxembourg (€66.000), Schweiz (€78.000), Danmark (€61.000)', 'Laveste EU-gennemsnitslønninger: Bulgarien (€13.500), Rumænien (€14.200)', 'Justeret for købekraftsparitet indsnævres kløften betydeligt', 'Teknologi, finans og teknik betaler 40-80% over nationale gennemsnit', 'Den gennemsnitlige bruttoårlige løn i EU er ca. €33.500 (skøn 2026)'],
+  fi: ['Korkeimmat keskipalkat: Luxemburg (66 000€), Sveitsi (78 000€), Tanska (61 000€)', 'Alhaisimmat EU:n keskipalkat: Bulgaria (13 500€), Romania (14 200€)', 'Ostovoimapariteetilla oikaistuna ero kapenee merkittävästi', 'Teknologia, rahoitus ja insinöörityö maksavat 40-80% yli kansallisten keskiarvojen', 'EU:n keskimääräinen bruttovuosipalkka on noin 33 500€ (arvio 2026)'],
+  el: ['Υψηλότεροι μέσοι μισθοί: Λουξεμβούργο (€66.000), Ελβετία (€78.000), Δανία (€61.000)', 'Χαμηλότεροι μέσοι μισθοί ΕΕ: Βουλγαρία (€13.500), Ρουμανία (€14.200)', 'Διορθωμένοι για αγοραστική δύναμη, το χάσμα μειώνεται σημαντικά', 'Τεχνολογία, χρηματοοικονομικά και μηχανική πληρώνουν 40-80% πάνω από τους εθνικούς μέσους όρους', 'Ο μέσος ακαθάριστος ετήσιος μισθός στην ΕΕ είναι περίπου €33.500 (εκτίμηση 2026)'],
+  hu: ['Legmagasabb átlagfizetések: Luxemburg (66 000€), Svájc (78 000€), Dánia (61 000€)', 'Legalacsonyabb EU-átlagfizetések: Bulgária (13 500€), Románia (14 200€)', 'Vásárlóerő-paritással korrigálva a különbség jelentősen csökken', 'Technológia, pénzügy és mérnöki szakmák 40-80%-kal fizetnek a nemzeti átlagok felett', 'Az EU átlagos éves bruttó keresete kb. 33 500€ (2026-os becslés)'],
+  sk: ['Najvyššie priemerné platy: Luxembursko (66 000€), Švajčiarsko (78 000€), Dánsko (61 000€)', 'Najnižšie priemerné platy EÚ: Bulharsko (13 500€), Rumunsko (14 200€)', 'Po úprave o paritu kúpnej sily sa rozdiel výrazne zmenšuje', 'Technológie, financie a strojárstvo platia 40-80% nad národnými priemermi', 'Priemerný hrubý ročný plat v EÚ je asi 33 500€ (odhad 2026)'],
+  bg: ['Най-високи средни заплати: Люксембург (66 000€), Швейцария (78 000€), Дания (61 000€)', 'Най-ниски средни заплати в ЕС: България (13 500€), Румъния (14 200€)', 'Коригирани за паритет на покупателната способност, разликата значително намалява', 'Технологиите, финансите и инженерингът плащат 40-80% над националните средни', 'Средното годишно брутно възнаграждение в ЕС е около 33 500€ (оценка 2026)'],
+  hr: ['Najviše prosječne plaće: Luksemburg (66.000€), Švicarska (78.000€), Danska (61.000€)', 'Najniže prosječne plaće EU: Bugarska (13.500€), Rumunjska (14.200€)', 'Korigirane za paritet kupovne moći, jaz se značajno sužava', 'Tehnologija, financije i inženjerstvo plaćaju 40-80% iznad nacionalnih prosjeka', 'Prosječna bruto godišnja plaća u EU iznosi oko 33.500€ (procjena 2026)'],
+  sl: ['Najvišje povprečne plače: Luksemburg (66.000€), Švica (78.000€), Danska (61.000€)', 'Najnižje povprečne plače EU: Bolgarija (13.500€), Romunija (14.200€)', 'Prilagojene za paritet kupne moči, vrzel se bistveno zoži', 'Tehnologija, finance in inženirstvo plačajo 40-80% nad nacionalnimi povprečji', 'Povprečna bruto letna plača v EU je okoli 33.500€ (ocena 2026)'],
+  lt: ['Aukščiausi viduriniai atlyginimai: Liuksemburgas (66 000€), Šveicarija (78 000€), Danija (61 000€)', 'Žemiausi vidutiniai atlyginimai ES: Bulgarija (13 500€), Rumunija (14 200€)', 'Pakoreguojus pagal perkamosios galios paritetą, skirtumas žymiai sumažėja', 'Technologijos, finansai ir inžinerija moka 40-80% daugiau nei nacionaliniai vidurkiai', 'Vidutinis metinis bruto atlyginimas ES yra apie 33 500€ (2026 m. įvertinimas)'],
+  lv: ['Augstākās vidējās algas: Luksemburga (66 000€), Šveice (78 000€), Dānija (61 000€)', 'Zemākās vidējās algas ES: Bulgārija (13 500€), Rumānija (14 200€)', 'Koriģētas pēc pirktspējas paritātes, plaisa ievērojami sašaurinās', 'Tehnoloģijas, finanses un inženierija maksā par 40-80% vairāk nekā valstu vidējie', 'ES vidējā gada bruto alga ir aptuveni 33 500€ (2026. gada aplēse)'],
+  et: ['Kõrgeimad keskmised palgad: Luksemburg (66 000€), Šveits (78 000€), Taani (61 000€)', 'Madalaimad EL-i keskmised palgad: Bulgaaria (13 500€), Rumeenia (14 200€)', 'Ostujõu pariteediga korrigeeritult väheneb lõhe märkimisväärselt', 'Tehnoloogia, rahandus ja inseneeria maksavad 40-80% rohkem kui riiklikud keskmised', 'EL-i keskmine aastane brutopalk on umbes 33 500€ (2026. aasta hinnang)'],
+  mt: ['L-ogħla salarji medji: Lussemburgu (€66,000), Svizzera (€78,000), Danimarka (€61,000)', 'L-inqas salarji medji tal-UE: Bulgarija (€13,500), Rumanija (€14,200)', 'Aġġustati għall-parità tal-qawwa tax-xiri, id-distakk jidgħajjar b\'mod sinifikanti', 'It-teknoloġija, il-finanzi u l-inġinerija jħallsu 40-80% aktar mil-medji nazzjonali', 'Is-salarju medju annwali gross fl-UE huwa ta\' madwar €33,500 (stima 2026)'],
+  ga: ['Na meánphá is airde: Lucsamburg (€66,000), An Eilvéis (€78,000), An Danmhairg (€61,000)', 'Na meánphá AE is ísle: An Bhulgáir (€13,500), An Rómáin (€14,200)', 'Coigeartaithe le haghaidh paireacht chumhacht ceannaigh, cúngaíonn an bearnas go suntasach', 'Íocann teicneolaíocht, airgeadas agus innealtóireacht 40-80% os cionn meánanna náisiúnta', 'Is é tuarastal bliantúil comhlán meánach an AE thart ar €33,500 (meastachán 2026)'],
+};
+
+// --------------- FAQ ---------------
+const faqItems: Record<string, Array<{question: string; answer: string}>> = {
+  en: [
+    { question: 'What is the average salary in Europe in 2026?', answer: 'The EU-wide average gross annual salary in 2026 is approximately €33,500, though this varies enormously by country. Western and Northern European countries average €40,000–€65,000+, while Central and Eastern European countries average €15,000–€28,000. When adjusted for cost of living and purchasing power, the differences are smaller than the raw numbers suggest.' },
+    { question: 'Which country has the highest average salary in Europe?', answer: 'Among EU member states, Luxembourg has the highest average annual gross salary at approximately €66,000. Including Switzerland (non-EU), the figure rises to around €78,000. Denmark (€61,000), Ireland (€52,000), and the Netherlands (€51,000) round out the top EU earners.' },
+    { question: 'Which EU country has the lowest average salary?', answer: 'Bulgaria has the lowest average annual gross salary among EU member states at approximately €13,500, followed by Romania (€14,200) and Latvia (€16,800). However, these figures should be considered alongside local costs: rent, food, and services in Bulgaria can be 60-70% cheaper than in Western Europe.' },
+    { question: 'What is the average salary in Germany?', answer: 'The average gross annual salary in Germany is approximately €44,000 in 2026, equating to roughly €3,667/month gross or about €2,200–€2,500/month net depending on tax class, pension contributions, and health insurance. Salaries vary significantly by industry: tech and automotive pay well above average; hospitality and retail below.' },
+    { question: 'How does purchasing power affect salary comparisons?', answer: 'A €15,000 salary in Bulgaria has much greater real purchasing power than the same figure in Luxembourg or Denmark. The EU uses Purchasing Power Standard (PPS) to normalise these differences. When adjusted, the gap between EU countries narrows considerably — Eastern European workers often enjoy a reasonable quality of life despite lower nominal salaries.' },
+    { question: 'What sectors pay the most across Europe?', answer: 'Financial services, technology/ICT, and pharmaceutical industries consistently pay the highest average salaries across all EU countries, typically 40-80% above national averages. Energy and engineering also pay significantly above average. Retail, hospitality, and agriculture pay the least, often only marginally above minimum wage levels in many countries.' },
+    { question: 'How have European salaries changed in recent years?', answer: 'European salaries rose significantly in 2022-2024 due to inflationary pressures, with average nominal wage growth of 4-7% annually across the EU. By 2025-2026, wage growth has moderated to 2-4% in most countries as inflation fell back toward the ECB\'s 2% target. Real wages (inflation-adjusted) have recovered in most countries after the 2022 energy crisis setback.' },
+  ],
+  fr: [
+    { question: 'Quel est le salaire moyen en Europe en 2026 ?', answer: 'Le salaire annuel brut moyen à l\'échelle de l\'UE en 2026 est d\'environ 33 500 €, mais cela varie considérablement selon les pays. Les pays d\'Europe occidentale et du Nord ont des moyennes de 40 000 à 65 000 € et plus, tandis que les pays d\'Europe centrale et orientale se situent entre 15 000 et 28 000 €.' },
+    { question: 'Quel pays a le salaire moyen le plus élevé en Europe ?', answer: 'Parmi les États membres de l\'UE, le Luxembourg a le salaire annuel brut moyen le plus élevé, à environ 66 000 €. En incluant la Suisse (non-UE), ce chiffre monte à environ 78 000 €.' },
+    { question: 'Quel pays de l\'UE a le salaire moyen le plus bas ?', answer: 'La Bulgarie a le salaire annuel brut moyen le plus bas parmi les États membres de l\'UE, à environ 13 500 €, suivie de la Roumanie (14 200 €) et de la Lettonie (16 800 €).' },
+    { question: 'Quel est le salaire moyen en Allemagne ?', answer: 'Le salaire annuel brut moyen en Allemagne est d\'environ 44 000 € en 2026, soit environ 3 667 €/mois brut ou 2 200 à 2 500 €/mois net.' },
+    { question: 'Comment le pouvoir d\'achat affecte-t-il les comparaisons salariales ?', answer: 'Un salaire de 15 000 € en Bulgarie a un pouvoir d\'achat réel beaucoup plus élevé que la même somme au Luxembourg ou au Danemark. L\'UE utilise le Standard de Pouvoir d\'Achat (SPA) pour normaliser ces différences.' },
+    { question: 'Quels secteurs paient le plus en Europe ?', answer: 'Les services financiers, la technologie et l\'industrie pharmaceutique paient systématiquement les salaires les plus élevés, généralement 40 à 80 % au-dessus des moyennes nationales.' },
+    { question: 'Comment les salaires européens ont-ils évolué ces dernières années ?', answer: 'Les salaires européens ont augmenté de manière significative en 2022-2024 en raison des pressions inflationnistes. En 2025-2026, la croissance des salaires s\'est modérée à 2-4 % dans la plupart des pays.' },
+  ],
+  de: [
+    { question: 'Was ist das Durchschnittsgehalt in Europa 2026?', answer: 'Das EU-weite Bruttodurchschnittsgehalt 2026 beträgt ca. 33.500 €. West- und Nordeuropa erzielt Durchschnittswerte von 40.000–65.000 €+, Zentral- und Osteuropa 15.000–28.000 €.' },
+    { question: 'Welches Land hat das höchste Durchschnittsgehalt in Europa?', answer: 'Unter den EU-Mitgliedstaaten hat Luxemburg das höchste Bruttodurchschnittsgehalt mit ca. 66.000 €. Inklusive Schweiz (Nicht-EU) sind es ca. 78.000 €.' },
+    { question: 'Welches EU-Land hat das niedrigste Durchschnittsgehalt?', answer: 'Bulgarien hat das niedrigste Bruttodurchschnittsgehalt unter EU-Mitgliedstaaten mit ca. 13.500 €, gefolgt von Rumänien (14.200 €) und Lettland (16.800 €).' },
+    { question: 'Was ist das Durchschnittsgehalt in Deutschland?', answer: 'Das Bruttodurchschnittsgehalt in Deutschland beträgt ca. 44.000 € p.a. (2026), also ca. 3.667 €/Monat brutto oder 2.200–2.500 €/Monat netto.' },
+    { question: 'Wie beeinflusst Kaufkraft Gehaltsvergleiche?', answer: '15.000 € in Bulgarien haben eine erheblich höhere reale Kaufkraft als in Luxemburg oder Dänemark. Die EU nutzt den Kaufkraftstandard (KKS) für Normalisierungen.' },
+    { question: 'Welche Sektoren zahlen in Europa am meisten?', answer: 'Finanzdienstleistungen, Technologie/IKT und Pharmaindustrie zahlen durchgängig die höchsten Gehälter, typischerweise 40–80 % über dem nationalen Durchschnitt.' },
+    { question: 'Wie haben sich europäische Gehälter zuletzt entwickelt?', answer: '2022–2024 stiegen die Gehälter inflationsbedingt stark. 2025–2026 hat sich das Wachstum auf 2–4 % p.a. normalisiert.' },
+  ],
+  es: [
+    { question: '¿Cuál es el salario promedio en Europa en 2026?', answer: 'El salario bruto anual promedio en la UE en 2026 es de aproximadamente 33.500 €. Europa Occidental y del Norte promedia 40.000–65.000 €+, mientras que Europa Central y Oriental promedia 15.000–28.000 €.' },
+    { question: '¿Qué país tiene el salario promedio más alto en Europa?', answer: 'Entre los estados miembros de la UE, Luxemburgo tiene el salario bruto anual promedio más alto con aproximadamente 66.000 €. Incluyendo Suiza (no UE), la cifra sube a unos 78.000 €.' },
+    { question: '¿Qué país de la UE tiene el salario promedio más bajo?', answer: 'Bulgaria tiene el salario bruto anual promedio más bajo entre los estados miembros de la UE, con aproximadamente 13.500 €, seguido de Rumanía (14.200 €) y Letonia (16.800 €).' },
+    { question: '¿Cuál es el salario promedio en Alemania?', answer: 'El salario bruto anual promedio en Alemania es de aproximadamente 44.000 € en 2026, equivalente a unos 3.667 €/mes bruto o 2.200–2.500 €/mes neto.' },
+    { question: '¿Cómo afecta el poder adquisitivo a las comparaciones salariales?', answer: 'Un salario de 15.000 € en Bulgaria tiene un poder adquisitivo real mucho mayor que la misma cifra en Luxemburgo o Dinamarca. La UE usa el Standard de Poder Adquisitivo (SPA) para normalizar estas diferencias.' },
+    { question: '¿Qué sectores pagan más en Europa?', answer: 'Servicios financieros, tecnología y la industria farmacéutica pagan sistemáticamente los salarios más altos, típicamente un 40-80% por encima de los promedios nacionales.' },
+    { question: '¿Cómo han cambiado los salarios europeos en los últimos años?', answer: 'Los salarios europeos aumentaron significativamente en 2022-2024 debido a presiones inflacionarias. En 2025-2026, el crecimiento salarial se ha moderado al 2-4% en la mayoría de los países.' },
+  ],
+  it: [{ question: 'Qual è lo stipendio medio in Europa nel 2026?', answer: 'Lo stipendio lordo medio annuale nell\'UE nel 2026 è di circa 33.500€. I paesi dell\'Europa occidentale e settentrionale hanno medie di 40.000–65.000€+.' }, { question: 'Quale paese ha lo stipendio medio più alto in Europa?', answer: 'Tra gli stati membri dell\'UE, il Lussemburgo ha lo stipendio lordo medio più alto con circa 66.000€.' }, { question: 'Quale paese UE ha lo stipendio medio più basso?', answer: 'La Bulgaria ha il salario medio annuo lordo più basso tra gli stati membri dell\'UE, circa 13.500€.' }, { question: 'Qual è lo stipendio medio in Germania?', answer: 'Lo stipendio lordo medio annuale in Germania è di circa 44.000€ nel 2026.' }, { question: 'Come influisce il potere d\'acquisto sui confronti salariali?', answer: '15.000€ in Bulgaria hanno un potere d\'acquisto reale molto maggiore che in Lussemburgo.' }, { question: 'Quali settori pagano di più in Europa?', answer: 'Servizi finanziari, tecnologia e farmaceutica pagano sistematicamente i salari più alti, tipicamente il 40-80% sopra le medie nazionali.' }, { question: 'Come sono cambiati i salari europei?', answer: 'I salari europei sono aumentati significativamente nel 2022-2024. Nel 2025-2026 la crescita si è moderata al 2-4% annuo.' }],
+  pt: [{ question: 'Qual é o salário médio na Europa em 2026?', answer: 'O salário bruto anual médio na UE em 2026 é de cerca de 33.500€. A Europa Ocidental e do Norte tem médias de 40.000–65.000€+.' }, { question: 'Que país tem o salário médio mais alto na Europa?', answer: 'Entre os estados membros da UE, o Luxemburgo tem o salário bruto anual médio mais alto, com cerca de 66.000€.' }, { question: 'Que país da UE tem o salário médio mais baixo?', answer: 'A Bulgária tem o salário bruto anual médio mais baixo entre os estados membros da UE, com cerca de 13.500€.' }, { question: 'Qual é o salário médio na Alemanha?', answer: 'O salário bruto anual médio na Alemanha é de cerca de 44.000€ em 2026.' }, { question: 'Como o poder de compra afeta as comparações salariais?', answer: '15.000€ na Bulgária têm muito maior poder de compra real do que no Luxemburgo.' }, { question: 'Que setores pagam mais na Europa?', answer: 'Serviços financeiros, tecnologia e indústria farmacêutica pagam sistematicamente os salários mais altos.' }, { question: 'Como mudaram os salários europeus?', answer: 'Os salários europeus subiram significativamente em 2022-2024. Em 2025-2026, o crescimento moderou-se para 2-4%.' }],
+  nl: [{ question: 'Wat is het gemiddelde salaris in Europa in 2026?', answer: 'Het EU-brede gemiddelde bruto jaarsalaris in 2026 is ongeveer €33.500. West- en Noord-Europa gemiddeld €40.000–€65.000+.' }, { question: 'Welk land heeft het hoogste gemiddelde salaris in Europa?', answer: 'Onder EU-lidstaten heeft Luxemburg het hoogste gemiddelde bruto jaarsalaris met ongeveer €66.000.' }, { question: 'Welk EU-land heeft het laagste gemiddelde salaris?', answer: 'Bulgarije heeft het laagste gemiddelde bruto jaarsalaris onder EU-lidstaten met ongeveer €13.500.' }, { question: 'Wat is het gemiddelde salaris in Duitsland?', answer: 'Het gemiddelde bruto jaarsalaris in Duitsland is ongeveer €44.000 in 2026.' }, { question: 'Hoe beïnvloedt koopkracht salarisvergelijkingen?', answer: '€15.000 in Bulgarije heeft een veel hogere reële koopkracht dan in Luxemburg.' }, { question: 'Welke sectoren betalen het meest in Europa?', answer: 'Financiële diensten, technologie en farmaceutische industrie betalen consequent de hoogste salarissen.' }, { question: 'Hoe zijn Europese salarissen veranderd?', answer: 'Europese salarissen stegen aanzienlijk in 2022-2024. In 2025-2026 is de groei gematigd tot 2-4%.' }],
+  pl: [{ question: 'Jakie jest średnie wynagrodzenie w Europie w 2026 roku?', answer: 'Średnie roczne wynagrodzenie brutto w UE w 2026 roku wynosi około 33 500 €. Europa Zachodnia i Północna przeciętnie 40 000–65 000 €+.' }, { question: 'Który kraj ma najwyższe przeciętne wynagrodzenie w Europie?', answer: 'Wśród państw członkowskich UE Luksemburg ma najwyższe przeciętne roczne wynagrodzenie brutto — około 66 000 €.' }, { question: 'Który kraj UE ma najniższe przeciętne wynagrodzenie?', answer: 'Bułgaria ma najniższe przeciętne roczne wynagrodzenie brutto wśród państw członkowskich UE — około 13 500 €.' }, { question: 'Jakie jest przeciętne wynagrodzenie w Niemczech?', answer: 'Przeciętne roczne wynagrodzenie brutto w Niemczech wynosi około 44 000 € w 2026 roku.' }, { question: 'Jak siła nabywcza wpływa na porównania wynagrodzeń?', answer: '15 000 € w Bułgarii ma znacznie wyższą realną siłę nabywczą niż ta sama kwota w Luksemburgu.' }, { question: 'Które sektory płacą najwięcej w Europie?', answer: 'Usługi finansowe, technologie i przemysł farmaceutyczny stale płacą najwyższe wynagrodzenia.' }, { question: 'Jak zmieniały się wynagrodzenia europejskie?', answer: 'Wynagrodzenia europejskie wzrosły znacząco w latach 2022-2024. W 2025-2026 wzrost wyhamował do 2-4%.' }],
+  ro: [{ question: 'Care este salariul mediu în Europa în 2026?', answer: 'Salariul brut mediu anual la nivelul UE în 2026 este de aproximativ 33.500€. Europa de Vest și de Nord are medii de 40.000–65.000€+.' }, { question: 'Ce țară are cel mai mare salariu mediu în Europa?', answer: 'Dintre statele membre UE, Luxemburgul are cel mai mare salariu brut mediu anual — aproximativ 66.000€.' }, { question: 'Ce țară UE are cel mai mic salariu mediu?', answer: 'Bulgaria are cel mai mic salariu brut mediu anual dintre statele membre UE — aproximativ 13.500€.' }, { question: 'Care este salariul mediu în Germania?', answer: 'Salariul brut mediu anual în Germania este de aproximativ 44.000€ în 2026.' }, { question: 'Cum afectează puterea de cumpărare comparațiile salariale?', answer: '15.000€ în Bulgaria au o putere de cumpărare reală mult mai mare decât în Luxemburg.' }, { question: 'Ce sectoare plătesc cel mai bine în Europa?', answer: 'Serviciile financiare, tehnologia și industria farmaceutică plătesc în mod constant cele mai mari salarii.' }, { question: 'Cum s-au schimbat salariile europene?', answer: 'Salariile europene au crescut semnificativ în 2022-2024. În 2025-2026, creșterea s-a moderat la 2-4%.' }],
+  cs: [{ question: 'Jaký je průměrný plat v Evropě v roce 2026?', answer: 'Průměrný hrubý roční plat v EU v roce 2026 je přibližně 33 500 €. Západ a sever Evropy průměruje 40 000–65 000 €+.' }, { question: 'Která země má v Evropě nejvyšší průměrný plat?', answer: 'Mezi členskými státy EU má Lucembursko nejvyšší průměrný hrubý roční plat — přibližně 66 000 €.' }, { question: 'Která země EU má nejnižší průměrný plat?', answer: 'Bulharsko má nejnižší průměrný hrubý roční plat mezi členskými státy EU — přibližně 13 500 €.' }, { question: 'Jaký je průměrný plat v Německu?', answer: 'Průměrný hrubý roční plat v Německu je přibližně 44 000 € v roce 2026.' }, { question: 'Jak kupní síla ovlivňuje srovnání platů?', answer: '15 000 € v Bulharsku má výrazně vyšší reálnou kupní sílu než v Lucembursku.' }, { question: 'Která odvětví v Evropě platí nejvíce?', answer: 'Finanční služby, technologie a farmaceutický průmysl konzistentně platí nejvyšší platy.' }, { question: 'Jak se evropské platy vyvíjely?', answer: 'Evropské platy výrazně vzrostly v letech 2022-2024. V letech 2025-2026 se růst zmírnil na 2-4 %.' }],
+  sv: [{ question: 'Vad är genomsnittslönen i Europa 2026?', answer: 'Den EU-övergripande genomsnittliga bruttolönen 2026 är ungefär €33 500. Väst- och Nordeuropa genomsnitt €40 000–€65 000+.' }, { question: 'Vilket land har högst genomsnittslön i Europa?', answer: 'Bland EU-medlemsstater har Luxemburg den högsta genomsnittliga bruttolönen — ungefär €66 000.' }, { question: 'Vilket EU-land har lägst genomsnittslön?', answer: 'Bulgarien har den lägsta genomsnittliga bruttolönen bland EU-medlemsstater — ungefär €13 500.' }, { question: 'Vad är genomsnittslönen i Tyskland?', answer: 'Den genomsnittliga bruttolönen i Tyskland är ungefär €44 000 2026.' }, { question: 'Hur påverkar köpkraft lönejämförelser?', answer: '€15 000 i Bulgarien har en mycket högre verklig köpkraft än i Luxemburg.' }, { question: 'Vilka sektorer betalar mest i Europa?', answer: 'Finansiella tjänster, teknik och läkemedel betalar konsekvent de högsta lönerna.' }, { question: 'Hur har europeiska löner förändrats?', answer: 'Europeiska löner steg kraftigt 2022-2024. I 2025-2026 modererades tillväxten till 2-4%.' }],
+  da: [{ question: 'Hvad er gennemsnitslønnen i Europa 2026?', answer: 'Den EU-dækkende gennemsnitlige bruttoløn i 2026 er ca. €33.500. Vest- og Nordeuropa gennemsnitlig €40.000–€65.000+.' }, { question: 'Hvilket land har den højeste gennemsnitsløn i Europa?', answer: 'Blandt EU-medlemsstater har Luxembourg den højeste gennemsnitlige bruttoårsløn — ca. €66.000.' }, { question: 'Hvilket EU-land har den laveste gennemsnitsløn?', answer: 'Bulgarien har den laveste gennemsnitlige bruttoårsløn — ca. €13.500.' }, { question: 'Hvad er gennemsnitslønnen i Tyskland?', answer: 'Den gennemsnitlige bruttoårsløn i Tyskland er ca. €44.000 i 2026.' }, { question: 'Hvordan påvirker købekraft lønsammenligninger?', answer: '€15.000 i Bulgarien har en meget højere reel købekraft end i Luxembourg.' }, { question: 'Hvilke sektorer betaler mest i Europa?', answer: 'Finansielle tjenester, teknologi og farmaceutisk industri betaler konsekvent de højeste lønninger.' }, { question: 'Hvordan har europæiske lønninger ændret sig?', answer: 'Europæiske lønninger steg markant i 2022-2024. I 2025-2026 modererede væksten sig til 2-4%.' }],
+  fi: [{ question: 'Mikä on keskipalkka Euroopassa 2026?', answer: 'EU:n laajuinen bruttopalkka on noin 33 500€ vuonna 2026. Länsi- ja Pohjois-Eurooppa keskiarvo 40 000–65 000€+.' }, { question: 'Millä maalla on korkein keskipalkka Euroopassa?', answer: 'EU-jäsenvaltioista Luxemburgilla on korkein keskimääräinen bruttovuosipalkka — noin 66 000€.' }, { question: 'Millä EU-maalla on alhaisin keskipalkka?', answer: 'Bulgarialla on alhaisin keskimääräinen bruttovuosipalkka EU-jäsenmaista — noin 13 500€.' }, { question: 'Mikä on keskipalkka Saksassa?', answer: 'Saksan keskimääräinen bruttovuosipalkka on noin 44 000€ vuonna 2026.' }, { question: 'Kuinka ostovoima vaikuttaa palkkatasojen vertailuun?', answer: '15 000€ Bulgariassa on huomattavasti suurempi todellinen ostovoima kuin Luxemburgissa.' }, { question: 'Mitkä alat maksavat eniten Euroopassa?', answer: 'Rahoituspalvelut, teknologia ja lääketeollisuus maksavat johdonmukaisesti korkeimpia palkkoja.' }, { question: 'Miten eurooppalaiset palkat ovat muuttuneet?', answer: 'Eurooppalaiset palkat nousivat merkittävästi 2022-2024. Vuosina 2025-2026 kasvu hidastui 2-4%:iin.' }],
+  el: [{ question: 'Ποιος είναι ο μέσος μισθός στην Ευρώπη το 2026;', answer: 'Ο μέσος ακαθάριστος ετήσιος μισθός στην ΕΕ το 2026 είναι περίπου €33.500. Δυτική και Βόρεια Ευρώπη μέσο €40.000–€65.000+.' }, { question: 'Ποια χώρα έχει τον υψηλότερο μέσο μισθό στην Ευρώπη;', answer: 'Μεταξύ των κρατών μελών της ΕΕ, το Λουξεμβούργο έχει τον υψηλότερο μέσο ακαθάριστο ετήσιο μισθό — περίπου €66.000.' }, { question: 'Ποια χώρα της ΕΕ έχει τον χαμηλότερο μέσο μισθό;', answer: 'Η Βουλγαρία έχει τον χαμηλότερο μέσο ακαθάριστο ετήσιο μισθό — περίπου €13.500.' }, { question: 'Ποιος είναι ο μέσος μισθός στη Γερμανία;', answer: 'Ο μέσος ακαθάριστος ετήσιος μισθός στη Γερμανία είναι περίπου €44.000 το 2026.' }, { question: 'Πώς επηρεάζει η αγοραστική δύναμη τις συγκρίσεις μισθών;', answer: '€15.000 στη Βουλγαρία έχουν πολύ μεγαλύτερη πραγματική αγοραστική δύναμη από ό,τι στο Λουξεμβούργο.' }, { question: 'Ποιοι τομείς πληρώνουν περισσότερο στην Ευρώπη;', answer: 'Χρηματοοικονομικές υπηρεσίες, τεχνολογία και φαρμακευτική βιομηχανία πληρώνουν σταθερά τους υψηλότερους μισθούς.' }, { question: 'Πώς άλλαξαν οι ευρωπαϊκοί μισθοί τα τελευταία χρόνια;', answer: 'Οι μισθοί αυξήθηκαν σημαντικά το 2022-2024. Το 2025-2026 η αύξηση μετριάστηκε σε 2-4%.' }],
+  hu: [{ question: 'Mekkora az átlagfizetés Európában 2026-ban?', answer: 'Az EU-szintű átlagos bruttó éves kereset 2026-ban kb. 33 500€. Nyugat- és Észak-Európa átlaga 40 000–65 000€+.' }, { question: 'Melyik ország rendelkezik a legmagasabb átlagfizetéssel Európában?', answer: 'Az EU tagállamai közül Luxemburgban a legmagasabb az átlagos bruttó éves kereset — kb. 66 000€.' }, { question: 'Melyik EU-tagállamnak a legalacsonyabb az átlagfizetése?', answer: 'Bulgáriában a legalacsonyabb az átlagos bruttó éves kereset az EU tagállamai között — kb. 13 500€.' }, { question: 'Mekkora az átlagfizetés Németországban?', answer: 'Németország átlagos bruttó éves keresete kb. 44 000€ 2026-ban.' }, { question: 'Hogyan befolyásolja a vásárlóerő a bérhasonlításokat?', answer: '15 000€ Bulgáriában lényegesen nagyobb valódi vásárlóerőt jelent, mint Luxemburgban.' }, { question: 'Mely szektorok fizetnek a legtöbbet Európában?', answer: 'Pénzügyi szolgáltatások, technológia és gyógyszer folyamatosan a legmagasabb fizetéseket nyújtják.' }, { question: 'Hogyan változtak az európai fizetések az elmúlt években?', answer: 'Az európai fizetések 2022-2024-ben jelentősen emelkedtek. 2025-2026-ban a növekedés 2-4%-ra mérséklődött.' }],
+  sk: [{ question: 'Aký je priemerný plat v Európe v roku 2026?', answer: 'Priemerný hrubý ročný plat v EÚ v roku 2026 je približne 33 500€. Západ a sever Európy priemerne 40 000–65 000€+.' }, { question: 'Ktorá krajina má v Európe najvyšší priemerný plat?', answer: 'Spomedzi členských štátov EÚ má Luxembursko najvyšší priemerný hrubý ročný plat — približne 66 000€.' }, { question: 'Ktorá krajina EÚ má najnižší priemerný plat?', answer: 'Bulharsko má najnižší priemerný hrubý ročný plat — približne 13 500€.' }, { question: 'Aký je priemerný plat v Nemecku?', answer: 'Priemerný hrubý ročný plat v Nemecku je približne 44 000€ v roku 2026.' }, { question: 'Ako kúpna sila ovplyvňuje porovnania platov?', answer: '15 000€ v Bulharsku má oveľa vyššiu reálnu kúpnu silu ako v Luxembursku.' }, { question: 'Ktoré sektory platia v Európe najviac?', answer: 'Finančné služby, technológie a farmaceutický priemysel konzistentne platia najvyššie platy.' }, { question: 'Ako sa vyvíjali európske platy?', answer: 'Európske platy výrazne vzrástli v rokoch 2022-2024. V rokoch 2025-2026 sa rast zmiernil na 2-4%.' }],
+  bg: [{ question: 'Каква е средната заплата в Европа през 2026 г.?', answer: 'Средната брутна годишна заплата в ЕС за 2026 г. е около 33 500€. Западна и Северна Европа средно 40 000–65 000€+.' }, { question: 'Коя страна има най-висока средна заплата в Европа?', answer: 'Сред държавите членки на ЕС, Люксембург има най-висока средна брутна годишна заплата — около 66 000€.' }, { question: 'Коя страна от ЕС има най-ниска средна заплата?', answer: 'България има най-ниска средна брутна годишна заплата сред държавите членки на ЕС — около 13 500€.' }, { question: 'Каква е средната заплата в Германия?', answer: 'Средната брутна годишна заплата в Германия е около 44 000€ през 2026 г.' }, { question: 'Как покупателната способност влияе върху сравненията на заплатите?', answer: '15 000€ в България имат значително по-висока реална покупателна способност, отколкото в Люксембург.' }, { question: 'Кои сектори плащат най-много в Европа?', answer: 'Финансовите услуги, технологиите и фармацевтичната промишленост последователно плащат най-високи заплати.' }, { question: 'Как са се променили европейските заплати?', answer: 'Европейските заплати се повишиха значително през 2022-2024 г. В 2025-2026 г. ръстът се умери до 2-4%.' }],
+  hr: [{ question: 'Koja je prosječna plaća u Europi 2026.?', answer: 'Prosječna bruto godišnja plaća u EU 2026. je oko 33.500€. Zapadna i Sjeverna Europa prosjek 40.000–65.000€+.' }, { question: 'Koja zemlja ima najveću prosječnu plaću u Europi?', answer: 'Među državama članicama EU-a, Luksemburg ima najveću prosječnu bruto godišnju plaću — oko 66.000€.' }, { question: 'Koja zemlja EU-a ima najnižu prosječnu plaću?', answer: 'Bugarska ima najnižu prosječnu bruto godišnju plaću — oko 13.500€.' }, { question: 'Koja je prosječna plaća u Njemačkoj?', answer: 'Prosječna bruto godišnja plaća u Njemačkoj je oko 44.000€ 2026.' }, { question: 'Kako kupovna moć utječe na usporedbe plaća?', answer: '15.000€ u Bugarskoj ima puno veću stvarnu kupovnu moć nego u Luksemburgu.' }, { question: 'Koji sektori plaćaju najviše u Europi?', answer: 'Financijske usluge, tehnologija i farmaceutska industrija dosljedno plaćaju najviše plaće.' }, { question: 'Kako su se europske plaće mijenjale?', answer: 'Europske plaće su porasle značajno 2022-2024. U 2025-2026 rast se umjerio na 2-4%.' }],
+  sl: [{ question: 'Kakšna je povprečna plača v Evropi v 2026?', answer: 'Povprečna bruto letna plača v EU v 2026 je okoli 33.500€. Zahod in Sever Evrope povprečje 40.000–65.000€+.' }, { question: 'Katera država ima najvišjo povprečno plačo v Evropi?', answer: 'Med državami članicami EU ima Luksemburg najvišjo povprečno bruto letno plačo — okoli 66.000€.' }, { question: 'Katera država EU ima najnižjo povprečno plačo?', answer: 'Bolgarija ima najnižjo povprečno bruto letno plačo — okoli 13.500€.' }, { question: 'Kakšna je povprečna plača v Nemčiji?', answer: 'Povprečna bruto letna plača v Nemčiji je okoli 44.000€ v letu 2026.' }, { question: 'Kako kupna moč vpliva na primerjave plač?', answer: '15.000€ v Bolgariji ima bistveno večjo realno kupno moč kot v Luksemburgu.' }, { question: 'Kateri sektorji plačajo največ v Evropi?', answer: 'Finančne storitve, tehnologija in farmacevtska industrija dosledno plačajo najvišje plače.' }, { question: 'Kako so se evropske plače spremenile?', answer: 'Evropske plače so se v letih 2022-2024 znatno zvišale. V 2025-2026 se je rast umirila na 2-4%.' }],
+  lt: [{ question: 'Koks vidutinis atlyginimas Europoje 2026 m.?', answer: 'Vidutinis metinis bruto atlyginimas ES 2026 m. yra apie 33 500€. Vakarų ir Šiaurės Europa vidurkis 40 000–65 000€+.' }, { question: 'Kuri šalis turi aukščiausią vidutinį atlyginimą Europoje?', answer: 'Tarp ES valstybių narių Liuksemburgas turi aukščiausią vidutinį metinį bruto atlyginimą — apie 66 000€.' }, { question: 'Kuri ES šalis turi žemiausią vidutinį atlyginimą?', answer: 'Bulgarija turi žemiausią vidutinį metinį bruto atlyginimą tarp ES valstybių narių — apie 13 500€.' }, { question: 'Koks vidutinis atlyginimas Vokietijoje?', answer: 'Vidutinis metinis bruto atlyginimas Vokietijoje 2026 m. yra apie 44 000€.' }, { question: 'Kaip perkamoji galia veikia atlyginimų palyginimus?', answer: '15 000€ Bulgarijoje turi daug didesnę realią perkamąją galią nei Liuksemburge.' }, { question: 'Kurie sektoriai moka daugiausiai Europoje?', answer: 'Finansinės paslaugos, technologijos ir farmacijos pramonė nuolat moka aukščiausius atlyginimus.' }, { question: 'Kaip pasikeitė Europos atlyginimai?', answer: 'Europos atlyginimai ženkliai išaugo 2022-2024 m. 2025-2026 m. augimas sulėtėjo iki 2-4%.' }],
+  lv: [{ question: 'Kāda ir vidējā alga Eiropā 2026. gadā?', answer: 'ES vidējā bruto gada alga 2026. gadā ir aptuveni 33 500€. Rietumu un Ziemeļu Eiropas vidējais rādītājs 40 000–65 000€+.' }, { question: 'Kurā valstī ir visaugstākā vidējā alga Eiropā?', answer: 'No ES dalībvalstīm Luksemburgai ir visaugstākā vidējā bruto gada alga — aptuveni 66 000€.' }, { question: 'Kurai ES valstij ir viszemākā vidējā alga?', answer: 'Bulgārijai ir viszemākā vidējā bruto gada alga starp ES dalībvalstīm — aptuveni 13 500€.' }, { question: 'Kāda ir vidējā alga Vācijā?', answer: 'Vidējā bruto gada alga Vācijā 2026. gadā ir aptuveni 44 000€.' }, { question: 'Kā pirktspēja ietekmē algu salīdzinājumus?', answer: '15 000€ Bulgārijā ir daudz lielāka reālā pirktspēja nekā Luksemburgā.' }, { question: 'Kuras nozares Eiropā maksā vairāk?', answer: 'Finanšu pakalpojumi, tehnoloģijas un farmaceitiskā rūpniecība konsekventi maksā augstākās algas.' }, { question: 'Kā mainījušās Eiropas algas?', answer: 'Eiropas algas ievērojami pieauga 2022-2024. gadā. 2025-2026. gadā augums mērenāks — 2-4%.' }],
+  et: [{ question: 'Milline on keskmine palk Euroopas 2026. aastal?', answer: 'EL-i keskmine aastane brutopalk 2026. aastal on umbes 33 500€. Lääne- ja Põhja-Euroopa keskmine 40 000–65 000€+.' }, { question: 'Millises riigis on kõrgeim keskmine palk Euroopas?', answer: 'EL-i liikmesriikide hulgas on Luksemburgil kõrgeim keskmine aastane brutopalk — umbes 66 000€.' }, { question: 'Millisel EL-i riigil on madalaim keskmine palk?', answer: 'Bulgaarial on madalaim keskmine aastane brutopalk EL-i liikmesriikide hulgas — umbes 13 500€.' }, { question: 'Milline on keskmine palk Saksamaal?', answer: 'Saksamaa keskmine aastane brutopalk on umbes 44 000€ 2026. aastal.' }, { question: 'Kuidas ostujõud palgavõrdlusi mõjutab?', answer: '15 000€ Bulgaarias on palju suurema reaalse ostujõuga kui Luksemburgis.' }, { question: 'Millised sektorid maksavad Euroopas kõige rohkem?', answer: 'Finantsteenused, tehnoloogia ja farmaatsia maksavad järjepidevalt kõrgeimaid palku.' }, { question: 'Kuidas on Euroopa palgad muutunud?', answer: 'Euroopa palgad tõusid märkimisväärselt 2022-2024. 2025-2026 aeglustus kasv 2-4%-ni.' }],
+  mt: [{ question: 'X\'inhu s-salarju medju fl-Ewropa fl-2026?', answer: 'Is-salarju medju annwali gross fl-UE fl-2026 huwa ta\' madwar €33,500. L-Ewropa tal-Punent u tat-Tramuntana medja €40,000–€65,000+.' }, { question: 'Liema pajjiż għandu l-ogħla salarju medju fl-Ewropa?', answer: 'Fost l-istati membri tal-UE, il-Lussemburgu għandu l-ogħla salarju medju annwali gross — madwar €66,000.' }, { question: 'Liema pajjiż tal-UE għandu l-inqas salarju medju?', answer: 'Il-Bulgarija għandha l-inqas salarju medju annwali gross — madwar €13,500.' }, { question: 'X\'inhu s-salarju medju fil-Ġermanja?', answer: 'Is-salarju medju annwali gross fil-Ġermanja huwa madwar €44,000 fl-2026.' }, { question: 'Kif taffettwa l-qawwa tax-xiri l-paraguni tas-salarji?', answer: '€15,000 fil-Bulgarija għandha qawwa tax-xiri reali ħafna ogħla minn dak fil-Lussemburgu.' }, { question: 'Liema setturi jħallsu l-aktar fl-Ewropa?', answer: 'Is-servizzi finanzjarji, it-teknoloġija u l-industrija farmaċewtika jħallsu konsistentement l-ogħla salarji.' }, { question: 'Kif inbidlu s-salarji Ewropej?', answer: 'Is-salarji Ewropej telgħu b\'mod sinifikanti fl-2022-2024. Fl-2025-2026, it-tkabbir moderà għal 2-4%.' }],
+  ga: [{ question: 'Cad is meánphá ann san Eoraip in 2026?', answer: 'Is é meántuarastal bliantúil comhlán ar fud an AE in 2026 thart ar €33,500. Meán Iarthar agus Tuaisceart na hEorpa €40,000–€65,000+.' }, { question: 'Cé acu tír a bhfuil an meánphá is airde in Eoraip?', answer: 'I measc ballstáit AE, tá an tuarastal bliantúil comhlán meánach is airde ag Lucsamburg — thart ar €66,000.' }, { question: 'Cé acu tír AE a bhfuil an meánphá is ísle?', answer: 'Tá an tuarastal bliantúil comhlán meánach is ísle ag An Bhulgáir i measc ballstáit AE — thart ar €13,500.' }, { question: 'Cad é an meánphá sa Ghearmáin?', answer: 'Is é tuarastal bliantúil comhlán meánach na Gearmáine thart ar €44,000 in 2026.' }, { question: 'Conas a théann cumhacht ceannaigh i gcion ar chomparáidí pá?', answer: 'Tá i bhfad níos mó cumhacht ceannaigh fíor ag €15,000 sa Bhulgáir ná in Lucsamburg.' }, { question: 'Cé na hearnálacha a íocann an méid is mó san Eoraip?', answer: 'Íocann seirbhísí airgeadais, teicneolaíocht agus cógaisíocht na tuarastail is airde de réir a chéile.' }, { question: 'Conas atá pá na hEorpa athraithe le blianta beaga?', answer: 'D\'ardaigh pá na hEorpa go suntasach in 2022-2024. In 2025-2026, modhnaíodh an fás go 2-4%.' }],
+};
+
+// --------------- Salary data ---------------
+const euSalaryData = [
+  { country: '🇱🇺', name: 'Luxembourg', avg: 66000, ppp: 52000, minWage: 2571, topSector: 'Finance' },
+  { country: '🇩🇰', name: 'Denmark', avg: 61000, ppp: 48000, minWage: null, topSector: 'Tech/Pharma' },
+  { country: '🇮🇪', name: 'Ireland', avg: 52000, ppp: 40000, minWage: 2146, topSector: 'Tech' },
+  { country: '🇳🇱', name: 'Netherlands', avg: 51000, ppp: 41000, minWage: 1995, topSector: 'Tech/Finance' },
+  { country: '🇧🇪', name: 'Belgium', avg: 49000, ppp: 40000, minWage: 1994, topSector: 'Pharma' },
+  { country: '🇸🇪', name: 'Sweden', avg: 48000, ppp: 40000, minWage: null, topSector: 'Tech' },
+  { country: '🇩🇪', name: 'Germany', avg: 44000, ppp: 37000, minWage: 2054, topSector: 'Automotive/Tech' },
+  { country: '🇫🇮', name: 'Finland', avg: 43000, ppp: 36000, minWage: null, topSector: 'Tech/Engineering' },
+  { country: '🇦🇹', name: 'Austria', avg: 42000, ppp: 35000, minWage: null, topSector: 'Finance' },
+  { country: '🇫🇷', name: 'France', avg: 40000, ppp: 34000, minWage: 1767, topSector: 'Consulting/Tech' },
+  { country: '🇮🇹', name: 'Italy', avg: 32000, ppp: 28000, minWage: null, topSector: 'Fashion/Engineering' },
+  { country: '🇪🇸', name: 'Spain', avg: 29000, ppp: 26000, minWage: 1323, topSector: 'Tourism/Finance' },
+  { country: '🇵🇹', name: 'Portugal', avg: 23000, ppp: 21000, minWage: 870, topSector: 'Tech/Tourism' },
+  { country: '🇨🇿', name: 'Czech Republic', avg: 21000, ppp: 22000, minWage: 773, topSector: 'Manufacturing' },
+  { country: '🇵🇱', name: 'Poland', avg: 20000, ppp: 21000, minWage: 833, topSector: 'Tech/Manufacturing' },
+  { country: '🇸🇰', name: 'Slovakia', avg: 18500, ppp: 19000, minWage: 750, topSector: 'Automotive' },
+  { country: '🇭🇺', name: 'Hungary', avg: 18000, ppp: 18500, minWage: 642, topSector: 'Manufacturing' },
+  { country: '🇭🇷', name: 'Croatia', avg: 17500, ppp: 18000, minWage: 840, topSector: 'Tourism' },
+  { country: '🇱🇻', name: 'Latvia', avg: 16800, ppp: 17000, minWage: 700, topSector: 'IT/Finance' },
+  { country: '🇱🇹', name: 'Lithuania', avg: 17200, ppp: 17500, minWage: 924, topSector: 'IT' },
+  { country: '🇷🇴', name: 'Romania', avg: 14200, ppp: 15000, minWage: 700, topSector: 'IT/Manufacturing' },
+  { country: '🇧🇬', name: 'Bulgaria', avg: 13500, ppp: 14000, minWage: 477, topSector: 'IT' },
+];
+
+// --------------- Schema ---------------
+const currentFaq = fb(faqItems, lang);
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: fb(pageTitle, lang),
+    description: fb(pageDescription, lang),
+    url: `https://eurosalary.eu/${lang}/guides/average-salary-europe/`,
+    inLanguage: lang,
+    datePublished: '2026-04-18',
+    dateModified: '2026-04-18',
+    author: { '@type': 'Organization', name: 'EuroSalary', url: 'https://eurosalary.eu' },
+    publisher: {
+      '@type': 'Organization',
+      name: 'EuroSalary',
+      url: 'https://eurosalary.eu',
+      logo: { '@type': 'ImageObject', url: 'https://eurosalary.eu/logo.svg' },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://eurosalary.eu/${lang}/guides/average-salary-europe/` },
+    keywords: 'average salary Europe 2026, salary comparison Europe, European salaries by country, highest salary Europe, lowest salary Europe',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: currentFaq.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `https://eurosalary.eu/${lang}/` },
+      { '@type': 'ListItem', position: 2, name: 'Guides', item: `https://eurosalary.eu/${lang}/guides/` },
+      { '@type': 'ListItem', position: 3, name: fb(pageTitle, lang), item: `https://eurosalary.eu/${lang}/guides/average-salary-europe/` },
+    ],
+  },
+];
+
+const homeCrumb: Record<string, string> = { en: 'Home', fr: 'Accueil', de: 'Startseite', es: 'Inicio', it: 'Home', pt: 'Início', nl: 'Home', pl: 'Strona główna', ro: 'Acasă', cs: 'Domů', sv: 'Hem', da: 'Hjem', fi: 'Koti', el: 'Αρχική', hu: 'Főoldal', sk: 'Domov', bg: 'Начало', hr: 'Početna', sl: 'Domov', lt: 'Pagrindinis', lv: 'Sākums', et: 'Avaleht', mt: 'Paġna ewlenija', ga: 'Baile' };
+const guidesCrumb: Record<string, string> = { en: 'Guides', fr: 'Guides', de: 'Leitfäden', es: 'Guías', it: 'Guide', pt: 'Guias', nl: 'Gidsen', pl: 'Przewodniki', ro: 'Ghiduri', cs: 'Průvodci', sv: 'Guider', da: 'Guider', fi: 'Oppaat', el: 'Οδηγοί', hu: 'Útmutatók', sk: 'Sprievodcovia', bg: 'Ръководства', hr: 'Vodiči', sl: 'Vodniki', lt: 'Vadovai', lv: 'Ceļveži', et: 'Juhendid', mt: 'Gwidi', ga: 'Treoracha' };
+---
+
+<BaseLayout
+  title={fb(pageTitle, lang)}
+  description={fb(pageDescription, lang)}
+  datePublished="2026-04-18"
+  schema={pageSchema}
+>
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{fb(homeCrumb, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a href={`/${lang}/guides/`}>{fb(guidesCrumb, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">Average Salary Europe</span>
+      </nav>
+      <h1 class="page-hero__title">{fb(pageTitle, lang)}</h1>
+      <p class="page-hero__meta">
+        <span class="page-hero__date">Updated April 2026 · Eurostat + EuroSalary Data</span>
+        <span class="page-hero__tags">
+          <span class="page-hero__tag">Salary Data</span>
+          <span class="page-hero__tag">EU Countries</span>
+          <span class="page-hero__tag">2026</span>
+        </span>
+      </p>
+    </div>
+  </section>
+
+  <div class="container page-body">
+    <TLDRBox items={fb(tldrItems, lang)} />
+
+    <div class="guide-content">
+      <h2>Average Salaries Across Europe: Complete Data Table</h2>
+      <p>The table below shows average gross annual salaries for EU member states, along with purchasing power parity (PPP) adjusted figures, minimum wages (where applicable), and the highest-paying sector in each country. Data is sourced from Eurostat, national statistics offices, and EuroSalary market data as of Q1 2026.</p>
+
+      <div class="salary-table-wrapper">
+        <table class="salary-table">
+          <thead>
+            <tr>
+              <th>Country</th>
+              <th>Avg Gross/Year</th>
+              <th>PPP Adjusted</th>
+              <th>Min. Wage/Month</th>
+              <th>Top Sector</th>
+            </tr>
+          </thead>
+          <tbody>
+            {euSalaryData.map((row) => (
+              <tr>
+                <td class="country-cell">
+                  <span class="country-flag">{row.country}</span>
+                  <a href={`/${lang}/salary/${row.name.toLowerCase().replace(/\s+/g, '-')}/`} class="country-link">{row.name}</a>
+                </td>
+                <td class="salary-cell">
+                  <strong>€{row.avg.toLocaleString('en-EU')}</strong>
+                </td>
+                <td class="salary-cell ppp">€{row.ppp.toLocaleString('en-EU')}</td>
+                <td>{row.minWage ? `€${row.minWage.toLocaleString('en-EU')}` : '— (collective)'}</td>
+                <td class="sector-tag">{row.topSector}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="data-note">Sources: Eurostat Structure of Earnings Survey 2024, national statistics bureaus, EuroSalary market data. Figures are gross annual salary estimates for full-time employees. PPP = purchasing power parity adjusted to EU27 average.</p>
+
+      <h2>Understanding the Data: Why Salaries Differ So Much</h2>
+      <p>The raw salary gap between the highest-paying EU country (Luxembourg at €66,000) and the lowest (Bulgaria at €13,500) looks extreme — nearly a 5:1 ratio. But this figure is deeply misleading without context.</p>
+
+      <h3>The Purchasing Power Correction</h3>
+      <p>A family earning €13,500 in Sofia, Bulgaria can afford housing, food, transport, and leisure at costs 60-70% lower than equivalent spending in Luxembourg City. The EU's Purchasing Power Standard (PPS) corrects for this, and when applied, the effective ratio narrows to roughly 2.5:1 — still significant, but far less dramatic than the nominal figures suggest.</p>
+
+      <h3>Productivity and Economic Development</h3>
+      <p>Salary levels track closely with GDP per capita and labour productivity. Countries that transitioned to market economies more recently (post-1989 EU accession countries) are at earlier stages of wage convergence. The EU's cohesion policy explicitly aims to reduce these gaps over time — and it has worked: Polish salaries have tripled in real terms since 2004.</p>
+
+      <h3>Tax and Social Contribution Systems</h3>
+      <p>Gross salary figures don't tell the full story. Countries with high employer social contributions (France, Belgium) effectively pay workers more in total compensation than gross salary figures suggest. Countries with lower marginal income tax rates (e.g., flat-tax systems in Eastern Europe) leave employees with more take-home pay relative to gross. A €30,000 gross salary in Romania may yield a higher net-of-tax income than the same gross in Germany.</p>
+
+      <h2>Salaries by Sector: Where the Money Is</h2>
+      <p>Across all EU countries, certain sectors consistently pay significantly above national averages. Understanding these premiums helps you assess whether you're in a high- or low-compensation sector.</p>
+
+      <div class="sector-table-wrapper">
+        <table class="sector-table">
+          <thead>
+            <tr>
+              <th>Sector</th>
+              <th>Premium vs. National Average</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Financial Services</td><td class="premium high">+65-80%</td><td>Banking, insurance, fund management</td></tr>
+            <tr><td>Technology/ICT</td><td class="premium high">+55-75%</td><td>Software, cloud, cybersecurity</td></tr>
+            <tr><td>Pharmaceutical</td><td class="premium high">+50-70%</td><td>R&D, clinical, regulatory affairs</td></tr>
+            <tr><td>Energy</td><td class="premium medium">+40-55%</td><td>Oil/gas, renewables engineering</td></tr>
+            <tr><td>Engineering</td><td class="premium medium">+30-50%</td><td>Automotive, aerospace, industrial</td></tr>
+            <tr><td>Consulting</td><td class="premium medium">+35-50%</td><td>Strategy, management consulting</td></tr>
+            <tr><td>Healthcare (clinical)</td><td class="premium medium">+20-40%</td><td>Physicians, specialists</td></tr>
+            <tr><td>Education</td><td class="premium low">+0-15%</td><td>Varies widely by country</td></tr>
+            <tr><td>Retail</td><td class="premium low">-10 to -20%</td><td>Often at or near minimum wage</td></tr>
+            <tr><td>Hospitality</td><td class="premium low">-15 to -25%</td><td>Lowest sector in most EU countries</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Salary Trends: How European Pay Has Moved</h2>
+      <p>European wages have been on a significant upward trajectory since 2020, though the path has not been smooth.</p>
+
+      <h3>2020-2022: Pandemic and Recovery</h3>
+      <p>The COVID-19 pandemic initially suppressed wages in hospitality, retail, and tourism. However, technology, healthcare, and logistics workers saw significant salary increases due to demand surge. Remote work accelerated international talent competition, pushing salaries higher for skilled tech workers across all EU markets.</p>
+
+      <h3>2022-2024: The Inflation Crisis</h3>
+      <p>Energy price shocks following Russia's invasion of Ukraine drove CPI inflation across the EU to 8-10% in 2022-2023. Workers demanded and largely received above-inflation wage increases. The EU average nominal wage growth hit 5-7% annually in this period, though real wages (inflation-adjusted) fell in many countries in 2022 before recovering in 2023-2024.</p>
+
+      <h3>2025-2026: Stabilisation</h3>
+      <p>With EU inflation falling back toward the ECB's 2% target, wage growth has moderated. Average nominal wage growth across the EU27 is running at approximately 3-4% in 2025-2026. Real wages have fully recovered their pre-crisis levels in most countries. The technology sector continues to experience above-average wage growth, while traditional industries have seen more modest increases.</p>
+
+      <h2>Cost of Living Adjusted Rankings</h2>
+      <p>When we account for local purchasing power, the rankings shift significantly. Countries like Portugal, Estonia, Latvia, and Lithuania offer a compelling combination of reasonable salaries and low living costs — making them increasingly attractive for both remote workers and local employees when considering overall quality of life.</p>
+
+      <p>Use EuroSalary's comparison tools to calculate real purchasing power differences between countries for your specific role:</p>
+
+      <ul class="internal-links">
+        <li><a href={`/${lang}/compare/`}>Compare Salaries Across EU Countries</a></li>
+        <li><a href={`/${lang}/salary-check/`}>Salary Check — Is Your Pay Competitive?</a></li>
+        <li><a href={`/${lang}/countries/`}>Country-by-Country Salary Pages</a></li>
+        <li><a href={`/${lang}/guides/salary-negotiation-europe/`}>How to Negotiate Salary in Europe</a></li>
+        <li><a href={`/${lang}/guides/eu-pay-transparency-directive/`}>EU Pay Transparency Directive 2026</a></li>
+        <li><a href={`/${lang}/salary-transparency/`}>Pay Transparency Status by Country</a></li>
+      </ul>
+    </div>
+
+    <FAQSection items={fb(faqItems, lang)} />
+  </div>
+</BaseLayout>
+
+<style>
+  .page-hero {
+    background: #0F1F3D; color: white;
+    padding: 5rem 0 3.5rem; position: relative; overflow: hidden;
+  }
+  .page-hero__dots {
+    position: absolute; inset: 0; opacity: 0.07; pointer-events: none;
+    background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 32px 32px;
+  }
+  .page-hero__inner { position: relative; z-index: 1; }
+  .page-hero__breadcrumbs {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 500; margin-bottom: 2rem;
+  }
+  .page-hero__breadcrumbs a { color: rgba(120,135,171,0.9); text-decoration: none; }
+  .page-hero__breadcrumbs a:hover { color: white; }
+  .page-hero__breadcrumbs .material-symbols-outlined { font-size: 14px; color: rgba(120,135,171,0.5); }
+  .page-hero__breadcrumbs-current { color: rgba(120,135,171,0.7); font-weight: 500; }
+  .page-hero__title {
+    font-family: 'Public Sans', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 1.5rem;
+    max-width: 820px;
+  }
+  .page-hero__meta { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .page-hero__date { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(120,135,171,0.9); font-weight: 500; }
+  .page-hero__tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .page-hero__tag { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 8px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border-radius: 2px; }
+
+  .page-body { padding: 2.5rem 0 4rem; max-width: 900px; }
+
+  .guide-content h2 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.65rem; font-weight: 800; letter-spacing: -0.02em;
+    color: #0F1F3D; margin-top: 2.5rem; margin-bottom: 1rem;
+    border-bottom: 2px solid #eef0f5; padding-bottom: 0.5rem;
+  }
+  .guide-content h3 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.2rem; font-weight: 700; color: #1a2f5a; margin-top: 1.75rem; margin-bottom: 0.75rem;
+  }
+  .guide-content p { font-size: 1rem; line-height: 1.8; color: #374151; margin-bottom: 1rem; }
+  .guide-content ul { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+  .guide-content li { font-size: 1rem; line-height: 1.7; color: #374151; margin-bottom: 0.4rem; }
+
+  .salary-table-wrapper, .sector-table-wrapper { overflow-x: auto; margin: 1.5rem 0; border-radius: 6px; border: 1px solid #e5e7eb; }
+  .salary-table, .sector-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  .salary-table th, .sector-table th { background: #0F1F3D; color: white; padding: 0.8rem 1rem; text-align: left; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .salary-table td, .sector-table td { padding: 0.65rem 1rem; border-bottom: 1px solid #f3f4f6; color: #374151; }
+  .salary-table tr:last-child td, .sector-table tr:last-child td { border-bottom: none; }
+  .salary-table tr:nth-child(even) td, .sector-table tr:nth-child(even) td { background: #fafafa; }
+  .salary-table tr:hover td, .sector-table tr:hover td { background: #f0f4ff; }
+
+  .country-cell { display: flex; align-items: center; gap: 0.5rem; }
+  .country-flag { font-size: 1.1rem; }
+  .country-link { color: #0051d5; text-decoration: none; font-weight: 500; }
+  .country-link:hover { text-decoration: underline; }
+  .salary-cell { font-weight: 600; color: #0F1F3D; }
+  .salary-cell.ppp { color: #6b7280; font-weight: 400; }
+  .sector-tag { font-size: 0.8rem; background: #f0f4ff; color: #1a2f5a; padding: 2px 6px; border-radius: 3px; }
+
+  .premium { font-weight: 700; padding: 2px 8px; border-radius: 3px; display: inline-block; }
+  .premium.high { background: #dcfce7; color: #166534; }
+  .premium.medium { background: #fef9c3; color: #854d0e; }
+  .premium.low { background: #fee2e2; color: #991b1b; }
+
+  .data-note { font-size: 0.8rem; color: #9ca3af; font-style: italic; margin-top: -0.5rem; }
+
+  .internal-links { list-style: none; padding: 0; background: #f8f9fc; border-radius: 6px; padding: 1.25rem 1.5rem; }
+  .internal-links li { margin-bottom: 0.5rem; }
+  .internal-links a { color: #0051d5; text-decoration: none; font-weight: 500; font-size: 0.95rem; }
+  .internal-links a:hover { text-decoration: underline; }
+</style>
