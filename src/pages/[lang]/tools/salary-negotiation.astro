@@ -1,0 +1,1072 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { languages } from '../../../i18n/ui';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+
+const pageTitle = 'Salary Negotiation Letter Generator | EuroSalary.eu';
+const pageDesc = 'Generate a professional, culturally appropriate salary negotiation email for your EU job in seconds. Free AI-powered tool — enter your details and get a ready-to-send letter.';
+
+const EU_COUNTRIES = [
+  { code: 'AT', name: 'Austria' }, { code: 'BE', name: 'Belgium' },
+  { code: 'BG', name: 'Bulgaria' }, { code: 'HR', name: 'Croatia' },
+  { code: 'CY', name: 'Cyprus' }, { code: 'CZ', name: 'Czech Republic' },
+  { code: 'DK', name: 'Denmark' }, { code: 'EE', name: 'Estonia' },
+  { code: 'FI', name: 'Finland' }, { code: 'FR', name: 'France' },
+  { code: 'DE', name: 'Germany' }, { code: 'GR', name: 'Greece' },
+  { code: 'HU', name: 'Hungary' }, { code: 'IE', name: 'Ireland' },
+  { code: 'IT', name: 'Italy' }, { code: 'LV', name: 'Latvia' },
+  { code: 'LT', name: 'Lithuania' }, { code: 'LU', name: 'Luxembourg' },
+  { code: 'MT', name: 'Malta' }, { code: 'NL', name: 'Netherlands' },
+  { code: 'PL', name: 'Poland' }, { code: 'PT', name: 'Portugal' },
+  { code: 'RO', name: 'Romania' }, { code: 'SK', name: 'Slovakia' },
+  { code: 'SI', name: 'Slovenia' }, { code: 'ES', name: 'Spain' },
+  { code: 'SE', name: 'Sweden' }, { code: 'CH', name: 'Switzerland' },
+  { code: 'GB', name: 'United Kingdom' }, { code: 'NO', name: 'Norway' },
+];
+
+const CURRENCIES = [
+  { code: 'EUR', symbol: '€', name: 'Euro' },
+  { code: 'GBP', symbol: '£', name: 'British Pound' },
+  { code: 'CHF', symbol: 'CHF', name: 'Swiss Franc' },
+  { code: 'SEK', symbol: 'kr', name: 'Swedish Krona' },
+  { code: 'DKK', symbol: 'kr', name: 'Danish Krone' },
+  { code: 'PLN', symbol: 'zł', name: 'Polish Złoty' },
+  { code: 'CZK', symbol: 'Kč', name: 'Czech Koruna' },
+  { code: 'HUF', symbol: 'Ft', name: 'Hungarian Forint' },
+  { code: 'RON', symbol: 'lei', name: 'Romanian Leu' },
+  { code: 'NOK', symbol: 'kr', name: 'Norwegian Krone' },
+];
+---
+
+<BaseLayout title={pageTitle} description={pageDesc} canonicalPath={`/${lang}/tools/salary-negotiation/`}>
+  <div class="neg-page">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero__badge">
+          <span class="material-symbols-outlined">edit_note</span>
+          Free AI Tool
+        </div>
+        <h1 class="hero__title">Salary Negotiation Letter Generator</h1>
+        <p class="hero__subtitle">
+          Get a professionally crafted, culturally appropriate salary negotiation email
+          for the European market — in seconds. Free, no signup required.
+        </p>
+      </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="main-section">
+      <div class="container">
+        <div class="layout">
+
+          <!-- Form card -->
+          <div class="form-card">
+            <h2 class="form-card__title">Your Details</h2>
+
+            <form id="neg-form" autocomplete="off">
+
+              <!-- Role -->
+              <div class="field">
+                <label class="field__label" for="neg-role">
+                  <span class="material-symbols-outlined">work</span>
+                  Your Job Title / Role
+                </label>
+                <input
+                  type="text"
+                  id="neg-role"
+                  name="role"
+                  required
+                  maxlength="80"
+                  placeholder="e.g. Senior Software Engineer"
+                  class="field__input"
+                />
+              </div>
+
+              <!-- Country -->
+              <div class="field">
+                <label class="field__label" for="neg-country">
+                  <span class="material-symbols-outlined">location_on</span>
+                  Country
+                </label>
+                <select id="neg-country" name="country" required class="field__select">
+                  <option value="">Select country…</option>
+                  {EU_COUNTRIES.map(c => (
+                    <option value={c.code}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <!-- Years of experience -->
+              <div class="field">
+                <label class="field__label" for="neg-exp">
+                  <span class="material-symbols-outlined">military_tech</span>
+                  Years of Experience
+                </label>
+                <input
+                  type="number"
+                  id="neg-exp"
+                  name="yearsExperience"
+                  required
+                  min="0"
+                  max="50"
+                  placeholder="e.g. 5"
+                  class="field__input"
+                />
+              </div>
+
+              <!-- Currency -->
+              <div class="field">
+                <label class="field__label" for="neg-currency">
+                  <span class="material-symbols-outlined">currency_exchange</span>
+                  Currency
+                </label>
+                <select id="neg-currency" name="currency" class="field__select">
+                  {CURRENCIES.map(c => (
+                    <option value={c.code}>{c.symbol} {c.code} — {c.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <!-- Current salary -->
+              <div class="field">
+                <label class="field__label" for="neg-current">
+                  <span class="material-symbols-outlined">payments</span>
+                  Current Annual Gross Salary
+                </label>
+                <input
+                  type="number"
+                  id="neg-current"
+                  name="currentSalary"
+                  required
+                  min="1000"
+                  max="9999999"
+                  placeholder="e.g. 65000"
+                  class="field__input"
+                />
+                <div class="field__hint">Annual gross (before tax)</div>
+              </div>
+
+              <!-- Target salary -->
+              <div class="field">
+                <label class="field__label" for="neg-target">
+                  <span class="material-symbols-outlined">trending_up</span>
+                  Target Annual Gross Salary
+                </label>
+                <input
+                  type="number"
+                  id="neg-target"
+                  name="targetSalary"
+                  required
+                  min="1000"
+                  max="9999999"
+                  placeholder="e.g. 75000"
+                  class="field__input"
+                />
+                <div class="field__hint raise-preview" id="raise-preview"></div>
+              </div>
+
+              <!-- Tone -->
+              <div class="field">
+                <label class="field__label" for="neg-tone">
+                  <span class="material-symbols-outlined">tune</span>
+                  Letter Tone
+                </label>
+                <select id="neg-tone" name="tone" class="field__select">
+                  <option value="professional">Professional &amp; Formal</option>
+                  <option value="confident">Confident &amp; Direct</option>
+                  <option value="warm">Warm &amp; Collaborative</option>
+                </select>
+              </div>
+
+              <button type="submit" class="submit-btn" id="submit-btn">
+                <span class="material-symbols-outlined">auto_awesome</span>
+                Generate My Letter
+              </button>
+            </form>
+
+            <!-- Link to salary check -->
+            <div class="salary-check-link">
+              <span class="material-symbols-outlined">analytics</span>
+              Not sure what to ask for?
+              <a href={`/${lang}/salary-check/`}>Check your market rate first →</a>
+            </div>
+          </div>
+
+          <!-- Results panel -->
+          <div class="results-panel" id="results-panel" aria-live="polite">
+
+            <!-- Empty state -->
+            <div class="empty-state" id="empty-state">
+              <div class="empty-state__icon">
+                <span class="material-symbols-outlined">description</span>
+              </div>
+              <h3 class="empty-state__title">Your letter will appear here</h3>
+              <p class="empty-state__desc">
+                Fill in your details on the left and click "Generate My Letter" to get
+                a professionally written, culturally adapted negotiation email.
+              </p>
+              <div class="empty-state__features">
+                <div class="feature-item">
+                  <span class="material-symbols-outlined">public</span>
+                  Culturally adapted for 30+ countries
+                </div>
+                <div class="feature-item">
+                  <span class="material-symbols-outlined">psychology</span>
+                  Powered by GPT-4o mini
+                </div>
+                <div class="feature-item">
+                  <span class="material-symbols-outlined">lock</span>
+                  Your data is never stored
+                </div>
+              </div>
+            </div>
+
+            <!-- Loading state -->
+            <div class="loading" id="loading-state" style="display:none">
+              <div class="loading__spinner"></div>
+              <p>Crafting your negotiation letter…</p>
+            </div>
+
+            <!-- Error state -->
+            <div class="error-state" id="error-state" style="display:none">
+              <span class="material-symbols-outlined">error</span>
+              <p id="error-msg">Something went wrong. Please try again.</p>
+            </div>
+
+            <!-- Letter output -->
+            <div id="letter-output" style="display:none">
+              <div class="letter-card">
+                <div class="letter-card__header">
+                  <div class="letter-card__title">
+                    <span class="material-symbols-outlined">description</span>
+                    Your Negotiation Letter
+                  </div>
+                  <div class="letter-card__actions">
+                    <button class="action-btn" id="copy-btn" type="button">
+                      <span class="material-symbols-outlined">content_copy</span>
+                      Copy
+                    </button>
+                    <button class="action-btn action-btn--secondary" id="regen-btn" type="button">
+                      <span class="material-symbols-outlined">refresh</span>
+                      Regenerate
+                    </button>
+                  </div>
+                </div>
+
+                <div class="raise-badge" id="raise-badge"></div>
+
+                <div class="letter-body" id="letter-body"></div>
+
+                <div class="copy-confirm" id="copy-confirm" style="display:none">
+                  <span class="material-symbols-outlined">check_circle</span>
+                  Copied to clipboard!
+                </div>
+              </div>
+
+              <!-- Tips card -->
+              <div class="tips-card">
+                <div class="tips-card__header">
+                  <span class="material-symbols-outlined">lightbulb</span>
+                  Tips for Sending This Letter
+                </div>
+                <ul class="tips-list">
+                  <li>Send it on a Tuesday or Wednesday morning — response rates are highest mid-week.</li>
+                  <li>Request a meeting rather than expecting a reply by email alone.</li>
+                  <li>Bring market data to support your ask — bookmark <a href={`/${lang}/salary-check/`}>eurosalary.eu/salary-check</a>.</li>
+                  <li>Be prepared to discuss total compensation (bonus, benefits) not just base salary.</li>
+                  <li>If rejected, ask "What would I need to achieve to reach this salary in 6 months?"</li>
+                </ul>
+              </div>
+
+              <!-- Email capture -->
+              <div class="email-card" id="email-card">
+                <div class="email-card__icon">
+                  <span class="material-symbols-outlined">mail</span>
+                </div>
+                <h3 class="email-card__title">Get Salary Tips Every Month</h3>
+                <p class="email-card__desc">
+                  Real salary data, negotiation tactics, and market shifts for Europe —
+                  delivered monthly. Free, no spam, unsubscribe anytime.
+                </p>
+                <form class="email-form" id="email-form">
+                  <input
+                    type="email"
+                    id="email-input"
+                    name="email"
+                    required
+                    placeholder="your@email.com"
+                    class="email-form__input"
+                  />
+                  <button type="submit" class="email-form__btn" id="email-btn">
+                    Subscribe
+                  </button>
+                </form>
+                <div id="email-success" style="display:none" class="email-success">
+                  <span class="material-symbols-outlined">check_circle</span>
+                  You're subscribed! Check your inbox.
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="how-it-works">
+      <div class="container">
+        <h2 class="section-title">How It Works</h2>
+        <div class="steps">
+          <div class="step">
+            <div class="step__num">1</div>
+            <div class="step__title">Enter Your Details</div>
+            <div class="step__desc">Your role, country, experience, current salary and what you want to earn. Takes 30 seconds.</div>
+          </div>
+          <div class="step">
+            <div class="step__num">2</div>
+            <div class="step__title">AI Writes the Letter</div>
+            <div class="step__desc">GPT-4o mini generates a culturally appropriate email tailored to workplace norms in your specific country.</div>
+          </div>
+          <div class="step">
+            <div class="step__num">3</div>
+            <div class="step__title">Copy &amp; Send</div>
+            <div class="step__desc">Copy with one click, personalise if needed, and send. Most users are ready to send within 2 minutes.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ section -->
+    <section class="faq-section">
+      <div class="container">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <div class="faq-list">
+          <div class="faq-item">
+            <h3 class="faq-item__q">Is this tool really free?</h3>
+            <p class="faq-item__a">Yes — completely free, no account required. We cover the AI costs because we want you to get paid fairly.</p>
+          </div>
+          <div class="faq-item">
+            <h3 class="faq-item__q">Is my salary data stored anywhere?</h3>
+            <p class="faq-item__a">No. Your inputs are sent directly to OpenAI to generate the letter and are not stored on our servers. We do not log salary figures.</p>
+          </div>
+          <div class="faq-item">
+            <h3 class="faq-item__q">How does cultural adaptation work?</h3>
+            <p class="faq-item__a">Each EU country has distinct workplace norms. The generator adapts tone, formality, and argumentation style — for example, German letters are more data-driven and formal, while Danish letters are more direct and egalitarian.</p>
+          </div>
+          <div class="faq-item">
+            <h3 class="faq-item__q">How much of a raise should I ask for?</h3>
+            <p class="faq-item__a">In the EU market, 5–15% is typical for a retention raise; 15–25% is common when switching jobs. Use our <a href={`/${lang}/salary-check/`}>Salary Check tool</a> to see where you stand relative to the market before deciding.</p>
+          </div>
+          <div class="faq-item">
+            <h3 class="faq-item__q">Can I regenerate the letter if I don't like it?</h3>
+            <p class="faq-item__a">Yes — click "Regenerate" and GPT-4o mini will write a fresh version. Each generation is slightly different.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</BaseLayout>
+
+<script>
+const form = document.getElementById('neg-form') as HTMLFormElement;
+const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+const loadingState = document.getElementById('loading-state') as HTMLElement;
+const errorState = document.getElementById('error-state') as HTMLElement;
+const errorMsg = document.getElementById('error-msg') as HTMLElement;
+const letterOutput = document.getElementById('letter-output') as HTMLElement;
+const emptyState = document.getElementById('empty-state') as HTMLElement;
+const letterBody = document.getElementById('letter-body') as HTMLElement;
+const raiseBadge = document.getElementById('raise-badge') as HTMLElement;
+const copyBtn = document.getElementById('copy-btn') as HTMLButtonElement;
+const regenBtn = document.getElementById('regen-btn') as HTMLButtonElement;
+const copyConfirm = document.getElementById('copy-confirm') as HTMLElement;
+const raisePreview = document.getElementById('raise-preview') as HTMLElement;
+
+let lastPayload: any = null;
+
+// Live raise % preview
+function updateRaisePreview() {
+  const current = parseFloat((document.getElementById('neg-current') as HTMLInputElement).value);
+  const target = parseFloat((document.getElementById('neg-target') as HTMLInputElement).value);
+  if (current > 0 && target > 0) {
+    const pct = Math.round(((target - current) / current) * 100);
+    if (pct > 0) {
+      raisePreview.textContent = `+${pct}% increase from current salary`;
+      raisePreview.style.color = 'var(--success)';
+    } else if (pct < 0) {
+      raisePreview.textContent = `${pct}% (target is lower than current — double check)`;
+      raisePreview.style.color = 'var(--danger)';
+    } else {
+      raisePreview.textContent = 'Same as current salary';
+      raisePreview.style.color = 'var(--muted)';
+    }
+  } else {
+    raisePreview.textContent = '';
+  }
+}
+
+(document.getElementById('neg-current') as HTMLInputElement).addEventListener('input', updateRaisePreview);
+(document.getElementById('neg-target') as HTMLInputElement).addEventListener('input', updateRaisePreview);
+
+async function generateLetter(payload: any) {
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="material-symbols-outlined">hourglass_top</span> Generating…';
+  loadingState.style.display = 'flex';
+  errorState.style.display = 'none';
+  letterOutput.style.display = 'none';
+  emptyState.style.display = 'none';
+
+  try {
+    const res = await fetch('/api/generate-negotiation-letter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json() as any;
+
+    if (!res.ok || data.error) {
+      throw new Error(data.error || 'Failed to generate letter');
+    }
+
+    // Render letter
+    letterBody.textContent = data.letter;
+    if (data.raise_percent > 0) {
+      raiseBadge.textContent = `+${data.raise_percent}% raise request`;
+      raiseBadge.style.display = 'inline-block';
+    } else {
+      raiseBadge.style.display = 'none';
+    }
+
+    loadingState.style.display = 'none';
+    letterOutput.style.display = 'block';
+    letterOutput.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch (err: any) {
+    loadingState.style.display = 'none';
+    errorState.style.display = 'flex';
+    errorMsg.textContent = err.message || 'Something went wrong. Please try again.';
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<span class="material-symbols-outlined">auto_awesome</span> Generate My Letter';
+  }
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fd = new FormData(form);
+  lastPayload = {
+    role: fd.get('role') as string,
+    country: fd.get('country') as string,
+    yearsExperience: parseInt(fd.get('yearsExperience') as string, 10),
+    currentSalary: parseFloat(fd.get('currentSalary') as string),
+    targetSalary: parseFloat(fd.get('targetSalary') as string),
+    currency: fd.get('currency') as string,
+    tone: fd.get('tone') as string,
+  };
+  await generateLetter(lastPayload);
+});
+
+regenBtn.addEventListener('click', async () => {
+  if (lastPayload) {
+    await generateLetter(lastPayload);
+  }
+});
+
+copyBtn.addEventListener('click', async () => {
+  const text = letterBody.textContent || '';
+  try {
+    await navigator.clipboard.writeText(text);
+    copyConfirm.style.display = 'flex';
+    copyBtn.innerHTML = '<span class="material-symbols-outlined">check</span> Copied!';
+    setTimeout(() => {
+      copyConfirm.style.display = 'none';
+      copyBtn.innerHTML = '<span class="material-symbols-outlined">content_copy</span> Copy';
+    }, 2500);
+  } catch {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    copyConfirm.style.display = 'flex';
+    setTimeout(() => { copyConfirm.style.display = 'none'; }, 2500);
+  }
+});
+
+// Email capture
+const emailForm = document.getElementById('email-form') as HTMLFormElement;
+const emailBtn = document.getElementById('email-btn') as HTMLButtonElement;
+const emailSuccess = document.getElementById('email-success') as HTMLElement;
+
+emailForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = (document.getElementById('email-input') as HTMLInputElement).value;
+  emailBtn.disabled = true;
+  emailBtn.textContent = 'Subscribing…';
+
+  try {
+    const res = await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, language: document.documentElement.lang || 'en' }),
+    });
+    const data = await res.json() as any;
+    if (res.ok || data.error === 'already_subscribed') {
+      emailForm.style.display = 'none';
+      emailSuccess.style.display = 'flex';
+    } else {
+      throw new Error('Failed to subscribe');
+    }
+  } catch {
+    emailBtn.disabled = false;
+    emailBtn.textContent = 'Subscribe';
+    alert('Something went wrong. Please try again.');
+  }
+});
+</script>
+
+<style is:global>
+.neg-page {
+  background: var(--bg);
+  min-height: 100vh;
+}
+
+/* ─── Hero ────────────────────────────────────────────────────────────────── */
+.hero {
+  background: var(--navy);
+  padding: var(--sp-16) 0 var(--sp-12);
+  text-align: center;
+}
+
+.hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  background: rgba(255,204,0,0.12);
+  color: var(--eu-yellow);
+  border: 1px solid rgba(255,204,0,0.25);
+  border-radius: var(--r-pill);
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--sp-5);
+}
+.hero__badge .material-symbols-outlined { font-size: 16px; }
+
+.hero__title {
+  font-size: clamp(1.9rem, 4.5vw, 3rem);
+  font-weight: 900;
+  color: #fff;
+  margin: 0 0 var(--sp-4);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.hero__subtitle {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.72);
+  max-width: 580px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ─── Container ───────────────────────────────────────────────────────────── */
+.container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 var(--sp-6);
+}
+
+/* ─── Main layout ─────────────────────────────────────────────────────────── */
+.main-section {
+  padding: var(--sp-12) 0 var(--sp-16);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: var(--sp-8);
+  align-items: start;
+}
+
+@media (max-width: 920px) {
+  .layout { grid-template-columns: 1fr; }
+}
+
+/* ─── Form card ───────────────────────────────────────────────────────────── */
+.form-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: var(--sp-8);
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 100px;
+}
+
+.form-card__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 var(--sp-6);
+}
+
+.field {
+  margin-bottom: var(--sp-5);
+}
+
+.field__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-bottom: var(--sp-2);
+  letter-spacing: 0.02em;
+}
+.field__label .material-symbols-outlined { font-size: 16px; color: var(--eu-blue); }
+
+.field__input,
+.field__select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  background: var(--bg-2);
+  color: var(--ink);
+  font-size: 15px;
+  font-family: var(--font-sans);
+  transition: border-color var(--t-fast);
+  box-sizing: border-box;
+}
+.field__input:focus,
+.field__select:focus {
+  outline: none;
+  border-color: var(--eu-blue);
+  box-shadow: var(--shadow-focus);
+}
+
+.field__hint {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.raise-preview {
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.submit-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  padding: 14px;
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-md);
+  font-size: 16px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  margin-top: var(--sp-4);
+  transition: background var(--t-base), transform var(--t-fast);
+}
+.submit-btn:hover { background: var(--eu-blue); transform: translateY(-1px); }
+.submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.submit-btn .material-symbols-outlined { font-size: 20px; }
+
+.salary-check-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--sp-5);
+  padding: var(--sp-4);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.salary-check-link .material-symbols-outlined { font-size: 16px; color: var(--eu-blue); flex-shrink: 0; }
+.salary-check-link a { color: var(--eu-blue); font-weight: 600; text-decoration: none; }
+.salary-check-link a:hover { text-decoration: underline; }
+
+/* ─── Results panel ───────────────────────────────────────────────────────── */
+.results-panel {
+  min-height: 300px;
+}
+
+/* Empty state */
+.empty-state {
+  background: var(--card);
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--r-xl);
+  padding: var(--sp-12) var(--sp-8);
+  text-align: center;
+}
+.empty-state__icon .material-symbols-outlined {
+  font-size: 56px;
+  color: var(--border-strong);
+  display: block;
+  margin-bottom: var(--sp-4);
+}
+.empty-state__title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 var(--sp-3);
+}
+.empty-state__desc {
+  font-size: 14px;
+  color: var(--muted);
+  max-width: 360px;
+  margin: 0 auto var(--sp-8);
+  line-height: 1.6;
+}
+.empty-state__features {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  max-width: 280px;
+  margin: 0 auto;
+}
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: 13px;
+  color: var(--ink-2);
+  font-weight: 500;
+}
+.feature-item .material-symbols-outlined { font-size: 18px; color: var(--eu-blue); }
+
+/* Loading */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-4);
+  padding: var(--sp-16);
+  color: var(--muted);
+}
+.loading__spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--eu-blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Error */
+.error-state {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-6);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger);
+  border-radius: var(--r-md);
+  color: var(--danger);
+}
+
+/* ─── Letter card ─────────────────────────────────────────────────────────── */
+.letter-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: var(--sp-8);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--sp-5);
+}
+
+.letter-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-4);
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+}
+
+.letter-card__title {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+.letter-card__title .material-symbols-outlined { font-size: 20px; color: var(--eu-blue); }
+
+.letter-card__actions {
+  display: flex;
+  gap: var(--sp-2);
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  background: var(--bg-2);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.action-btn:hover { background: var(--eu-blue); color: #fff; border-color: var(--eu-blue); }
+.action-btn .material-symbols-outlined { font-size: 16px; }
+.action-btn--secondary { background: transparent; }
+.action-btn--secondary:hover { background: var(--bg); color: var(--ink); border-color: var(--border-strong); }
+
+.raise-badge {
+  display: none;
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid var(--success);
+  border-radius: var(--r-pill);
+  padding: 4px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: var(--sp-5);
+}
+
+.letter-body {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--sp-6) var(--sp-8);
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--ink);
+  white-space: pre-wrap;
+  font-family: var(--font-sans);
+}
+
+.copy-confirm {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-4);
+  color: var(--success);
+  font-size: 14px;
+  font-weight: 600;
+}
+.copy-confirm .material-symbols-outlined { font-size: 18px; }
+
+/* ─── Tips card ───────────────────────────────────────────────────────────── */
+.tips-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: var(--sp-6) var(--sp-8);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--sp-5);
+}
+.tips-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-weight: 700;
+  color: var(--navy);
+  font-size: 15px;
+  margin-bottom: var(--sp-5);
+}
+.tips-card__header .material-symbols-outlined { color: var(--eu-yellow); font-size: 20px; }
+
+.tips-list {
+  padding-left: var(--sp-5);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+.tips-list li {
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+.tips-list a { color: var(--eu-blue); }
+
+/* ─── Email card ──────────────────────────────────────────────────────────── */
+.email-card {
+  background: linear-gradient(135deg, var(--navy), var(--eu-blue));
+  border-radius: var(--r-xl);
+  padding: var(--sp-8);
+  text-align: center;
+  color: #fff;
+}
+.email-card__icon .material-symbols-outlined {
+  font-size: 36px;
+  color: var(--eu-yellow);
+  display: block;
+  margin-bottom: var(--sp-3);
+}
+.email-card__title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 var(--sp-2);
+}
+.email-card__desc {
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+  margin: 0 0 var(--sp-5);
+  line-height: 1.5;
+}
+
+.email-form {
+  display: flex;
+  gap: var(--sp-2);
+  max-width: 420px;
+  margin: 0 auto;
+}
+.email-form__input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid rgba(255,255,255,0.25);
+  border-radius: var(--r-sm);
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-size: 14px;
+  font-family: var(--font-sans);
+}
+.email-form__input::placeholder { color: rgba(255,255,255,0.5); }
+.email-form__input:focus {
+  outline: none;
+  border-color: var(--eu-yellow);
+  background: rgba(255,255,255,0.15);
+}
+.email-form__btn {
+  padding: 12px 20px;
+  background: var(--eu-yellow);
+  color: var(--navy);
+  border: none;
+  border-radius: var(--r-sm);
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--t-base);
+}
+.email-form__btn:hover { background: var(--eu-yellow-600); }
+.email-form__btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.email-success {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  color: var(--eu-yellow);
+  font-weight: 600;
+  font-size: 15px;
+}
+.email-success .material-symbols-outlined { font-size: 22px; }
+
+/* ─── How it works ────────────────────────────────────────────────────────── */
+.how-it-works {
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  padding: var(--sp-16) 0;
+}
+.section-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--navy);
+  text-align: center;
+  margin: 0 0 var(--sp-10);
+}
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-6);
+}
+@media (max-width: 700px) {
+  .steps { grid-template-columns: 1fr; }
+}
+.step {
+  text-align: center;
+  padding: var(--sp-6);
+}
+.step__num {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--eu-blue);
+  color: #fff;
+  font-size: 20px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--sp-4);
+}
+.step__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: var(--sp-2);
+}
+.step__desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ─── FAQ ─────────────────────────────────────────────────────────────────── */
+.faq-section {
+  padding: var(--sp-16) 0;
+}
+.faq-list {
+  max-width: 740px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+.faq-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-6) var(--sp-7);
+}
+.faq-item__q {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 0 0 var(--sp-2);
+}
+.faq-item__a {
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.7;
+  margin: 0;
+}
+.faq-item__a a { color: var(--eu-blue); }
+</style>
