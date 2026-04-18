@@ -11,7 +11,7 @@
     "dev": "astro dev",
     "pipeline:generate": "node scripts/generate-from-pipeline.mjs",
     "generate:tax": "node scripts/generate-tax-data.mjs",
-    "prebuild": "node scripts/build-tokens.mjs && node scripts/generate-from-pipeline.mjs && node scripts/generate-tax-data.mjs",
+    "prebuild": "node scripts/build-tokens.mjs && node scripts/generate-tax-data.mjs",
     "build": "astro build",
     "postbuild": "node scripts/segment-sitemap.mjs",
     "preview": "astro preview",

@@ -1,0 +1,1086 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { languages } from '../../../i18n/ui';
+import { useTranslations } from '../../../i18n/utils';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+const t = useTranslations(lang as any);
+
+// ─── Page copy (English only — this is a tool page, not a content page) ─────
+const pageTitle = 'Are You Well Paid? — Salary Check';
+const pageDesc = 'Find out if you\'re well paid for your role in Europe. Enter your job, country, and salary to get a percentile score, market comparison, and AI-powered advice.';
+
+const EU_COUNTRIES = [
+  { code: 'AT', name: 'Austria' }, { code: 'BE', name: 'Belgium' },
+  { code: 'BG', name: 'Bulgaria' }, { code: 'HR', name: 'Croatia' },
+  { code: 'CY', name: 'Cyprus' }, { code: 'CZ', name: 'Czech Republic' },
+  { code: 'DK', name: 'Denmark' }, { code: 'EE', name: 'Estonia' },
+  { code: 'FI', name: 'Finland' }, { code: 'FR', name: 'France' },
+  { code: 'DE', name: 'Germany' }, { code: 'GR', name: 'Greece' },
+  { code: 'HU', name: 'Hungary' }, { code: 'IE', name: 'Ireland' },
+  { code: 'IT', name: 'Italy' }, { code: 'LV', name: 'Latvia' },
+  { code: 'LT', name: 'Lithuania' }, { code: 'LU', name: 'Luxembourg' },
+  { code: 'MT', name: 'Malta' }, { code: 'NL', name: 'Netherlands' },
+  { code: 'PL', name: 'Poland' }, { code: 'PT', name: 'Portugal' },
+  { code: 'RO', name: 'Romania' }, { code: 'SK', name: 'Slovakia' },
+  { code: 'SI', name: 'Slovenia' }, { code: 'ES', name: 'Spain' },
+  { code: 'SE', name: 'Sweden' }, { code: 'CH', name: 'Switzerland' },
+];
+
+const JOBS = [
+  { slug: 'software-engineer', name: 'Software Engineer' },
+  { slug: 'product-manager', name: 'Product Manager' },
+  { slug: 'data-analyst', name: 'Data Analyst' },
+  { slug: 'devops-engineer', name: 'DevOps Engineer' },
+  { slug: 'ux-designer', name: 'UX Designer' },
+  { slug: 'financial-analyst', name: 'Financial Analyst' },
+  { slug: 'marketing-manager', name: 'Marketing Manager' },
+  { slug: 'hr-manager', name: 'HR Manager' },
+  { slug: 'project-manager', name: 'Project Manager' },
+  { slug: 'business-analyst', name: 'Business Analyst' },
+  { slug: 'sales-manager', name: 'Sales Manager' },
+  { slug: 'operations-manager', name: 'Operations Manager' },
+  { slug: 'accountant', name: 'Accountant' },
+  { slug: 'graphic-designer', name: 'Graphic Designer' },
+  { slug: 'civil-engineer', name: 'Civil Engineer' },
+  { slug: 'mechanical-engineer', name: 'Mechanical Engineer' },
+  { slug: 'logistics-manager', name: 'Logistics Manager' },
+  { slug: 'customer-service-rep', name: 'Customer Service Representative' },
+  { slug: 'doctor', name: 'Doctor / Physician' },
+  { slug: 'nurse', name: 'Nurse' },
+  { slug: 'teacher', name: 'Teacher' },
+  { slug: 'lawyer', name: 'Lawyer' },
+  { slug: 'pharmacist', name: 'Pharmacist' },
+  { slug: 'university-professor', name: 'University Professor' },
+];
+
+const CURRENCIES = [
+  { code: 'EUR', symbol: '€', name: 'Euro' },
+  { code: 'GBP', symbol: '£', name: 'British Pound' },
+  { code: 'CHF', symbol: 'CHF', name: 'Swiss Franc' },
+  { code: 'SEK', symbol: 'kr', name: 'Swedish Krona' },
+  { code: 'DKK', symbol: 'kr', name: 'Danish Krone' },
+  { code: 'PLN', symbol: 'zł', name: 'Polish Złoty' },
+  { code: 'CZK', symbol: 'Kč', name: 'Czech Koruna' },
+  { code: 'HUF', symbol: 'Ft', name: 'Hungarian Forint' },
+  { code: 'RON', symbol: 'lei', name: 'Romanian Leu' },
+  { code: 'BGN', symbol: 'лв', name: 'Bulgarian Lev' },
+];
+---
+
+<BaseLayout title={pageTitle} description={pageDesc} canonicalPath={`/${lang}/salary-check/`}>
+  <div class="salary-check">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero__badge">
+          <span class="material-symbols-outlined">analytics</span>
+          Free Salary Check
+        </div>
+        <h1 class="hero__title">Are You Well Paid?</h1>
+        <p class="hero__subtitle">
+          Enter your details and find out where you stand compared to thousands of
+          professionals across Europe — with AI-powered insights.
+        </p>
+      </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="main-section">
+      <div class="container">
+        <div class="layout">
+
+          <!-- Form card -->
+          <div class="form-card" id="form-panel">
+            <h2 class="form-card__title">Your Details</h2>
+
+            <form id="salary-check-form" autocomplete="off">
+              <!-- Country -->
+              <div class="field">
+                <label class="field__label" for="sc-country">
+                  <span class="material-symbols-outlined">location_on</span>
+                  Your Country
+                </label>
+                <select id="sc-country" name="country" required class="field__select">
+                  <option value="">Select country…</option>
+                  {EU_COUNTRIES.map(c => (
+                    <option value={c.code}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <!-- Job -->
+              <div class="field">
+                <label class="field__label" for="sc-job">
+                  <span class="material-symbols-outlined">work</span>
+                  Your Job Title
+                </label>
+                <select id="sc-job" name="job" required class="field__select">
+                  <option value="">Select job title…</option>
+                  {JOBS.map(j => (
+                    <option value={j.slug}>{j.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <!-- Experience level -->
+              <div class="field">
+                <label class="field__label" for="sc-level">
+                  <span class="material-symbols-outlined">military_tech</span>
+                  Experience Level
+                </label>
+                <select id="sc-level" name="experience_level" required class="field__select">
+                  <option value="junior">Junior (0–3 years)</option>
+                  <option value="mid" selected>Mid-level (3–7 years)</option>
+                  <option value="senior">Senior (7–12 years)</option>
+                  <option value="lead">Lead / Principal (12+ years)</option>
+                </select>
+              </div>
+
+              <!-- Salary -->
+              <div class="field">
+                <label class="field__label" for="sc-salary">
+                  <span class="material-symbols-outlined">payments</span>
+                  Your Annual Gross Salary
+                </label>
+                <div class="salary-input">
+                  <select id="sc-currency" name="currency" class="salary-input__currency">
+                    {CURRENCIES.map(c => (
+                      <option value={c.code}>{c.symbol} {c.code}</option>
+                    ))}
+                  </select>
+                  <input
+                    type="number"
+                    id="sc-salary"
+                    name="salary"
+                    required
+                    min="1000"
+                    max="9999999"
+                    placeholder="e.g. 65000"
+                    class="salary-input__amount"
+                  />
+                </div>
+                <div class="field__hint">Annual gross (before tax)</div>
+              </div>
+
+              <button type="submit" class="submit-btn" id="submit-btn">
+                <span class="material-symbols-outlined">search</span>
+                Check My Salary
+              </button>
+            </form>
+          </div>
+
+          <!-- Results panel (hidden until form submitted) -->
+          <div class="results-panel" id="results-panel" aria-live="polite">
+            <!-- Loading state -->
+            <div class="loading" id="loading-state" style="display:none">
+              <div class="loading__spinner"></div>
+              <p>Analyzing your salary across European markets…</p>
+            </div>
+
+            <!-- Error state -->
+            <div class="error-state" id="error-state" style="display:none">
+              <span class="material-symbols-outlined">error</span>
+              <p id="error-msg">Something went wrong. Please try again.</p>
+            </div>
+
+            <!-- Results -->
+            <div id="results-content" style="display:none">
+
+              <!-- Verdict card -->
+              <div class="verdict-card" id="verdict-card">
+                <div class="verdict-card__top">
+                  <div class="verdict-badge" id="verdict-badge">
+                    <span class="material-symbols-outlined" id="verdict-icon">star</span>
+                    <span id="verdict-label">Well Paid</span>
+                  </div>
+                  <div class="verdict-meta" id="verdict-meta">
+                    You're in the top <strong id="top-pct">23%</strong> for your role in <strong id="country-name">Germany</strong>
+                  </div>
+                </div>
+
+                <!-- Percentile bar -->
+                <div class="percentile-bar">
+                  <div class="percentile-bar__track">
+                    <div class="percentile-bar__fill" id="percentile-fill"></div>
+                    <div class="percentile-bar__marker" id="percentile-marker">
+                      <div class="percentile-bar__marker-dot"></div>
+                      <div class="percentile-bar__marker-label" id="marker-label">P50</div>
+                    </div>
+                  </div>
+                  <div class="percentile-bar__labels">
+                    <span>Lowest</span>
+                    <span>Median</span>
+                    <span>Highest</span>
+                  </div>
+                </div>
+
+                <!-- Salary benchmarks -->
+                <div class="benchmark-row" id="benchmark-row">
+                  <div class="benchmark-item">
+                    <div class="benchmark-item__label">Market Low</div>
+                    <div class="benchmark-item__value" id="bench-min">—</div>
+                  </div>
+                  <div class="benchmark-item benchmark-item--highlight">
+                    <div class="benchmark-item__label">Market Median</div>
+                    <div class="benchmark-item__value" id="bench-median">—</div>
+                  </div>
+                  <div class="benchmark-item">
+                    <div class="benchmark-item__label">Market High</div>
+                    <div class="benchmark-item__value" id="bench-max">—</div>
+                  </div>
+                  <div class="benchmark-item benchmark-item--yours">
+                    <div class="benchmark-item__label">Your Salary</div>
+                    <div class="benchmark-item__value" id="bench-yours">—</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- AI Analysis -->
+              <div class="analysis-card">
+                <div class="analysis-card__header">
+                  <span class="material-symbols-outlined">psychology</span>
+                  AI Analysis
+                </div>
+                <p class="analysis-card__text" id="ai-analysis-text">—</p>
+              </div>
+
+              <!-- Where you'd earn more -->
+              <div class="countries-card" id="countries-card">
+                <div class="countries-card__header">
+                  <span class="material-symbols-outlined">flight_takeoff</span>
+                  Where You'd Earn More
+                </div>
+                <div class="countries-card__subtitle">Top countries for your role with higher median salaries</div>
+                <div id="countries-table"></div>
+                <div id="no-countries-msg" style="display:none" class="countries-card__empty">
+                  You're already in one of the top-paying countries for this role. 🎉
+                </div>
+              </div>
+
+              <!-- Salary tips -->
+              <div class="tips-card">
+                <div class="tips-card__header">
+                  <span class="material-symbols-outlined">trending_up</span>
+                  How to Increase Your Salary
+                </div>
+                <ul class="tips-list" id="tips-list"></ul>
+              </div>
+
+              <!-- Email capture -->
+              <div class="email-card" id="email-card">
+                <div class="email-card__icon">
+                  <span class="material-symbols-outlined">mail</span>
+                </div>
+                <h3 class="email-card__title">Get Monthly Salary Insights</h3>
+                <p class="email-card__desc">
+                  Receive salary trends, market shifts, and negotiation tips for your role every month.
+                  Free, no spam, unsubscribe anytime.
+                </p>
+                <form class="email-form" id="email-form">
+                  <input
+                    type="email"
+                    id="email-input"
+                    name="email"
+                    required
+                    placeholder="your@email.com"
+                    class="email-form__input"
+                  />
+                  <button type="submit" class="email-form__btn" id="email-btn">
+                    Subscribe
+                  </button>
+                </form>
+                <div id="email-success" style="display:none" class="email-success">
+                  <span class="material-symbols-outlined">check_circle</span>
+                  You're subscribed! Check your inbox.
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="how-it-works">
+      <div class="container">
+        <h2 class="section-title">How the Salary Check Works</h2>
+        <div class="steps">
+          <div class="step">
+            <div class="step__num">1</div>
+            <div class="step__title">Real Benchmark Data</div>
+            <div class="step__desc">We use salary ranges from Eurostat and verified job postings across 27 EU countries and 24+ job categories.</div>
+          </div>
+          <div class="step">
+            <div class="step__num">2</div>
+            <div class="step__title">Percentile Calculation</div>
+            <div class="step__desc">Your salary is placed on a distribution curve to show exactly where you rank among professionals in your country.</div>
+          </div>
+          <div class="step">
+            <div class="step__num">3</div>
+            <div class="step__title">AI-Powered Advice</div>
+            <div class="step__desc">GPT-4 generates personalised analysis and concrete steps to increase your earnings based on your specific situation.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</BaseLayout>
+
+<script>
+const form = document.getElementById('salary-check-form') as HTMLFormElement;
+const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+const loadingState = document.getElementById('loading-state') as HTMLElement;
+const errorState = document.getElementById('error-state') as HTMLElement;
+const errorMsg = document.getElementById('error-msg') as HTMLElement;
+const resultsContent = document.getElementById('results-content') as HTMLElement;
+const resultsPanel = document.getElementById('results-panel') as HTMLElement;
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(form);
+  const payload = {
+    country: formData.get('country') as string,
+    job: formData.get('job') as string,
+    experience_level: formData.get('experience_level') as string,
+    salary: parseFloat(formData.get('salary') as string),
+    currency: formData.get('currency') as string,
+  };
+
+  // Show loading
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Analyzing…';
+  loadingState.style.display = 'flex';
+  errorState.style.display = 'none';
+  resultsContent.style.display = 'none';
+  resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    const res = await fetch('/api/salary-check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json() as any;
+
+    if (!res.ok || data.error) {
+      throw new Error(data.error || 'Failed to analyze salary');
+    }
+
+    renderResults(data, payload);
+    loadingState.style.display = 'none';
+    resultsContent.style.display = 'block';
+    resultsContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch (err: any) {
+    loadingState.style.display = 'none';
+    errorState.style.display = 'flex';
+    errorMsg.textContent = err.message || 'Something went wrong. Please try again.';
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<span class="material-symbols-outlined">search</span> Check My Salary';
+  }
+});
+
+function fmt(n: number): string {
+  return '€' + n.toLocaleString('en-EU', { maximumFractionDigits: 0 });
+}
+
+function renderResults(data: any, payload: any) {
+  const { percentile, verdict, salary_eur, benchmark, ai_analysis, salary_tips, top_countries } = data;
+
+  // Verdict badge
+  const badge = document.getElementById('verdict-badge')!;
+  const verdictIcon = document.getElementById('verdict-icon')!;
+  const verdictLabel = document.getElementById('verdict-label')!;
+  badge.style.background = verdict.color + '1a';
+  badge.style.color = verdict.color;
+  badge.style.borderColor = verdict.color + '40';
+
+  const icons: Record<string, string> = {
+    well_paid: 'star',
+    average: 'trending_flat',
+    underpaid: 'trending_down',
+  };
+  verdictIcon.textContent = icons[verdict.key] || 'analytics';
+  verdictLabel.textContent = verdict.label;
+
+  // Verdict meta
+  const topPct = Math.max(1, 100 - percentile);
+  document.getElementById('top-pct')!.textContent = topPct + '%';
+  document.getElementById('country-name')!.textContent = benchmark.country;
+
+  // Percentile bar
+  const fill = document.getElementById('percentile-fill')!;
+  const marker = document.getElementById('percentile-marker')!;
+  const markerLabel = document.getElementById('marker-label')!;
+  fill.style.width = percentile + '%';
+  fill.style.background = verdict.color;
+  marker.style.left = percentile + '%';
+  markerLabel.textContent = 'You (P' + percentile + ')';
+
+  // Benchmark values
+  document.getElementById('bench-min')!.textContent = fmt(benchmark.min);
+  document.getElementById('bench-median')!.textContent = fmt(benchmark.median);
+  document.getElementById('bench-max')!.textContent = fmt(benchmark.max);
+  document.getElementById('bench-yours')!.textContent = fmt(salary_eur);
+
+  // AI analysis
+  document.getElementById('ai-analysis-text')!.textContent = ai_analysis;
+
+  // Top countries table
+  const countriesTable = document.getElementById('countries-table')!;
+  const noCountries = document.getElementById('no-countries-msg')!;
+  if (top_countries && top_countries.length > 0) {
+    countriesTable.style.display = 'block';
+    noCountries.style.display = 'none';
+    countriesTable.innerHTML = top_countries.map((c: any) => `
+      <div class="country-row">
+        <div class="country-row__name">${c.name}</div>
+        <div class="country-row__salary">${fmt(c.median)}/yr</div>
+        <div class="country-row__diff country-row__diff--positive">+${c.diff}%</div>
+      </div>
+    `).join('');
+  } else {
+    countriesTable.style.display = 'none';
+    noCountries.style.display = 'block';
+  }
+
+  // Salary tips
+  const tipsList = document.getElementById('tips-list')!;
+  tipsList.innerHTML = (salary_tips || []).map((tip: string) => `
+    <li class="tip-item">
+      <span class="material-symbols-outlined tip-item__icon">check_circle</span>
+      <span>${tip}</span>
+    </li>
+  `).join('');
+}
+
+// Email capture
+const emailForm = document.getElementById('email-form') as HTMLFormElement;
+const emailBtn = document.getElementById('email-btn') as HTMLButtonElement;
+const emailSuccess = document.getElementById('email-success') as HTMLElement;
+
+emailForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = (document.getElementById('email-input') as HTMLInputElement).value;
+  emailBtn.disabled = true;
+  emailBtn.textContent = 'Subscribing…';
+
+  try {
+    const res = await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, language: document.documentElement.lang || 'en' }),
+    });
+    const data = await res.json() as any;
+    if (res.ok || data.error === 'already_subscribed') {
+      emailForm.style.display = 'none';
+      emailSuccess.style.display = 'flex';
+    } else {
+      throw new Error('Failed to subscribe');
+    }
+  } catch {
+    emailBtn.disabled = false;
+    emailBtn.textContent = 'Subscribe';
+    alert('Something went wrong. Please try again.');
+  }
+});
+</script>
+
+<style>
+.salary-check {
+  background: var(--bg);
+  min-height: 100vh;
+}
+
+/* ─── Hero ──────────────────────────────────────────────────────────────────── */
+.hero {
+  background: var(--navy);
+  padding: var(--sp-16) 0 var(--sp-12);
+  text-align: center;
+}
+
+.hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  background: rgba(255,204,0,0.12);
+  color: var(--eu-yellow);
+  border: 1px solid rgba(255,204,0,0.25);
+  border-radius: var(--r-pill);
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--sp-5);
+}
+.hero__badge .material-symbols-outlined { font-size: 16px; }
+
+.hero__title {
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  color: #fff;
+  margin: 0 0 var(--sp-4);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.hero__subtitle {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.72);
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ─── Container ─────────────────────────────────────────────────────────────── */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 var(--sp-6);
+}
+
+/* ─── Main layout ────────────────────────────────────────────────────────────── */
+.main-section {
+  padding: var(--sp-12) 0 var(--sp-16);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: var(--sp-8);
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── Form card ──────────────────────────────────────────────────────────────── */
+.form-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: var(--sp-8);
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 100px;
+}
+
+.form-card__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 var(--sp-6);
+}
+
+.field {
+  margin-bottom: var(--sp-5);
+}
+
+.field__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-bottom: var(--sp-2);
+  letter-spacing: 0.02em;
+}
+.field__label .material-symbols-outlined { font-size: 16px; color: var(--eu-blue); }
+
+.field__select,
+.salary-input__amount {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  background: var(--bg-2);
+  color: var(--ink);
+  font-size: 15px;
+  font-family: var(--font-sans);
+  transition: border-color var(--t-fast);
+  box-sizing: border-box;
+}
+.field__select:focus,
+.salary-input__amount:focus {
+  outline: none;
+  border-color: var(--eu-blue);
+  box-shadow: var(--shadow-focus);
+}
+
+.salary-input {
+  display: flex;
+  gap: var(--sp-2);
+}
+.salary-input__currency {
+  width: 110px;
+  flex-shrink: 0;
+  padding: 10px 10px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  background: var(--bg-2);
+  color: var(--ink);
+  font-size: 14px;
+  font-family: var(--font-sans);
+  transition: border-color var(--t-fast);
+}
+.salary-input__currency:focus {
+  outline: none;
+  border-color: var(--eu-blue);
+  box-shadow: var(--shadow-focus);
+}
+.salary-input__amount { flex: 1; }
+
+.field__hint {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.submit-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  padding: 14px;
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-md);
+  font-size: 16px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  margin-top: var(--sp-4);
+  transition: background var(--t-base), transform var(--t-fast);
+}
+.submit-btn:hover { background: var(--eu-blue); transform: translateY(-1px); }
+.submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.submit-btn .material-symbols-outlined { font-size: 20px; }
+
+/* ─── Results panel ────────────────────────────────────────────────────────── */
+.results-panel {
+  min-height: 200px;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-4);
+  padding: var(--sp-16);
+  color: var(--muted);
+}
+.loading__spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--eu-blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.error-state {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-6);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger);
+  border-radius: var(--r-md);
+  color: var(--danger);
+}
+
+/* ─── Verdict card ──────────────────────────────────────────────────────────── */
+.verdict-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: var(--sp-8);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--sp-5);
+}
+
+.verdict-card__top {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-8);
+  flex-wrap: wrap;
+}
+
+.verdict-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 8px 20px;
+  border: 2px solid;
+  border-radius: var(--r-pill);
+  font-weight: 700;
+  font-size: 16px;
+}
+.verdict-badge .material-symbols-outlined { font-size: 20px; }
+
+.verdict-meta {
+  font-size: 15px;
+  color: var(--ink-2);
+  flex: 1;
+}
+
+/* Percentile bar */
+.percentile-bar {
+  margin-bottom: var(--sp-6);
+}
+.percentile-bar__track {
+  position: relative;
+  height: 12px;
+  background: var(--eu-blue-50);
+  border-radius: var(--r-pill);
+  margin-bottom: 28px;
+}
+.percentile-bar__fill {
+  height: 100%;
+  border-radius: var(--r-pill);
+  transition: width 0.8s var(--ease);
+}
+.percentile-bar__marker {
+  position: absolute;
+  top: -4px;
+  transform: translateX(-50%);
+  transition: left 0.8s var(--ease);
+}
+.percentile-bar__marker-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--navy);
+  border: 3px solid #fff;
+  box-shadow: var(--shadow-md);
+  margin: 0 auto;
+}
+.percentile-bar__marker-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+  text-align: center;
+  margin-top: 4px;
+}
+.percentile-bar__labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* Benchmark row */
+.benchmark-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-3);
+}
+
+@media (max-width: 600px) {
+  .benchmark-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+.benchmark-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--sp-3) var(--sp-4);
+  text-align: center;
+}
+.benchmark-item--highlight {
+  background: var(--eu-blue-50);
+  border-color: var(--eu-blue-100);
+}
+.benchmark-item--yours {
+  background: var(--navy);
+  border-color: var(--navy);
+}
+.benchmark-item__label {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.benchmark-item--yours .benchmark-item__label { color: rgba(255,255,255,0.7); }
+.benchmark-item__value {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  font-family: var(--font-mono);
+}
+.benchmark-item--yours .benchmark-item__value { color: var(--eu-yellow); }
+
+/* ─── Analysis card ──────────────────────────────────────────────────────────── */
+.analysis-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: var(--sp-6) var(--sp-8);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--sp-5);
+}
+.analysis-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-weight: 700;
+  color: var(--navy);
+  font-size: 15px;
+  margin-bottom: var(--sp-4);
+}
+.analysis-card__header .material-symbols-outlined {
+  color: var(--eu-blue);
+  font-size: 20px;
+}
+.analysis-card__text {
+  font-size: 15px;
+  color: var(--ink-2);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ─── Countries card ─────────────────────────────────────────────────────────── */
+.countries-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: var(--sp-6) var(--sp-8);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--sp-5);
+}
+.countries-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-weight: 700;
+  color: var(--navy);
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+.countries-card__header .material-symbols-outlined { color: var(--eu-blue); font-size: 20px; }
+.countries-card__subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: var(--sp-5);
+}
+.countries-card__empty {
+  text-align: center;
+  padding: var(--sp-6);
+  color: var(--success);
+  font-weight: 600;
+}
+
+.country-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  margin-bottom: var(--sp-2);
+  background: var(--bg-2);
+}
+.country-row:last-child { margin-bottom: 0; }
+.country-row__name { flex: 1; font-weight: 600; color: var(--ink); font-size: 14px; }
+.country-row__salary { font-family: var(--font-mono); font-size: 14px; font-weight: 600; color: var(--ink-2); }
+.country-row__diff--positive {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--success);
+  background: var(--success-bg);
+  padding: 3px 10px;
+  border-radius: var(--r-pill);
+}
+
+/* ─── Tips card ──────────────────────────────────────────────────────────────── */
+.tips-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: var(--sp-6) var(--sp-8);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--sp-5);
+}
+.tips-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-weight: 700;
+  color: var(--navy);
+  font-size: 15px;
+  margin-bottom: var(--sp-5);
+}
+.tips-card__header .material-symbols-outlined { color: var(--success); font-size: 20px; }
+
+.tips-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+.tip-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.tip-item__icon {
+  color: var(--success);
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: -1px;
+}
+
+/* ─── Email card ─────────────────────────────────────────────────────────────── */
+.email-card {
+  background: linear-gradient(135deg, var(--navy), var(--eu-blue));
+  border-radius: var(--r-xl);
+  padding: var(--sp-8);
+  text-align: center;
+  color: #fff;
+}
+.email-card__icon .material-symbols-outlined {
+  font-size: 36px;
+  color: var(--eu-yellow);
+  display: block;
+  margin-bottom: var(--sp-3);
+}
+.email-card__title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 var(--sp-2);
+}
+.email-card__desc {
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+  margin: 0 0 var(--sp-5);
+  line-height: 1.5;
+}
+
+.email-form {
+  display: flex;
+  gap: var(--sp-2);
+  max-width: 420px;
+  margin: 0 auto;
+}
+.email-form__input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid rgba(255,255,255,0.25);
+  border-radius: var(--r-sm);
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-size: 14px;
+  font-family: var(--font-sans);
+}
+.email-form__input::placeholder { color: rgba(255,255,255,0.5); }
+.email-form__input:focus {
+  outline: none;
+  border-color: var(--eu-yellow);
+  background: rgba(255,255,255,0.15);
+}
+.email-form__btn {
+  padding: 12px 20px;
+  background: var(--eu-yellow);
+  color: var(--navy);
+  border: none;
+  border-radius: var(--r-sm);
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--t-base);
+}
+.email-form__btn:hover { background: var(--eu-yellow-600); }
+.email-form__btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.email-success {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  color: var(--eu-yellow);
+  font-weight: 600;
+  font-size: 15px;
+}
+.email-success .material-symbols-outlined { font-size: 22px; }
+
+/* ─── How it works ────────────────────────────────────────────────────────── */
+.how-it-works {
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  padding: var(--sp-16) 0;
+}
+.section-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--navy);
+  text-align: center;
+  margin: 0 0 var(--sp-10);
+}
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-6);
+}
+@media (max-width: 700px) {
+  .steps { grid-template-columns: 1fr; }
+}
+.step {
+  text-align: center;
+  padding: var(--sp-6);
+}
+.step__num {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--eu-blue);
+  color: #fff;
+  font-size: 20px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--sp-4);
+}
+.step__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: var(--sp-2);
+}
+.step__desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+</style>
