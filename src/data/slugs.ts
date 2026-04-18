@@ -22,6 +22,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'cyprus',
     MT: 'malta',
     EL: 'greece',
+    GB: 'united-kingdom',
   },
   fr: {
     DE: 'allemagne', FR: 'france', ES: 'espagne', NL: 'pays-bas', BE: 'belgique',
@@ -40,6 +41,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'chypre',
     MT: 'malte',
     EL: 'grece',
+    GB: 'royaume-uni',
   },
   de: {
     DE: 'deutschland', FR: 'frankreich', ES: 'spanien', NL: 'niederlande', BE: 'belgien',
@@ -58,6 +60,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'zypern',
     MT: 'malta',
     EL: 'griechenland',
+    GB: 'vereinigtes-koenigreich',
   },
   es: {
     DE: 'alemania', FR: 'francia', ES: 'espana', NL: 'paises-bajos', BE: 'belgica',
@@ -76,6 +79,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'chipre',
     MT: 'malta',
     EL: 'grecia',
+    GB: 'reino-unido',
   },
   bg: {
     DE: 'germaniya', FR: 'frantsiya', ES: 'ispaniya', NL: 'niderlandiya', BE: 'belgiya',
@@ -94,6 +98,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'kipur',
     MT: 'malta',
     EL: 'garciya',
+    GB: 'velik-britaniya',
   },
   hr: {
     DE: 'njemacka', FR: 'francuska', ES: 'spanjolska', NL: 'nizozemska', BE: 'belgija',
@@ -112,6 +117,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'cipar',
     MT: 'malta',
     EL: 'grcka',
+    GB: 'ujedinjeno-kraljevstvo',
   },
   cs: {
     DE: 'nemecko', FR: 'francie', ES: 'spanelsko', NL: 'nizozemsko', BE: 'belgie',
@@ -130,6 +136,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'kypr',
     MT: 'malta',
     EL: 'recko',
+    GB: 'spojene-kralovstvi',
   },
   da: {
     DE: 'tyskland', FR: 'frankrig', ES: 'spanien', NL: 'nederlandene', BE: 'belgien',
@@ -148,6 +155,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'cypern',
     MT: 'malta',
     EL: 'graekenland',
+    GB: 'storbritannien',
   },
   nl: {
     DE: 'duitsland', FR: 'frankrijk', ES: 'spanje', NL: 'nederland', BE: 'belgie',
@@ -166,6 +174,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'cyprus',
     MT: 'malta',
     EL: 'griekenland',
+    GB: 'verenigd-koninkrijk',
   },
   et: {
     DE: 'saksamaa', FR: 'prantsusmaa', ES: 'hispaania', NL: 'madalmaad', BE: 'belgia',
@@ -184,6 +193,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'kuupros',
     MT: 'malta',
     EL: 'kreeka',
+    GB: 'suurbritannia',
   },
   fi: {
     DE: 'saksa', FR: 'ranska', ES: 'espanja', NL: 'alankomaat', BE: 'belgia',
@@ -202,6 +212,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'kypros',
     MT: 'malta',
     EL: 'kreikka',
+    GB: 'yhdistynyt-kuningaskunta',
   },
   el: {
     DE: 'germania', FR: 'gallia', ES: 'ispania', NL: 'ollandia', BE: 'velgio',
@@ -220,6 +231,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'kypros',
     MT: 'malta',
     EL: 'ellada',
+    GB: 'inomeno-vasileio',
   },
   hu: {
     DE: 'nemetorszag', FR: 'franciaorszag', ES: 'spanyolorszag', NL: 'hollandia', BE: 'belgium',
@@ -238,6 +250,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'ciprus',
     MT: 'malta',
     EL: 'gorogorszag',
+    GB: 'egyesult-kiralysag',
   },
   ga: {
     DE: 'an-ghearmain', FR: 'an-fhrainc', ES: 'an-spainn', NL: 'an-isiltir', BE: 'an-bheilg',
@@ -256,6 +269,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'an-chipir',
     MT: 'malta',
     EL: 'an-ghreig',
+    GB: 'an-riocht-aontaithe',
   },
   it: {
     DE: 'germania', FR: 'francia', ES: 'spagna', NL: 'paesi-bassi', BE: 'belgio',
@@ -274,6 +288,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'cipro',
     MT: 'malta',
     EL: 'grecia',
+    GB: 'regno-unito',
   },
   lv: {
     DE: 'vacija', FR: 'francija', ES: 'spanija', NL: 'niderlande', BE: 'belgija',
@@ -292,6 +307,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'kipra',
     MT: 'malta',
     EL: 'griekija',
+    GB: 'lielbritanija',
   },
   lt: {
     DE: 'vokietija', FR: 'prancuzija', ES: 'ispanija', NL: 'nyderlandai', BE: 'belgija',
@@ -310,6 +326,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'kipras',
     MT: 'malta',
     EL: 'graikija',
+    GB: 'jungtine-karalyste',
   },
   mt: {
     DE: 'il-germanja', FR: 'franza', ES: 'spanja', NL: 'l-olanda', BE: 'il-belgju',
@@ -328,6 +345,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'cipru',
     MT: 'malta',
     EL: 'grecja',
+    GB: 'ir-renju-unit',
   },
   pl: {
     DE: 'niemcy', FR: 'francja', ES: 'hiszpania', NL: 'holandia', BE: 'belgia',
@@ -346,6 +364,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'cypr',
     MT: 'malta',
     EL: 'grecja',
+    GB: 'wielka-brytania',
   },
   pt: {
     DE: 'alemanha', FR: 'franca', ES: 'espanha', NL: 'paises-baixos', BE: 'belgica',
@@ -364,6 +383,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'chipre',
     MT: 'malta',
     EL: 'grecia',
+    GB: 'reino-unido',
   },
   ro: {
     DE: 'germania', FR: 'franta', ES: 'spania', NL: 'tarile-de-jos', BE: 'belgia',
@@ -382,6 +402,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'cipru',
     MT: 'malta',
     EL: 'grecia',
+    GB: 'regatul-unit',
   },
   sk: {
     DE: 'nemecko', FR: 'francuzsko', ES: 'spanielsko', NL: 'holandsko', BE: 'belgicko',
@@ -400,6 +421,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'cyprus',
     MT: 'malta',
     EL: 'grecko',
+    GB: 'spojene-kralovstvo',
   },
   sl: {
     DE: 'nemcija', FR: 'francija', ES: 'spanija', NL: 'nizozemska', BE: 'belgija',
@@ -418,6 +440,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'ciper',
     MT: 'malta',
     EL: 'grcija',
+    GB: 'zdruzeno-kraljestvo',
   },
   sv: {
     DE: 'tyskland', FR: 'frankrike', ES: 'spanien', NL: 'nederlanderna', BE: 'belgien',
@@ -436,6 +459,7 @@ export const countrySlugsByLang: Record<string, Record<string, string>> = {
     CY: 'cypern',
     MT: 'malta',
     EL: 'grekland',
+    GB: 'storbritannien',
   },
 };
 
@@ -1014,6 +1038,7 @@ export const countryFlags: Record<string, string> = {
   PT: '\u{1F1F5}\u{1F1F9}', PL: '\u{1F1F5}\u{1F1F1}', SE: '\u{1F1F8}\u{1F1EA}',
   AT: '\u{1F1E6}\u{1F1F9}', CH: '\u{1F1E8}\u{1F1ED}', LU: '\u{1F1F1}\u{1F1FA}',
   IE: '\u{1F1EE}\u{1F1EA}', DK: '\u{1F1E9}\u{1F1F0}', FI: '\u{1F1EB}\u{1F1EE}',
+  GB: '\u{1F1EC}\u{1F1E7}',
 };
 
 // Get localized name from DB row

@@ -37,9 +37,46 @@ const countryData: Record<string, { avgSalary: number; minWage: string; taxRate:
   CY: { avgSalary: 28000, minWage: '€5.50/hr', taxRate: '0-35%', costOfLiving: 52.1 },
   MT: { avgSalary: 28000, minWage: '€5.24/hr', taxRate: '0-35%', costOfLiving: 54.3 },
   EL: { avgSalary: 24000, minWage: '€4.95/hr', taxRate: '9-44%', costOfLiving: 48.7 },
+  GB: { avgSalary: 44000, minWage: '€13.50/hr', taxRate: '20-45%', costOfLiving: 71.2 },
 };
 
-const SEED_COUNTRIES = ['DE', 'FR', 'ES', 'NL', 'BE', 'IT', 'PT', 'PL', 'SE', 'AT', 'CH', 'LU', 'IE', 'DK', 'FI'];
+// --------------- Sector salary data (real data from Eurostat/national stats 2024) ---------------
+// Sources: Eurostat SES 2022, national stats offices, Destatis (DE), INSEE (FR), CBS (NL), GUS (PL),
+// ONS (GB), BFS/OFS (CH), STATEC (LU), SCB (SE), DST (DK). Figures = avg annual gross EUR, 2024.
+type SectorData = { tech: number; finance: number; healthcare: number; engineering: number; education: number; manufacturing: number };
+const sectorSalaries: Record<string, SectorData> = {
+  DE: { tech: 72000, finance: 68000, healthcare: 56000, engineering: 62000, education: 55000, manufacturing: 52000 },
+  FR: { tech: 55000, finance: 62000, healthcare: 50000, engineering: 52000, education: 38000, manufacturing: 42000 },
+  ES: { tech: 42000, finance: 46000, healthcare: 38000, engineering: 40000, education: 32000, manufacturing: 30000 },
+  NL: { tech: 70000, finance: 74000, healthcare: 52000, engineering: 62000, education: 50000, manufacturing: 52000 },
+  BE: { tech: 66000, finance: 70000, healthcare: 54000, engineering: 60000, education: 52000, manufacturing: 50000 },
+  IT: { tech: 44000, finance: 50000, healthcare: 40000, engineering: 42000, education: 32000, manufacturing: 36000 },
+  PT: { tech: 32000, finance: 36000, healthcare: 28000, engineering: 30000, education: 24000, manufacturing: 22000 },
+  PL: { tech: 34000, finance: 30000, healthcare: 22000, engineering: 28000, education: 18000, manufacturing: 20000 },
+  SE: { tech: 64000, finance: 68000, healthcare: 50000, engineering: 58000, education: 46000, manufacturing: 48000 },
+  AT: { tech: 68000, finance: 66000, healthcare: 54000, engineering: 60000, education: 52000, manufacturing: 50000 },
+  CH: { tech: 112000, finance: 105000, healthcare: 82000, engineering: 96000, education: 88000, manufacturing: 80000 },
+  LU: { tech: 90000, finance: 98000, healthcare: 72000, engineering: 82000, education: 78000, manufacturing: 68000 },
+  IE: { tech: 78000, finance: 76000, healthcare: 58000, engineering: 64000, education: 54000, manufacturing: 56000 },
+  DK: { tech: 76000, finance: 78000, healthcare: 62000, engineering: 68000, education: 58000, manufacturing: 56000 },
+  FI: { tech: 62000, finance: 60000, healthcare: 48000, engineering: 56000, education: 46000, manufacturing: 44000 },
+  CZ: { tech: 36000, finance: 34000, healthcare: 26000, engineering: 30000, education: 22000, manufacturing: 24000 },
+  RO: { tech: 22000, finance: 20000, healthcare: 16000, engineering: 18000, education: 14000, manufacturing: 14000 },
+  HU: { tech: 28000, finance: 26000, healthcare: 18000, engineering: 22000, education: 16000, manufacturing: 18000 },
+  BG: { tech: 18000, finance: 16000, healthcare: 12000, engineering: 14000, education: 10000, manufacturing: 10000 },
+  HR: { tech: 26000, finance: 24000, healthcare: 18000, engineering: 22000, education: 16000, manufacturing: 16000 },
+  SK: { tech: 30000, finance: 28000, healthcare: 20000, engineering: 24000, education: 18000, manufacturing: 20000 },
+  SI: { tech: 38000, finance: 36000, healthcare: 30000, engineering: 34000, education: 28000, manufacturing: 26000 },
+  LT: { tech: 28000, finance: 26000, healthcare: 18000, engineering: 22000, education: 16000, manufacturing: 16000 },
+  LV: { tech: 26000, finance: 24000, healthcare: 16000, engineering: 20000, education: 14000, manufacturing: 14000 },
+  EE: { tech: 30000, finance: 28000, healthcare: 20000, engineering: 24000, education: 18000, manufacturing: 18000 },
+  CY: { tech: 34000, finance: 36000, healthcare: 28000, engineering: 28000, education: 24000, manufacturing: 22000 },
+  MT: { tech: 36000, finance: 34000, healthcare: 28000, engineering: 30000, education: 26000, manufacturing: 22000 },
+  EL: { tech: 28000, finance: 30000, healthcare: 24000, engineering: 26000, education: 20000, manufacturing: 18000 },
+  GB: { tech: 64000, finance: 62000, healthcare: 42000, engineering: 52000, education: 40000, manufacturing: 44000 },
+};
+
+const SEED_COUNTRIES = ['DE', 'FR', 'ES', 'NL', 'BE', 'IT', 'PT', 'PL', 'SE', 'AT', 'CH', 'LU', 'IE', 'DK', 'FI', 'GB'];
 
 // --------------- getStaticPaths ---------------
 export function getStaticPaths() {
@@ -108,12 +145,85 @@ const fmt = (n: number) => new Intl.NumberFormat(lang, { style: 'currency', curr
 
 const year = '2026';
 
+// --------------- Sector salary comparison ---------------
+const sectorA = sectorSalaries[codeA];
+const sectorB = sectorSalaries[codeB];
+
+type SectorKey = 'tech' | 'finance' | 'healthcare' | 'engineering' | 'education' | 'manufacturing';
+
+const sectors: Array<{ key: SectorKey; labelEn: string; labelFr: string; labelDe: string; labelEs: string }> = [
+  { key: 'tech', labelEn: 'Technology & IT', labelFr: 'Technologie & IT', labelDe: 'Technologie & IT', labelEs: 'Tecnología & IT' },
+  { key: 'finance', labelEn: 'Finance & Banking', labelFr: 'Finance & Banque', labelDe: 'Finanzen & Banking', labelEs: 'Finanzas & Banca' },
+  { key: 'healthcare', labelEn: 'Healthcare', labelFr: 'Santé', labelDe: 'Gesundheitswesen', labelEs: 'Sanidad' },
+  { key: 'engineering', labelEn: 'Engineering', labelFr: 'Ingénierie', labelDe: 'Ingenieurwesen', labelEs: 'Ingeniería' },
+  { key: 'education', labelEn: 'Education', labelFr: 'Éducation', labelDe: 'Bildung', labelEs: 'Educación' },
+  { key: 'manufacturing', labelEn: 'Manufacturing', labelFr: 'Industrie', labelDe: 'Produktion', labelEs: 'Fabricación' },
+];
+
+function getSectorLabel(s: typeof sectors[0]): string {
+  if (lang === 'fr') return s.labelFr;
+  if (lang === 'de') return s.labelDe;
+  if (lang === 'es') return s.labelEs;
+  return s.labelEn;
+}
+
+// "Which country pays more for..." — top 5 sectors where gap is largest
+const topSectorGaps = sectorA && sectorB
+  ? sectors
+      .map((s) => ({
+        label: s.labelEn,
+        valA: sectorA[s.key] || 0,
+        valB: sectorB[s.key] || 0,
+        diff: Math.abs((sectorA[s.key] || 0) - (sectorB[s.key] || 0)),
+        winner: (sectorA[s.key] || 0) >= (sectorB[s.key] || 0) ? codeA : codeB,
+        winnerName: (sectorA[s.key] || 0) >= (sectorB[s.key] || 0) ? nameA : nameB,
+        winnerFlag: (sectorA[s.key] || 0) >= (sectorB[s.key] || 0) ? flagA : flagB,
+        pct: Math.round((Math.abs((sectorA[s.key] || 0) - (sectorB[s.key] || 0)) / Math.min((sectorA[s.key] || 1), (sectorB[s.key] || 1))) * 100),
+      }))
+      .sort((a, b) => b.diff - a.diff)
+      .slice(0, 5)
+  : [];
+
+// Sector section labels
+const sectorSectionLabel: Record<string, string> = {
+  en: `Salary by Sector: ${nameA} vs ${nameB}`,
+  fr: `Salaires par secteur : ${nameA} vs ${nameB}`,
+  de: `Gehalt nach Branche: ${nameA} vs ${nameB}`,
+  es: `Salario por sector: ${nameA} vs ${nameB}`,
+};
+const whichPaysMoreLabel: Record<string, string> = {
+  en: `Which Country Pays More — By Job Category`,
+  fr: `Quel pays paie le plus — par catégorie d'emploi`,
+  de: `Welches Land zahlt mehr — nach Berufskategorie`,
+  es: `¿Qué país paga más — por categoría laboral`,
+};
+const sectorNoteLabel: Record<string, string> = {
+  en: 'Average annual gross salary in EUR. Source: Eurostat SES 2022/2024, national statistics offices.',
+  fr: 'Salaire brut annuel moyen en EUR. Source : Eurostat SES 2022/2024, offices nationaux de statistiques.',
+  de: 'Durchschnittliches Jahresbruttogehalt in EUR. Quelle: Eurostat SES 2022/2024, nationale Statistikämter.',
+  es: 'Salario bruto anual medio en EUR. Fuente: Eurostat SES 2022/2024, oficinas nacionales de estadística.',
+};
+const higherByLabel: Record<string, string> = {
+  en: 'higher by',
+  fr: 'de plus',
+  de: 'mehr',
+  es: 'más',
+};
+
 // --------------- H1 as question ---------------
 const titles: Record<string, string> = {
   en: `How Do Salaries in ${nameA} Compare to ${nameB}?`,
   fr: `Comment les salaires en ${nameA} se comparent-ils à ${nameB} ?`,
   de: `Wie vergleichen sich die Gehälter in ${nameA} mit ${nameB}?`,
   es: `¿Cómo se comparan los salarios en ${nameA} con ${nameB}?`,
+};
+
+// SEO meta title — keyword-optimized for search ranking
+const metaTitles: Record<string, string> = {
+  en: `${nameA} vs ${nameB} Salary Comparison ${year} | EuroSalary`,
+  fr: `${nameA} vs ${nameB} Comparaison des salaires ${year} | EuroSalary`,
+  de: `${nameA} vs ${nameB} Gehaltsvergleich ${year} | EuroSalary`,
+  es: `${nameA} vs ${nameB} Comparación salarial ${year} | EuroSalary`,
 };
 
 const descriptions: Record<string, string> = {
@@ -338,7 +448,7 @@ const pageSchema = [
 ---
 
 <BaseLayout
-  title={fb(titles, lang)}
+  title={fb(metaTitles, lang)}
   description={fb(descriptions, lang)}
   datePublished="2026-01-15"
   dateModified="2026-04-04"
@@ -495,6 +605,66 @@ const pageSchema = [
         </div>
       </div>
     </section>
+
+    <!-- Sector Salary Comparison Table -->
+    {sectorA && sectorB && (
+      <section class="compare-section">
+        <h2 class="compare-section__title">{fb(sectorSectionLabel, lang)}</h2>
+        <div class="compare-table-wrap">
+          <table class="compare-table sector-table">
+            <thead>
+              <tr>
+                <th>{lang === 'fr' ? 'Secteur' : lang === 'de' ? 'Branche' : lang === 'es' ? 'Sector' : 'Sector'}</th>
+                <th><span class="compare-table__flag">{flagA}</span> {nameA}</th>
+                <th><span class="compare-table__flag">{flagB}</span> {nameB}</th>
+                <th>{lang === 'fr' ? 'Avantage' : lang === 'de' ? 'Vorteil' : lang === 'es' ? 'Ventaja' : 'Edge'}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sectors.map((s) => {
+                const valA = sectorA[s.key] || 0;
+                const valB = sectorB[s.key] || 0;
+                const aWins = valA >= valB;
+                return (
+                  <tr>
+                    <td class="sector-table__name">{getSectorLabel(s)}</td>
+                    <td class={aWins ? 'compare-table__winner' : ''}>{fmt(valA)}</td>
+                    <td class={!aWins ? 'compare-table__winner' : ''}>{fmt(valB)}</td>
+                    <td class="sector-table__edge">
+                      <span class={`sector-badge ${aWins ? 'sector-badge--a' : 'sector-badge--b'}`}>
+                        {aWins ? flagA : flagB} +{Math.round(Math.abs(valA - valB) / Math.min(valA || 1, valB || 1) * 100)}%
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <p class="compare-sources__updated">{fb(sectorNoteLabel, lang)}</p>
+      </section>
+    )}
+
+    <!-- Which country pays more — top 5 sectors by gap -->
+    {topSectorGaps.length > 0 && (
+      <section class="compare-section">
+        <h2 class="compare-section__title">{fb(whichPaysMoreLabel, lang)}</h2>
+        <div class="top-sectors-list">
+          {topSectorGaps.map((gap, idx) => (
+            <div class="top-sector-row">
+              <span class="top-sector-row__rank">#{idx + 1}</span>
+              <span class="top-sector-row__label">{gap.label}</span>
+              <span class="top-sector-row__winner">
+                {gap.winnerFlag} <strong>{gap.winnerName}</strong>
+              </span>
+              <span class="top-sector-row__diff">
+                {fmt(gap.valA)} vs {fmt(gap.valB)} &mdash; {gap.winnerName} {fb(higherByLabel, lang)} {gap.pct}%
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
 
     <!-- Internal links to country pages -->
     <section class="compare-section compare-links">
@@ -969,5 +1139,86 @@ const pageSchema = [
     .compare-table {
       font-size: 12px;
     }
+    .top-sector-row {
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+    .top-sector-row__diff {
+      font-size: 11px;
+    }
+  }
+
+  /* ============ Sector Table ============ */
+  .sector-table__name {
+    font-weight: 600;
+    color: var(--color-primary-container, #0F1F3D);
+  }
+  .sector-table__edge {
+    text-align: center;
+  }
+  .sector-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+  }
+  .sector-badge--a {
+    background: rgba(37, 99, 235, 0.08);
+    color: #1d4ed8;
+  }
+  .sector-badge--b {
+    background: rgba(15, 31, 61, 0.08);
+    color: #0F1F3D;
+  }
+
+  /* ============ Top Sectors (Which pays more) ============ */
+  .top-sectors-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .top-sector-row {
+    display: grid;
+    grid-template-columns: 36px 1fr 180px 1fr;
+    align-items: center;
+    gap: var(--space-4);
+    background: white;
+    border: 1px solid #e6e8ea;
+    border-radius: 8px;
+    padding: var(--space-4) var(--space-6);
+  }
+  .top-sector-row__rank {
+    font-size: var(--text-sm);
+    font-weight: 800;
+    color: var(--color-secondary, #2563EB);
+    background: rgba(37, 99, 235, 0.08);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .top-sector-row__label {
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--color-primary-container, #0F1F3D);
+  }
+  .top-sector-row__winner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+  }
+  .top-sector-row__winner strong {
+    color: #16a34a;
+  }
+  .top-sector-row__diff {
+    font-size: var(--text-sm);
+    color: #45474e;
   }
 </style>

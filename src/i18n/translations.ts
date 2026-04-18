@@ -230,6 +230,14 @@ export const countryNames: Record<string, Record<string, string>> = {
     lt: 'Graikija', mt: 'Il-Grecja', pl: 'Grecja', pt: 'Grecia',
     ro: 'Grecia', sk: 'Grecko', sl: 'Grcija', sv: 'Grekland',
   },
+  GB: {
+    en: 'United Kingdom', fr: 'Royaume-Uni', de: 'Vereinigtes Königreich', es: 'Reino Unido',
+    it: 'Regno Unito', pt: 'Reino Unido', nl: 'Verenigd Koninkrijk', pl: 'Wielka Brytania',
+    ro: 'Regatul Unit', cs: 'Spojené království', sv: 'Storbritannien', da: 'Storbritannien',
+    fi: 'Yhdistynyt kuningaskunta', el: 'Ηνωμένο Βασίλειο', hu: 'Egyesült Királyság', sk: 'Spojené kráľovstvo',
+    bg: 'Великобритания', hr: 'Ujedinjeno Kraljevstvo', sl: 'Združeno kraljestvo', lt: 'Jungtinė Karalystė',
+    lv: 'Lielbritānija', et: 'Suurbritannia', mt: 'Ir-Renju Unit', ga: 'An Ríocht Aontaithe',
+  },
 };
 
 // --------------- Job display names (21 jobs × 24 langs) ---------------
