@@ -4,6 +4,11 @@
 // Run via: node scripts/sync-eurostat.mjs
 
 import { createClient } from '@supabase/supabase-js';
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
@@ -133,6 +138,19 @@ async function main() {
     }, { onConflict: 'slug' });
 
   console.log(`[${new Date().toISOString()}] Eurostat sync complete`);
+
+  // Run the salary_data enrichment from Eurostat ISCO data
+  console.log('\n--- Running salary_data enrichment from Eurostat ---');
+  const enrichScript = join(__dirname, 'enrich-from-eurostat.mjs');
+  try {
+    execFileSync(process.execPath, [enrichScript], {
+      stdio: 'inherit',
+      env: process.env,
+    });
+  } catch (err) {
+    console.error('Enrichment script failed:', err.message);
+    // Non-fatal — sync continues
+  }
 }
 
 main().catch((err) => {
