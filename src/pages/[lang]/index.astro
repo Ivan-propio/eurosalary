@@ -30,6 +30,56 @@ const schema = [
       'query-input': 'required name=search_term_string',
     },
   },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'EuroSalary.eu',
+    url: 'https://eurosalary.eu',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://eurosalary.eu/logo.svg',
+    },
+    description: 'European salary comparison platform — verified, Eurostat-sourced salary data across 27 EU countries in all 24 official EU languages.',
+    foundingDate: '2023',
+    areaServed: 'EU',
+    address: {
+      '@type': 'PostalAddress',
+      addressCountry: 'LU',
+    },
+    contactPoint: {
+      '@type': 'ContactPoint',
+      email: 'hello@eurosalary.eu',
+      contactType: 'customer service',
+    },
+    sameAs: [
+      'https://www.linkedin.com/company/eurosalary',
+      'https://twitter.com/eurosalaryeu',
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: 'EuroSalary EU Salary Dataset 2026',
+    description: 'Comprehensive salary data across 27 EU member states, 21 job categories, and 4 experience levels. Sourced from Eurostat, OECD, and national statistical institutes. Updated weekly.',
+    url: 'https://eurosalary.eu/salary-facts.json',
+    creator: {
+      '@type': 'Organization',
+      name: 'EuroSalary.eu',
+      url: 'https://eurosalary.eu',
+    },
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+    temporalCoverage: '2026',
+    spatialCoverage: {
+      '@type': 'Place',
+      name: 'European Union',
+    },
+    keywords: 'salary data, European wages, minimum wage EU, average salary Europe, Eurostat, OECD',
+    distribution: {
+      '@type': 'DataDownload',
+      encodingFormat: 'application/ld+json',
+      contentUrl: 'https://eurosalary.eu/salary-facts.json',
+    },
+  },
 ];
 ---
 

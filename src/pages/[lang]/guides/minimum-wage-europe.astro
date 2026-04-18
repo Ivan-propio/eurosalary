@@ -1,0 +1,496 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { languages } from '../../../i18n/ui';
+import { fb } from '../../../i18n/utils';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+
+// --------------- Meta ---------------
+const pageTitle: Record<string, string> = {
+  en: 'Minimum Wage in Europe 2026: Complete EU Country Guide',
+  fr: 'Salaire minimum en Europe 2026 : guide complet par pays de l\'UE',
+  de: 'Mindestlohn in Europa 2026: Vollständiger EU-Länderführer',
+  es: 'Salario mínimo en Europa 2026: guía completa por país de la UE',
+  it: 'Salario minimo in Europa 2026: guida completa per paese UE',
+  pt: 'Salário mínimo na Europa 2026: guia completo por país da UE',
+  nl: 'Minimumloon in Europa 2026: complete gids per EU-land',
+  pl: 'Płaca minimalna w Europie 2026: pełny przewodnik po krajach UE',
+  ro: 'Salariu minim în Europa 2026: ghid complet pe țări UE',
+  cs: 'Minimální mzda v Evropě 2026: úplný průvodce zeměmi EU',
+  sv: 'Minimilön i Europa 2026: komplett guide per EU-land',
+  da: 'Mindsteløn i Europa 2026: komplet guide per EU-land',
+  fi: 'Vähimmäispalkka Euroopassa 2026: täydellinen opas EU-maittain',
+  el: 'Κατώτατος μισθός στην Ευρώπη 2026: πλήρης οδηγός ανά χώρα ΕΕ',
+  hu: 'Minimálbér Európában 2026: teljes útmutató EU-országonként',
+  sk: 'Minimálna mzda v Európe 2026: úplný sprievodca krajinami EÚ',
+  bg: 'Минимална заплата в Европа 2026: пълно ръководство по страни от ЕС',
+  hr: 'Minimalna plaća u Europi 2026: potpuni vodič po zemljama EU-a',
+  sl: 'Minimalna plača v Evropi 2026: popoln vodnik po državah EU',
+  lt: 'Minimalus atlyginimas Europoje 2026: išsamus ES šalių vadovas',
+  lv: 'Minimālā alga Eiropā 2026: pilnīgs ES valstu ceļvedis',
+  et: 'Miinimumpalk Euroopas 2026: täielik EL-i riikide juhend',
+  mt: 'Salarju minimu fl-Ewropa 2026: gwida sħiħa tal-pajjiżi tal-UE',
+  ga: 'Pá íosta san Eoraip 2026: treoir iomlán tír ar thír AE',
+};
+
+const pageDescription: Record<string, string> = {
+  en: 'Current minimum wages for all EU countries in 2026 — monthly amounts, hourly rates, year-over-year changes, and cost of living context. Luxembourg leads at €2,570/month; Bulgaria at €551/month.',
+  fr: 'Salaires minimums actuels pour tous les pays de l\'UE en 2026 — montants mensuels, taux horaires, évolutions annuelles et contexte du coût de la vie. Le Luxembourg en tête à 2 570 €/mois.',
+  de: 'Aktuelle Mindestlöhne für alle EU-Länder 2026 — monatliche Beträge, Stundenlöhne, Jahresveränderungen und Lebenshaltungskosten-Kontext. Luxemburg führt mit 2.570 €/Monat.',
+  es: 'Salarios mínimos actuales para todos los países de la UE en 2026 — importes mensuales, tarifas horarias, variaciones interanuales y contexto del coste de vida. Luxemburgo lidera con 2.570 €/mes.',
+  it: 'Salari minimi attuali per tutti i paesi UE nel 2026 — importi mensili, tariffe orarie, variazioni annuali e contesto del costo della vita. Il Lussemburgo guida con 2.570 €/mese.',
+  pt: 'Salários mínimos atuais para todos os países da UE em 2026 — valores mensais, taxas horárias, variações anuais e contexto do custo de vida. Luxemburgo lidera com 2.570 €/mês.',
+  nl: 'Actuele minimumlonen voor alle EU-landen in 2026 — maandelijkse bedragen, uurtarieven, jaarlijkse wijzigingen en context levenskosten. Luxemburg leidt met €2.570/maand.',
+  pl: 'Aktualne płace minimalne dla wszystkich krajów UE w 2026 r. — miesięczne kwoty, stawki godzinowe, zmiany rok do roku i kontekst kosztów życia. Luksemburg na czele z 2 570 €/miesiąc.',
+  ro: 'Salariile minime actuale pentru toate țările UE în 2026 — sume lunare, tarife orare, modificări anuale și context al costului vieții. Luxemburg în frunte cu 2.570 €/lună.',
+  cs: 'Aktuální minimální mzdy pro všechny země EU v roce 2026 — měsíční částky, hodinové sazby, meziroční změny a kontext životních nákladů. Lucembursko vede s 2 570 €/měsíc.',
+  sv: 'Aktuella minimilöner för alla EU-länder 2026 — månadsbelopp, timlöner, årsförändringar och levnadskostnadskontext. Luxemburg leder med €2 570/månad.',
+  da: 'Aktuelle mindstelønninger for alle EU-lande i 2026 — månedlige beløb, timepriser, årsændringer og leveomkostningskontekst. Luxembourg leder med €2.570/måned.',
+  fi: 'Voimassa olevat vähimmäispalkat kaikille EU-maille 2026 — kuukausimäärät, tuntipalkat, vuosimuutokset ja elinkustannuskonteksti. Luxemburg johtaa 2 570 €/kuukausi.',
+  el: 'Τρέχοντες κατώτατοι μισθοί για όλες τις χώρες ΕΕ το 2026 — μηνιαία ποσά, ωριαία ποσοστά, ετήσιες αλλαγές και πλαίσιο κόστους ζωής. Το Λουξεμβούργο οδηγεί με €2.570/μήνα.',
+  hu: 'Aktuális minimálbérek az összes EU-ország számára 2026-ban — havi összegek, órabérek, éves változások és megélhetési költségek kontextusa. Luxemburg vezet 2570 €/hó összeggel.',
+  sk: 'Aktuálne minimálne mzdy pre všetky krajiny EÚ v roku 2026 — mesačné sumy, hodinové sadzby, medziročné zmeny a kontext životných nákladov. Luxembursko vedie s 2 570 €/mesiac.',
+  bg: 'Актуални минимални заплати за всички страни от ЕС за 2026 г. — месечни суми, часови ставки, годишни промени и контекст на разходите за живот. Люксембург води с 2 570 €/месец.',
+  hr: 'Aktualne minimalne plaće za sve zemlje EU-a 2026. — mjesečni iznosi, satne stope, godišnje promjene i kontekst troškova života. Luksemburg vodi s 2.570 €/mjesec.',
+  sl: 'Aktualne minimalne plače za vse države EU 2026 — mesečni zneski, urne postavke, letne spremembe in kontekst stroškov življenja. Luksemburg vodi z 2.570 €/mesec.',
+  lt: 'Dabartiniai minimalūs atlyginimai visoms ES šalims 2026 m. — mėnesinės sumos, valandiniai tarifai, metiniai pokyčiai ir pragyvenimo išlaidų kontekstas. Liuksemburgas pirmauja su 2 570 €/mėn.',
+  lv: 'Pašreizējās minimālās algas visām ES valstīm 2026. gadā — mēneša summas, stundas likmes, gada izmaiņas un dzīves dārdzības konteksts. Luksemburga vadībā ar 2 570 €/mēnesī.',
+  et: 'Praegused miinimumpalgad kõikidele EL-i riikidele 2026. aastal — kuusummad, tunnimäärad, aastased muutused ja elukalliduse kontekst. Luksemburg eesotsas 2 570 €/kuus.',
+  mt: 'Salarji minimi attwali għall-pajjiżi kollha tal-UE fl-2026 — ammonti mensili, rati bil-siegħa, tibdil fis-sena u kuntest tal-ispiża tal-għajxien. Il-Lussemburgu jmexxi bi €2,570/xahar.',
+  ga: 'Pánna íosta reatha do gach tír AE in 2026 — méideanna míosúla, rátaí uaire, athruithe bliantúla agus comhthéacs costas maireachtála. Lucsamburg i gceannas le €2,570/mí.',
+};
+
+// --------------- TLDR ---------------
+const tldrItems: Record<string, string[]> = {
+  en: [
+    'Luxembourg has the highest minimum wage in the EU: €2,570/month (gross) — more than 4× Bulgaria\'s €551/month',
+    '21 out of 27 EU member states have a statutory national minimum wage in 2026',
+    'Denmark, Sweden, Finland, Italy, Austria, and Cyprus rely on sector-level collective bargaining instead',
+    'Germany\'s minimum wage is €12.82/hour (~€2,222/month); Ireland leads hourly at €13.50/hour (~€2,340/month)',
+    'Adjusted for purchasing power, the real gap between countries narrows significantly',
+  ],
+  fr: [
+    'Le Luxembourg a le salaire minimum le plus élevé de l\'UE : 2 570 €/mois (brut) — plus de 4× celui de la Bulgarie (551 €/mois)',
+    '21 des 27 États membres de l\'UE ont un salaire minimum légal national en 2026',
+    'Le Danemark, la Suède, la Finlande, l\'Italie, l\'Autriche et Chypre s\'appuient sur les conventions collectives sectorielles',
+    'Le salaire minimum allemand est de 12,82 €/heure (~2 222 €/mois) ; l\'Irlande mène sur le taux horaire à 13,50 €/heure',
+    'Ajusté au pouvoir d\'achat, l\'écart réel entre les pays se réduit considérablement',
+  ],
+  de: [
+    'Luxemburg hat den höchsten Mindestlohn in der EU: 2.570 €/Monat (brutto) — mehr als 4× Bulgariens 551 €/Monat',
+    '21 von 27 EU-Mitgliedstaaten haben 2026 einen gesetzlichen nationalen Mindestlohn',
+    'Dänemark, Schweden, Finnland, Italien, Österreich und Zypern setzen auf sektorale Tarifverträge',
+    'Deutschlands Mindestlohn beträgt 12,82 €/Stunde (~2.222 €/Monat); Irland führt stündlich mit 13,50 €/Stunde',
+    'Kaufkraftbereinigt verringert sich der reale Unterschied zwischen den Ländern erheblich',
+  ],
+  es: [
+    'Luxemburgo tiene el salario mínimo más alto de la UE: 2.570 €/mes (bruto) — más de 4× el de Bulgaria (551 €/mes)',
+    '21 de los 27 estados miembros de la UE tienen un salario mínimo nacional estatutario en 2026',
+    'Dinamarca, Suecia, Finlandia, Italia, Austria y Chipre dependen de convenios colectivos sectoriales',
+    'El salario mínimo alemán es de 12,82 €/hora (~2.222 €/mes); Irlanda lidera por hora con 13,50 €/hora',
+    'Ajustado por poder adquisitivo, la brecha real entre países se reduce significativamente',
+  ],
+  it: ['Il Lussemburgo ha il salario minimo più alto nell\'UE: €2.570/mese (lordo) — oltre 4× quello della Bulgaria (€551/mese)', '21 dei 27 stati membri dell\'UE hanno un salario minimo nazionale legale nel 2026', 'Danimarca, Svezia, Finlandia, Italia, Austria e Cipro si affidano alla contrattazione collettiva settoriale', 'Il salario minimo tedesco è di €12,82/ora (~€2.222/mese); l\'Irlanda guida orario a €13,50/ora', 'Corretto per il potere d\'acquisto, il divario reale tra paesi si riduce notevolmente'],
+  pt: ['O Luxemburgo tem o salário mínimo mais alto da UE: €2.570/mês (bruto) — mais de 4× o da Bulgária (€551/mês)', '21 dos 27 estados membros da UE têm um salário mínimo nacional estatutário em 2026', 'Dinamarca, Suécia, Finlândia, Itália, Áustria e Chipre dependem de acordos coletivos setoriais', 'O salário mínimo alemão é de €12,82/hora (~€2.222/mês); a Irlanda lidera à hora com €13,50/hora', 'Ajustado para o poder de compra, a diferença real entre países reduz-se significativamente'],
+  nl: ['Luxemburg heeft het hoogste minimumloon in de EU: €2.570/maand (bruto) — meer dan 4× dat van Bulgarije (€551/maand)', '21 van de 27 EU-lidstaten hebben in 2026 een wettelijk nationaal minimumloon', 'Denemarken, Zweden, Finland, Italië, Oostenrijk en Cyprus vertrouwen op sectorale collectieve overeenkomsten', 'Het Duitse minimumloon is €12,82/uur (~€2.222/maand); Ierland leidt per uur met €13,50/uur', 'Gecorrigeerd voor koopkracht wordt het reële verschil tussen landen aanzienlijk kleiner'],
+  pl: ['Luksemburg ma najwyższą płacę minimalną w UE: 2 570 €/miesiąc (brutto) — ponad 4× więcej niż Bułgaria (551 €/miesiąc)', '21 z 27 państw członkowskich UE ma ustawową krajową płacę minimalną w 2026 r.', 'Dania, Szwecja, Finlandia, Włochy, Austria i Cypr polegają na sektorowych układach zbiorowych', 'Płaca minimalna w Niemczech wynosi 12,82 €/godz. (~2 222 €/miesiąc); Irlandia prowadzi godzinowo z 13,50 €/godz.', 'Po korekcie o siłę nabywczą realna różnica między krajami znacznie się zmniejsza'],
+  ro: ['Luxemburg are cel mai mare salariu minim din UE: 2.570 €/lună (brut) — de peste 4 ori mai mare decât Bulgaria (551 €/lună)', '21 din 27 de state membre UE au un salariu minim național statutar în 2026', 'Danemarca, Suedia, Finlanda, Italia, Austria și Cipru se bazează pe contracte colective sectoriale', 'Salariul minim german este de 12,82 €/oră (~2.222 €/lună); Irlanda conduce pe oră cu 13,50 €/oră', 'Ajustat la puterea de cumpărare, decalajul real dintre țări se micșorează semnificativ'],
+  cs: ['Lucembursko má nejvyšší minimální mzdu v EU: 2 570 €/měsíc (hrubé) — více než 4× více než Bulharsko (551 €/měsíc)', '21 z 27 členských států EU má v roce 2026 zákonnou národní minimální mzdu', 'Dánsko, Švédsko, Finsko, Itálie, Rakousko a Kypr spoléhají na sektorové kolektivní smlouvy', 'Německá minimální mzda je 12,82 €/hod. (~2 222 €/měsíc); Irsko vede hodinově s 13,50 €/hod.', 'Upraven o kupní sílu, reálný rozdíl mezi zeměmi se výrazně zmenšuje'],
+  sv: ['Luxemburg har den högsta minimilönen i EU: €2 570/månad (brutto) — mer än 4× Bulgariens €551/månad', '21 av 27 EU-medlemsstater har en lagstadgad nationell minimilön 2026', 'Danmark, Sverige, Finland, Italien, Österrike och Cypern förlitar sig på sektoriella kollektivavtal', 'Tysklands minimilön är €12,82/timme (~€2 222/månad); Irland leder per timme med €13,50/timme', 'Justerat för köpkraft minskar det verkliga gapet mellan länder avsevärt'],
+  da: ['Luxembourg har den højeste mindsteløn i EU: €2.570/måned (brutto) — mere end 4× Bulgariens €551/måned', '21 ud af 27 EU-medlemsstater har en lovbestemt national mindsteløn i 2026', 'Danmark, Sverige, Finland, Italien, Østrig og Cypern baserer sig på sektorielle kollektive aftaler', 'Tysklands mindsteløn er €12,82/time (~€2.222/måned); Irland leder pr. time med €13,50/time', 'Justeret for købekraft indsnævres det reelle kløft mellem lande betydeligt'],
+  fi: ['Luxemburgilla on korkein vähimmäispalkka EU:ssa: 2 570 €/kuukausi (brutto) — yli 4× Bulgarian 551 €/kuukausi', '21 / 27 EU-jäsenvaltiosta on lakisääteinen kansallinen vähimmäispalkka vuonna 2026', 'Tanska, Ruotsi, Suomi, Italia, Itävalta ja Kypros tukeutuvat alakohtaisiin työehtosopimuksiin', 'Saksan vähimmäispalkka on 12,82 €/tunti (~2 222 €/kuukausi); Irlanti johtaa tuntipalkassa 13,50 €/tunnilla', 'Ostovoimalla oikaistuna maiden välinen todellinen kuilu kapenee merkittävästi'],
+  el: ['Το Λουξεμβούργο έχει τον υψηλότερο κατώτατο μισθό στην ΕΕ: €2.570/μήνα (μεικτά) — πάνω από 4× αυτόν της Βουλγαρίας (€551/μήνα)', '21 από 27 κράτη μέλη της ΕΕ έχουν εθνικό κατώτατο μισθό το 2026', 'Δανία, Σουηδία, Φινλανδία, Ιταλία, Αυστρία και Κύπρος βασίζονται σε κλαδικές συλλογικές συμβάσεις', 'Ο κατώτατος μισθός της Γερμανίας είναι €12,82/ώρα (~€2.222/μήνα)· η Ιρλανδία οδηγεί ωριαία με €13,50/ώρα', 'Διορθωμένος για αγοραστική δύναμη, το πραγματικό χάσμα μεταξύ χωρών μειώνεται σημαντικά'],
+  hu: ['Luxemburgban van a legmagasabb minimálbér az EU-ban: 2 570 €/hó (bruttó) — több mint 4× Bulgária 551 €/hójánál', '27 EU-tagállam közül 21-nek van 2026-ban törvényes nemzeti minimálbére', 'Dánia, Svédország, Finnország, Olaszország, Ausztria és Ciprus ágazati kollektív szerződésekre támaszkodik', 'Németország minimálbére 12,82 €/óra (~2 222 €/hó); Írország vezet órabérben 13,50 €/óra összeggel', 'Vásárlóerőre korrigálva az országok közötti reális különbség jelentősen csökken'],
+  sk: ['Luxembursko má najvyššiu minimálnu mzdu v EÚ: 2 570 €/mesiac (hrubé) — viac ako 4× viac ako Bulharsko (551 €/mesiac)', '21 z 27 členských štátov EÚ má v roku 2026 zákonné národné minimum', 'Dánsko, Švédsko, Fínsko, Taliansko, Rakúsko a Cyprus sa spoliehajú na odvetvové kolektívne zmluvy', 'Nemecká minimálna mzda je 12,82 €/hod. (~2 222 €/mesiac); Írsko vedie hodinovo s 13,50 €/hod.', 'Upravená o kúpnu silu, reálny rozdiel medzi krajinami sa výrazne zmenšuje'],
+  bg: ['Люксембург има най-висока минимална заплата в ЕС: 2 570 €/месец (бруто) — над 4× повече от България (551 €/месец)', '21 от 27-те държави членки на ЕС имат законова национална минимална заплата през 2026 г.', 'Дания, Швеция, Финландия, Италия, Австрия и Кипър разчитат на секторни колективни споразумения', 'Минималната заплата в Германия е 12,82 €/час (~2 222 €/месец); Ирландия води почасово с 13,50 €/час', 'Коригирана за покупателната способност, реалната разлика между страните намалява значително'],
+  hr: ['Luksemburg ima najvišu minimalnu plaću u EU-u: 2.570 €/mjesec (bruto) — više od 4× od Bugarske (551 €/mjesec)', '21 od 27 država članica EU-a ima zakonsku nacionalnu minimalnu plaću 2026.', 'Danska, Švedska, Finska, Italija, Austrija i Cipar oslanjaju se na sektorske kolektivne ugovore', 'Minimalna plaća Njemačke je 12,82 €/sat (~2.222 €/mjesec); Irska vodi po satu s 13,50 €/sat', 'Korigirana za kupovnu moć, stvarna razlika između zemalja znatno se sužava'],
+  sl: ['Luksemburg ima najvišjo minimalno plačo v EU: 2.570 €/mesec (bruto) — več kot 4× Bolgarijo (551 €/mesec)', '21 od 27 držav članic EU ima zakonsko nacionalno minimalno plačo 2026', 'Danska, Švedska, Finska, Italija, Avstrija in Ciper se zanašajo na sektorske kolektivne pogodbe', 'Nemška minimalna plača je 12,82 €/uro (~2.222 €/mesec); Irska vodi po uri z 12,50 €/uro', 'Po prilagodbi za kupno moč se dejanska vrzel med državami znatno zoži'],
+  lt: ['Liuksemburgas turi aukščiausią minimalų atlyginimą ES: 2 570 €/mėn. (bruto) — daugiau nei 4× Bulgarijos 551 €/mėn.', '21 iš 27 ES valstybių narių 2026 m. turi įstatyminį nacionalinį minimalų atlyginimą', 'Danija, Švedija, Suomija, Italija, Austrija ir Kipras remiasi sektorinėmis kolektyvinėmis sutartimis', 'Vokietijos minimumas yra 12,82 €/val. (~2 222 €/mėn.); Airija pirmauja valandiniu tarifu — 13,50 €/val.', 'Pakoreguojus pagal perkamąją galią, realus skirtumas tarp šalių žymiai sumažėja'],
+  lv: ['Luksemburgai ir augstākā minimālā alga ES: 2 570 €/mēnesī (bruto) — vairāk nekā 4× Bulgārijas 551 €/mēnesī', '21 no 27 ES dalībvalstīm 2026. gadā ir likumīga valsts minimālā alga', 'Dānija, Zviedrija, Somija, Itālija, Austrija un Kipra paļaujas uz nozaru kolektīvajiem līgumiem', 'Vācijas minimālā alga ir 12,82 €/stundā (~2 222 €/mēnesī); Īrija vadībā pa stundām ar 13,50 €/stundā', 'Koriģēts pēc pirktspējas, reālā plaisa starp valstīm ievērojami sašaurinās'],
+  et: ['Luksemburgil on EL-i kõrgeim miinimumpalk: 2 570 €/kuus (brutona) — üle 4× Bulgaria 551 €/kuust', '21-l 27-st EL-i liikmesriigist on 2026. aastal seadusjärgne riiklik miinimumpalk', 'Taani, Rootsi, Soome, Itaalia, Austria ja Küpros tuginevad sektorilepingutele', 'Saksamaa miinimumpalk on 12,82 €/tund (~2 222 €/kuus); Iirimaa juhib tunnipalgas 13,50 €/tunniga', 'Ostujõuga korrigeeritult väheneb riikidevaheline tegelik lõhe märkimisväärselt'],
+  mt: ['Il-Lussemburgu għandu l-ogħla salarju minimu fl-UE: €2,570/xahar (gross) — aktar minn 4× tal-Bulgarija (€551/xahar)', '21 minn 27 stat membru tal-UE għandhom salarju minimu nazzjonali statutorju fl-2026', 'Id-Danimarka, l-Isvezja, il-Finlandja, l-Italja, l-Awstrija u Ċipru jiddependu fuq ftehimiet kollettivi settorjali', 'Is-salarju minimu tal-Ġermanja huwa €12.82/siegħa (~€2,222/xahar); l-Irlanda tmexxi bil-siegħa b\'€13.50/siegħa', 'Aġġustat għall-qawwa tax-xiri, id-distakk reali bejn il-pajjiżi jidgħajjar b\'mod sinifikanti'],
+  ga: ['Tá an pá íosta is airde san AE ag Lucsamburg: €2,570/mí (comhlán) — níos mó ná 4× pá íosta na Bulgáire (€551/mí)', 'Tá pá íosta náisiúnta reachtúil i 21 den 27 ballstát AE in 2026', 'Braitheann an Danmhairg, an tSualainn, an Fhionlainn, an Iodáil, an Ostair agus an Chipir ar chomhaontuithe comhchoiteanna earnála', 'Is é €12.82/uair an chloig (~€2,340/mí) pá íosta na Gearmáine; tá an Éire chun tosaigh ar bhonn uaire le €13.50/uair', 'Agus é coigeartaithe le haghaidh cumhacht ceannaigh, cúngaíonn an bearnas iarbhír idir tíortha go suntasach'],
+};
+
+// --------------- Minimum wage data 2026 ---------------
+const minWageData = [
+  { flag: '🇱🇺', country: 'Luxembourg', code: 'lu', monthly: 2570, hourly: null, hourlyDisplay: '—', prevYear: 2387, currency: '€', note: 'Highest in EU; indexed to inflation + productivity' },
+  { flag: '🇮🇪', country: 'Ireland', code: 'ie', monthly: 2340, hourly: 13.50, prevYear: 2215, currency: '€', note: 'Hourly rate; monthly estimate based on 173.33h' },
+  { flag: '🇳🇱', country: 'Netherlands', code: 'nl', monthly: 2299, hourly: 13.27, prevYear: 2070, currency: '€', note: 'Hourly rate; monthly estimate based on 173.33h' },
+  { flag: '🇩🇪', country: 'Germany', code: 'de', monthly: 2222, hourly: 12.82, prevYear: 2054, currency: '€', note: 'Hourly rate; monthly estimate based on 173.33h' },
+  { flag: '🇧🇪', country: 'Belgium', code: 'be', monthly: 2029, hourly: null, hourlyDisplay: '—', prevYear: 1994, currency: '€', note: 'Mandatory monthly gross minimum wage' },
+  { flag: '🇫🇷', country: 'France', code: 'fr', monthly: 1801, hourly: 11.65, prevYear: 1767, currency: '€', note: 'SMIC — Salaire Minimum Interprofessionnel de Croissance' },
+  { flag: '🇸🇮', country: 'Slovenia', code: 'si', monthly: 1254, hourly: null, hourlyDisplay: '—', prevYear: 1203, currency: '€', note: 'Annual increase tied to inflation' },
+  { flag: '🇪🇸', country: 'Spain', code: 'es', monthly: 1184, hourly: null, hourlyDisplay: '—', prevYear: 1134, currency: '€', note: 'SMI — Salario Mínimo Interprofesional' },
+  { flag: '🇲🇹', country: 'Malta', code: 'mt', monthly: 928, hourly: null, hourlyDisplay: '—', prevYear: 895, currency: '€', note: '~€214.10/week; monthly estimate ×4.33' },
+  { flag: '🇱🇹', country: 'Lithuania', code: 'lt', monthly: 924, hourly: null, hourlyDisplay: '—', prevYear: 867, currency: '€', note: 'Significant 6.6% increase Jan 2026' },
+  { flag: '🇬🇷', country: 'Greece', code: 'gr', monthly: 830, hourly: null, hourlyDisplay: '—', prevYear: 780, currency: '€', note: 'Increased 6.4% Jan 2026' },
+  { flag: '🇭🇷', country: 'Croatia', code: 'hr', monthly: 840, hourly: null, hourlyDisplay: '—', prevYear: 796, currency: '€', note: 'Significant growth post-Eurozone entry (2023)' },
+  { flag: '🇸🇰', country: 'Slovakia', code: 'sk', monthly: 816, hourly: null, hourlyDisplay: '—', prevYear: 750, currency: '€', note: 'Linked to average wage (57%)' },
+  { flag: '🇵🇹', country: 'Portugal', code: 'pt', monthly: 870, hourly: null, hourlyDisplay: '—', prevYear: 820, currency: '€', note: 'Increased from €820 in 2025; government roadmap to €1,020 by 2028' },
+  { flag: '🇪🇪', country: 'Estonia', code: 'ee', monthly: 886, hourly: null, hourlyDisplay: '—', prevYear: 820, currency: '€', note: 'Increased 8% Jan 2026' },
+  { flag: '🇱🇻', country: 'Latvia', code: 'lv', monthly: 740, hourly: null, hourlyDisplay: '—', prevYear: 700, currency: '€', note: 'Increased from €700' },
+  { flag: '🇵🇱', country: 'Poland', code: 'pl', monthly: 1000, hourly: null, hourlyDisplay: '—', prevYear: 950, currency: '€', note: 'PLN 4,300/month (~€1,000); rapid growth +5%' },
+  { flag: '🇨🇿', country: 'Czech Republic', code: 'cz', monthly: 755, hourly: null, hourlyDisplay: '—', prevYear: 715, currency: '€', note: 'CZK 18,900/month (~€755); varies with CZK/EUR rate' },
+  { flag: '🇭🇺', country: 'Hungary', code: 'hu', monthly: 680, hourly: null, hourlyDisplay: '—', prevYear: 642, currency: '€', note: 'HUF 266,800/month (~€680); varies with HUF/EUR rate' },
+  { flag: '🇷🇴', country: 'Romania', code: 'ro', monthly: 743, hourly: null, hourlyDisplay: '—', prevYear: 700, currency: '€', note: 'RON 3,700/month (~€743); varies with RON/EUR rate' },
+  { flag: '🇧🇬', country: 'Bulgaria', code: 'bg', monthly: 551, hourly: null, hourlyDisplay: '—', prevYear: 477, currency: '€', note: 'BGN 1,077/month (~€551); lowest in EU but fast-growing (+15%)' },
+];
+
+const noMinWageCountries = [
+  { flag: '🇩🇰', country: 'Denmark', note: 'No statutory minimum wage; sectoral agreements average €19–21/hour' },
+  { flag: '🇸🇪', country: 'Sweden', note: 'No statutory minimum wage; strong union coverage ~90% of workers' },
+  { flag: '🇫🇮', country: 'Finland', note: 'No statutory minimum wage; collective agreements cover ~85% of workers' },
+  { flag: '🇮🇹', country: 'Italy', note: 'No statutory minimum wage; political debate ongoing as of 2026' },
+  { flag: '🇦🇹', country: 'Austria', note: 'No statutory minimum wage; Kollektivverträge (sector agreements) vary widely' },
+  { flag: '🇨🇾', country: 'Cyprus', note: 'Statutory minimum for specific sectors only; general minimum proposed in 2023, phasing in' },
+];
+
+// --------------- FAQ ---------------
+const faqItems: Record<string, Array<{question: string; answer: string}>> = {
+  en: [
+    { question: 'What is the minimum wage in Germany?', answer: 'The statutory minimum wage in Germany is €12.82 per hour as of January 2026, equating to approximately €2,222 per month based on a standard 40-hour working week. Germany introduced its first national minimum wage in 2015 and has raised it multiple times since, with the Federal Minimum Wage Commission reviewing rates annually. Note that some sectors have higher minimum wages under collective agreements.' },
+    { question: 'Which EU country has the highest minimum wage?', answer: 'Luxembourg has the highest statutory minimum wage in the European Union at €2,570 per month (gross) as of 2026. This is more than 4 times higher than Bulgaria\'s minimum wage (€551/month). Luxembourg\'s high minimum wage reflects its position as the EU\'s wealthiest country by GDP per capita, dominated by the financial services sector and EU institutional employment.' },
+    { question: 'Which EU country has the lowest minimum wage?', answer: 'Bulgaria has the lowest statutory national minimum wage in the EU at approximately €551 per month (BGN 1,077) in 2026. However, it is also one of the fastest-growing — Bulgaria raised its minimum wage by approximately 15% compared to 2025. When adjusted for purchasing power parity, the effective gap between Bulgaria and richer EU states narrows considerably.' },
+    { question: 'Does Germany have a minimum wage?', answer: 'Yes. Germany introduced its first statutory national minimum wage of €8.50/hour in January 2015 under the Mindestlohngesetz (Minimum Wage Act). It has been raised multiple times since: €12.00 (Oct 2022), €12.41 (Jan 2024), and €12.82 (Jan 2026). The Federal Minimum Wage Commission (Mindestlohnkommission) reviews and adjusts the rate every two years.' },
+    { question: 'Does France have a minimum wage?', answer: 'Yes. France\'s minimum wage is called the SMIC (Salaire Minimum Interprofessionnel de Croissance). In 2026, the SMIC is €11.65/hour or €1,801/month gross. It is automatically adjusted each January 1st and whenever CPI inflation exceeds 2%. France has had a statutory minimum wage since 1970 — one of the longest-running in Europe.' },
+    { question: 'Why do Denmark and Sweden have no minimum wage?', answer: 'Denmark, Sweden, and Finland do not have a statutory national minimum wage because their labour markets operate on a different model: strong trade unions and employer associations negotiate sector-level collective agreements that cover the vast majority of workers. In Denmark, these agreements effectively deliver minimum wages of €19–21/hour in most sectors — significantly higher than many countries with statutory minimums. The EU Minimum Wage Directive (2022) does not require member states with high collective bargaining coverage to adopt a statutory minimum.' },
+    { question: 'What is the minimum wage in Spain?', answer: 'Spain\'s minimum wage (Salario Mínimo Interprofesional, SMI) is €1,184 per month gross in 2026, or €14,208 annually. Spain has dramatically increased its minimum wage in recent years — it stood at €858/month in 2019 and has nearly doubled. Seasonal workers, domestic workers, and some agricultural workers may be covered by different rates under sector agreements.' },
+    { question: 'Is minimum wage in Europe enough to live on?', answer: 'It depends heavily on the country. In Luxembourg (€2,570/month), the minimum wage can support a modest but liveable lifestyle given high costs. In Bulgaria (€551/month), local purchasing power means this covers basic expenses in smaller cities despite looking very low in absolute terms. The EU benchmarks a "fair minimum wage" at 60% of the median wage — as of 2026, most EU states with statutory minimums are approaching this target following the 2022 EU Minimum Wage Directive.' },
+  ],
+  fr: [
+    { question: 'Quel est le salaire minimum en Allemagne ?', answer: 'Le salaire minimum légal en Allemagne est de 12,82 €/heure depuis janvier 2026, soit environ 2 222 €/mois pour une semaine de travail de 40 heures. L\'Allemagne a introduit son premier salaire minimum national en 2015 et l\'a augmenté plusieurs fois depuis.' },
+    { question: 'Quel pays de l\'UE a le salaire minimum le plus élevé ?', answer: 'Le Luxembourg a le salaire minimum légal le plus élevé de l\'Union européenne : 2 570 €/mois (brut) en 2026. C\'est plus de 4 fois le salaire minimum de la Bulgarie (551 €/mois).' },
+    { question: 'Quel pays de l\'UE a le salaire minimum le plus bas ?', answer: 'La Bulgarie a le salaire minimum national légal le plus bas de l\'UE, à environ 551 €/mois (BGN 1 077) en 2026. Cependant, c\'est aussi l\'un des plus en forte croissance — la Bulgarie a augmenté son salaire minimum d\'environ 15 % par rapport à 2025.' },
+    { question: 'L\'Allemagne a-t-elle un salaire minimum ?', answer: 'Oui. L\'Allemagne a introduit son premier salaire minimum national légal de 8,50 €/heure en janvier 2015. Il a été relevé plusieurs fois depuis : 12,00 € (oct. 2022), 12,41 € (jan. 2024) et 12,82 € (jan. 2026).' },
+    { question: 'La France a-t-elle un salaire minimum ?', answer: 'Oui. Le salaire minimum en France s\'appelle le SMIC (Salaire Minimum Interprofessionnel de Croissance). En 2026, le SMIC est de 11,65 €/heure ou 1 801 €/mois brut. Il est automatiquement ajusté chaque 1er janvier.' },
+    { question: 'Pourquoi le Danemark et la Suède n\'ont-ils pas de salaire minimum ?', answer: 'Le Danemark, la Suède et la Finlande n\'ont pas de salaire minimum national légal car leurs marchés du travail fonctionnent sur un modèle différent : de forts syndicats et associations patronales négocient des conventions collectives sectorielles qui couvrent la grande majorité des travailleurs.' },
+    { question: 'Quel est le salaire minimum en Espagne ?', answer: 'Le salaire minimum en Espagne (SMI) est de 1 184 €/mois brut en 2026. L\'Espagne a considérablement augmenté son salaire minimum ces dernières années — il était de 858 €/mois en 2019 et a presque doublé.' },
+    { question: 'Le salaire minimum en Europe suffit-il pour vivre ?', answer: 'Cela dépend beaucoup du pays. Au Luxembourg (2 570 €/mois), le salaire minimum permet un mode de vie modeste mais viable. En Bulgarie (551 €/mois), le pouvoir d\'achat local signifie que cela couvre les dépenses de base dans les petites villes.' },
+  ],
+  de: [
+    { question: 'Was ist der Mindestlohn in Deutschland?', answer: 'Der gesetzliche Mindestlohn in Deutschland beträgt ab Januar 2026 12,82 €/Stunde, was bei einer 40-Stunden-Woche ca. 2.222 €/Monat entspricht. Deutschland hat seinen ersten nationalen Mindestlohn 2015 eingeführt und seitdem mehrfach erhöht.' },
+    { question: 'Welches EU-Land hat den höchsten Mindestlohn?', answer: 'Luxemburg hat mit 2.570 €/Monat (brutto) den höchsten gesetzlichen Mindestlohn in der EU (2026). Das ist mehr als 4× der Mindestlohn Bulgariens (551 €/Monat).' },
+    { question: 'Welches EU-Land hat den niedrigsten Mindestlohn?', answer: 'Bulgarien hat mit ca. 551 €/Monat (BGN 1.077) den niedrigsten nationalen Mindestlohn in der EU (2026). Dieser ist jedoch auch einer der am schnellsten wachsenden — Bulgarien erhöhte seinen Mindestlohn um ca. 15 %.' },
+    { question: 'Hat Deutschland einen Mindestlohn?', answer: 'Ja. Deutschland hat seinen ersten gesetzlichen nationalen Mindestlohn von 8,50 €/Stunde im Januar 2015 eingeführt und seitdem mehrfach erhöht: 12,00 € (Okt. 2022), 12,41 € (Jan. 2024) und 12,82 € (Jan. 2026).' },
+    { question: 'Hat Frankreich einen Mindestlohn?', answer: 'Ja. Frankreichs Mindestlohn heißt SMIC. 2026 liegt er bei 11,65 €/Stunde oder 1.801 €/Monat brutto. Er wird automatisch jedes Jahr am 1. Januar angepasst.' },
+    { question: 'Warum haben Dänemark und Schweden keinen Mindestlohn?', answer: 'Dänemark, Schweden und Finnland haben keinen gesetzlichen Mindestlohn, weil ihr Arbeitsmarkt auf starken Gewerkschaften und Arbeitgeberverbänden basiert, die sektorale Tarifverträge aushandeln.' },
+    { question: 'Was ist der Mindestlohn in Spanien?', answer: 'Spaniens Mindestlohn (SMI) beträgt 2026 1.184 €/Monat brutto. Spanien hat seinen Mindestlohn in den letzten Jahren stark erhöht — von 858 €/Monat (2019) auf fast das Doppelte.' },
+    { question: 'Reicht der Mindestlohn in Europa zum Leben?', answer: 'Das hängt stark vom Land ab. In Luxemburg (2.570 €/Monat) ermöglicht der Mindestlohn einen bescheidenen Lebensstandard. In Bulgarien (551 €/Monat) deckt lokale Kaufkraft die Grundausgaben in kleineren Städten.' },
+  ],
+  es: [
+    { question: '¿Cuál es el salario mínimo en Alemania?', answer: 'El salario mínimo legal en Alemania es de 12,82 €/hora desde enero de 2026, lo que equivale a aproximadamente 2.222 €/mes para una semana laboral de 40 horas.' },
+    { question: '¿Qué país de la UE tiene el salario mínimo más alto?', answer: 'Luxemburgo tiene el salario mínimo legal más alto de la Unión Europea: 2.570 €/mes (bruto) en 2026. Esto es más de 4 veces el salario mínimo de Bulgaria (551 €/mes).' },
+    { question: '¿Qué país de la UE tiene el salario mínimo más bajo?', answer: 'Bulgaria tiene el salario mínimo nacional legal más bajo de la UE, con aproximadamente 551 €/mes (BGN 1.077) en 2026.' },
+    { question: '¿Tiene Alemania un salario mínimo?', answer: 'Sí. Alemania introdujo su primer salario mínimo nacional legal de 8,50 €/hora en enero de 2015 y lo ha aumentado varias veces: 12,82 € (enero 2026).' },
+    { question: '¿Tiene Francia un salario mínimo?', answer: 'Sí. El salario mínimo en Francia se llama SMIC. En 2026, el SMIC es de 11,65 €/hora o 1.801 €/mes bruto.' },
+    { question: '¿Por qué Dinamarca y Suecia no tienen salario mínimo?', answer: 'Dinamarca, Suecia y Finlandia no tienen salario mínimo nacional legal porque sus mercados laborales funcionan con convenios colectivos sectoriales que cubren a la mayoría de los trabajadores.' },
+    { question: '¿Cuál es el salario mínimo en España?', answer: 'El SMI en España es de 1.184 €/mes bruto en 2026. España ha aumentado dramáticamente su salario mínimo en los últimos años — de 858 €/mes en 2019 a casi el doble.' },
+    { question: '¿Es suficiente el salario mínimo en Europa para vivir?', answer: 'Depende mucho del país. En Luxemburgo (2.570 €/mes) permite un estilo de vida modesto. En Bulgaria (551 €/mes), el poder adquisitivo local cubre los gastos básicos en ciudades más pequeñas.' },
+  ],
+  it: [{ question: 'Qual è il salario minimo in Germania?', answer: 'Il salario minimo legale in Germania è di €12,82/ora da gennaio 2026, pari a circa €2.222/mese per una settimana lavorativa di 40 ore.' }, { question: 'Quale paese UE ha il salario minimo più alto?', answer: 'Il Lussemburgo ha il salario minimo legale più alto dell\'UE: €2.570/mese (lordo) nel 2026.' }, { question: 'Quale paese UE ha il salario minimo più basso?', answer: 'La Bulgaria ha il salario minimo nazionale legale più basso dell\'UE, circa €551/mese nel 2026.' }, { question: 'La Germania ha un salario minimo?', answer: 'Sì. La Germania ha introdotto il primo salario minimo di €8,50/ora nel 2015 e l\'ha aumentato a €12,82/ora nel 2026.' }, { question: 'La Francia ha un salario minimo?', answer: 'Sì. Il SMIC francese è €11,65/ora o €1.801/mese lordo nel 2026.' }, { question: 'Perché Danimarca e Svezia non hanno salario minimo?', answer: 'Perché i loro mercati del lavoro si basano su contratti collettivi settoriali tra sindacati e associazioni datoriali.' }, { question: 'Qual è il salario minimo in Spagna?', answer: 'L\'SMI spagnolo è €1.184/mese lordo nel 2026 — quasi raddoppiato rispetto al 2019.' }, { question: 'Il salario minimo in Europa basta per vivere?', answer: 'Dipende dal paese. In Lussemburgo (€2.570/mese) sì; in Bulgaria (€551/mese) la parità di potere d\'acquisto locale permette di coprire i bisogni di base.' }],
+  pt: [{ question: 'Qual é o salário mínimo na Alemanha?', answer: 'O salário mínimo legal na Alemanha é de €12,82/hora desde janeiro de 2026, equivalente a cerca de €2.222/mês.' }, { question: 'Que país da UE tem o salário mínimo mais alto?', answer: 'O Luxemburgo tem o salário mínimo legal mais alto da UE: €2.570/mês (bruto) em 2026.' }, { question: 'Que país da UE tem o salário mínimo mais baixo?', answer: 'A Bulgária tem o salário mínimo nacional legal mais baixo da UE, com cerca de €551/mês em 2026.' }, { question: 'A Alemanha tem salário mínimo?', answer: 'Sim. A Alemanha introduziu o seu primeiro salário mínimo de €8,50/hora em 2015 e aumentou para €12,82/hora em 2026.' }, { question: 'A França tem salário mínimo?', answer: 'Sim. O SMIC francês é €11,65/hora ou €1.801/mês bruto em 2026.' }, { question: 'Por que a Dinamarca e a Suécia não têm salário mínimo?', answer: 'Os seus mercados de trabalho baseiam-se em convenções coletivas setoriais que cobrem a maioria dos trabalhadores.' }, { question: 'Qual é o salário mínimo em Espanha?', answer: 'O SMI espanhol é €1.184/mês bruto em 2026 — quase duplicado desde 2019.' }, { question: 'O salário mínimo na Europa é suficiente para viver?', answer: 'Depende muito do país. No Luxemburgo (€2.570/mês) permite um estilo de vida modesto. Na Bulgária (€551/mês) o poder de compra local cobre despesas básicas.' }],
+  nl: [{ question: 'Wat is het minimumloon in Duitsland?', answer: 'Het wettelijk minimumloon in Duitsland is €12,82/uur vanaf januari 2026, gelijk aan ongeveer €2.222/maand.' }, { question: 'Welk EU-land heeft het hoogste minimumloon?', answer: 'Luxemburg heeft het hoogste wettelijk minimumloon in de EU: €2.570/maand (bruto) in 2026.' }, { question: 'Welk EU-land heeft het laagste minimumloon?', answer: 'Bulgarije heeft het laagste nationale minimumloon in de EU, ca. €551/maand in 2026.' }, { question: 'Heeft Duitsland een minimumloon?', answer: 'Ja. Duitsland introduceerde zijn eerste minimumloon van €8,50/uur in 2015 en verhoogde het naar €12,82/uur in 2026.' }, { question: 'Heeft Frankrijk een minimumloon?', answer: 'Ja. De Franse SMIC is €11,65/uur of €1.801/maand bruto in 2026.' }, { question: 'Waarom hebben Denemarken en Zweden geen minimumloon?', answer: 'Hun arbeidsmarkten werken met sectorale collectieve overeenkomsten die de meeste werknemers dekken.' }, { question: 'Wat is het minimumloon in Spanje?', answer: 'De Spaanse SMI is €1.184/maand bruto in 2026 — bijna verdubbeld ten opzichte van 2019.' }, { question: 'Is het minimumloon in Europa genoeg om van te leven?', answer: 'Dat hangt sterk af van het land. In Luxemburg (€2.570/maand) biedt het een bescheiden leven. In Bulgarije (€551/maand) dekt lokale koopkracht basisuitgaven.' }],
+  pl: [{ question: 'Jaka jest płaca minimalna w Niemczech?', answer: 'Ustawowa płaca minimalna w Niemczech wynosi 12,82 €/godz. od stycznia 2026 r., co odpowiada około 2 222 €/miesiąc.' }, { question: 'Który kraj UE ma najwyższą płacę minimalną?', answer: 'Luksemburg ma najwyższą ustawową płacę minimalną w UE: 2 570 €/miesiąc (brutto) w 2026 r.' }, { question: 'Który kraj UE ma najniższą płacę minimalną?', answer: 'Bułgaria ma najniższą krajową płacę minimalną w UE — ok. 551 €/miesiąc w 2026 r.' }, { question: 'Czy Niemcy mają płacę minimalną?', answer: 'Tak. Niemcy wprowadziły pierwszą ustawową płacę minimalną 8,50 €/godz. w 2015 r. i podnosiły ją kilkakrotnie do 12,82 €/godz. w 2026 r.' }, { question: 'Czy Francja ma płacę minimalną?', answer: 'Tak. Francuski SMIC wynosi 11,65 €/godz. lub 1 801 €/miesiąc brutto w 2026 r.' }, { question: 'Dlaczego Dania i Szwecja nie mają płacy minimalnej?', answer: 'Ich rynki pracy opierają się na sektorowych układach zbiorowych obejmujących większość pracowników.' }, { question: 'Jaka jest płaca minimalna w Hiszpanii?', answer: 'Hiszpański SMI wynosi 1 184 €/miesiąc brutto w 2026 r. — prawie dwukrotnie więcej niż w 2019 r.' }, { question: 'Czy płaca minimalna w Europie wystarcza na życie?', answer: 'To zależy od kraju. W Luksemburgu (2 570 €/miesiąc) tak; w Bułgarii (551 €/miesiąc) lokalna siła nabywcza pokrywa podstawowe wydatki.' }],
+  ro: [{ question: 'Care este salariul minim în Germania?', answer: 'Salariul minim legal în Germania este de 12,82 €/oră din ianuarie 2026, echivalent cu aproximativ 2.222 €/lună.' }, { question: 'Ce țară UE are cel mai mare salariu minim?', answer: 'Luxemburg are cel mai mare salariu minim legal din UE: 2.570 €/lună (brut) în 2026.' }, { question: 'Ce țară UE are cel mai mic salariu minim?', answer: 'Bulgaria are cel mai mic salariu minim național din UE — aproximativ 551 €/lună în 2026.' }, { question: 'Germania are salariu minim?', answer: 'Da. Germania a introdus primul salariu minim de 8,50 €/oră în 2015 și l-a majorat la 12,82 €/oră în 2026.' }, { question: 'Franța are salariu minim?', answer: 'Da. SMIC-ul francez este 11,65 €/oră sau 1.801 €/lună brut în 2026.' }, { question: 'De ce Danemarca și Suedia nu au salariu minim?', answer: 'Piețele lor de muncă se bazează pe acorduri colective sectoriale care acoperă majoritatea lucrătorilor.' }, { question: 'Care este salariul minim în Spania?', answer: 'SMI-ul spaniol este 1.184 €/lună brut în 2026 — aproape dublat față de 2019.' }, { question: 'Este suficient salariul minim în Europa pentru a trăi?', answer: 'Depinde mult de țară. În Luxemburg (2.570 €/lună) da; în Bulgaria (551 €/lună) puterea de cumpărare locală acoperă cheltuielile de bază.' }],
+  cs: [{ question: 'Jaká je minimální mzda v Německu?', answer: 'Zákonná minimální mzda v Německu je 12,82 €/hod. od ledna 2026, tedy přibližně 2 222 €/měsíc.' }, { question: 'Která země EU má nejvyšší minimální mzdu?', answer: 'Lucembursko má nejvyšší zákonnou minimální mzdu v EU: 2 570 €/měsíc (hrubé) v roce 2026.' }, { question: 'Která země EU má nejnižší minimální mzdu?', answer: 'Bulharsko má nejnižší národní minimální mzdu v EU — přibližně 551 €/měsíc v roce 2026.' }, { question: 'Má Německo minimální mzdu?', answer: 'Ano. Německo zavedlo první minimální mzdu 8,50 €/hod. v roce 2015 a zvýšilo ji na 12,82 €/hod. v roce 2026.' }, { question: 'Má Francie minimální mzdu?', answer: 'Ano. Francouzský SMIC je 11,65 €/hod. nebo 1 801 €/měsíc hrubého v roce 2026.' }, { question: 'Proč Dánsko a Švédsko nemají minimální mzdu?', answer: 'Jejich trhy práce fungují na základě sektorových kolektivních smluv pokrývajících většinu pracovníků.' }, { question: 'Jaká je minimální mzda ve Španělsku?', answer: 'Španělský SMI je 1 184 €/měsíc hrubého v roce 2026 — téměř zdvojnásobeno od roku 2019.' }, { question: 'Stačí minimální mzda v Evropě k životu?', answer: 'Záleží na zemi. V Lucembursku (2 570 €/měsíc) ano; v Bulharsku (551 €/měsíc) místní kupní síla pokrývá základní výdaje.' }],
+  sv: [{ question: 'Vad är minimilönen i Tyskland?', answer: 'Den lagstadgade minimilönen i Tyskland är €12,82/timme från januari 2026, vilket motsvarar ca €2 222/månad.' }, { question: 'Vilket EU-land har den högsta minimilönen?', answer: 'Luxemburg har den högsta lagstadgade minimilönen i EU: €2 570/månad (brutto) 2026.' }, { question: 'Vilket EU-land har den lägsta minimilönen?', answer: 'Bulgarien har den lägsta nationella minimilönen i EU — ca €551/månad 2026.' }, { question: 'Har Tyskland en minimilön?', answer: 'Ja. Tyskland introducerade den första minimilönen på €8,50/timme 2015 och har höjt den till €12,82/timme 2026.' }, { question: 'Har Frankrike en minimilön?', answer: 'Ja. Den franska SMIC är €11,65/timme eller €1 801/månad brutto 2026.' }, { question: 'Varför har Danmark och Sverige ingen minimilön?', answer: 'Deras arbetsmarknader fungerar med sektoriella kollektivavtal som täcker de flesta arbetstagare.' }, { question: 'Vad är minimilönen i Spanien?', answer: 'Den spanska SMI är €1 184/månad brutto 2026 — nästan fördubblad sedan 2019.' }, { question: 'Räcker minimilönen i Europa att leva på?', answer: 'Det beror på landet. I Luxemburg (€2 570/månad) ja; i Bulgarien (€551/månad) täcker lokal köpkraft grundläggande utgifter.' }],
+  da: [{ question: 'Hvad er mindstelønnen i Tyskland?', answer: 'Den lovpligtige mindsteløn i Tyskland er €12,82/time fra januar 2026, svarende til ca. €2.222/måned.' }, { question: 'Hvilket EU-land har den højeste mindsteløn?', answer: 'Luxembourg har den højeste lovpligtige mindsteløn i EU: €2.570/måned (brutto) i 2026.' }, { question: 'Hvilket EU-land har den laveste mindsteløn?', answer: 'Bulgarien har den laveste nationale mindsteløn i EU — ca. €551/måned i 2026.' }, { question: 'Har Tyskland en mindsteløn?', answer: 'Ja. Tyskland introducerede den første mindsteløn på €8,50/time i 2015 og har hævet den til €12,82/time i 2026.' }, { question: 'Har Frankrig en mindsteløn?', answer: 'Ja. Den franske SMIC er €11,65/time eller €1.801/måned brutto i 2026.' }, { question: 'Hvorfor har Danmark og Sverige ingen mindsteløn?', answer: 'Deres arbejdsmarkeder fungerer med sektorielle kollektive aftaler, der dækker de fleste arbejdstagere.' }, { question: 'Hvad er mindstelønnen i Spanien?', answer: 'Den spanske SMI er €1.184/måned brutto i 2026 — næsten fordoblet siden 2019.' }, { question: 'Er mindstelønnen i Europa nok til at leve af?', answer: 'Det afhænger meget af landet. I Luxembourg (€2.570/måned) ja; i Bulgarien (€551/måned) dækker lokal købekraft grundlæggende udgifter.' }],
+  fi: [{ question: 'Mikä on minimipalkka Saksassa?', answer: 'Saksan lakisääteinen minimipalkka on 12,82 €/tunti tammikuusta 2026 alkaen, eli noin 2 222 €/kuukausi.' }, { question: 'Millä EU-maalla on korkein minimipalkka?', answer: 'Luxemburgilla on EU:n korkein lakisääteinen minimipalkka: 2 570 €/kuukausi (brutto) vuonna 2026.' }, { question: 'Millä EU-maalla on alhaisin minimipalkka?', answer: 'Bulgarialla on EU:n alhaisin kansallinen minimipalkka — noin 551 €/kuukausi vuonna 2026.' }, { question: 'Onko Saksalla minimipalkka?', answer: 'On. Saksa otti ensimmäisen minimipalkakseen 8,50 €/tunti vuonna 2015 ja on nostanut sen 12,82 €/tunniin vuoteen 2026 mennessä.' }, { question: 'Onko Ranskalla minimipalkka?', answer: 'On. Ranskan SMIC on 11,65 €/tunti tai 1 801 €/kuukausi brutto vuonna 2026.' }, { question: 'Miksi Tanskalla ja Ruotsilla ei ole minimipalkkaa?', answer: 'Heidän työmarkkinansa toimivat alakohtaisilla työehtosopimuksilla, jotka kattavat useimmat työntekijät.' }, { question: 'Mikä on minimipalkka Espanjassa?', answer: 'Espanjan SMI on 1 184 €/kuukausi brutto vuonna 2026 — lähes kaksinkertaistunut vuodesta 2019.' }, { question: 'Riittääkö minimipalkka Euroopassa elämiseen?', answer: 'Se riippuu paljon maasta. Luxemburgissa (2 570 €/kk) kyllä; Bulgariassa (551 €/kk) paikallinen ostovoima kattaa perusmenot.' }],
+  el: [{ question: 'Ποιος είναι ο κατώτατος μισθός στη Γερμανία;', answer: 'Ο νόμιμος κατώτατος μισθός στη Γερμανία είναι €12,82/ώρα από τον Ιανουάριο 2026, δηλαδή περίπου €2.222/μήνα.' }, { question: 'Ποια χώρα ΕΕ έχει τον υψηλότερο κατώτατο μισθό;', answer: 'Το Λουξεμβούργο έχει τον υψηλότερο νόμιμο κατώτατο μισθό στην ΕΕ: €2.570/μήνα (μεικτά) το 2026.' }, { question: 'Ποια χώρα ΕΕ έχει τον χαμηλότερο κατώτατο μισθό;', answer: 'Η Βουλγαρία έχει τον χαμηλότερο εθνικό κατώτατο μισθό στην ΕΕ — περίπου €551/μήνα το 2026.' }, { question: 'Έχει η Γερμανία κατώτατο μισθό;', answer: 'Ναι. Η Γερμανία εισήγαγε πρώτο κατώτατο μισθό €8,50/ώρα το 2015 και τον αύξησε σε €12,82/ώρα το 2026.' }, { question: 'Έχει η Γαλλία κατώτατο μισθό;', answer: 'Ναι. Ο γαλλικός SMIC είναι €11,65/ώρα ή €1.801/μήνα μεικτά το 2026.' }, { question: 'Γιατί η Δανία και η Σουηδία δεν έχουν κατώτατο μισθό;', answer: 'Οι αγορές εργασίας τους λειτουργούν με κλαδικές συλλογικές συμβάσεις που καλύπτουν τους περισσότερους εργαζομένους.' }, { question: 'Ποιος είναι ο κατώτατος μισθός στην Ισπανία;', answer: 'Ο ισπανικός SMI είναι €1.184/μήνα μεικτά το 2026 — σχεδόν διπλάσιος από το 2019.' }, { question: 'Αρκεί ο κατώτατος μισθός στην Ευρώπη για να ζήσει κάποιος;', answer: 'Εξαρτάται από τη χώρα. Στο Λουξεμβούργο (€2.570/μήνα) ναι· στη Βουλγαρία (€551/μήνα) η τοπική αγοραστική δύναμη καλύπτει βασικές δαπάνες.' }],
+  hu: [{ question: 'Mennyi a minimálbér Németországban?', answer: 'A törvényes minimálbér Németországban 2026 januárjától 12,82 €/óra, ami 40 órás munkahétnél kb. 2 222 €/hó.' }, { question: 'Melyik EU-tagállamnak van a legmagasabb minimálbére?', answer: 'Luxemburgnak van a legmagasabb törvényes minimálbére az EU-ban: 2 570 €/hó (bruttó) 2026-ban.' }, { question: 'Melyik EU-tagállamnak van a legalacsonyabb minimálbére?', answer: 'Bulgáriának van a legalacsonyabb nemzeti minimálbére az EU-ban — kb. 551 €/hó 2026-ban.' }, { question: 'Van-e Németországnak minimálbére?', answer: 'Igen. Németország 2015-ben vezette be az első 8,50 €/óra minimálbért, amit 2026-ra 12,82 €/órára emelt.' }, { question: 'Van-e Franciaországnak minimálbére?', answer: 'Igen. A francia SMIC 11,65 €/óra vagy 1 801 €/hó bruttó 2026-ban.' }, { question: 'Miért nincs Dániának és Svédországnak minimálbére?', answer: 'Munkaerőpiacaik ágazati kollektív szerződéseken alapulnak, amelyek a legtöbb munkavállalót fedik.' }, { question: 'Mennyi a minimálbér Spanyolországban?', answer: 'A spanyol SMI 1 184 €/hó bruttó 2026-ban — közel kétszerese a 2019-es szintnek.' }, { question: 'Elég-e a minimálbér Európában megélni?', answer: 'Ez nagymértékben az országtól függ. Luxemburgban (2 570 €/hó) igen; Bulgáriában (551 €/hó) a helyi vásárlóerő fedezi az alapkiadásokat.' }],
+  sk: [{ question: 'Aká je minimálna mzda v Nemecku?', answer: 'Zákonná minimálna mzda v Nemecku je 12,82 €/hod. od januára 2026, čo zodpovedá asi 2 222 €/mesiac.' }, { question: 'Ktorá krajina EÚ má najvyššiu minimálnu mzdu?', answer: 'Luxembursko má najvyššiu zákonná minimálnu mzdu v EÚ: 2 570 €/mesiac (hrubé) v roku 2026.' }, { question: 'Ktorá krajina EÚ má najnižšiu minimálnu mzdu?', answer: 'Bulharsko má najnižšiu národnú minimálnu mzdu v EÚ — asi 551 €/mesiac v roku 2026.' }, { question: 'Má Nemecko minimálnu mzdu?', answer: 'Áno. Nemecko zaviedlo prvú minimálnu mzdu 8,50 €/hod. v roku 2015 a zvýšilo ju na 12,82 €/hod. v roku 2026.' }, { question: 'Má Francúzsko minimálnu mzdu?', answer: 'Áno. Francúzsky SMIC je 11,65 €/hod. alebo 1 801 €/mesiac hrubého v roku 2026.' }, { question: 'Prečo Dánsko a Švédsko nemajú minimálnu mzdu?', answer: 'Ich trhy práce fungujú na základe odvetvových kolektívnych zmlúv pokrývajúcich väčšinu pracovníkov.' }, { question: 'Aká je minimálna mzda v Španielsku?', answer: 'Španielsky SMI je 1 184 €/mesiac hrubého v roku 2026 — takmer zdvojnásobený od roku 2019.' }, { question: 'Stačí minimálna mzda v Európe na živobytie?', answer: 'Záleží na krajine. V Luxembursku (2 570 €/mes.) áno; v Bulharsku (551 €/mes.) miestna kúpna sila pokrýva základné výdaje.' }],
+  bg: [{ question: 'Каква е минималната заплата в Германия?', answer: 'Законовата минимална заплата в Германия е 12,82 €/час от януари 2026 г., равностойно на около 2 222 €/месец.' }, { question: 'Коя страна от ЕС има най-висока минимална заплата?', answer: 'Люксембург има най-висока законова минимална заплата в ЕС: 2 570 €/месец (бруто) за 2026 г.' }, { question: 'Коя страна от ЕС има най-ниска минимална заплата?', answer: 'България има най-ниска национална минимална заплата в ЕС — около 551 €/месец за 2026 г.' }, { question: 'Има ли Германия минимална заплата?', answer: 'Да. Германия въведе първата минимална заплата от 8,50 €/час през 2015 г. и я повиши до 12,82 €/час за 2026 г.' }, { question: 'Има ли Франция минимална заплата?', answer: 'Да. Френският SMIC е 11,65 €/час или 1 801 €/месец бруто за 2026 г.' }, { question: 'Защо Дания и Швеция нямат минимална заплата?', answer: 'Техните трудови пазари работят с секторни колективни споразумения, обхващащи повечето работници.' }, { question: 'Каква е минималната заплата в Испания?', answer: 'Испанският SMI е 1 184 €/месец бруто за 2026 г. — почти удвоен от 2019 г.' }, { question: 'Достатъчна ли е минималната заплата в Европа за живот?', answer: 'Зависи от страната. В Люксембург (2 570 €/месец) да; в България (551 €/месец) местната покупателна способност покрива основни разходи.' }],
+  hr: [{ question: 'Koja je minimalna plaća u Njemačkoj?', answer: 'Zakonska minimalna plaća u Njemačkoj je 12,82 €/sat od siječnja 2026., što odgovara oko 2.222 €/mjesec.' }, { question: 'Koja zemlja EU-a ima najveću minimalnu plaću?', answer: 'Luksemburg ima najveću zakonsku minimalnu plaću u EU-u: 2.570 €/mjesec (bruto) 2026.' }, { question: 'Koja zemlja EU-a ima najnižu minimalnu plaću?', answer: 'Bugarska ima najnižu nacionalnu minimalnu plaću u EU-u — oko 551 €/mjesec 2026.' }, { question: 'Ima li Njemačka minimalnu plaću?', answer: 'Da. Njemačka je uvela prvu minimalnu plaću od 8,50 €/sat 2015. i podigla je na 12,82 €/sat 2026.' }, { question: 'Ima li Francuska minimalnu plaću?', answer: 'Da. Francuski SMIC je 11,65 €/sat ili 1.801 €/mjesec bruto 2026.' }, { question: 'Zašto Danska i Švedska nemaju minimalnu plaću?', answer: 'Njihova tržišta rada funkcioniraju na temelju sektorskih kolektivnih ugovora koji pokrivaju većinu radnika.' }, { question: 'Koja je minimalna plaća u Španjolskoj?', answer: 'Španjolski SMI je 1.184 €/mjesec bruto 2026. — gotovo udvostručen od 2019.' }, { question: 'Je li minimalna plaća u Europi dovoljna za život?', answer: 'Ovisi o zemlji. U Luksemburgu (2.570 €/mj.) da; u Bugarskoj (551 €/mj.) lokalna kupovna moć pokriva osnovne troškove.' }],
+  sl: [{ question: 'Kakšna je minimalna plača v Nemčiji?', answer: 'Zakonska minimalna plača v Nemčiji je 12,82 €/uro od januarja 2026, kar ustreza ok. 2.222 €/mesec.' }, { question: 'Katera država EU ima najvišjo minimalno plačo?', answer: 'Luksemburg ima najvišjo zakonsko minimalno plačo v EU: 2.570 €/mesec (bruto) v 2026.' }, { question: 'Katera država EU ima najnižjo minimalno plačo?', answer: 'Bolgarija ima najnižjo nacionalno minimalno plačo v EU — ok. 551 €/mesec v 2026.' }, { question: 'Ali ima Nemčija minimalno plačo?', answer: 'Da. Nemčija je uvedla prvo minimalno plačo 8,50 €/uro leta 2015 in jo zvišala na 12,82 €/uro do leta 2026.' }, { question: 'Ali ima Francija minimalno plačo?', answer: 'Da. Francoski SMIC je 11,65 €/uro ali 1.801 €/mesec bruto v 2026.' }, { question: 'Zakaj Danska in Švedska nimata minimalne plače?', answer: 'Njuni trgi dela delujejo na podlagi sektorskih kolektivnih pogodb, ki pokrivajo večino delavcev.' }, { question: 'Kakšna je minimalna plača v Španiji?', answer: 'Španski SMI je 1.184 €/mesec bruto v 2026 — skoraj podvojen od leta 2019.' }, { question: 'Ali je minimalna plača v Evropi dovolj za življenje?', answer: 'Odvisno od države. V Luksemburgu (2.570 €/mes.) da; v Bolgariji (551 €/mes.) lokalna kupna moč pokriva osnovne stroške.' }],
+  lt: [{ question: 'Koks minimalus atlyginimas Vokietijoje?', answer: 'Įstatyminis minimalus atlyginimas Vokietijoje nuo 2026 m. sausio yra 12,82 €/val., tai yra apie 2 222 €/mėn.' }, { question: 'Kuri ES šalis turi aukščiausią minimalų atlyginimą?', answer: 'Liuksemburgas turi aukščiausią įstatyminį minimalų atlyginimą ES: 2 570 €/mėn. (bruto) 2026 m.' }, { question: 'Kuri ES šalis turi žemiausią minimalų atlyginimą?', answer: 'Bulgarija turi žemiausią nacionalinį minimalų atlyginimą ES — apie 551 €/mėn. 2026 m.' }, { question: 'Ar Vokietija turi minimalų atlyginimą?', answer: 'Taip. Vokietija 2015 m. įvedė pirmą 8,50 €/val. minimalų atlyginimą ir padidino jį iki 12,82 €/val. 2026 m.' }, { question: 'Ar Prancūzija turi minimalų atlyginimą?', answer: 'Taip. Prancūzijos SMIC yra 11,65 €/val. arba 1 801 €/mėn. bruto 2026 m.' }, { question: 'Kodėl Danija ir Švedija neturi minimalaus atlyginimo?', answer: 'Jų darbo rinkos veikia sektorinių kolektyvinių sutarčių pagrindu, apimančių daugumą darbuotojų.' }, { question: 'Koks minimalus atlyginimas Ispanijoje?', answer: 'Ispanijos SMI yra 1 184 €/mėn. bruto 2026 m. — beveik dvigubai daugiau nei 2019 m.' }, { question: 'Ar Europoje minimalaus atlyginimo pakanka pragyvenimui?', answer: 'Priklauso nuo šalies. Liuksemburge (2 570 €/mėn.) taip; Bulgarijoje (551 €/mėn.) vietinė perkamoji galia dengia pagrindinius poreikius.' }],
+  lv: [{ question: 'Kāda ir minimālā alga Vācijā?', answer: 'Vācijas likumiskā minimālā alga no 2026. gada janvāra ir 12,82 €/stundā, kas atbilst aptuveni 2 222 €/mēnesī.' }, { question: 'Kurai ES valstij ir augstākā minimālā alga?', answer: 'Luksemburgai ir augstākā likumiskā minimālā alga ES: 2 570 €/mēnesī (bruto) 2026. gadā.' }, { question: 'Kurai ES valstij ir zemākā minimālā alga?', answer: 'Bulgārijai ir zemākā valsts minimālā alga ES — aptuveni 551 €/mēnesī 2026. gadā.' }, { question: 'Vai Vācijai ir minimālā alga?', answer: 'Jā. Vācija ieviesa pirmo 8,50 €/st. minimālo algu 2015. gadā un palielināja to līdz 12,82 €/st. 2026. gadā.' }, { question: 'Vai Francijai ir minimālā alga?', answer: 'Jā. Francijas SMIC ir 11,65 €/st. vai 1 801 €/mēnesī bruto 2026. gadā.' }, { question: 'Kāpēc Dānijai un Zviedrijai nav minimālās algas?', answer: 'To darba tirgi darbojas ar nozaru kolektīvajiem līgumiem, kas aptver lielāko daļu darba ņēmēju.' }, { question: 'Kāda ir minimālā alga Spānijā?', answer: 'Spānijas SMI 2026. gadā ir 1 184 €/mēnesī bruto — gandrīz divkāršojies kopš 2019. gada.' }, { question: 'Vai Eiropas minimālā alga ir pietiekama dzīvošanai?', answer: 'Atkarīgs no valsts. Luksemburgā (2 570 €/mēn.) jā; Bulgārijā (551 €/mēn.) vietējā pirktspēja sedz pamatvajadzības.' }],
+  et: [{ question: 'Milline on miinimumpalk Saksamaal?', answer: 'Saksamaa seadusjärgne miinimumpalk on alates 2026. aasta jaanuarist 12,82 €/tund, mis vastab umbes 2 222 €/kuus.' }, { question: 'Millisel EL-i riigil on kõrgeim miinimumpalk?', answer: 'Luksemburgil on EL-i kõrgeim seadusjärgne miinimumpalk: 2 570 €/kuus (brutona) 2026. aastal.' }, { question: 'Millisel EL-i riigil on madalaim miinimumpalk?', answer: 'Bulgaarial on EL-i madalaim riiklik miinimumpalk — umbes 551 €/kuus 2026. aastal.' }, { question: 'Kas Saksamaal on miinimumpalk?', answer: 'Jah. Saksamaa võttis kasutusele esimese 8,50 €/tunni miinimumpalga 2015. aastal ja tõstis selle 12,82 €/tunnini 2026. aastaks.' }, { question: 'Kas Prantsusmaal on miinimumpalk?', answer: 'Jah. Prantsuse SMIC on 11,65 €/tund või 1 801 €/kuus brutona 2026. aastal.' }, { question: 'Miks Taanil ja Rootsil pole miinimumpalka?', answer: 'Nende tööturgudel toimivad sektorilepingud, mis katavad enamiku töötajaid.' }, { question: 'Milline on miinimumpalk Hispaanias?', answer: 'Hispaania SMI on 1 184 €/kuus brutona 2026. aastal — peaaegu kahekordistunud 2019. aastast.' }, { question: 'Kas Euroopa miinimumpalk on eluks piisav?', answer: 'Oleneb riigist. Luksemburgis (2 570 €/kuu) jah; Bulgaarias (551 €/kuu) katab kohalik ostujõud põhikulud.' }],
+  mt: [{ question: 'X\'inhu s-salarju minimu fil-Ġermanja?', answer: 'Is-salarju minimu legali fil-Ġermanja huwa €12,82/siegħa mill-Jannar 2026, ekwivalenti għal madwar €2,222/xahar.' }, { question: 'Liema pajjiż tal-UE għandu l-ogħla salarju minimu?', answer: 'Il-Lussemburgu għandu l-ogħla salarju minimu legali fl-UE: €2,570/xahar (gross) fl-2026.' }, { question: 'Liema pajjiż tal-UE għandu l-inqas salarju minimu?', answer: 'Il-Bulgarija għandha l-inqas salarju minimu nazzjonali fl-UE — madwar €551/xahar fl-2026.' }, { question: 'Il-Ġermanja għandha salarju minimu?', answer: 'Iva. Il-Ġermanja introduċiet l-ewwel salarju minimu ta\' €8.50/siegħa fl-2015 u rafa\'tu sa €12.82/siegħa fl-2026.' }, { question: 'Franza għandha salarju minimu?', answer: 'Iva. Il-SMIC Franċiż huwa €11.65/siegħa jew €1,801/xahar gross fl-2026.' }, { question: 'Għaliex id-Danimarka u l-Isvezja ma għandhomx salarju minimu?', answer: 'Is-swieq tax-xogħol tagħhom joperaw fuq ftehimiet kollettivi settorjali li jkopru l-maġġoranza tal-ħaddiema.' }, { question: 'X\'inhu s-salarju minimu fi Spanja?', answer: 'L-SMI Spanjol huwa €1,184/xahar gross fl-2026 — kważi rduppjat mill-2019.' }, { question: 'Is-salarju minimu fl-Ewropa huwa biżżejjed biex tgħix?', answer: 'Jiddependi ħafna mill-pajjiż. Fil-Lussemburgu (€2,570/xahar) iva; fil-Bulgarija (€551/xahar) il-qawwa tax-xiri lokali tkopri l-ispejjeż bażiċi.' }],
+  ga: [{ question: 'Cad é pá íosta na Gearmáine?', answer: 'Is é €12.82 san uair an phá íosta reachtúil sa Ghearmáin ó Eanáir 2026, comhionann le thart ar €2,222 sa mhí.' }, { question: 'Cé acu tír AE a bhfuil an pá íosta is airde?', answer: 'Tá an pá íosta reachtúil is airde san AE ag Lucsamburg: €2,570 sa mhí (comhlán) in 2026.' }, { question: 'Cé acu tír AE a bhfuil an pá íosta is ísle?', answer: 'Tá an pá íosta náisiúnta is ísle san AE ag an mBulgáir — thart ar €551 sa mhí in 2026.' }, { question: 'An bhfuil pá íosta ag an nGearmáin?', answer: 'Tá. Thug an Ghearmáin isteach an chéad phá íosta €8.50 san uair in 2015 agus ardaíodh go €12.82 san uair in 2026 é.' }, { question: 'An bhfuil pá íosta ag an bhFrainc?', answer: 'Tá. Is é €11.65 san uair nó €1,801 sa mhí (comhlán) an SMIC Francach in 2026.' }, { question: 'Cén fáth nach bhfuil pá íosta ag an Danmhairg agus ag an tSualainn?', answer: 'Oibríonn a gcuid margaí saothair ar chomhaontuithe comhchoiteanna earnála a chlúdaíonn formhór na n-oibrithe.' }, { question: 'Cad é pá íosta na Spáinne?', answer: 'Is é €1,184 sa mhí (comhlán) SMI na Spáinne in 2026 — beagnach dhá oiread ó 2019.' }, { question: 'An leor pá íosta na hEorpa le maireachtáil?', answer: 'Braitheann sé go mór ar an tír. I Lucsamburg (€2,570/mí) is leor; sa Bhulgáir (€551/mí) clúdaíonn cumhacht ceannaigh áitiúil caiteachas bunúsach.' }],
+};
+
+// --------------- Schema ---------------
+const currentFaq = fb(faqItems, lang);
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: fb(pageTitle, lang),
+    description: fb(pageDescription, lang),
+    url: `https://eurosalary.eu/${lang}/guides/minimum-wage-europe/`,
+    inLanguage: lang,
+    datePublished: '2026-04-18',
+    dateModified: '2026-04-18',
+    author: { '@type': 'Organization', name: 'EuroSalary', url: 'https://eurosalary.eu' },
+    publisher: {
+      '@type': 'Organization',
+      name: 'EuroSalary',
+      url: 'https://eurosalary.eu',
+      logo: { '@type': 'ImageObject', url: 'https://eurosalary.eu/logo.svg' },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://eurosalary.eu/${lang}/guides/minimum-wage-europe/` },
+    keywords: 'minimum wage Europe 2026, minimum wage EU countries, lowest minimum wage Europe, highest minimum wage Europe, Germany minimum wage, France SMIC, Luxembourg minimum wage',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: currentFaq.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `https://eurosalary.eu/${lang}/` },
+      { '@type': 'ListItem', position: 2, name: 'Guides', item: `https://eurosalary.eu/${lang}/guides/` },
+      { '@type': 'ListItem', position: 3, name: fb(pageTitle, lang), item: `https://eurosalary.eu/${lang}/guides/minimum-wage-europe/` },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: 'EU Minimum Wages 2026',
+    description: 'Statutory national minimum wages for EU member states, 2026 data',
+    url: `https://eurosalary.eu/${lang}/guides/minimum-wage-europe/`,
+    creator: { '@type': 'Organization', name: 'EuroSalary', url: 'https://eurosalary.eu' },
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+    temporalCoverage: '2026',
+    spatialCoverage: 'European Union',
+  },
+];
+
+const homeCrumb: Record<string, string> = { en: 'Home', fr: 'Accueil', de: 'Startseite', es: 'Inicio', it: 'Home', pt: 'Início', nl: 'Home', pl: 'Strona główna', ro: 'Acasă', cs: 'Domů', sv: 'Hem', da: 'Hjem', fi: 'Koti', el: 'Αρχική', hu: 'Főoldal', sk: 'Domov', bg: 'Начало', hr: 'Početna', sl: 'Domov', lt: 'Pagrindinis', lv: 'Sākums', et: 'Avaleht', mt: 'Paġna ewlenija', ga: 'Baile' };
+const guidesCrumb: Record<string, string> = { en: 'Guides', fr: 'Guides', de: 'Leitfäden', es: 'Guías', it: 'Guide', pt: 'Guias', nl: 'Gidsen', pl: 'Przewodniki', ro: 'Ghiduri', cs: 'Průvodci', sv: 'Guider', da: 'Guider', fi: 'Oppaat', el: 'Οδηγοί', hu: 'Útmutatók', sk: 'Sprievodcovia', bg: 'Ръководства', hr: 'Vodiči', sl: 'Vodniki', lt: 'Vadovai', lv: 'Ceļveži', et: 'Juhendid', mt: 'Gwidi', ga: 'Treoracha' };
+---
+
+<BaseLayout
+  title={fb(pageTitle, lang)}
+  description={fb(pageDescription, lang)}
+  datePublished="2026-04-18"
+  schema={pageSchema}
+>
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{fb(homeCrumb, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a href={`/${lang}/guides/`}>{fb(guidesCrumb, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">Minimum Wage Europe 2026</span>
+      </nav>
+      <h1 class="page-hero__title">{fb(pageTitle, lang)}</h1>
+      <p class="page-hero__meta">
+        <span class="page-hero__date">Updated April 2026 · Official Government Sources</span>
+        <span class="page-hero__tags">
+          <span class="page-hero__tag">Minimum Wage</span>
+          <span class="page-hero__tag">EU Countries</span>
+          <span class="page-hero__tag">2026</span>
+        </span>
+      </p>
+    </div>
+  </section>
+
+  <div class="container page-body">
+    <TLDRBox items={fb(tldrItems, lang)} />
+
+    <div class="guide-content">
+      <h2>EU Minimum Wages 2026: Complete Data Table</h2>
+      <p>The table below lists statutory national minimum wages for all EU member states that have them, sorted from highest to lowest monthly gross amount. Exchange rates for non-euro countries are approximate (April 2026). Countries are linked to their individual minimum wage and salary pages.</p>
+
+      <div class="mw-table-wrapper">
+        <table class="mw-table">
+          <thead>
+            <tr>
+              <th>Country</th>
+              <th>Monthly (EUR)</th>
+              <th>Hourly (EUR)</th>
+              <th>vs. 2025</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {minWageData.map((row) => {
+              const change = row.monthly - row.prevYear;
+              const pct = ((change / row.prevYear) * 100).toFixed(1);
+              return (
+                <tr>
+                  <td class="country-cell">
+                    <span class="country-flag">{row.flag}</span>
+                    <a href={`/${lang}/minimum-wage/${row.code}/`} class="country-link">{row.country}</a>
+                  </td>
+                  <td class="salary-cell"><strong>€{row.monthly.toLocaleString('en-EU')}</strong></td>
+                  <td class="salary-cell secondary">{row.hourly ? `€${row.hourly}` : row.hourlyDisplay}</td>
+                  <td class={`change-cell ${change >= 0 ? 'positive' : 'negative'}`}>
+                    {change >= 0 ? '+' : ''}{pct}%
+                  </td>
+                  <td class="note-cell">{row.note}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p class="data-note">Sources: Official government gazettes, national labour ministries, Eurostat. Monthly figures for hourly-rate countries estimated at 173.33h (40h/week × 52/12). Non-euro figures converted at ECB reference rates (April 2026).</p>
+
+      <h2>Countries Without a Statutory Minimum Wage</h2>
+      <p>Six EU member states do not have a statutory national minimum wage. Instead, they rely on sector-level collective bargaining agreements between trade unions and employer organisations. In most cases, effective minimum pay under these agreements is higher than statutory minimums in other EU countries.</p>
+
+      <div class="mw-table-wrapper">
+        <table class="mw-table">
+          <thead>
+            <tr>
+              <th>Country</th>
+              <th>Minimum Wage Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {noMinWageCountries.map((row) => (
+              <tr>
+                <td class="country-cell">
+                  <span class="country-flag">{row.flag}</span>
+                  <span class="country-name">{row.country}</span>
+                </td>
+                <td class="note-cell">{row.note}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Year-over-Year Changes: Who Raised Wages the Most?</h2>
+      <p>2026 saw significant minimum wage increases across the EU, driven by the 2022 EU Minimum Wage Directive requiring member states to ensure minimum wages reach at least 60% of the median wage. The fastest-growing minimum wages in 2026:</p>
+
+      <ul>
+        <li><strong>Bulgaria: +15%</strong> — From ~€477 to €551/month. Still EU's lowest, but fastest-growing as a percentage.</li>
+        <li><strong>Lithuania: +6.6%</strong> — From €867 to €924/month; strong wage growth in Baltic region.</li>
+        <li><strong>Greece: +6.4%</strong> — From €780 to €830/month; recovering from the decade-long austerity freeze.</li>
+        <li><strong>Estonia: +8%</strong> — From €820 to €886/month; Baltic wage convergence continues.</li>
+        <li><strong>Netherlands: +11.1%</strong> — From €2,070 to €2,299/month; major reform in 2024 raised the floor significantly.</li>
+        <li><strong>Germany: +8.2%</strong> — From €2,054 to €2,222/month; rate set by Mindestlohnkommission (Federal Minimum Wage Commission).</li>
+      </ul>
+
+      <h2>Cost of Living Context: What Does Minimum Wage Buy?</h2>
+      <p>Raw numbers are misleading without purchasing power context. Here's what minimum wage roughly buys in each tier of EU countries:</p>
+
+      <h3>High Minimum Wage Countries (€1,800–€2,570/month)</h3>
+      <p><strong>Luxembourg (€2,570):</strong> A single person can afford a one-bedroom apartment (€1,400–1,800/month in Luxembourg City) plus food and transport — but barely. This is why Luxembourg has one of the highest costs of living in the EU. A minimum wage earner may struggle in the capital but live comfortably in peripheral communes.</p>
+      <p><strong>Ireland (€2,340), Netherlands (€2,299), Germany (€2,222):</strong> Covers basic housing (shared), food, and transport in most cities, but leaves little margin. In Dublin, Berlin, or Amsterdam specifically, minimum wage is tight. Secondary cities like Limerick, Leipzig, or Eindhoven are much more manageable.</p>
+      <p><strong>France (€1,801 SMIC):</strong> Outside Paris, a minimum wage earner can cover rent, food, and transport with some modest savings. In Paris, the SMIC alone is genuinely insufficient for a single person without subsidised housing (HLM).</p>
+
+      <h3>Mid-Range Countries (€800–€1,300/month)</h3>
+      <p><strong>Spain (€1,184), Portugal (€870), Greece (€830):</strong> In smaller cities and rural areas, these wages cover a modest lifestyle. In Madrid, Barcelona, Lisbon, or Athens, costs have risen sharply and minimum wage earners typically need social support, family help, or shared housing. Spain's SMI has doubled since 2019, significantly improving living standards.</p>
+
+      <h3>Lower Minimum Wage Countries (€550–€800/month)</h3>
+      <p><strong>Bulgaria (€551), Romania (€743), Hungary (€680):</strong> Local purchasing power is far stronger than the euro figure suggests. Rent in Sofia, Bucharest, or Budapest can be €250–450/month outside prime areas. Food and transport are 50–60% cheaper than in Western Europe. A minimum wage earner in Bulgaria can live frugally but adequately — though healthcare, travel, and durables remain challenging on minimum wages.</p>
+
+      <h2>The EU Minimum Wage Directive (2022)</h2>
+      <p>In September 2022, the EU adopted the Adequate Minimum Wages Directive, requiring member states to:</p>
+      <ul>
+        <li>Ensure statutory minimum wages are "adequate" — benchmarked at 60% of median gross wage or 50% of average gross wage</li>
+        <li>Promote collective bargaining coverage to at least 80% of workers</li>
+        <li>Update minimum wages at least every 2 years (or every 4 years for indexed rates)</li>
+        <li>Report data annually to the European Labour Authority</li>
+      </ul>
+      <p>Member states had until November 15, 2024 to transpose the directive. By 2026, most EU countries with statutory minimums have met or are approaching the 60% median benchmark. The directive explicitly does not require countries with high collective bargaining coverage (Denmark, Sweden, Finland, Austria, Italy, Cyprus) to introduce a statutory minimum.</p>
+
+      <h2>Internal Links</h2>
+      <ul class="internal-links">
+        <li><a href={`/${lang}/guides/average-salary-europe/`}>Average Salaries Across Europe 2026</a></li>
+        <li><a href={`/${lang}/guides/salary-negotiation-europe/`}>How to Negotiate a Higher Salary in Europe</a></li>
+        <li><a href={`/${lang}/guides/eu-pay-transparency-directive/`}>EU Pay Transparency Directive 2026</a></li>
+        <li><a href={`/${lang}/compare/`}>Compare Salaries Across EU Countries</a></li>
+        <li><a href={`/${lang}/calculator/`}>Net Salary Calculator — All EU Countries</a></li>
+        <li><a href={`/${lang}/country/germany/`}>Germany Salary Guide</a></li>
+        <li><a href={`/${lang}/country/france/`}>France Salary Guide</a></li>
+        <li><a href={`/${lang}/country/luxembourg/`}>Luxembourg Salary Guide</a></li>
+        <li><a href={`/${lang}/country/spain/`}>Spain Salary Guide</a></li>
+      </ul>
+    </div>
+
+    <FAQSection items={fb(faqItems, lang)} />
+  </div>
+</BaseLayout>
+
+<style>
+  .page-hero {
+    background: #0F1F3D; color: white;
+    padding: 5rem 0 3.5rem; position: relative; overflow: hidden;
+  }
+  .page-hero__dots {
+    position: absolute; inset: 0; opacity: 0.07; pointer-events: none;
+    background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 32px 32px;
+  }
+  .page-hero__inner { position: relative; z-index: 1; }
+  .page-hero__breadcrumbs {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 500; margin-bottom: 2rem;
+  }
+  .page-hero__breadcrumbs a { color: rgba(120,135,171,0.9); text-decoration: none; }
+  .page-hero__breadcrumbs a:hover { color: white; }
+  .page-hero__breadcrumbs .material-symbols-outlined { font-size: 14px; color: rgba(120,135,171,0.5); }
+  .page-hero__breadcrumbs-current { color: rgba(120,135,171,0.7); font-weight: 500; }
+  .page-hero__title {
+    font-family: 'Public Sans', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 1.5rem;
+    max-width: 820px;
+  }
+  .page-hero__meta { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .page-hero__date { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(120,135,171,0.9); font-weight: 500; }
+  .page-hero__tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .page-hero__tag { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 8px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border-radius: 2px; }
+
+  .page-body { padding: 2.5rem 0 4rem; max-width: 900px; }
+
+  .guide-content h2 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.65rem; font-weight: 800; letter-spacing: -0.02em;
+    color: #0F1F3D; margin-top: 2.5rem; margin-bottom: 1rem;
+    border-bottom: 2px solid #eef0f5; padding-bottom: 0.5rem;
+  }
+  .guide-content h3 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.2rem; font-weight: 700; color: #1a2f5a; margin-top: 1.75rem; margin-bottom: 0.75rem;
+  }
+  .guide-content p { font-size: 1rem; line-height: 1.8; color: #374151; margin-bottom: 1rem; }
+  .guide-content ul { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+  .guide-content li { font-size: 1rem; line-height: 1.7; color: #374151; margin-bottom: 0.4rem; }
+
+  .mw-table-wrapper { overflow-x: auto; margin: 1.5rem 0; border-radius: 6px; border: 1px solid #e5e7eb; }
+  .mw-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  .mw-table th { background: #0F1F3D; color: white; padding: 0.8rem 1rem; text-align: left; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .mw-table td { padding: 0.65rem 1rem; border-bottom: 1px solid #f3f4f6; color: #374151; }
+  .mw-table tr:last-child td { border-bottom: none; }
+  .mw-table tr:nth-child(even) td { background: #fafafa; }
+  .mw-table tr:hover td { background: #f0f4ff; }
+
+  .country-cell { display: flex; align-items: center; gap: 0.5rem; }
+  .country-flag { font-size: 1.1rem; }
+  .country-name { font-weight: 500; color: #374151; }
+  .country-link { color: #0051d5; text-decoration: none; font-weight: 500; }
+  .country-link:hover { text-decoration: underline; }
+  .salary-cell { font-weight: 600; color: #0F1F3D; }
+  .salary-cell.secondary { font-weight: 400; color: #6b7280; }
+  .change-cell { font-weight: 600; font-size: 0.85rem; }
+  .change-cell.positive { color: #059669; }
+  .change-cell.negative { color: #dc2626; }
+  .note-cell { font-size: 0.8rem; color: #6b7280; max-width: 280px; }
+
+  .data-note { font-size: 0.8rem; color: #9ca3af; margin-top: 0.5rem; font-style: italic; }
+
+  .internal-links { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+  .internal-links li::before { content: '→ '; color: #0051d5; font-weight: 700; }
+  .internal-links a { color: #0051d5; text-decoration: none; font-weight: 500; }
+  .internal-links a:hover { text-decoration: underline; }
+</style>
