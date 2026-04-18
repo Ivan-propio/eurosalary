@@ -1,0 +1,455 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TLDRBox from '../../../components/TLDRBox.astro';
+import FAQSection from '../../../components/FAQSection.astro';
+import { languages } from '../../../i18n/ui';
+import { fb } from '../../../i18n/utils';
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+
+// --------------- Meta ---------------
+const pageTitle: Record<string, string> = {
+  en: 'EU Pay Transparency Directive 2026: Complete Guide for Employees & Employers',
+  fr: 'Directive UE sur la transparence salariale 2026 : guide complet',
+  de: 'EU-Gehaltstransparenzrichtlinie 2026: Vollständiger Leitfaden',
+  es: 'Directiva UE sobre transparencia salarial 2026: guía completa',
+  it: 'Direttiva UE sulla trasparenza retributiva 2026: guida completa',
+  pt: 'Diretiva UE sobre transparência salarial 2026: guia completo',
+  nl: 'EU-richtlijn loontransparantie 2026: complete gids',
+  pl: 'Dyrektywa UE o przejrzystości wynagrodzeń 2026: kompletny przewodnik',
+  ro: 'Directiva UE privind transparența salarială 2026: ghid complet',
+  cs: 'Směrnice EU o transparentnosti odměňování 2026: kompletní průvodce',
+  sv: 'EU:s lönetransparensdirektiv 2026: komplett guide',
+  da: 'EU\'s løngennemsigtighedsdirektiv 2026: komplet guide',
+  fi: 'EU:n palkkatasa-arvodirektiivi 2026: täydellinen opas',
+  el: 'Οδηγία ΕΕ για διαφάνεια αμοιβών 2026: πλήρης οδηγός',
+  hu: 'EU bérezési átláthatósági irányelv 2026: teljes útmutató',
+  sk: 'Smernica EÚ o transparentnosti odmeňovania 2026: kompletný sprievodca',
+  bg: 'Директива на ЕС за прозрачност на заплащането 2026: пълно ръководство',
+  hr: 'Direktiva EU o transparentnosti plaća 2026: potpuni vodič',
+  sl: 'Direktiva EU o preglednosti plač 2026: popoln vodnik',
+  lt: 'ES darbo užmokesčio skaidrumo direktyva 2026: išsamus vadovas',
+  lv: 'ES algu pārredzamības direktīva 2026: pilnīgs ceļvedis',
+  et: 'EL-i palgaläbipaistvuse direktiiv 2026: täielik juhend',
+  mt: 'Direttiva tal-UE dwar it-trasparenza tal-pagi 2026: gwida kompleta',
+  ga: 'Treoir AE ar thrédhearcacht pá 2026: treoir iomlán',
+};
+
+const pageDescription: Record<string, string> = {
+  en: 'Everything you need to know about the EU Pay Transparency Directive 2026: what it requires, who it affects, implementation timeline by country, and your rights as an employee.',
+  fr: 'Tout ce que vous devez savoir sur la directive européenne sur la transparence salariale 2026 : exigences, personnes concernées, calendrier et vos droits.',
+  de: 'Alles Wichtige zur EU-Gehaltstransparenzrichtlinie 2026: Anforderungen, Betroffene, Zeitplan und Ihre Rechte als Arbeitnehmer.',
+  es: 'Todo lo que necesita saber sobre la Directiva de transparencia salarial de la UE 2026: requisitos, afectados, calendario y sus derechos.',
+  it: 'Tutto quello che devi sapere sulla Direttiva UE sulla trasparenza retributiva 2026: requisiti, chi riguarda, tempistica e i tuoi diritti.',
+  pt: 'Tudo o que precisa de saber sobre a Diretiva da UE sobre transparência salarial 2026: requisitos, afetados, cronograma e os seus direitos.',
+  nl: 'Alles wat u moet weten over de EU-richtlijn loontransparantie 2026: vereisten, wie het betreft, tijdlijn en uw rechten.',
+  pl: 'Wszystko, co musisz wiedzieć o dyrektywie UE o przejrzystości wynagrodzeń 2026: wymagania, kogo dotyczy, harmonogram i Twoje prawa.',
+  ro: 'Tot ce trebuie să știți despre Directiva UE privind transparența salarială 2026: cerințe, cine este afectat, calendar și drepturile dvs.',
+  cs: 'Vše, co potřebujete vědět o směrnici EU o transparentnosti odměňování 2026: požadavky, koho se týká, harmonogram a vaše práva.',
+  sv: 'Allt du behöver veta om EU:s lönetransparensdirektiv 2026: krav, vem det gäller, tidslinje och dina rättigheter.',
+  da: 'Alt hvad du behøver at vide om EU\'s løngennemsigtighedsdirektiv 2026: krav, hvem det berører, tidslinje og dine rettigheder.',
+  fi: 'Kaikki mitä sinun täytyy tietää EU:n palkkatasa-arvodirektiivistä 2026: vaatimukset, keitä se koskee, aikataulu ja oikeutesi.',
+  el: 'Όλα όσα χρειάζεστε να γνωρίζετε για την οδηγία ΕΕ για τη διαφάνεια αμοιβών 2026.',
+  hu: 'Minden, amit tudnia kell az EU bérezési átláthatósági irányelvéről 2026: követelmények, érintettek, ütemterv és az Ön jogai.',
+  sk: 'Všetko, čo potrebujete vedieť o smernici EÚ o transparentnosti odmeňovania 2026.',
+  bg: 'Всичко, което трябва да знаете за директивата на ЕС за прозрачност на заплащането 2026.',
+  hr: 'Sve što trebate znati o direktivi EU o transparentnosti plaća 2026.',
+  sl: 'Vse, kar morate vedeti o direktivi EU o preglednosti plač 2026.',
+  lt: 'Viskas, ką reikia žinoti apie ES darbo užmokesčio skaidrumo direktyvą 2026.',
+  lv: 'Viss, kas jums jāzina par ES algu pārredzamības direktīvu 2026.',
+  et: 'Kõik, mida pead teadma EL-i palgaläbipaistvuse direktiivi kohta 2026.',
+  mt: 'Kulma għandek bżonn tkun taf dwar id-Direttiva tal-UE dwar it-trasparenza tal-pagi 2026.',
+  ga: 'Gach rud is gá duit a fháil amach faoi Threoir AE ar thrédhearcacht pá 2026.',
+};
+
+// --------------- TLDR ---------------
+const tldrItems: Record<string, string[]> = {
+  en: [
+    'The EU Pay Transparency Directive must be implemented by all EU member states by 7 June 2026',
+    'Companies with 100+ employees must report gender pay gaps annually; 250+ employees from day one',
+    'Job ads must include salary ranges — candidates cannot be asked about past earnings',
+    'Employees gain the right to request pay information for comparable roles',
+    'Violations can result in fines, compensation claims, and reversed burden of proof',
+  ],
+  fr: [
+    'La directive sur la transparence salariale doit être transposée par tous les États membres avant le 7 juin 2026',
+    'Les entreprises de 100+ salariés doivent déclarer annuellement les écarts de rémunération entre hommes et femmes',
+    'Les offres d\'emploi doivent inclure les fourchettes de salaires — il est interdit de demander le salaire passé',
+    'Les employés ont le droit de demander des informations sur la rémunération pour des postes comparables',
+    'Les violations peuvent entraîner des amendes, des demandes d\'indemnisation et un renversement de la charge de la preuve',
+  ],
+  de: [
+    'Die EU-Gehaltstransparenzrichtlinie muss bis zum 7. Juni 2026 von allen EU-Mitgliedstaaten umgesetzt werden',
+    'Unternehmen mit 100+ Mitarbeitern müssen jährlich Geschlechtslohnlücken melden; 250+ Mitarbeiter ab dem ersten Tag',
+    'Stellenanzeigen müssen Gehaltsspannen enthalten — Kandidaten dürfen nicht nach früheren Gehältern gefragt werden',
+    'Arbeitnehmer erhalten das Recht, Gehaltsinformationen für vergleichbare Stellen anzufordern',
+    'Verstöße können zu Bußgeldern, Schadensersatzansprüchen und umgekehrter Beweislast führen',
+  ],
+  es: [
+    'La directiva de transparencia salarial de la UE debe ser transpuesta por todos los estados miembros antes del 7 de junio de 2026',
+    'Las empresas con 100+ empleados deben informar anualmente sobre la brecha salarial de género',
+    'Las ofertas de empleo deben incluir rangos salariales — no se puede preguntar por el salario anterior',
+    'Los empleados tienen derecho a solicitar información salarial para puestos comparables',
+    'Las infracciones pueden resultar en multas, reclamaciones de compensación e inversión de la carga de la prueba',
+  ],
+  it: ['La direttiva UE sulla trasparenza retributiva deve essere recepita entro il 7 giugno 2026', 'Le aziende con 100+ dipendenti devono segnalare annualmente i divari retributivi di genere', 'Gli annunci di lavoro devono includere fasce retributive — non si può chiedere dello stipendio precedente', 'I dipendenti hanno il diritto di richiedere informazioni retributive per ruoli comparabili', 'Le violazioni possono comportare sanzioni e inversione dell\'onere della prova'],
+  pt: ['A Diretiva da UE sobre transparência salarial deve ser transposta até 7 de junho de 2026', 'Empresas com 100+ funcionários devem reportar anualmente disparidades salariais de género', 'Anúncios de emprego devem incluir faixas salariais — não se pode perguntar sobre salários anteriores', 'Funcionários ganham o direito de solicitar informações salariais para funções comparáveis', 'Violações podem resultar em multas e inversão do ónus da prova'],
+  nl: ['De EU-richtlijn loontransparantie moet vóór 7 juni 2026 worden geïmplementeerd', 'Bedrijven met 100+ werknemers moeten jaarlijks loonverschillen rapporteren', 'Vacatures moeten salarisranges bevatten — kandidaten mogen niet worden gevraagd naar eerder salaris', 'Werknemers krijgen het recht om looninformatie op te vragen voor vergelijkbare functies', 'Overtredingen kunnen leiden tot boetes en omkering van bewijslast'],
+  pl: ['Dyrektywa UE o przejrzystości wynagrodzeń musi zostać wdrożona do 7 czerwca 2026', 'Firmy z 100+ pracownikami muszą corocznie raportować lukę płacową', 'Ogłoszenia o pracę muszą zawierać widełki płacowe', 'Pracownicy zyskują prawo do żądania informacji o wynagrodzeniach', 'Naruszenia mogą skutkować karami i odwróceniem ciężaru dowodu'],
+  ro: ['Directiva UE privind transparența salarială trebuie transpusă până pe 7 iunie 2026', 'Companiile cu 100+ angajați trebuie să raporteze anual diferențele salariale de gen', 'Anunțurile de angajare trebuie să includă intervale salariale', 'Angajații dobândesc dreptul de a solicita informații salariale', 'Încălcările pot duce la amenzi și inversarea sarcinii probei'],
+  cs: ['Směrnice EU o transparentnosti odměňování musí být transponována do 7. června 2026', 'Společnosti se 100+ zaměstnanci musí každoročně hlásit genderové rozdíly v odměňování', 'Pracovní inzeráty musí obsahovat platové rozsahy', 'Zaměstnanci získávají právo žádat informace o odměňování', 'Porušení může vést k pokutám a obrácení důkazního břemene'],
+  sv: ['EU:s lönetransparensdirektiv måste implementeras senast den 7 juni 2026', 'Företag med 100+ anställda måste rapportera lönegap varje år', 'Jobbannonser måste innehålla löneintervall', 'Anställda får rätt att begära löneinformation', 'Överträdelser kan leda till böter och omvänd bevisbörda'],
+  da: ['EU\'s løngennemsigtighedsdirektiv skal implementeres senest den 7. juni 2026', 'Virksomheder med 100+ ansatte skal rapportere lønforskelle årligt', 'Jobopslag skal inkludere lønintervaller', 'Medarbejdere får ret til at anmode om lønoplysninger', 'Overtrædelser kan føre til bøder og omvendt bevisbyrde'],
+  fi: ['EU:n palkkatasa-arvodirektiivi on pantava täytäntöön viimeistään 7. kesäkuuta 2026', 'Yli 100 työntekijän yritysten on raportoitava palkkaeroja vuosittain', 'Työpaikkailmoitusten on sisällettävä palkkavälit', 'Työntekijät saavat oikeuden pyytää palkkatietoja', 'Rikkomuksista voi seurata sakkoja ja todistustaakan kääntyminen'],
+  el: ['Η οδηγία ΕΕ για διαφάνεια αμοιβών πρέπει να εφαρμοστεί έως τις 7 Ιουνίου 2026', 'Εταιρείες με 100+ εργαζόμενους πρέπει να αναφέρουν τα χάσματα αμοιβών', 'Οι αγγελίες εργασίας πρέπει να περιλαμβάνουν εύρος μισθών', 'Οι εργαζόμενοι αποκτούν δικαίωμα πληροφοριών αμοιβής', 'Οι παραβάσεις μπορεί να οδηγήσουν σε πρόστιμα'],
+  hu: ['Az EU bérezési átláthatósági irányelvet 2026. június 7-ig kell átültetni', '100+ munkavállalóval rendelkező cégeknek évente kell jelenteniük a bérszakadékot', 'Az álláshirdetéseknek tartalmazniuk kell a bértartományokat', 'A munkavállalók jogot kapnak bérinformációk kérésére', 'A jogsértések bírságokat vonhatnak maga után'],
+  sk: ['Smernica EÚ o transparentnosti odmeňovania musí byť transponovaná do 7. júna 2026', 'Spoločnosti so 100+ zamestnancami musia každoročne hlásiť rozdiely v odmeňovaní', 'Pracovné inzeráty musia obsahovať platové rozpätia', 'Zamestnanci získavajú právo žiadať informácie o odmeňovaní', 'Porušenia môžu viesť k pokutám'],
+  bg: ['Директивата на ЕС за прозрачност на заплащането трябва да бъде транспонирана до 7 юни 2026 г.', 'Компании с 100+ служители трябва да докладват разликите в заплащането', 'Обявите за работа трябва да включват диапазони на заплатите', 'Служителите получават право да искат информация за заплатите', 'Нарушенията могат да доведат до глоби'],
+  hr: ['Direktiva EU o transparentnosti plaća mora biti implementirana do 7. lipnja 2026.', 'Tvrtke sa 100+ zaposlenika moraju godišnje izvještavati o razlikama u plaćama', 'Oglasi za posao moraju uključivati raspone plaća', 'Zaposlenici dobivaju pravo na informacije o plaćama', 'Kršenja mogu rezultirati kaznama'],
+  sl: ['Direktiva EU o preglednosti plač mora biti implementirana do 7. junija 2026', 'Podjetja s 100+ zaposlenimi morajo letno poročati o razlikah v plačah', 'Oglasi za delovna mesta morajo vključevati razpone plač', 'Zaposleni pridobijo pravico zahtevati informacije o plačah', 'Kršitve lahko privedejo do glob'],
+  lt: ['ES darbo užmokesčio skaidrumo direktyva turi būti perkelta iki 2026 m. birželio 7 d.', 'Įmonės, turinčios 100+ darbuotojų, turi kasmet teikti ataskaitas apie darbo užmokesčio skirtumus', 'Darbo skelbimų turi apimti darbo užmokesčio diapazonus', 'Darbuotojai įgyja teisę prašyti informacijos apie atlyginimą', 'Pažeidimai gali lemti baudas'],
+  lv: ['ES algu pārredzamības direktīva jāievieš līdz 2026. gada 7. jūnijam', 'Uzņēmumiem ar 100+ darbiniekiem jāziņo par algu atšķirībām', 'Darba sludinājumiem jāietver algu diapazoni', 'Darbinieki iegūst tiesības pieprasīt algu informāciju', 'Pārkāpumi var radīt sodus'],
+  et: ['EL-i palgaläbipaistvuse direktiiv tuleb üle võtta 7. juuniks 2026', 'Üle 100 töötajaga ettevõtted peavad iga-aastaselt palgalõhest aru andma', 'Tööpakkumised peavad sisaldama palgavahemikke', 'Töötajad saavad õiguse taotleda palgainfot', 'Rikkumised võivad kaasa tuua trahve'],
+  mt: ['Id-Direttiva tal-UE dwar it-trasparenza tal-pagi trid tiġi implimentata sal-7 ta\' Ġunju 2026', 'Kumpaniji b\'100+ impjegat iridu jirrapportaw differenzi fil-pagi kull sena', 'L-avviżi tax-xogħol iridu jinkludu firxiet tas-salarju', 'L-impjegati jiksbu d-dritt li jitolbu informazzjoni dwar il-pagi', 'Il-ksur jista\' jwassal għal multi'],
+  ga: ['Ní mór an Treoir AE ar thrédhearcacht pá a chur i bhfeidhm faoin 7 Meitheamh 2026', 'Ní mór do chuideachtaí a bhfuil 100+ fostaí acu bearna phá inscne a thuairisciú go bliantúil', 'Ní mór d\'fhógraí post raonta pá a áireamh', 'Faigheann fostaithe an ceart faisnéis pá a iarraidh', 'D\'fhéadfadh sáruithe fíneálacha a thabhairt'],
+};
+
+// --------------- FAQ ---------------
+const faqItems: Record<string, Array<{question: string; answer: string}>> = {
+  en: [
+    { question: 'What is the EU Pay Transparency Directive?', answer: 'The EU Pay Transparency Directive (2023/970/EU) is a law adopted by the European Parliament in April 2023 requiring EU member states to implement new rules on pay transparency by June 7, 2026. It covers salary disclosure in job ads, employee rights to pay information, gender pay gap reporting, and stronger enforcement mechanisms.' },
+    { question: 'When does the EU Pay Transparency Directive come into effect?', answer: 'EU member states must transpose the directive into national law by June 7, 2026. Some countries (France, Spain, Ireland, Sweden, Portugal) already have similar measures in place. Companies will have additional time after transposition — 250+ employee firms report from year one, 150-249 employees from year three, and 100-149 employees from year five.' },
+    { question: 'Who does the EU Pay Transparency Directive apply to?', answer: 'The directive applies to all employers in EU member states, regardless of size, for provisions on job ad salary disclosure and pay information rights. Gender pay gap reporting requirements apply to companies with 100 or more employees, with phased-in thresholds.' },
+    { question: 'Does the directive require salary disclosure in job ads?', answer: 'Yes. Employers must provide salary information — either a specific salary or a salary range — before the first interview. This can be in the job posting or communicated separately. Employers cannot ask candidates about their salary history.' },
+    { question: 'What are the penalties for non-compliance?', answer: 'Penalties vary by member state, but the directive requires "effective, proportionate and dissuasive" sanctions. EU countries must set specific fines. Crucially, the burden of proof is reversed — if an employee claims pay discrimination, the employer must prove the difference is justified, not the employee.' },
+    { question: 'What rights do employees get under the directive?', answer: 'Employees have the right to request information from their employer about: their own pay level, the average pay level (broken down by gender) for workers doing the same work or work of equal value. Employers must respond within 2 months. Employees cannot be penalized for exercising these rights.' },
+    { question: 'How does the directive affect companies outside the EU?', answer: 'Non-EU companies operating in the EU must comply if they employ workers in EU member states. The directive applies to employment relationships governed by EU member state law, regardless of where the employer is headquartered.' },
+  ],
+  fr: [
+    { question: 'Qu\'est-ce que la directive sur la transparence salariale de l\'UE ?', answer: 'La directive européenne sur la transparence salariale (2023/970/UE) est une loi adoptée par le Parlement européen en avril 2023 obligeant les États membres de l\'UE à mettre en œuvre de nouvelles règles sur la transparence des salaires d\'ici le 7 juin 2026.' },
+    { question: 'Quand la directive entre-t-elle en vigueur ?', answer: 'Les États membres de l\'UE doivent transposer la directive en droit national avant le 7 juin 2026. Certains pays ont déjà des mesures similaires en place. Les entreprises bénéficient d\'un délai supplémentaire après la transposition selon leur taille.' },
+    { question: 'À qui s\'applique la directive ?', answer: 'La directive s\'applique à tous les employeurs des États membres de l\'UE pour les dispositions relatives à la divulgation des salaires dans les offres d\'emploi. Les exigences de rapport sur l\'écart de rémunération s\'appliquent aux entreprises de 100 salariés ou plus.' },
+    { question: 'La directive impose-t-elle la divulgation des salaires dans les offres d\'emploi ?', answer: 'Oui. Les employeurs doivent fournir des informations salariales avant le premier entretien. Ils ne peuvent pas demander aux candidats leurs antécédents salariaux.' },
+    { question: 'Quelles sont les sanctions en cas de non-conformité ?', answer: 'Les sanctions varient selon les États membres, mais la directive exige des sanctions effectives et dissuasives. La charge de la preuve est inversée en faveur des employés.' },
+    { question: 'Quels droits les employés ont-ils en vertu de la directive ?', answer: 'Les employés ont le droit de demander des informations sur leur niveau de rémunération et le niveau moyen de rémunération pour des travailleurs effectuant un travail comparable.' },
+    { question: 'Comment la directive affecte-t-elle les entreprises hors de l\'UE ?', answer: 'Les entreprises non européennes opérant dans l\'UE doivent se conformer si elles emploient des travailleurs dans des États membres de l\'UE.' },
+  ],
+  de: [
+    { question: 'Was ist die EU-Gehaltstransparenzrichtlinie?', answer: 'Die EU-Richtlinie zur Gehaltstransparenz (2023/970/EU) ist ein Gesetz, das im April 2023 vom Europäischen Parlament verabschiedet wurde und EU-Mitgliedstaaten verpflichtet, bis zum 7. Juni 2026 neue Regeln zur Gehaltstransparenz umzusetzen.' },
+    { question: 'Wann tritt die Richtlinie in Kraft?', answer: 'EU-Mitgliedstaaten müssen die Richtlinie bis zum 7. Juni 2026 in nationales Recht umsetzen. Einige Länder haben bereits ähnliche Maßnahmen. Unternehmen erhalten nach der Umsetzung zusätzliche Zeit je nach Größe.' },
+    { question: 'Für wen gilt die Richtlinie?', answer: 'Die Richtlinie gilt für alle Arbeitgeber in EU-Mitgliedstaaten. Berichtspflichten zur Geschlechterlohnlücke gelten für Unternehmen mit 100 oder mehr Mitarbeitern.' },
+    { question: 'Verlangt die Richtlinie Gehaltsangaben in Stellenanzeigen?', answer: 'Ja. Arbeitgeber müssen vor dem ersten Gespräch Gehaltsinformationen bereitstellen. Sie dürfen Bewerber nicht nach ihrem bisherigen Gehalt fragen.' },
+    { question: 'Was sind die Strafen bei Nichteinhaltung?', answer: 'Strafen variieren je nach Mitgliedstaat. Wichtig: Die Beweislast ist umgekehrt — der Arbeitgeber muss Gehaltsunterschiede rechtfertigen.' },
+    { question: 'Welche Rechte erhalten Arbeitnehmer?', answer: 'Arbeitnehmer haben das Recht, Informationen über ihr eigenes Gehalt und das Durchschnittsgehalt für vergleichbare Tätigkeiten anzufordern.' },
+    { question: 'Wie wirkt sich die Richtlinie auf Unternehmen außerhalb der EU aus?', answer: 'Nicht-EU-Unternehmen, die in der EU tätig sind, müssen sich an die Richtlinie halten, wenn sie Arbeitnehmer in EU-Mitgliedstaaten beschäftigen.' },
+  ],
+  es: [
+    { question: '¿Qué es la Directiva de transparencia salarial de la UE?', answer: 'La Directiva sobre transparencia salarial de la UE (2023/970/UE) es una ley adoptada por el Parlamento Europeo en abril de 2023 que obliga a los estados miembros a implementar nuevas normas sobre transparencia salarial antes del 7 de junio de 2026.' },
+    { question: '¿Cuándo entra en vigor la directiva?', answer: 'Los estados miembros de la UE deben transponer la directiva antes del 7 de junio de 2026. Algunos países ya tienen medidas similares.' },
+    { question: '¿A quién aplica la directiva?', answer: 'La directiva aplica a todos los empleadores en los estados miembros de la UE. Los requisitos de reporte de brecha salarial aplican a empresas con 100 o más empleados.' },
+    { question: '¿La directiva exige divulgar salarios en las ofertas de empleo?', answer: 'Sí. Los empleadores deben proporcionar información salarial antes de la primera entrevista. No pueden preguntar a los candidatos su historial salarial.' },
+    { question: '¿Cuáles son las sanciones por incumplimiento?', answer: 'Las sanciones varían según el estado miembro. Crucialmente, la carga de la prueba se invierte: el empleador debe justificar las diferencias salariales.' },
+    { question: '¿Qué derechos tienen los empleados?', answer: 'Los empleados tienen derecho a solicitar información sobre su nivel salarial y el nivel salarial promedio para puestos comparables.' },
+    { question: '¿Cómo afecta la directiva a empresas fuera de la UE?', answer: 'Las empresas no europeas que operan en la UE deben cumplir si emplean trabajadores en estados miembros.' },
+  ],
+  it: [{ question: 'Cos\'è la Direttiva UE sulla trasparenza retributiva?', answer: 'La Direttiva UE sulla trasparenza retributiva (2023/970/UE) è una legge adottata dal Parlamento europeo nell\'aprile 2023 che obbliga gli stati membri a implementare nuove regole sulla trasparenza retributiva entro il 7 giugno 2026.' }, { question: 'Quando entra in vigore?', answer: 'Gli stati membri devono recepire la direttiva entro il 7 giugno 2026. Alcuni paesi hanno già misure simili.' }, { question: 'A chi si applica?', answer: 'Si applica a tutti i datori di lavoro nell\'UE. I requisiti di segnalazione del divario retributivo si applicano alle aziende con 100 o più dipendenti.' }, { question: 'La direttiva richiede la divulgazione dei salari negli annunci?', answer: 'Sì. I datori di lavoro devono fornire informazioni salariali prima del primo colloquio.' }, { question: 'Quali sono le sanzioni?', answer: 'Le sanzioni variano per stato membro. L\'onere della prova è invertito in favore dei dipendenti.' }, { question: 'Quali diritti hanno i dipendenti?', answer: 'I dipendenti possono richiedere informazioni sulla propria retribuzione e sulla retribuzione media per ruoli comparabili.' }, { question: 'Come influisce sulle aziende extra-UE?', answer: 'Le aziende non UE che operano nell\'UE devono conformarsi se assumono lavoratori negli stati membri.' }],
+  pt: [{ question: 'O que é a Diretiva da UE sobre transparência salarial?', answer: 'A Diretiva da UE sobre transparência salarial (2023/970/UE) foi adotada em abril de 2023 e exige que os estados membros implementem novas regras até 7 de junho de 2026.' }, { question: 'Quando entra em vigor?', answer: 'Os estados membros devem transpor a diretiva até 7 de junho de 2026.' }, { question: 'A quem se aplica?', answer: 'Aplica-se a todos os empregadores na UE. Os requisitos de reporte aplicam-se a empresas com 100 ou mais funcionários.' }, { question: 'Exige divulgação de salários em anúncios?', answer: 'Sim. Os empregadores devem fornecer informações salariais antes da primeira entrevista.' }, { question: 'Quais são as sanções?', answer: 'As sanções variam por estado membro, com inversão do ónus da prova.' }, { question: 'Que direitos têm os funcionários?', answer: 'Os funcionários podem solicitar informações sobre a sua remuneração e a remuneração média para funções comparáveis.' }, { question: 'Como afeta empresas fora da UE?', answer: 'Empresas fora da UE que operam na UE devem cumprir se empregam trabalhadores nos estados membros.' }],
+  nl: [{ question: 'Wat is de EU-richtlijn loontransparantie?', answer: 'De EU-richtlijn loontransparantie (2023/970/EU) is aangenomen in april 2023 en verplicht EU-lidstaten nieuwe regels te implementeren vóór 7 juni 2026.' }, { question: 'Wanneer treedt de richtlijn in werking?', answer: 'Lidstaten moeten de richtlijn omzetten vóór 7 juni 2026.' }, { question: 'Voor wie geldt de richtlijn?', answer: 'De richtlijn geldt voor alle werkgevers in de EU. Rapportageverplichtingen gelden voor bedrijven met 100 of meer werknemers.' }, { question: 'Verplicht de richtlijn tot salarisopenbaarmaking in vacatures?', answer: 'Ja. Werkgevers moeten salarisinfo verstrekken vóór het eerste gesprek.' }, { question: 'Wat zijn de sancties?', answer: 'Sancties variëren per lidstaat, met omkering van de bewijslast.' }, { question: 'Welke rechten krijgen werknemers?', answer: 'Werknemers mogen informatie opvragen over hun loon en het gemiddelde loon voor vergelijkbare functies.' }, { question: 'Geldt de richtlijn voor niet-EU bedrijven?', answer: 'Ja, als zij werknemers in EU-lidstaten in dienst hebben.' }],
+  pl: [{ question: 'Czym jest dyrektywa UE o przejrzystości wynagrodzeń?', answer: 'Dyrektywa UE o przejrzystości wynagrodzeń (2023/970/UE) zobowiązuje państwa członkowskie do wdrożenia nowych przepisów do 7 czerwca 2026 r.' }, { question: 'Kiedy wchodzi w życie?', answer: 'Państwa członkowskie muszą przetransponować dyrektywę do 7 czerwca 2026 r.' }, { question: 'Kogo dotyczy?', answer: 'Dotyczy wszystkich pracodawców w UE. Obowiązki sprawozdawcze dotyczą firm z 100 lub więcej pracownikami.' }, { question: 'Czy wymaga ujawniania wynagrodzeń w ogłoszeniach?', answer: 'Tak. Pracodawcy muszą podać informacje o wynagrodzeniu przed pierwszą rozmową.' }, { question: 'Jakie są kary?', answer: 'Kary różnią się w zależności od państwa członkowskiego, z odwróceniem ciężaru dowodu.' }, { question: 'Jakie prawa mają pracownicy?', answer: 'Pracownicy mogą żądać informacji o swoim wynagrodzeniu i średnim wynagrodzeniu na porównywalnych stanowiskach.' }, { question: 'Czy dotyczy firm spoza UE?', answer: 'Tak, jeśli zatrudniają pracowników w państwach członkowskich UE.' }],
+  ro: [{ question: 'Ce este Directiva UE privind transparența salarială?', answer: 'Directiva UE (2023/970/UE) obligă statele membre să implementeze noi reguli până pe 7 iunie 2026.' }, { question: 'Când intră în vigoare?', answer: 'Statele membre trebuie să transpună directiva până pe 7 iunie 2026.' }, { question: 'Cui se aplică?', answer: 'Se aplică tuturor angajatorilor din UE. Cerințele de raportare vizează companiile cu 100+ angajați.' }, { question: 'Impune divulgarea salariilor în anunțuri?', answer: 'Da. Angajatorii trebuie să furnizeze informații salariale înainte de primul interviu.' }, { question: 'Care sunt sancțiunile?', answer: 'Sancțiunile variază, cu inversarea sarcinii probei.' }, { question: 'Ce drepturi au angajații?', answer: 'Angajații pot solicita informații despre salariul lor și salariul mediu pentru roluri comparabile.' }, { question: 'Se aplică companiilor din afara UE?', answer: 'Da, dacă angajează lucrători în statele membre.' }],
+  cs: [{ question: 'Co je směrnice EU o transparentnosti odměňování?', answer: 'Směrnice EU (2023/970/EU) zavazuje členské státy k implementaci nových pravidel do 7. června 2026.' }, { question: 'Kdy vstupuje v platnost?', answer: 'Členské státy musí transponovat směrnici do 7. června 2026.' }, { question: 'Na koho se vztahuje?', answer: 'Vztahuje se na všechny zaměstnavatele v EU. Povinnosti hlášení platí pro firmy se 100 a více zaměstnanci.' }, { question: 'Vyžaduje zveřejnění platů v inzerátech?', answer: 'Ano. Zaměstnavatelé musí poskytnout platové informace před prvním pohovorem.' }, { question: 'Jaké jsou sankce?', answer: 'Sankce se liší, s obrácením důkazního břemene.' }, { question: 'Jaká práva mají zaměstnanci?', answer: 'Zaměstnanci mohou žádat informace o svém platu a průměrném platu pro srovnatelné pozice.' }, { question: 'Platí pro firmy mimo EU?', answer: 'Ano, pokud zaměstnávají pracovníky v členských státech EU.' }],
+  sv: [{ question: 'Vad är EU:s lönetransparensdirektiv?', answer: 'EU:s lönetransparensdirektiv (2023/970/EU) ålägger EU:s medlemsstater att implementera nya regler senast den 7 juni 2026.' }, { question: 'När träder direktivet i kraft?', answer: 'Medlemsstater måste genomföra direktivet senast den 7 juni 2026.' }, { question: 'Vem omfattas?', answer: 'Direktivet gäller alla arbetsgivare i EU. Rapporteringskrav gäller företag med 100 eller fler anställda.' }, { question: 'Kräver direktivet löneuppgifter i jobbannonser?', answer: 'Ja. Arbetsgivare måste ge löneinformation innan första intervjun.' }, { question: 'Vilka sanktioner finns?', answer: 'Sanktioner varierar, med omvänd bevisbörda.' }, { question: 'Vilka rättigheter får anställda?', answer: 'Anställda kan begära information om sin lön och genomsnittslön för jämförbara tjänster.' }, { question: 'Gäller det för icke-EU-företag?', answer: 'Ja, om de anställer arbetstagare i EU-medlemsstater.' }],
+  da: [{ question: 'Hvad er EU\'s løngennemsigtighedsdirektiv?', answer: 'EU\'s direktiv (2023/970/EU) forpligter EU\'s medlemsstater til at implementere nye regler senest den 7. juni 2026.' }, { question: 'Hvornår træder det i kraft?', answer: 'Medlemsstater skal gennemføre direktivet inden den 7. juni 2026.' }, { question: 'Hvem er omfattet?', answer: 'Direktivet gælder alle arbejdsgivere i EU. Rapporteringskrav gælder virksomheder med 100 eller flere ansatte.' }, { question: 'Kræver direktivet lønoplysninger i jobopslag?', answer: 'Ja. Arbejdsgivere skal give lønoplysninger inden første samtale.' }, { question: 'Hvad er sanktionerne?', answer: 'Sanktioner varierer, med omvendt bevisbyrde.' }, { question: 'Hvilke rettigheder får medarbejdere?', answer: 'Medarbejdere kan anmode om oplysninger om deres løn og gennemsnitsløn for sammenlignelige stillinger.' }, { question: 'Gælder det for ikke-EU virksomheder?', answer: 'Ja, hvis de ansætter arbejdstagere i EU-medlemsstater.' }],
+  fi: [{ question: 'Mikä on EU:n palkkatasa-arvodirektiivi?', answer: 'EU:n direktiivi (2023/970/EU) velvoittaa jäsenvaltiot panemaan täytäntöön uudet säännöt 7. kesäkuuta 2026 mennessä.' }, { question: 'Milloin se tulee voimaan?', answer: 'Jäsenvaltioiden on siirrettävä direktiivi kansalliseen lainsäädäntöön 7. kesäkuuta 2026 mennessä.' }, { question: 'Ketä se koskee?', answer: 'Direktiivi koskee kaikkia työnantajia EU:ssa. Raportointivaatimukset koskevat yrityksiä, joilla on 100 tai enemmän työntekijöitä.' }, { question: 'Edellyttääkö direktiivi palkkatietojen julkistamista?', answer: 'Kyllä. Työnantajien on annettava palkkatietoja ennen ensimmäistä haastattelua.' }, { question: 'Mitkä ovat seuraamukset?', answer: 'Seuraamukset vaihtelevat, todistustaakka kääntyy.' }, { question: 'Mitä oikeuksia työntekijät saavat?', answer: 'Työntekijät voivat pyytää tietoja palkastaan ja vertailukelpoisten tehtävien keskipalkasta.' }, { question: 'Koskeeko se EU:n ulkopuolisia yrityksiä?', answer: 'Kyllä, jos ne palkkaavat työntekijöitä EU:n jäsenvaltioissa.' }],
+  el: [{ question: 'Τι είναι η οδηγία ΕΕ για τη διαφάνεια αμοιβών;', answer: 'Η οδηγία ΕΕ (2023/970/ΕΕ) υποχρεώνει τα κράτη μέλη να εφαρμόσουν νέους κανόνες έως τις 7 Ιουνίου 2026.' }, { question: 'Πότε τίθεται σε ισχύ;', answer: 'Τα κράτη μέλη πρέπει να ενσωματώσουν την οδηγία έως τις 7 Ιουνίου 2026.' }, { question: 'Σε ποιους εφαρμόζεται;', answer: 'Εφαρμόζεται σε όλους τους εργοδότες στην ΕΕ. Οι απαιτήσεις υποβολής εκθέσεων αφορούν εταιρείες με 100+ εργαζόμενους.' }, { question: 'Απαιτεί αποκάλυψη μισθών σε αγγελίες;', answer: 'Ναι. Οι εργοδότες πρέπει να παρέχουν πληροφορίες αμοιβής πριν από την πρώτη συνέντευξη.' }, { question: 'Ποιες είναι οι κυρώσεις;', answer: 'Οι κυρώσεις ποικίλουν, με αντιστροφή του βάρους απόδειξης.' }, { question: 'Ποια δικαιώματα αποκτούν οι εργαζόμενοι;', answer: 'Μπορούν να ζητήσουν πληροφορίες για αμοιβές σε συγκρίσιμες θέσεις.' }, { question: 'Ισχύει για μη-ΕΕ εταιρείες;', answer: 'Ναι, αν απασχολούν εργαζόμενους σε κράτη μέλη.' }],
+  hu: [{ question: 'Mi az EU bérezési átláthatósági irányelv?', answer: 'Az EU irányelve (2023/970/EU) kötelezi a tagállamokat az új szabályok 2026. június 7-ig történő bevezetésére.' }, { question: 'Mikor lép hatályba?', answer: 'A tagállamoknak 2026. június 7-ig kell átültetniük az irányelvet.' }, { question: 'Kire vonatkozik?', answer: 'Az irányelv az EU összes munkáltatójára vonatkozik. A jelentési kötelezettségek a 100+ munkavállalóval rendelkező cégekre.' }, { question: 'Megköveteli a fizetések feltüntetését az álláshirdetésekben?', answer: 'Igen. A munkáltatóknak bértájékoztatást kell adniuk az első interjú előtt.' }, { question: 'Mik a szankciók?', answer: 'A szankciók tagállamonként eltérnek, bizonyítási teher megfordítással.' }, { question: 'Milyen jogokat kapnak a munkavállalók?', answer: 'Joguk van bértájékoztatást kérni összehasonlítható munkakörökre vonatkozóan.' }, { question: 'Vonatkozik az EU-n kívüli cégekre?', answer: 'Igen, ha EU tagállamokban foglalkoztatnak munkavállalókat.' }],
+  sk: [{ question: 'Čo je smernica EÚ o transparentnosti odmeňovania?', answer: 'Smernica EÚ (2023/970/EÚ) zaväzuje členské štáty implementovať nové pravidlá do 7. júna 2026.' }, { question: 'Kedy nadobudne účinnosť?', answer: 'Členské štáty musia transponovať smernicu do 7. júna 2026.' }, { question: 'Na koho sa vzťahuje?', answer: 'Vzťahuje sa na všetkých zamestnávateľov v EÚ. Povinnosti hlásenia platia pre firmy so 100 a viac zamestnancami.' }, { question: 'Vyžaduje zverejnenie platov v inzerátoch?', answer: 'Áno. Zamestnávatelia musia poskytnúť platové informácie pred prvým pohovorom.' }, { question: 'Aké sú sankcie?', answer: 'Sankcie sa líšia, s prenesením dôkazného bremena.' }, { question: 'Aké práva majú zamestnanci?', answer: 'Môžu žiadať informácie o platoch na porovnateľných pozíciách.' }, { question: 'Platí pre firmy mimo EÚ?', answer: 'Áno, ak zamestnávajú pracovníkov v členských štátoch EÚ.' }],
+  bg: [{ question: 'Какво е директивата на ЕС за прозрачност на заплащането?', answer: 'Директивата на ЕС (2023/970/ЕС) задължава държавите членки да прилагат нови правила до 7 юни 2026 г.' }, { question: 'Кога влиза в сила?', answer: 'Държавите членки трябва да транспонират директивата до 7 юни 2026 г.' }, { question: 'За кого се прилага?', answer: 'Прилага се за всички работодатели в ЕС. Изискванията за отчетност се прилагат за фирми с 100+ служители.' }, { question: 'Изисква ли се оповестяване на заплати в обяви?', answer: 'Да. Работодателите трябва да предоставят информация за заплатите преди първото интервю.' }, { question: 'Какви са санкциите?', answer: 'Санкциите варират, с обръщане на тежестта на доказване.' }, { question: 'Какви права имат служителите?', answer: 'Могат да искат информация за заплащането за сравними длъжности.' }, { question: 'Прилага ли се за фирми извън ЕС?', answer: 'Да, ако наемат работници в държавите членки.' }],
+  hr: [{ question: 'Što je direktiva EU o transparentnosti plaća?', answer: 'Direktiva EU (2023/970/EU) obvezuje države članice na implementaciju novih pravila do 7. lipnja 2026.' }, { question: 'Kada stupa na snagu?', answer: 'Države članice moraju transponirati direktivu do 7. lipnja 2026.' }, { question: 'Na koga se primjenjuje?', answer: 'Primjenjuje se na sve poslodavce u EU. Zahtjevi izvješćivanja odnose se na tvrtke sa 100+ zaposlenika.' }, { question: 'Zahtijeva li objavu plaća u oglasima?', answer: 'Da. Poslodavci moraju pružiti informacije o plaći prije prvog razgovora.' }, { question: 'Koje su sankcije?', answer: 'Sankcije se razlikuju, s preokretom tereta dokazivanja.' }, { question: 'Koja prava dobivaju zaposlenici?', answer: 'Mogu zahtijevati informacije o plaćama za usporedive uloge.' }, { question: 'Primjenjuje li se na tvrtke izvan EU?', answer: 'Da, ako zapošljavaju radnike u državama članicama.' }],
+  sl: [{ question: 'Kaj je direktiva EU o preglednosti plač?', answer: 'Direktiva EU (2023/970/EU) zavezuje države članice k uvedbi novih pravil do 7. junija 2026.' }, { question: 'Kdaj začne veljati?', answer: 'Države članice morajo prenesti direktivo do 7. junija 2026.' }, { question: 'Na koga se nanaša?', answer: 'Nanaša se na vse delodajalce v EU. Zahteve poročanja se nanašajo na podjetja s 100+ zaposlenimi.' }, { question: 'Ali zahteva razkritje plač v oglasih?', answer: 'Da. Delodajalci morajo pred prvim razgovorom zagotoviti informacije o plači.' }, { question: 'Kakšne so sankcije?', answer: 'Sankcije se razlikujejo, z obratom dokaznega bremena.' }, { question: 'Kakšne pravice dobijo zaposleni?', answer: 'Zahtevajo lahko informacije o plačah za primerljive vloge.' }, { question: 'Velja za podjetja zunaj EU?', answer: 'Da, če zaposlujejo delavce v državah članicah.' }],
+  lt: [{ question: 'Kas yra ES darbo užmokesčio skaidrumo direktyva?', answer: 'ES direktyva (2023/970/ES) įpareigoja valstybes nares iki 2026 m. birželio 7 d. įgyvendinti naujus reikalavimus.' }, { question: 'Kada įsigalioja?', answer: 'Valstybės narės turi perkelti direktyvą iki 2026 m. birželio 7 d.' }, { question: 'Kam taikoma?', answer: 'Taikoma visiems darbdaviams ES. Ataskaitų teikimo reikalavimai taikomi įmonėms, kuriose dirba 100+ darbuotojų.' }, { question: 'Ar reikia skelbti atlyginimus darbo skelbimuose?', answer: 'Taip. Darbdaviai turi suteikti informaciją apie atlyginimą prieš pirmą pokalbį.' }, { question: 'Kokios sankcijos?', answer: 'Sankcijos skiriasi, įrodinėjimo pareiga perkeliama.' }, { question: 'Kokias teises gauna darbuotojai?', answer: 'Gali prašyti informacijos apie atlyginimus panašiose pareigose.' }, { question: 'Ar taikoma ne ES įmonėms?', answer: 'Taip, jei jos įdarbina darbuotojus valstybėse narėse.' }],
+  lv: [{ question: 'Kas ir ES algu pārredzamības direktīva?', answer: 'ES direktīva (2023/970/ES) uzliek dalībvalstīm pienākumu ieviest jaunus noteikumus līdz 2026. gada 7. jūnijam.' }, { question: 'Kad tā stājas spēkā?', answer: 'Dalībvalstīm direktīva jāpārceļ nacionālajos tiesību aktos līdz 2026. gada 7. jūnijam.' }, { question: 'Uz ko tā attiecas?', answer: 'Tā attiecas uz visiem darba devējiem ES. Ziņošanas prasības attiecas uz uzņēmumiem ar 100+ darbiniekiem.' }, { question: 'Vai tā prasa algu atklāšanu sludinājumos?', answer: 'Jā. Darba devējiem jāsniedz algas informācija pirms pirmās intervijas.' }, { question: 'Kādas ir sankcijas?', answer: 'Sankcijas atšķiras, pierādīšanas pienākums tiek apgriezts.' }, { question: 'Kādas tiesības gūst darbinieki?', answer: 'Var pieprasīt informāciju par algām salīdzināmās lomās.' }, { question: 'Vai tas attiecas uz uzņēmumiem ārpus ES?', answer: 'Jā, ja tie nodarbina darbiniekus dalībvalstīs.' }],
+  et: [{ question: 'Mis on EL-i palgaläbipaistvuse direktiiv?', answer: 'EL-i direktiiv (2023/970/EL) kohustab liikmesriike kehtestama uued reeglid 7. juuniks 2026.' }, { question: 'Millal see jõustub?', answer: 'Liikmesriigid peavad direktiivi üle võtma 7. juuniks 2026.' }, { question: 'Keda see puudutab?', answer: 'See puudutab kõiki tööandjaid EL-is. Aruandlusnõuded kehtivad ettevõtetele, kus on 100+ töötajat.' }, { question: 'Kas see nõuab palkade avaldamist kuulutustes?', answer: 'Jah. Tööandjad peavad andma palgainfot enne esimest vestlust.' }, { question: 'Millised on sanktsioonid?', answer: 'Sanktsioonid erinevad, tõendamiskohustus pöördub ümber.' }, { question: 'Millised õigused saavad töötajad?', answer: 'Nad võivad nõuda teavet võrreldavate ametikohtade palkade kohta.' }, { question: 'Kas see kehtib EL-i välistele ettevõtetele?', answer: 'Jah, kui nad tõmblevad töötajaid liikmesriikides.' }],
+  mt: [{ question: 'X\'inhi d-Direttiva tal-UE dwar it-trasparenza tal-pagi?', answer: 'Id-Direttiva tal-UE (2023/970/UE) tobbliga l-Istati Membri jimplimentaw regoli ġodda sal-7 ta\' Ġunju 2026.' }, { question: 'Meta tidħol fis-seħħ?', answer: 'L-Istati Membri jridu jittrasponu d-direttiva sal-7 ta\' Ġunju 2026.' }, { question: 'Għal min tapplika?', answer: 'Tapplika għal min iħaddem fl-UE. Ir-rekwiżiti ta\' rappurtar japplikaw għal kumpaniji b\'100+ impjegat.' }, { question: 'Tirrikjedi divulgazzjoni tas-salarju fl-avviżi?', answer: 'Iva. L-impjegaturi jridu jipprovdu informazzjoni dwar il-pagi qabel l-ewwel intervista.' }, { question: 'X\'inhuma s-sanzjonijiet?', answer: 'Is-sanzjonijiet jvarjaw, bil-piż tal-prova inverz.' }, { question: 'X\'drittijiet jiksbu l-impjegati?', answer: 'Jistgħu jitolbu informazzjoni dwar il-pagi f\'rwoli komparabbli.' }, { question: 'Japplika għal kumpaniji barra l-UE?', answer: 'Iva, jekk jimpjegaw ħaddiema fl-Istati Membri.' }],
+  ga: [{ question: 'Cad é an Treoir AE ar thrédhearcacht pá?', answer: 'Cuireann Treoir AE (2023/970/AE) de cheangal ar bhallstáit rialacha nua a chur i bhfeidhm faoin 7 Meitheamh 2026.' }, { question: 'Cathain a thagann sí i bhfeidhm?', answer: 'Ní mór do bhallstáit an treoir a thrasuí faoin 7 Meitheamh 2026.' }, { question: 'Cé air a bhfuil feidhm aici?', answer: 'Tá feidhm aici ar gach fostóir san AE. Baineann ceanglais tuairiscithe le cuideachtaí a bhfuil 100+ fostaí acu.' }, { question: 'An éilíonn sí nochtadh pá in fógraí post?', answer: 'Éilíonn. Ní mór d\'fhostóirí faisnéis pá a sholáthar roimh an gcéad agallamh.' }, { question: 'Cad iad na pionóis?', answer: 'Athraíonn pionóis de réir ballstáit, le hathróg ualach cruthúnais.' }, { question: 'Cad iad na cearta a fhaigheann fostaithe?', answer: 'Is féidir leo faisnéis a iarraidh faoi phá i róil inchomparáide.' }, { question: 'An bhfuil feidhm aige ar chuideachtaí lasmuigh den AE?', answer: 'Tá, má fhostaíonn siad oibrithe i mballstáit.' }],
+};
+
+// --------------- Schema ---------------
+const currentFaq = fb(faqItems, lang);
+const pageSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: fb(pageTitle, lang),
+    description: fb(pageDescription, lang),
+    url: `https://eurosalary.eu/${lang}/guides/eu-pay-transparency-directive/`,
+    inLanguage: lang,
+    datePublished: '2026-04-18',
+    dateModified: '2026-04-18',
+    author: { '@type': 'Organization', name: 'EuroSalary', url: 'https://eurosalary.eu' },
+    publisher: {
+      '@type': 'Organization',
+      name: 'EuroSalary',
+      url: 'https://eurosalary.eu',
+      logo: { '@type': 'ImageObject', url: 'https://eurosalary.eu/logo.svg' },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://eurosalary.eu/${lang}/guides/eu-pay-transparency-directive/` },
+    keywords: 'EU pay transparency directive 2026, pay transparency Europe, salary disclosure law, gender pay gap reporting',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: currentFaq.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `https://eurosalary.eu/${lang}/` },
+      { '@type': 'ListItem', position: 2, name: 'Guides', item: `https://eurosalary.eu/${lang}/guides/` },
+      { '@type': 'ListItem', position: 3, name: fb(pageTitle, lang), item: `https://eurosalary.eu/${lang}/guides/eu-pay-transparency-directive/` },
+    ],
+  },
+];
+
+const homeCrumb: Record<string, string> = { en: 'Home', fr: 'Accueil', de: 'Startseite', es: 'Inicio', it: 'Home', pt: 'Início', nl: 'Home', pl: 'Strona główna', ro: 'Acasă', cs: 'Domů', sv: 'Hem', da: 'Hjem', fi: 'Koti', el: 'Αρχική', hu: 'Főoldal', sk: 'Domov', bg: 'Начало', hr: 'Početna', sl: 'Domov', lt: 'Pagrindinis', lv: 'Sākums', et: 'Avaleht', mt: 'Paġna ewlenija', ga: 'Baile' };
+const guidesCrumb: Record<string, string> = { en: 'Guides', fr: 'Guides', de: 'Leitfäden', es: 'Guías', it: 'Guide', pt: 'Guias', nl: 'Gidsen', pl: 'Przewodniki', ro: 'Ghiduri', cs: 'Průvodci', sv: 'Guider', da: 'Guider', fi: 'Oppaat', el: 'Οδηγοί', hu: 'Útmutatók', sk: 'Sprievodcovia', bg: 'Ръководства', hr: 'Vodiči', sl: 'Vodniki', lt: 'Vadovai', lv: 'Ceļveži', et: 'Juhendid', mt: 'Gwidi', ga: 'Treoracha' };
+---
+
+<BaseLayout
+  title={fb(pageTitle, lang)}
+  description={fb(pageDescription, lang)}
+  datePublished="2026-04-18"
+  schema={pageSchema}
+>
+  <section class="page-hero">
+    <div class="page-hero__dots"></div>
+    <div class="container page-hero__inner">
+      <nav class="page-hero__breadcrumbs" aria-label="Breadcrumb">
+        <a href={`/${lang}/`}>{fb(homeCrumb, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <a href={`/${lang}/guides/`}>{fb(guidesCrumb, lang)}</a>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="page-hero__breadcrumbs-current">EU Pay Transparency Directive</span>
+      </nav>
+      <h1 class="page-hero__title">{fb(pageTitle, lang)}</h1>
+      <p class="page-hero__meta">
+        <span class="page-hero__date">Updated April 2026</span>
+        <span class="page-hero__tags">
+          <span class="page-hero__tag">Pay Transparency</span>
+          <span class="page-hero__tag">EU Law 2026</span>
+          <span class="page-hero__tag">Employee Rights</span>
+        </span>
+      </p>
+    </div>
+  </section>
+
+  <div class="container page-body">
+    <TLDRBox items={fb(tldrItems, lang)} />
+
+    <div class="guide-content">
+      <h2>What Is the EU Pay Transparency Directive?</h2>
+      <p>Directive 2023/970/EU — officially titled the "Pay Transparency Directive" — was adopted by the European Parliament and the Council of the European Union on 10 May 2023. It represents the most significant change to European employment law in a generation, fundamentally reshaping how companies can discuss, disclose, and manage compensation across all 27 EU member states.</p>
+
+      <p>The directive has three core objectives:</p>
+      <ul>
+        <li><strong>End pay secrecy:</strong> Employees must be able to discuss their salaries without fear of retaliation.</li>
+        <li><strong>Close the gender pay gap:</strong> Companies must actively measure and report on pay differences between men and women.</li>
+        <li><strong>Give job seekers more power:</strong> Salary ranges must be included in job ads or disclosed before interviews.</li>
+      </ul>
+
+      <p>The EU gender pay gap currently stands at approximately 12.7% (Eurostat, 2024), meaning women earn on average €0.127 less for every euro earned by men. The directive is designed to tackle structural pay discrimination through transparency rather than direct intervention.</p>
+
+      <h2>Key Provisions: What Companies Must Do</h2>
+
+      <h3>1. Pre-Employment Salary Disclosure</h3>
+      <p>Before or during the first interview, employers must provide applicants with the starting salary or salary range for the advertised position. This can appear directly in the job posting or be communicated separately — but it must happen before salary negotiations begin.</p>
+      <p><strong>Crucially, employers cannot ask candidates about their salary history.</strong> This prevents employers from anchoring offers to previous (potentially discriminatory) pay, breaking the cycle of pay discrimination following workers across jobs.</p>
+
+      <h3>2. Pay Transparency for Existing Employees</h3>
+      <p>Current employees gain the right to request — in writing — information about:</p>
+      <ul>
+        <li>Their own pay level and category</li>
+        <li>The average pay level for workers of the opposite gender doing the same or equal-value work</li>
+      </ul>
+      <p>Employers must respond within two months. They cannot prohibit employees from sharing pay information with colleagues, and they cannot penalize any worker who exercises these rights.</p>
+
+      <h3>3. Gender Pay Gap Reporting</h3>
+      <p>Companies must report annually on their gender pay gap, with phased thresholds:</p>
+      <ul>
+        <li><strong>250+ employees:</strong> Annual reporting from the directive's transposition date (June 2026)</li>
+        <li><strong>150–249 employees:</strong> Annual reporting from three years after transposition (June 2029)</li>
+        <li><strong>100–149 employees:</strong> Annual reporting from five years after transposition (June 2031)</li>
+        <li><strong>Under 100 employees:</strong> Not required (but member states may extend requirements)</li>
+      </ul>
+      <p>Reports must break down pay by worker category and by gender. If the gap exceeds 5% and cannot be justified by objective, gender-neutral criteria, the employer must conduct a joint pay assessment with worker representatives.</p>
+
+      <h3>4. Pay Structures and Job Evaluation</h3>
+      <p>Employers must establish clear, gender-neutral criteria for determining pay, including pay progression. These criteria must be documented and made accessible to employees. Workers must be informed about the pay category their role falls into.</p>
+
+      <h2>Timeline: When Does This Happen?</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-date">May 2023</div>
+          <div class="timeline-content"><strong>Directive Adopted</strong> — Published in the Official Journal of the EU</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">7 June 2026</div>
+          <div class="timeline-content"><strong>Transposition Deadline</strong> — All EU member states must have national laws in place</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">2026 onwards</div>
+          <div class="timeline-content"><strong>250+ employee companies</strong> begin annual gender pay gap reporting</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">2029 onwards</div>
+          <div class="timeline-content"><strong>150–249 employee companies</strong> begin annual reporting</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">2031 onwards</div>
+          <div class="timeline-content"><strong>100–149 employee companies</strong> begin annual reporting</div>
+        </div>
+      </div>
+
+      <h2>Country-by-Country Implementation Status</h2>
+      <p>Implementation progress varies significantly across EU member states. Some countries had existing legislation that partially meets the directive's requirements; others are starting from scratch.</p>
+
+      <div class="country-table-wrapper">
+        <table class="country-table">
+          <thead>
+            <tr>
+              <th>Country</th>
+              <th>Status</th>
+              <th>Gender Pay Gap</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>🇫🇷 France</td><td><span class="status implemented">Ahead</span></td><td>15.8%</td><td>Index égalité professionnelle since 2019</td></tr>
+            <tr><td>🇪🇸 Spain</td><td><span class="status implemented">Ahead</span></td><td>12.2%</td><td>Salary audits and equality plans already required</td></tr>
+            <tr><td>🇸🇪 Sweden</td><td><span class="status implemented">Ahead</span></td><td>11.2%</td><td>Annual pay surveys required since 2009</td></tr>
+            <tr><td>🇮🇪 Ireland</td><td><span class="status implemented">Ahead</span></td><td>9.6%</td><td>Gender Pay Gap Information Act 2021 active</td></tr>
+            <tr><td>🇵🇹 Portugal</td><td><span class="status implemented">Ahead</span></td><td>11.9%</td><td>Law 60/2018 on salary transparency active</td></tr>
+            <tr><td>🇩🇪 Germany</td><td><span class="status progress">In Progress</span></td><td>18.0%</td><td>Transposition legislation under development</td></tr>
+            <tr><td>🇳🇱 Netherlands</td><td><span class="status progress">In Progress</span></td><td>13.5%</td><td>Bill pending in parliament</td></tr>
+            <tr><td>🇧🇪 Belgium</td><td><span class="status progress">In Progress</span></td><td>5.3%</td><td>Existing pay gap analysis every 2 years</td></tr>
+            <tr><td>🇮🇹 Italy</td><td><span class="status progress">In Progress</span></td><td>5.0%</td><td>Law 162/2021 provides partial coverage</td></tr>
+            <tr><td>🇩🇰 Denmark</td><td><span class="status progress">In Progress</span></td><td>13.9%</td><td>Gender-specific pay statistics since 2006</td></tr>
+            <tr><td>🇵🇱 Poland</td><td><span class="status pending">Pending</span></td><td>4.5%</td><td>Transposition not yet started</td></tr>
+            <tr><td>🇷🇴 Romania</td><td><span class="status pending">Pending</span></td><td>3.6%</td><td>Transposition not yet started</td></tr>
+            <tr><td>🇭🇺 Hungary</td><td><span class="status pending">Pending</span></td><td>17.2%</td><td>Transposition not yet started</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><em>Data: EuroSalary analysis based on Eurostat data and national legislation tracking, April 2026.</em></p>
+
+      <h2>Employee Rights Under the Directive</h2>
+      <p>The directive creates several enforceable rights for workers that go beyond simply knowing what colleagues earn:</p>
+      <ul>
+        <li><strong>Right to pay information:</strong> Within 2 months of requesting it, employers must share average pay by gender for comparable work.</li>
+        <li><strong>Right to not disclose salary history:</strong> Employers cannot demand or use past salary information in determining your pay.</li>
+        <li><strong>Right to discuss pay:</strong> Contractual clauses preventing workers from discussing their pay are void and unenforceable.</li>
+        <li><strong>Right to compensation:</strong> If you've experienced pay discrimination, you can claim back pay, bonuses, and related financial losses.</li>
+        <li><strong>Reversed burden of proof:</strong> In discrimination claims, the employer must prove their pay practices are justified — not the worker.</li>
+        <li><strong>Protection from retaliation:</strong> Workers who exercise these rights must not face adverse treatment.</li>
+      </ul>
+
+      <h2>What Employers Must Prepare</h2>
+      <p>Companies operating in the EU should begin preparation now. Key steps include:</p>
+      <ol>
+        <li><strong>Audit current pay practices:</strong> Identify unexplained pay gaps between comparable roles using gender-neutral criteria.</li>
+        <li><strong>Define job categories and pay bands:</strong> Establish transparent, documented structures for how roles are graded and paid.</li>
+        <li><strong>Update recruitment processes:</strong> Remove salary history questions from application forms. Add salary ranges to job postings.</li>
+        <li><strong>Train HR and managers:</strong> Ensure anyone involved in hiring or pay decisions understands the new rules.</li>
+        <li><strong>Establish reporting systems:</strong> Build data infrastructure to track pay by gender across job categories for annual reporting.</li>
+        <li><strong>Review employment contracts:</strong> Remove any clauses preventing salary discussions between employees.</li>
+      </ol>
+
+      <h2>Related Resources on EuroSalary</h2>
+      <ul class="internal-links">
+        <li><a href={`/${lang}/salary-transparency/`}>Pay Transparency by Country — Current Status</a></li>
+        <li><a href={`/${lang}/guides/salary-negotiation-europe/`}>Salary Negotiation Guide for Europe</a></li>
+        <li><a href={`/${lang}/guides/average-salary-europe/`}>Average Salaries in Europe — Country Comparison</a></li>
+        <li><a href={`/${lang}/salary-check/`}>Check Your Salary Against EU Benchmarks</a></li>
+        <li><a href={`/${lang}/compare/`}>Compare Salaries Across European Countries</a></li>
+      </ul>
+    </div>
+
+    <FAQSection items={fb(faqItems, lang)} />
+  </div>
+</BaseLayout>
+
+<style>
+  .page-hero {
+    background: #0F1F3D; color: white;
+    padding: 5rem 0 3.5rem; position: relative; overflow: hidden;
+  }
+  .page-hero__dots {
+    position: absolute; inset: 0; opacity: 0.07; pointer-events: none;
+    background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 32px 32px;
+  }
+  .page-hero__inner { position: relative; z-index: 1; }
+  .page-hero__breadcrumbs {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 500; margin-bottom: 2rem;
+  }
+  .page-hero__breadcrumbs a { color: rgba(120,135,171,0.9); text-decoration: none; }
+  .page-hero__breadcrumbs a:hover { color: white; }
+  .page-hero__breadcrumbs .material-symbols-outlined { font-size: 14px; color: rgba(120,135,171,0.5); }
+  .page-hero__breadcrumbs-current { color: rgba(120,135,171,0.7); font-weight: 500; }
+  .page-hero__title {
+    font-family: 'Public Sans', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 1.5rem;
+    max-width: 820px;
+  }
+  .page-hero__meta { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .page-hero__date { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(120,135,171,0.9); font-weight: 500; }
+  .page-hero__tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .page-hero__tag { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 8px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border-radius: 2px; }
+
+  .page-body { padding: 2.5rem 0 4rem; max-width: 860px; }
+
+  .guide-content h2 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.65rem; font-weight: 800; letter-spacing: -0.02em;
+    color: #0F1F3D; margin-top: 2.5rem; margin-bottom: 1rem;
+    border-bottom: 2px solid #eef0f5; padding-bottom: 0.5rem;
+  }
+  .guide-content h3 {
+    font-family: 'Public Sans', sans-serif;
+    font-size: 1.2rem; font-weight: 700; color: #1a2f5a; margin-top: 1.75rem; margin-bottom: 0.75rem;
+  }
+  .guide-content p { font-size: 1rem; line-height: 1.8; color: #374151; margin-bottom: 1rem; }
+  .guide-content ul, .guide-content ol { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+  .guide-content li { font-size: 1rem; line-height: 1.7; color: #374151; margin-bottom: 0.4rem; }
+
+  .timeline { border-left: 3px solid #0051d5; padding-left: 1.5rem; margin: 1.5rem 0; }
+  .timeline-item { margin-bottom: 1.25rem; position: relative; }
+  .timeline-item::before { content: ''; position: absolute; left: -1.85rem; top: 6px; width: 10px; height: 10px; background: #0051d5; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 2px #0051d5; }
+  .timeline-date { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #0051d5; margin-bottom: 0.2rem; }
+  .timeline-content { font-size: 0.95rem; color: #374151; line-height: 1.5; }
+
+  .country-table-wrapper { overflow-x: auto; margin: 1.5rem 0; }
+  .country-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .country-table th { background: #0F1F3D; color: white; padding: 0.75rem 1rem; text-align: left; font-weight: 600; }
+  .country-table td { padding: 0.65rem 1rem; border-bottom: 1px solid #eef0f5; color: #374151; }
+  .country-table tr:hover td { background: #f8f9fc; }
+  .status { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 0.75rem; font-weight: 600; }
+  .status.implemented { background: #dcfce7; color: #166534; }
+  .status.progress { background: #fef9c3; color: #854d0e; }
+  .status.pending { background: #fee2e2; color: #991b1b; }
+
+  .internal-links { list-style: none; padding: 0; background: #f8f9fc; border-radius: 6px; padding: 1.25rem 1.5rem; }
+  .internal-links li { margin-bottom: 0.5rem; }
+  .internal-links a { color: #0051d5; text-decoration: none; font-weight: 500; font-size: 0.95rem; }
+  .internal-links a:hover { text-decoration: underline; }
+</style>
